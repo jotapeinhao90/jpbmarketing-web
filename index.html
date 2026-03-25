@@ -1,0 +1,571 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>JPB Marketing | Agencia B2B Industrial — Chile</title>
+  <meta name="description" content="JPB Marketing — Agencia de marketing B2B especializada en el sector industrial chileno. Automatización con IA, páginas web industriales, vendedor externo con portafolio permanente y prospección B2B. Más de $100.000.000 CLP en ventas gestionadas.">
+  <meta name="keywords" content="marketing B2B, marketing industrial, prospección B2B, vendedor externo, automatización IA, páginas web industriales, Chile">
+  <meta name="author" content="JPB Marketing">
+  <link rel="stylesheet" href="styles.css">
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>⚙️</text></svg>">
+</head>
+<body>
+
+  <!-- Loading Screen -->
+  <div class="loader" id="loader">
+    <div class="loader-content">
+      <div class="loader-logo">
+        <div class="loader-icon">JP</div>
+        <div class="loader-text">JPB <span>Marketing</span></div>
+      </div>
+      <div class="loader-bar">
+        <div class="loader-progress" id="loaderProgress"></div>
+      </div>
+      <div class="loader-percent" id="loaderPercent">0%</div>
+    </div>
+  </div>
+
+  <!-- Custom Cursor -->
+  <div class="cursor-dot" id="cursorDot"></div>
+  <div class="cursor-ring" id="cursorRing"></div>
+
+  <!-- Scroll Progress Bar -->
+  <div class="scroll-progress" id="scrollProgress"></div>
+
+  <!-- Particles Background -->
+  <canvas id="particles-canvas"></canvas>
+
+  <!-- Navigation -->
+  <nav class="navbar" id="navbar">
+    <div class="container">
+      <a href="#" class="logo magnetic" data-strength="20">
+        <div class="logo-icon">JP</div>
+        <span>JPB <span class="gradient-text">Marketing</span></span>
+      </a>
+      <div class="nav-links" id="navLinks">
+        <a href="#servicios" class="magnetic" data-strength="15">Servicios</a>
+        <a href="#prospeccion" class="magnetic" data-strength="15">Prospección</a>
+        <a href="#nosotros" class="magnetic" data-strength="15">Nosotros</a>
+        <a href="#resultados" class="magnetic" data-strength="15">Resultados</a>
+        <a href="#contacto" class="btn-cta btn-primary magnetic btn-ripple" data-strength="10">Agenda una Llamada</a>
+      </div>
+      <button class="mobile-toggle" id="mobileToggle" aria-label="Menú de navegación">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+    </div>
+  </nav>
+
+  <!-- Hero Section -->
+  <section class="hero" id="hero">
+    <div class="hero-bg" data-parallax data-speed="0.3">
+      <img src="assets/images/hero-bg.png" alt="Industria B2B Background">
+    </div>
+    <div class="blob blob-1"></div>
+    <div class="blob blob-2"></div>
+    <div class="blob blob-3"></div>
+    <div class="container">
+      <div class="hero-badge">
+        <span class="badge-dot"></span>
+        Agencia B2B Industrial — Chile
+      </div>
+      <h1 data-parallax data-speed="0.1">Tu fábrica necesita un <span class="gradient-text typewriter" id="heroTypewriter"></span></h1>
+      <p data-parallax data-speed="0.05">Nos integramos a tu equipo comercial como un vendedor externo con portafolio permanente. Automatización con IA, prospección industrial y presencia digital para fábricas que buscan escalar sus ventas B2B.</p>
+      <div class="hero-buttons">
+        <a href="#contacto" class="btn-cta btn-primary btn-large btn-ripple magnetic" data-strength="12">
+          Agenda una Llamada Estratégica
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+        </a>
+        <a href="#servicios" class="btn-cta btn-secondary btn-large btn-ripple magnetic" data-strength="12">
+          Ver Servicios
+        </a>
+      </div>
+      <div class="hero-stats">
+        <div class="hero-stat">
+          <div class="stat-number" data-target="180" data-suffix="k+">0</div>
+          <div class="stat-label">Contactos para Industrias</div>
+        </div>
+        <div class="hero-stat">
+          <div class="stat-number" data-target="1600" data-suffix="+">0</div>
+          <div class="stat-label">Contactos Prospectados Diarios</div>
+        </div>
+        <div class="hero-stat">
+          <div class="stat-number" data-target="5">0</div>
+          <div class="stat-label">Sectores Industriales</div>
+        </div>
+        <div class="hero-stat">
+          <div class="stat-number" data-target="3" data-suffix="x">0</div>
+          <div class="stat-label">Tasa Respuesta vs Mercado</div>
+        </div>
+      </div>
+    </div>
+    <div class="scroll-indicator">
+      <div class="mouse">
+        <div class="wheel"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Infinite Marquee -->
+  <div class="marquee-section">
+    <div class="marquee-track">
+      <div class="marquee-content">
+        <span>MANUFACTURA</span><span class="marquee-dot">◆</span>
+        <span>MINERÍA</span><span class="marquee-dot">◆</span>
+        <span>ALIMENTOS</span><span class="marquee-dot">◆</span>
+        <span>LOGÍSTICA</span><span class="marquee-dot">◆</span>
+        <span>METALURGIA</span><span class="marquee-dot">◆</span>
+        <span>QUÍMICA</span><span class="marquee-dot">◆</span>
+        <span>ENERGÍA</span><span class="marquee-dot">◆</span>
+        <span>CONSTRUCCIÓN</span><span class="marquee-dot">◆</span>
+        <span>MANUFACTURA</span><span class="marquee-dot">◆</span>
+        <span>MINERÍA</span><span class="marquee-dot">◆</span>
+        <span>ALIMENTOS</span><span class="marquee-dot">◆</span>
+        <span>LOGÍSTICA</span><span class="marquee-dot">◆</span>
+        <span>METALURGIA</span><span class="marquee-dot">◆</span>
+        <span>QUÍMICA</span><span class="marquee-dot">◆</span>
+        <span>ENERGÍA</span><span class="marquee-dot">◆</span>
+        <span>CONSTRUCCIÓN</span><span class="marquee-dot">◆</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Services Section -->
+  <section class="services section-padding" id="servicios">
+    <div class="container">
+      <div class="section-header reveal">
+        <div class="section-label text-scramble" data-text="Nuestros Servicios">Nuestros Servicios</div>
+        <h2>Cuatro pilares para escalar <span class="gradient-text">tu industria</span></h2>
+        <p>No somos una agencia genérica. Nos especializamos exclusivamente en el sector industrial B2B con servicios diseñados para fábricas que quieren dominar su mercado.</p>
+      </div>
+      <div class="services-grid">
+        <div class="service-card reveal tilt-card">
+          <div class="card-glow"></div>
+          <div class="service-icon">
+            <img src="assets/images/ia-icon.png" alt="Transformación Digital Integral">
+          </div>
+          <h3>Transformación Digital Integral</h3>
+          <p>Implementamos inteligencia artificial para automatizar procesos comerciales, atención de consultas, generación de cotizaciones y seguimiento de leads industriales. Google Antigravity y Claude Code como herramientas reales, no marketing vacío.</p>
+          <a href="#contacto" class="service-link">
+            Solicitar demo
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+          </a>
+        </div>
+        <div class="service-card reveal tilt-card">
+          <div class="card-glow"></div>
+          <div class="service-icon">
+            <img src="assets/images/strategy-icon.png" alt="Secretaria IA en WhatsApp">
+          </div>
+          <h3>Secretaria IA en WhatsApp</h3>
+          <p>Implementamos agentes de inteligencia artificial como secretarias virtuales que atienden tu WhatsApp 24/7. Resuelven dudas de clientes, filtran oportunidades y agendan reuniones con tomadores de decisión reales en piloto automático.</p>
+          <a href="#contacto" class="service-link">
+            Implementar IA
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+          </a>
+        </div>
+        <div class="service-card reveal tilt-card">
+          <div class="card-glow"></div>
+          <div class="service-icon">
+            <img src="assets/images/seo-icon.png" alt="Automatización con IA">
+          </div>
+          <h3>Automatización con IA</h3>
+          <p>Automatizamos procesos y orquestamos flujos complejos de trabajo. Integramos herramientas como n8n, Make, Google Antigravity y Claude Code para crear sistemas digitales que operan de forma autónoma.</p>
+          <a href="#contacto" class="service-link">
+            Automatizar procesos
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+          </a>
+        </div>
+        <div class="service-card reveal tilt-card">
+          <div class="card-glow"></div>
+          <div class="service-icon">
+            <img src="assets/images/web-industrial-icon.png" alt="Páginas Web Industriales">
+          </div>
+          <h3>Páginas Web Industriales</h3>
+          <p>Diseño tecnológico y moderno, adaptado al lenguaje visual del sector industrial. Páginas orientadas a la conversión B2B, integración con CRM, automatización y optimización para velocidad de carga en cualquier dispositivo.</p>
+          <a href="#contacto" class="service-link">
+            Ver portfolio
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+          </a>
+        </div>
+        <div class="service-card reveal tilt-card">
+          <div class="card-glow"></div>
+          <div class="service-icon">
+            <img src="assets/images/vendedor-icon.png" alt="Vendedor Externo">
+          </div>
+          <h3>Vendedor Externo / Portafolio Permanente</h3>
+          <p>Nuestro servicio diferenciador. Nos integramos a tu equipo comercial como un vendedor externo con portafolio activo: accedemos a tus productos, los representamos en el mercado y generamos ventas de manera continua.</p>
+          <a href="#contacto" class="service-link">
+            Quiero un vendedor en mi industria
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+          </a>
+        </div>
+        <div class="service-card reveal tilt-card">
+          <div class="card-glow"></div>
+          <div class="service-icon">
+            <img src="assets/images/prospeccion-icon.png" alt="Prospección B2B">
+          </div>
+          <h3>Prospección B2B Industrial</h3>
+          <p>Sistema propietario de prospección en frío altamente tecnificado. Llegamos a decisores de empresas de forma masiva y automatizada, <strong>prospectando 1.600 contactos diarios</strong> por ti, con tasas de respuesta superiores al estándar del mercado.</p>
+          <a href="#prospeccion" class="service-link">
+            Ver sistema de prospección
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Prospection System Section -->
+  <section class="prospeccion section-padding" id="prospeccion">
+    <div class="container">
+      <div class="section-header reveal">
+        <div class="section-label text-scramble" data-text="Sistema Propietario">Sistema Propietario</div>
+        <h2>Nuestro sistema de <span class="gradient-text">prospección en frío</span></h2>
+        <p>Infraestructura técnica de cold email diseñada para escalar el alcance comercial de forma controlada, evitando filtros de spam y maximizando tasas de entrega y respuesta.</p>
+      </div>
+      <div class="prospeccion-pipeline">
+        <div class="pipeline-step reveal">
+          <div class="pipeline-number">01</div>
+          <div class="pipeline-content">
+            <h3>Setup de Infraestructura</h3>
+            <ul>
+              <li>Compra de dominios secundarios en Namecheap (protegemos tu dominio principal)</li>
+              <li>Configuración DNS: SPF, DKIM, DMARC para máxima entregabilidad</li>
+              <li>Alojamiento en Submail + subdominios de tracking personalizados</li>
+            </ul>
+          </div>
+        </div>
+        <div class="pipeline-step reveal">
+          <div class="pipeline-number">02</div>
+          <div class="pipeline-content">
+            <h3>Casillas de Correo</h3>
+            <ul>
+              <li>10 casillas configuradas como subdominios desde donde se mandan emails</li>
+              <li>Identidad personalizada: nombre real + foto profesional</li>
+              <li>Cada casilla proyecta legitimidad empresarial</li>
+            </ul>
+          </div>
+        </div>
+        <div class="pipeline-step reveal">
+          <div class="pipeline-number">03</div>
+          <div class="pipeline-content">
+            <h3>Calentamiento (Warm-Up)</h3>
+            <ul>
+              <li>Setup disparador en Smartlead</li>
+              <li>14 días de calentamiento automático entre casillas</li>
+              <li>Construcción de reputación de dominio anti-spam</li>
+            </ul>
+          </div>
+        </div>
+        <div class="pipeline-step reveal">
+          <div class="pipeline-number">04</div>
+          <div class="pipeline-content">
+            <h3>Base de Prospectos</h3>
+            <ul>
+              <li>Enriquecimiento con Prospeo: identificamos decisores (gerentes, directores, dueños)</li>
+              <li>Base de datos segmentada por industria y cargo</li>
+              <li>Exportación y carga automatizada en Smartlead</li>
+            </ul>
+          </div>
+        </div>
+        <div class="pipeline-step reveal">
+          <div class="pipeline-number">05</div>
+          <div class="pipeline-content">
+            <h3>Campaña: Secuencia de 3 Disparadores</h3>
+            <ul>
+              <li><strong>Email 1:</strong> Presentación personalizada para la industria del prospecto</li>
+              <li><strong>Email 2:</strong> Follow-up con ángulo diferente y propuesta de valor reforzada</li>
+              <li><strong>Email 3:</strong> Cierre de secuencia para respuesta definitiva y gestión de pipeline</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+      <div class="prospeccion-result reveal">
+        <div class="result-badge">RESULTADO</div>
+        <p>Cientos de decisores industriales contactados simultáneamente, con personalización y apariencia de correo enviado manualmente. Tasas de respuesta <strong>3x superiores</strong> al promedio del mercado.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- About Section -->
+  <section class="about section-padding" id="nosotros">
+    <div class="container">
+      <div class="about-grid">
+        <div class="about-content reveal">
+          <div class="section-label text-scramble" data-text="Quiénes Somos" style="justify-content: flex-start;">Quiénes Somos</div>
+          <h2>Tu aliado estratégico en la <span class="gradient-text">industria B2B</span></h2>
+          <p>JPB Marketing nace con un propósito claro: conectar fábricas y empresas industriales chilenas con sus clientes potenciales de forma directa, tecnologizada y efectiva.</p>
+          <p>No trabajamos con cualquier empresa. Nos especializamos exclusivamente en el segmento industrial B2B de mayor volumen y ticket: fábricas de 250 a 300 trabajadores que necesitan presencia digital, automatización y fuerza de ventas externa.</p>
+          <div class="about-features">
+            <div class="about-feature">
+              <div class="feature-check">✓</div>
+              <span>Especialización exclusiva en B2B industrial</span>
+            </div>
+            <div class="about-feature">
+              <div class="feature-check">✓</div>
+              <span>Modelo de vendedor externo integrado a tu equipo</span>
+            </div>
+            <div class="about-feature">
+              <div class="feature-check">✓</div>
+              <span>Sistema de prospección tecnificado propio</span>
+            </div>
+            <div class="about-feature">
+              <div class="feature-check">✓</div>
+              <span>IA avanzada: Google Antigravity + Claude Code</span>
+            </div>
+            <div class="about-feature">
+              <div class="feature-check">✓</div>
+              <span>Más de 180.000 contactos B2B para industrias</span>
+            </div>
+          </div>
+        </div>
+        <div class="about-visual reveal">
+          <div class="about-metrics">
+            <div class="metric-card tilt-card">
+              <div class="card-glow"></div>
+              <div class="metric-value" data-target="180" data-suffix="k+">0</div>
+              <div class="metric-label">Contactos para Industrias B2B</div>
+            </div>
+            <div class="metric-card tilt-card">
+              <div class="card-glow"></div>
+              <div class="metric-value" data-target="5">0</div>
+              <div class="metric-label">Sectores Industriales</div>
+            </div>
+            <div class="metric-card tilt-card">
+              <div class="card-glow"></div>
+              <div class="metric-value" data-target="1600" data-suffix="+">0</div>
+              <div class="metric-label">Contactos Prospectados Diarios</div>
+            </div>
+            <div class="metric-card tilt-card">
+              <div class="card-glow"></div>
+              <div class="metric-value" data-target="14" data-suffix=" días">0</div>
+              <div class="metric-label">Setup Completo</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+
+  <!-- ICP Section -->
+  <section class="icp section-padding">
+    <div class="container">
+      <div class="icp-box reveal">
+        <h2>¿Eres nuestro <span class="gradient-text">cliente ideal</span>?</h2>
+        <div class="icp-grid">
+          <div class="icp-item">
+            <div class="icp-icon">🏭</div>
+            <div class="icp-text">
+              <div class="icp-label">Tipo de empresa</div>
+              <div class="icp-value">Fábricas e industrias manufactureras</div>
+            </div>
+          </div>
+          <div class="icp-item">
+            <div class="icp-icon">👥</div>
+            <div class="icp-text">
+              <div class="icp-label">Tamaño</div>
+              <div class="icp-value">250 a 300 trabajadores</div>
+            </div>
+          </div>
+          <div class="icp-item">
+            <div class="icp-icon">🤝</div>
+            <div class="icp-text">
+              <div class="icp-label">Modelo comercial</div>
+              <div class="icp-value">Business to Business (B2B)</div>
+            </div>
+          </div>
+          <div class="icp-item">
+            <div class="icp-icon">📍</div>
+            <div class="icp-text">
+              <div class="icp-label">Ubicación</div>
+              <div class="icp-value">Chile (expansión regional proyectada)</div>
+            </div>
+          </div>
+          <div class="icp-item">
+            <div class="icp-icon">🎯</div>
+            <div class="icp-text">
+              <div class="icp-label">Necesidad principal</div>
+              <div class="icp-value">Presencia digital, automatización, fuerza de ventas</div>
+            </div>
+          </div>
+          <div class="icp-item">
+            <div class="icp-icon">👔</div>
+            <div class="icp-text">
+              <div class="icp-label">Decisor de compra</div>
+              <div class="icp-value">Gerente General, Director Comercial, Dueño</div>
+            </div>
+          </div>
+        </div>
+        <div class="icp-cta">
+          <a href="#contacto" class="btn-cta btn-primary btn-large btn-ripple magnetic" data-strength="12">
+            Sí, quiero escalar mis ventas B2B
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA Section -->
+  <section class="cta section-padding">
+    <div class="container">
+      <div class="cta-box reveal">
+        <h2>¿Tu fábrica necesita un <span class="gradient-text">vendedor externo</span>?</h2>
+        <p>Incorpora un vendedor con portafolio activo que represente tus productos en el mercado industrial y genere ventas de forma continua. Agenda una llamada estratégica sin compromiso.</p>
+        <div class="hero-buttons">
+          <a href="#contacto" class="btn-cta btn-primary btn-large btn-ripple magnetic" data-strength="12">
+            Agenda tu Llamada Estratégica
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Contact Section -->
+  <section class="contact section-padding" id="contacto">
+    <div class="container">
+      <div class="contact-grid">
+        <div class="contact-info reveal">
+          <div class="section-label text-scramble" data-text="Contacto" style="justify-content: flex-start;">Contacto</div>
+          <h2>Hablemos de cómo escalar <span class="gradient-text">tus ventas industriales</span></h2>
+          <p>Cuéntanos sobre tu fábrica. En 30 minutos podemos definir si somos el socio estratégico que tu empresa necesita para dominar su segmento.</p>
+          <div class="contact-methods">
+            <div class="contact-method">
+              <div class="contact-method-icon">📧</div>
+              <div class="contact-method-text">
+                <div class="method-label">Email</div>
+                <div class="method-value">jpbayas@jpbmarketing.cl</div>
+              </div>
+            </div>
+            <div class="contact-method">
+              <div class="contact-method-icon">📱</div>
+              <div class="contact-method-text">
+                <div class="method-label">WhastApp / Teléfono</div>
+                <div class="method-value">+56 9 4484 3503</div>
+              </div>
+            </div>
+            <div class="contact-method">
+              <div class="contact-method-icon">📍</div>
+              <div class="contact-method-text">
+                <div class="method-label">Ubicación</div>
+                <div class="method-value">Santiago, Chile</div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <form class="contact-form reveal" id="contactForm">
+          <div class="form-row">
+            <div class="form-group">
+              <label for="name">Nombre completo</label>
+              <input type="text" id="name" placeholder="Tu nombre" required>
+              <div class="input-focus-line"></div>
+            </div>
+            <div class="form-group">
+              <label for="email">Email corporativo</label>
+              <input type="email" id="email" placeholder="tu@empresa.cl" required>
+              <div class="input-focus-line"></div>
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label for="company">Empresa</label>
+              <input type="text" id="company" placeholder="Nombre de tu empresa" required>
+              <div class="input-focus-line"></div>
+            </div>
+            <div class="form-group">
+              <label for="cargo">Cargo</label>
+              <input type="text" id="cargo" placeholder="Ej: Gerente Comercial">
+              <div class="input-focus-line"></div>
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="service">Servicio de interés</label>
+            <select id="service">
+              <option value="">Selecciona un servicio</option>
+              <option value="vendedor">Vendedor Externo / Portafolio</option>
+              <option value="prospeccion">Prospección B2B Industrial</option>
+              <option value="ia">Transformación Digital Integral</option>
+              <option value="web">Página Web Industrial</option>
+              <option value="integral">Paquete Integral</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="message">¿Qué desafío comercial enfrenta tu empresa?</label>
+            <textarea id="message" placeholder="Cuéntanos sobre tu fábrica, productos y objetivos de venta..." required></textarea>
+            <div class="input-focus-line"></div>
+          </div>
+          <button type="submit" class="btn-cta btn-primary btn-ripple">
+            Agendar Llamada Estratégica
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M22 2L11 13M22 2l-7 20-4-9-9-4 20-7z"/></svg>
+          </button>
+        </form>
+      </div>
+    </div>
+  </section>
+
+  <!-- Back to Top -->
+  <button class="back-to-top" id="backToTop" aria-label="Volver arriba">
+    <svg class="back-to-top-progress" viewBox="0 0 46 46">
+      <circle cx="23" cy="23" r="20" fill="none" stroke-width="2"/>
+    </svg>
+    <svg class="back-to-top-arrow" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 19V5M5 12l7-7 7 7"/></svg>
+  </button>
+
+  <!-- WhatsApp Float Button -->
+  <a href="https://wa.me/56944843503" class="whatsapp-float bg-green-500 magnetic" target="_blank" rel="noopener noreferrer" aria-label="Contactar por WhatsApp" data-strength="15">
+    <svg viewBox="0 0 24 24" fill="currentColor" width="30" height="30">
+      <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51a12.8 12.8 0 0 0-.57-.01c-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 0 1-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 0 1-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 0 1 2.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0 0 12.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 0 0 5.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 0 0-3.48-8.413Z"/>
+    </svg>
+  </a>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div class="footer-brand">
+          <a href="#" class="logo">
+            <div class="logo-icon">JP</div>
+            <span>JPB <span class="gradient-text">Marketing</span></span>
+          </a>
+          <p>Agencia B2B Industrial chilena. Conectamos fábricas con sus clientes potenciales de forma directa, tecnologizada y efectiva.</p>
+        </div>
+        <div class="footer-column">
+          <h4>Servicios</h4>
+          <ul>
+            <li><a href="#servicios">Transformación Digital Integral</a></li>
+            <li><a href="#servicios">Páginas Web Industriales</a></li>
+            <li><a href="#servicios">Vendedor Externo</a></li>
+            <li><a href="#prospeccion">Prospección B2B</a></li>
+          </ul>
+        </div>
+        <div class="footer-column">
+          <h4>Empresa</h4>
+          <ul>
+            <li><a href="#nosotros">Quiénes Somos</a></li>
+            <li><a href="#prospeccion">Sistema de Prospección</a></li>
+            <li><a href="#resultados">Sectores</a></li>
+            <li><a href="#contacto">Contacto</a></li>
+          </ul>
+        </div>
+        <div class="footer-column">
+          <h4>Legal</h4>
+          <ul>
+            <li><a href="#">Política de Privacidad</a></li>
+            <li><a href="#">Términos de Servicio</a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <p>&copy; 2025 JPB Marketing. Todos los derechos reservados.</p>
+        <p>Santiago, Chile · Documento Confidencial</p>
+      </div>
+    </div>
+  </footer>
+
+  <script src="main.js"></script>
+</body>
+</html>

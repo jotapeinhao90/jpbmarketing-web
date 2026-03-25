@@ -1,0 +1,320 @@
+{
+  "name": "Kommo → IA → Cotización PDF → Gmail",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "kommo-lead-cotizar",
+        "options": {}
+      },
+      "id": "webhook-trigger",
+      "name": "Webhook Kommo",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [250, 300],
+      "webhookId": "kommo-lead-cotizar",
+      "notes": "Recibe el evento cuando un lead cambia a la etapa 'Listo para cotizar' en Kommo. La URL será algo como: https://tu-n8n.com/webhook/kommo-lead-cotizar"
+    },
+    {
+      "parameters": {
+        "url": "=https://{{$json.kommo_subdomain || 'TU-SUBDOMINIO'}}.kommo.com/api/v4/leads/{{$json.body.lead_id}}/notes",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "limit",
+              "value": "100"
+            }
+          ]
+        },
+        "options": {
+          "response": {
+            "response": {
+              "responseFormat": "json"
+            }
+          }
+        }
+      },
+      "id": "http-kommo-notes",
+      "name": "Obtener Chat de Kommo",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [480, 300],
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "CONFIGURAR",
+          "name": "Kommo API Token"
+        }
+      },
+      "notes": "Llama a la API de Kommo para obtener las notas/mensajes del lead. Configura las credenciales HTTP Header Auth con: Name='Authorization', Value='Bearer TU_ACCESS_TOKEN_DE_KOMMO'"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Extraer textos de los mensajes del chat\nconst notes = $input.first().json._embedded?.notes || [];\n\nconst chatHistory = notes\n  .filter(note => note.note_type === 'message' || note.note_type === 'common')\n  .map(note => {\n    const text = note.params?.text || note.text || '';\n    const author = note.created_by === 0 ? 'Cliente' : 'Agente';\n    return `${author}: ${text}`;\n  })\n  .join('\\n---\\n');\n\nreturn [{ json: { chatHistory } }];"
+      },
+      "id": "code-parse-notes",
+      "name": "Parsear Historial",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [710, 300],
+      "notes": "Extrae y formatea los mensajes del chat de la respuesta de Kommo. No necesitas modificar este código."
+    },
+    {
+      "parameters": {
+        "resource": "chat",
+        "operation": "sendMessage",
+        "model": {
+          "__rl": true,
+          "value": "gpt-4o-mini",
+          "mode": "list"
+        },
+        "messages": {
+          "values": [
+            {
+              "role": "system",
+              "content": "Eres un asistente especializado en extraer información de cotización de conversaciones de WhatsApp entre un agente comercial y un cliente potencial.\n\nTu tarea es analizar el historial de chat y extraer los siguientes datos:\n1. Nombre completo del cliente\n2. Email del cliente\n3. Servicio o producto solicitado\n4. Detalles específicos del requerimiento\n5. Presupuesto estimado o rango de precio discutido\n\nREGLAS:\n- Responde ÚNICAMENTE con un objeto JSON válido, sin texto adicional.\n- Si algún dato no se encuentra en el historial, usa \"No especificado\" como valor.\n- Para el presupuesto, incluye el símbolo de moneda si se menciona (ej: \"$5,000 USD\").\n- Si hay múltiples servicios discutidos, combínalos en el campo \"servicio_solicitado\".\n- El campo \"detalles\" debe ser un resumen conciso de los requerimientos específicos del cliente (máximo 3 oraciones).\n- Extrae el nombre más completo que aparezca en la conversación.\n- Para el email, busca patrones como xxx@xxx.xxx en toda la conversación."
+            },
+            {
+              "role": "user",
+              "content": "=Analiza el siguiente historial de conversación y extrae los datos de cotización:\n\n---INICIO DEL HISTORIAL---\n{{ $json.chatHistory }}\n---FIN DEL HISTORIAL---\n\nDevuelve los datos en formato JSON con los campos: nombre_cliente, email_cliente, servicio_solicitado, detalles, presupuesto."
+            }
+          ]
+        },
+        "options": {
+          "temperature": 0.1,
+          "maxTokens": 500,
+          "responseFormat": "json_object"
+        }
+      },
+      "id": "openai-extract",
+      "name": "OpenAI Extraer Datos",
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 1.3,
+      "position": [940, 300],
+      "credentials": {
+        "openAiApi": {
+          "id": "CONFIGURAR",
+          "name": "OpenAI API Key"
+        }
+      },
+      "notes": "Envía el historial del chat a GPT-4o-mini para extraer los datos estructurados. Configura tu API Key de OpenAI en las credenciales."
+    },
+    {
+      "parameters": {
+        "jsCode": "// Parsear la respuesta JSON de OpenAI\nconst response = $input.first().json;\nlet content = response.message?.content || response.choices?.[0]?.message?.content || JSON.stringify(response);\n\nlet datos;\ntry {\n  datos = typeof content === 'string' ? JSON.parse(content) : content;\n} catch(e) {\n  // Intentar extraer JSON del texto\n  const match = content.match(/\\{[\\s\\S]*\\}/);\n  datos = match ? JSON.parse(match[0]) : {\n    nombre_cliente: 'No especificado',\n    email_cliente: 'No especificado',\n    servicio_solicitado: 'No especificado',\n    detalles: 'No especificado',\n    presupuesto: 'No especificado'\n  };\n}\n\n// Agregar fecha y número de cotización\nconst now = new Date();\ndatos.fecha = now.toLocaleDateString('es-MX', { day: '2-digit', month: '2-digit', year: 'numeric' });\ndatos.numero_cotizacion = 'COT-' + now.getFullYear().toString().slice(-2) + \n  String(now.getMonth()+1).padStart(2,'0') + \n  String(now.getDate()).padStart(2,'0') + \n  String(now.getHours()).padStart(2,'0') + \n  String(now.getMinutes()).padStart(2,'0');\n\nreturn [{ json: datos }];"
+      },
+      "id": "code-parse-ai",
+      "name": "Parsear Respuesta IA",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [1170, 300],
+      "notes": "Parsea el JSON devuelto por OpenAI y agrega la fecha actual y número de cotización automático."
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": false
+          },
+          "conditions": [
+            {
+              "leftValue": "={{ $json.email_cliente }}",
+              "rightValue": "No especificado",
+              "operator": {
+                "type": "string",
+                "operation": "notEquals"
+              }
+            },
+            {
+              "leftValue": "={{ $json.email_cliente }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "notEquals"
+              }
+            }
+          ],
+          "combinator": "and"
+        }
+      },
+      "id": "if-email-exists",
+      "name": "¿Tiene Email?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [1400, 300],
+      "notes": "Verifica que la IA haya encontrado un email válido. Si no, el flujo se detiene para evitar errores de envío."
+    },
+    {
+      "parameters": {
+        "operation": "createFromTemplate",
+        "documentId": {
+          "__rl": true,
+          "value": "PEGAR_ID_DE_TU_PLANTILLA_GOOGLE_DOCS",
+          "mode": "id"
+        },
+        "title": "=Cotización - {{ $json.nombre_cliente }} - {{ $json.fecha }}",
+        "folderId": {
+          "__rl": true,
+          "value": "PEGAR_ID_DE_CARPETA_EN_DRIVE",
+          "mode": "id"
+        },
+        "variables": {
+          "variableValues": [
+            { "name": "nombre", "value": "={{ $json.nombre_cliente }}" },
+            { "name": "email", "value": "={{ $json.email_cliente }}" },
+            { "name": "servicio", "value": "={{ $json.servicio_solicitado }}" },
+            { "name": "detalles", "value": "={{ $json.detalles }}" },
+            { "name": "presupuesto", "value": "={{ $json.presupuesto }}" },
+            { "name": "fecha", "value": "={{ $json.fecha }}" },
+            { "name": "numero_cotizacion", "value": "={{ $json.numero_cotizacion }}" }
+          ]
+        }
+      },
+      "id": "gdocs-create",
+      "name": "Crear Doc desde Plantilla",
+      "type": "n8n-nodes-base.googleDocs",
+      "typeVersion": 2,
+      "position": [1630, 200],
+      "credentials": {
+        "googleDocsOAuth2Api": {
+          "id": "CONFIGURAR",
+          "name": "Google Docs OAuth2"
+        }
+      },
+      "notes": "Crea una copia de la plantilla de Google Docs y reemplaza las variables {{nombre}}, {{email}}, etc. Necesitas el ID del documento plantilla (lo sacas de la URL del Doc)."
+    },
+    {
+      "parameters": {
+        "operation": "download",
+        "fileId": {
+          "__rl": true,
+          "value": "={{ $json.documentId }}",
+          "mode": "id"
+        },
+        "options": {
+          "googleFileConversion": {
+            "conversion": {
+              "docsToFormat": "application/pdf"
+            }
+          }
+        }
+      },
+      "id": "gdrive-pdf",
+      "name": "Exportar como PDF",
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [1860, 200],
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "CONFIGURAR",
+          "name": "Google Drive OAuth2"
+        }
+      },
+      "notes": "Descarga el documento creado como PDF para adjuntarlo al email."
+    },
+    {
+      "parameters": {
+        "sendTo": "={{ $('Parsear Respuesta IA').item.json.email_cliente }}",
+        "subject": "=Cotización de servicios — JPB Marketing — {{ $('Parsear Respuesta IA').item.json.servicio_solicitado }}",
+        "emailType": "html",
+        "message": "=<div style=\"font-family: 'Segoe UI', Arial, sans-serif; max-width: 600px; margin: 0 auto; color: #333;\">\n  <div style=\"background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 30px; text-align: center; border-radius: 12px 12px 0 0;\">\n    <h1 style=\"color: white; margin: 0; font-size: 24px;\">JPB Marketing</h1>\n    <p style=\"color: rgba(255,255,255,0.9); margin: 5px 0 0;\">Estrategias Digitales que Impulsan tu Negocio</p>\n  </div>\n  <div style=\"padding: 30px; background: #ffffff; border: 1px solid #e0e0e0;\">\n    <p style=\"font-size: 16px;\">Hola <strong>{{ $('Parsear Respuesta IA').item.json.nombre_cliente }}</strong>,</p>\n    <p>Gracias por tu interés en nuestros servicios. Hemos preparado una cotización personalizada basada en nuestra conversación.</p>\n    <div style=\"background: #f8f9fa; border-left: 4px solid #667eea; padding: 15px; margin: 20px 0; border-radius: 0 8px 8px 0;\">\n      <p style=\"margin: 0;\"><strong>📋 Servicio:</strong> {{ $('Parsear Respuesta IA').item.json.servicio_solicitado }}</p>\n      <p style=\"margin: 10px 0 0;\"><strong>💰 Inversión estimada:</strong> {{ $('Parsear Respuesta IA').item.json.presupuesto }}</p>\n    </div>\n    <p>Adjunto encontrarás el documento PDF con el detalle completo de la cotización.</p>\n    <p>Quedo atento a tus comentarios. Si tienes alguna pregunta o deseas agendar una llamada para revisar la propuesta, no dudes en responder a este correo.</p>\n    <p style=\"margin-top: 30px;\">Saludos cordiales,<br><strong>JPB Marketing</strong><br><span style=\"color: #888; font-size: 13px;\">📱 +52 (XXX) XXX-XXXX</span><br><span style=\"color: #888; font-size: 13px;\">🌐 www.jpbmarketing.com</span></p>\n  </div>\n  <div style=\"text-align: center; padding: 15px; color: #999; font-size: 11px;\">\n    <p>Este correo fue generado automáticamente.</p>\n  </div>\n</div>",
+        "options": {
+          "attachmentsUi": {
+            "attachmentsBinary": [
+              {
+                "property": "data"
+              }
+            ]
+          }
+        }
+      },
+      "id": "gmail-send",
+      "name": "Enviar Gmail",
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [2090, 200],
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "CONFIGURAR",
+          "name": "Gmail OAuth2"
+        }
+      },
+      "notes": "Envía el email con la cotización PDF adjunta al cliente."
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "error-msg",
+              "name": "error",
+              "value": "=No se encontró email del cliente en el historial del chat. Lead: {{ $('Webhook Kommo').item.json.body.lead_id }}",
+              "type": "string"
+            }
+          ]
+        }
+      },
+      "id": "no-email-handler",
+      "name": "Sin Email - Log Error",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [1630, 420],
+      "notes": "Si la IA no encontró un email válido, este nodo registra el error. Puedes agregar aquí una notificación (Slack, Telegram, etc.) para avisarte."
+    }
+  ],
+  "connections": {
+    "Webhook Kommo": {
+      "main": [
+        [{ "node": "Obtener Chat de Kommo", "type": "main", "index": 0 }]
+      ]
+    },
+    "Obtener Chat de Kommo": {
+      "main": [
+        [{ "node": "Parsear Historial", "type": "main", "index": 0 }]
+      ]
+    },
+    "Parsear Historial": {
+      "main": [
+        [{ "node": "OpenAI Extraer Datos", "type": "main", "index": 0 }]
+      ]
+    },
+    "OpenAI Extraer Datos": {
+      "main": [
+        [{ "node": "Parsear Respuesta IA", "type": "main", "index": 0 }]
+      ]
+    },
+    "Parsear Respuesta IA": {
+      "main": [
+        [{ "node": "¿Tiene Email?", "type": "main", "index": 0 }]
+      ]
+    },
+    "¿Tiene Email?": {
+      "main": [
+        [{ "node": "Crear Doc desde Plantilla", "type": "main", "index": 0 }],
+        [{ "node": "Sin Email - Log Error", "type": "main", "index": 0 }]
+      ]
+    },
+    "Crear Doc desde Plantilla": {
+      "main": [
+        [{ "node": "Exportar como PDF", "type": "main", "index": 0 }]
+      ]
+    },
+    "Exportar como PDF": {
+      "main": [
+        [{ "node": "Enviar Gmail", "type": "main", "index": 0 }]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "saveManualExecutions": true,
+    "callerPolicy": "workflowsFromSameOwner"
+  },
+  "tags": [
+    { "name": "Kommo" },
+    { "name": "Cotización" },
+    { "name": "Automatización" }
+  ]
+}

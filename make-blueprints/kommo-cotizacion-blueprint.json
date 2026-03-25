@@ -1,0 +1,301 @@
+{
+  "name": "Kommo → IA → Cotización PDF → Gmail",
+  "flow": [
+    {
+      "id": 1,
+      "module": "gateway:CustomWebHook",
+      "version": 1,
+      "parameters": {
+        "hook": null,
+        "maxResults": 1
+      },
+      "mapper": {},
+      "metadata": {
+        "designer": { "x": 0, "y": 0 },
+        "restore": {},
+        "parameters": [
+          {
+            "name": "hook",
+            "type": "hook:gateway-webhook",
+            "label": "Webhook",
+            "required": true
+          }
+        ],
+        "expect": [
+          { "name": "lead_id", "type": "text", "label": "Lead ID" },
+          { "name": "lead_name", "type": "text", "label": "Lead Name" }
+        ]
+      }
+    },
+    {
+      "id": 2,
+      "module": "http:ActionSendData",
+      "version": 3,
+      "parameters": {},
+      "mapper": {
+        "url": "https://TU-SUBDOMINIO.kommo.com/api/v4/leads/{{1.lead_id}}/notes?limit=100",
+        "serializeUrl": false,
+        "method": "get",
+        "headers": [
+          {
+            "name": "Authorization",
+            "value": "Bearer TU_ACCESS_TOKEN_DE_KOMMO"
+          }
+        ],
+        "qs": [],
+        "bodyType": "",
+        "parseResponse": true,
+        "authUser": "",
+        "authPass": "",
+        "timeout": "",
+        "shareCookies": false,
+        "ca": "",
+        "rejectUnauthorized": true,
+        "followRedirect": true,
+        "useQuerystring": false,
+        "gzip": true,
+        "useMtls": false,
+        "contentType": "",
+        "requestCompression": "none",
+        "followAllRedirects": false
+      },
+      "metadata": {
+        "designer": { "x": 300, "y": 0 },
+        "restore": {},
+        "expect": [
+          { "name": "url", "type": "url", "label": "URL", "required": true },
+          { "name": "method", "type": "select", "label": "Method", "required": true }
+        ]
+      }
+    },
+    {
+      "id": 3,
+      "module": "util:FunctionAggregator",
+      "version": 1,
+      "parameters": {
+        "feession": "{{join(2.data[].body; \" --- \")}}"
+      },
+      "mapper": {
+        "value": "{{2._embedded.notes[].params.text}}"
+      },
+      "metadata": {
+        "designer": { "x": 600, "y": 0 },
+        "restore": {}
+      }
+    },
+    {
+      "id": 4,
+      "module": "openai-gpt-3:CreateCompletion",
+      "version": 1,
+      "parameters": {
+        "__IMTCONN__": null
+      },
+      "mapper": {
+        "select": "chat",
+        "model": "gpt-4o-mini",
+        "messages": [
+          {
+            "role": "system",
+            "content": "Eres un asistente especializado en extraer información de cotización de conversaciones de WhatsApp entre un agente comercial y un cliente potencial.\n\nTu tarea es analizar el historial de chat y extraer los siguientes datos:\n1. Nombre completo del cliente\n2. Email del cliente\n3. Servicio o producto solicitado\n4. Detalles específicos del requerimiento\n5. Presupuesto estimado o rango de precio discutido\n\nREGLAS:\n- Responde ÚNICAMENTE con un objeto JSON válido, sin texto adicional, sin bloques de código markdown.\n- Si algún dato no se encuentra en el historial, usa \"No especificado\" como valor.\n- Para el presupuesto, incluye el símbolo de moneda si se menciona (ej: \"$5,000 USD\").\n- Si hay múltiples servicios discutidos, combínalos en el campo \"servicio_solicitado\".\n- El campo \"detalles\" debe ser un resumen conciso de los requerimientos específicos del cliente (máximo 3 oraciones).\n- Extrae el nombre más completo que aparezca en la conversación.\n- Para el email, busca patrones como xxx@xxx.xxx en toda la conversación.\n\nFormato de respuesta obligatorio:\n{\"nombre_cliente\": \"\", \"email_cliente\": \"\", \"servicio_solicitado\": \"\", \"detalles\": \"\", \"presupuesto\": \"\"}"
+          },
+          {
+            "role": "user",
+            "content": "Analiza el siguiente historial de conversación y extrae los datos de cotización:\n\n---INICIO DEL HISTORIAL---\n{{3.result}}\n---FIN DEL HISTORIAL---\n\nDevuelve los datos en formato JSON."
+          }
+        ],
+        "max_tokens": 500,
+        "temperature": "0.1",
+        "top_p": 1,
+        "response_format": { "type": "json_object" }
+      },
+      "metadata": {
+        "designer": { "x": 900, "y": 0 },
+        "restore": {
+          "parameters": {
+            "__IMTCONN__": {
+              "label": "OpenAI API Key",
+              "data": { "scoped": "true", "connection": "openai-gpt-3" }
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": 5,
+      "module": "json:ParseJSON",
+      "version": 1,
+      "parameters": {
+        "type": ""
+      },
+      "mapper": {
+        "json": "{{4.result}}"
+      },
+      "metadata": {
+        "designer": { "x": 1200, "y": 0 },
+        "restore": {}
+      }
+    },
+    {
+      "id": 6,
+      "module": "builtin:BasicRouter",
+      "version": 1,
+      "parameters": {},
+      "mapper": null,
+      "metadata": {
+        "designer": { "x": 1500, "y": 0 }
+      },
+      "routes": [
+        {
+          "flow": [
+            {
+              "id": 7,
+              "module": "google-docs:createFromTemplate",
+              "version": 1,
+              "parameters": {
+                "__IMTCONN__": null
+              },
+              "mapper": {
+                "templateDocumentId": "PEGAR_ID_DE_TU_PLANTILLA_GOOGLE_DOCS",
+                "title": "Cotización - {{5.nombre_cliente}} - {{formatDate(now; \"DD/MM/YYYY\")}}",
+                "folderId": "PEGAR_ID_DE_CARPETA_COTIZACIONES",
+                "values": [
+                  { "key": "nombre", "value": "{{5.nombre_cliente}}" },
+                  { "key": "email", "value": "{{5.email_cliente}}" },
+                  { "key": "servicio", "value": "{{5.servicio_solicitado}}" },
+                  { "key": "detalles", "value": "{{5.detalles}}" },
+                  { "key": "presupuesto", "value": "{{5.presupuesto}}" },
+                  { "key": "fecha", "value": "{{formatDate(now; \"DD/MM/YYYY\")}}" },
+                  { "key": "numero_cotizacion", "value": "COT-{{formatDate(now; \"YYMMDDHHmm\")}}" }
+                ]
+              },
+              "metadata": {
+                "designer": { "x": 1800, "y": -150 },
+                "restore": {
+                  "parameters": {
+                    "__IMTCONN__": {
+                      "label": "Google Docs (OAuth)",
+                      "data": { "scoped": "true", "connection": "google" }
+                    }
+                  }
+                }
+              }
+            },
+            {
+              "id": 8,
+              "module": "google-drive:downloadFile",
+              "version": 2,
+              "parameters": {
+                "__IMTCONN__": null
+              },
+              "mapper": {
+                "fileId": "{{7.documentId}}",
+                "conversion": "application/pdf"
+              },
+              "metadata": {
+                "designer": { "x": 2100, "y": -150 },
+                "restore": {
+                  "parameters": {
+                    "__IMTCONN__": {
+                      "label": "Google Drive (OAuth)",
+                      "data": { "scoped": "true", "connection": "google" }
+                    }
+                  }
+                }
+              }
+            },
+            {
+              "id": 9,
+              "module": "google-email:ActionSendEmail",
+              "version": 2,
+              "parameters": {
+                "__IMTCONN__": null
+              },
+              "mapper": {
+                "to": [
+                  { "value": "{{5.email_cliente}}" }
+                ],
+                "subject": "Cotización de servicios — JPB Marketing — {{5.servicio_solicitado}}",
+                "content": "<div style=\"font-family: 'Segoe UI', Arial, sans-serif; max-width: 600px; margin: 0 auto; color: #333;\"><div style=\"background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 30px; text-align: center; border-radius: 12px 12px 0 0;\"><h1 style=\"color: white; margin: 0; font-size: 24px;\">JPB Marketing</h1><p style=\"color: rgba(255,255,255,0.9); margin: 5px 0 0;\">Estrategias Digitales que Impulsan tu Negocio</p></div><div style=\"padding: 30px; background: #ffffff; border: 1px solid #e0e0e0;\"><p style=\"font-size: 16px;\">Hola <strong>{{5.nombre_cliente}}</strong>,</p><p>Gracias por tu interés en nuestros servicios. Hemos preparado una cotización personalizada basada en nuestra conversación.</p><div style=\"background: #f8f9fa; border-left: 4px solid #667eea; padding: 15px; margin: 20px 0; border-radius: 0 8px 8px 0;\"><p style=\"margin: 0;\"><strong>📋 Servicio:</strong> {{5.servicio_solicitado}}</p><p style=\"margin: 10px 0 0;\"><strong>💰 Inversión estimada:</strong> {{5.presupuesto}}</p></div><p>Adjunto encontrarás el documento PDF con el detalle completo de la cotización.</p><p>Quedo atento a tus comentarios. Si tienes alguna pregunta o deseas agendar una llamada para revisar la propuesta, no dudes en responder a este correo.</p><p style=\"margin-top: 30px;\">Saludos cordiales,<br><strong>JPB Marketing</strong><br><span style=\"color: #888; font-size: 13px;\">📱 +52 (XXX) XXX-XXXX</span><br><span style=\"color: #888; font-size: 13px;\">🌐 www.jpbmarketing.com</span></p></div><div style=\"text-align: center; padding: 15px; color: #999; font-size: 11px;\"><p>Este correo fue generado automáticamente.</p></div></div>",
+                "contentType": "html",
+                "attachments": [
+                  {
+                    "fileName": "Cotizacion-{{5.nombre_cliente}}.pdf",
+                    "data": "{{8.data}}"
+                  }
+                ]
+              },
+              "metadata": {
+                "designer": { "x": 2400, "y": -150 },
+                "restore": {
+                  "parameters": {
+                    "__IMTCONN__": {
+                      "label": "Gmail (OAuth)",
+                      "data": { "scoped": "true", "connection": "google-restricted" }
+                    }
+                  }
+                }
+              }
+            }
+          ],
+          "label": "Email encontrado",
+          "filter": {
+            "name": "Tiene email válido",
+            "conditions": [
+              [
+                {
+                  "a": "{{5.email_cliente}}",
+                  "b": "No especificado",
+                  "o": "text:notequal"
+                },
+                {
+                  "a": "{{5.email_cliente}}",
+                  "b": "",
+                  "o": "text:notequal"
+                }
+              ]
+            ]
+          }
+        },
+        {
+          "flow": [
+            {
+              "id": 10,
+              "module": "util:SetVariable2",
+              "version": 1,
+              "parameters": {},
+              "mapper": {
+                "name": "error_log",
+                "value": "No se encontró email del cliente en el chat del lead {{1.lead_id}} ({{1.lead_name}})"
+              },
+              "metadata": {
+                "designer": { "x": 1800, "y": 150 },
+                "restore": {}
+              }
+            }
+          ],
+          "label": "Sin email (fallback)"
+        }
+      ]
+    }
+  ],
+  "metadata": {
+    "instant": true,
+    "version": 1,
+    "scenario": {
+      "roundtrips": 1,
+      "maxErrors": 3,
+      "autoCommit": true,
+      "autoCommitTriggerLast": true,
+      "sequential": false,
+      "slots": null,
+      "confidential": false,
+      "dataloss": false,
+      "dlq": false,
+      "freshVariables": false
+    },
+    "designer": {
+      "orphans": []
+    },
+    "zone": "us1.make.com"
+  }
+}

@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Polimer | Fabricación de Envases Flexibles y Bolsas Plásticas</title>
+    <meta name="description" content="Polimer Ltda. fabrica y comercializa envases flexibles y bolsas plásticas de alta calidad. Más de 25 años de experiencia tecnológica.">
+    <link rel="stylesheet" href="styles.css">
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;600;800&display=swap" rel="stylesheet">
+</head>
+<body>
+
+    <!-- Loading Screen -->
+    <div class="loader" id="loader">
+        <div class="loader-content">
+            <div class="loader-logo">POLIMER<span>.</span></div>
+            <div class="loader-bar">
+                <div class="loader-progress" id="loaderProgress"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Custom Cursor -->
+    <div class="cursor-dot" id="cursorDot"></div>
+    <div class="cursor-ring" id="cursorRing"></div>
+
+    <!-- Navigation -->
+    <nav class="navbar" id="navbar">
+        <div class="container nav-container">
+            <a href="#" class="logo">
+                <svg width="32" height="32" viewBox="0 0 24 24" fill="none" class="logo-icon">
+                    <path d="M12 2L2 7l10 5 10-5-10-5z" fill="url(#gradient-primary)" />
+                    <path d="M2 17l10 5 10-5M2 12l10 5 10-5" stroke="var(--primary-color)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    <defs>
+                        <linearGradient id="gradient-primary" x1="2" y1="2" x2="22" y2="12" gradientUnits="userSpaceOnUse">
+                            <stop stop-color="#00f2fe" />
+                            <stop offset="1" stop-color="#4facfe" />
+                        </linearGradient>
+                    </defs>
+                </svg>
+                <span>POLIMER</span>
+            </a>
+            
+            <div class="nav-links">
+                <a href="#inicio" class="nav-link">Inicio</a>
+                <a href="#nosotros" class="nav-link">Nosotros</a>
+                <a href="#productos" class="nav-link">Productos</a>
+                <a href="#contacto" class="btn btn-primary">Cotizar Ahora</a>
+            </div>
+
+            <button class="mobile-menu-btn" aria-label="Abrir Menú">
+                <span></span><span></span><span></span>
+            </button>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero" id="inicio">
+        <div class="hero-bg">
+            <div class="glow-orb orb-1"></div>
+            <div class="glow-orb orb-2"></div>
+            <div class="grid-overlay"></div>
+        </div>
+        <div class="container hero-container">
+            <div class="hero-content reveal">
+                <div class="badge">Innovación en plásticos</div>
+                <h1 class="hero-title">Soluciones Flexibles para un Mundo <span class="text-gradient">Exigente</span></h1>
+                <p class="hero-subtitle">Más de 25 años de experiencia fabricando envases flexibles y bolsas plásticas con tecnología de vanguardia para potenciar tu marca y proteger tu producto.</p>
+                <div class="hero-buttons">
+                    <a href="#productos" class="btn btn-primary btn-lg">Explorar Catálogo</a>
+                    <a href="https://wa.me/56944843503" target="_blank" class="btn btn-secondary btn-lg">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path></svg>
+                        Hablar por WhatsApp
+                    </a>
+                </div>
+            </div>
+            
+            <div class="hero-stats reveal delay-1">
+                <div class="stat-item glass-card tilt">
+                    <h3 class="stat-number" data-target="25">0</h3>
+                    <p class="stat-label">Años de Experiencia</p>
+                </div>
+                <div class="stat-item glass-card tilt">
+                    <h3 class="stat-number" data-target="100" data-suffix="%">0</h3>
+                    <p class="stat-label">Calidad Garantizada</p>
+                </div>
+                <div class="stat-item glass-card tilt">
+                    <h3 class="stat-number" data-target="500" data-suffix="+">0</h3>
+                    <p class="stat-label">Clientes Satisfechos</p>
+                </div>
+            </div>
+        </div>
+        <div class="scroll-indicator">
+            <span class="mouse"><span class="wheel"></span></span>
+        </div>
+    </section>
+
+    <!-- About Section -->
+    <section class="about section-padding" id="nosotros">
+        <div class="container about-grid">
+            <div class="about-image-wrapper reveal">
+                <div class="about-image glass-card">
+                    <div class="abstract-shape"></div>
+                    <div class="content-overlay">
+                        <h3>Líderes en Envases</h3>
+                        <p>Fabricación nacional con tecnología global.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="about-text reveal delay-1">
+                <h2 class="section-title">Sobre <span class="text-gradient">Polimer</span></h2>
+                <p>Somos una empresa especializada en la producción y comercialización de todo tipo de envases flexibles. Contamos con tecnología avanzada y la máxima dedicación al detalle.</p>
+                <ul class="feature-list">
+                    <li><svg width="24" height="24" fill="none" stroke="var(--primary-color)" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><path d="M22 4L12 14.01l-3-3"></path></svg> Control de calidad riguroso en cada etapa</li>
+                    <li><svg width="24" height="24" fill="none" stroke="var(--primary-color)" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><path d="M22 4L12 14.01l-3-3"></path></svg> Soluciones hechas a medida de tu negocio</li>
+                    <li><svg width="24" height="24" fill="none" stroke="var(--primary-color)" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><path d="M22 4L12 14.01l-3-3"></path></svg> Compromiso total con los plazos de entrega</li>
+                </ul>
+            </div>
+        </div>
+    </section>
+
+    <!-- Products Section -->
+    <section class="products section-padding" id="productos">
+        <div class="container">
+            <div class="section-header reveal">
+                <h2 class="section-title">Nuestros <span class="text-gradient">Productos</span></h2>
+                <p>Ofrecemos una extensa gama de bolsas y formatos para adaptarnos a tus requerimientos.</p>
+            </div>
+
+            <div class="products-grid">
+                <!-- Product Card 1 -->
+                <div class="product-card glass-card reveal tilt">
+                    <div class="product-icon">🧊</div>
+                    <h3>Bolsas para Hielo</h3>
+                    <p>Resistentes a bajas temperaturas y roturas, diseñadas específicamente para hielo.</p>
+                </div>
+                <!-- Product Card 2 -->
+                <div class="product-card glass-card reveal delay-1 tilt">
+                    <div class="product-icon">📦</div>
+                    <h3>Fundas Cubre Pallet</h3>
+                    <p>Protección y estabilidad máxima para tu mercadería durante su transporte o almacenamiento.</p>
+                </div>
+                <!-- Product Card 3 -->
+                <div class="product-card glass-card reveal delay-2 tilt">
+                    <div class="product-icon">♻️</div>
+                    <h3>Bolsas de Basura</h3>
+                    <p>Alta resistencia para uso industrial y comercial con medidas personalizadas.</p>
+                </div>
+                <!-- Product Card 4 -->
+                <div class="product-card glass-card reveal tilt">
+                    <div class="product-icon">🗞️</div>
+                    <h3>Bolsas Wicketer</h3>
+                    <p>Ideales para procesos automáticos de envasado, aumentando tu productividad.</p>
+                </div>
+                <!-- Product Card 5 -->
+                <div class="product-card glass-card reveal delay-1 tilt">
+                    <div class="product-icon">🛡️</div>
+                    <h3>Films Especiales</h3>
+                    <p>Laminados, barrera y stretch. Máxima protección para cualquier tipo de producto.</p>
+                </div>
+                <!-- Product Card 6 -->
+                <div class="product-card glass-card reveal delay-2 tilt">
+                    <div class="product-icon">🛍️</div>
+                    <h3>Formatos Especiales</h3>
+                    <p>Pouche Doypack, Pouche al vacío y envases creados totalmente a tu medida.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact & Footer -->
+    <section class="contact-footer section-padding" id="contacto">
+        <div class="container contact-grid">
+            <div class="contact-info reveal">
+                <h2 class="section-title">Inicia tu <span class="text-gradient">Cotización</span></h2>
+                <p>Escríbenos para recibir atención personalizada. Respondemos a la brevedad.</p>
+                
+                <div class="contact-methods">
+                    <a href="https://wa.me/56944843503" class="contact-item method-whatsapp" target="_blank">
+                        <div class="icon">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path></svg>
+                        </div>
+                        <div>
+                            <h4>WhatsApp (Ventas)</h4>
+                            <span>+569 4484 3503</span>
+                        </div>
+                    </a>
+                    <a href="tel:+56933643058" class="contact-item">
+                        <div class="icon">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><path d="M12 6v6l4 2"></path></svg>
+                        </div>
+                        <div>
+                            <h4>Teléfono Alternativo</h4>
+                            <span>+569 3364 3058</span>
+                        </div>
+                    </a>
+                    <a href="mailto:info@polymer.cl" class="contact-item">
+                        <div class="icon">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg>
+                        </div>
+                        <div>
+                            <h4>Email</h4>
+                            <span>info@polymer.cl</span>
+                        </div>
+                    </a>
+                    <div class="contact-item">
+                        <div class="icon">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>
+                        </div>
+                        <div>
+                            <h4>Ubicación</h4>
+                            <span>Santa Ester 566, San Miguel, Santiago</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <form class="contact-form glass-card reveal delay-1" id="contactForm">
+                <h3>Envíanos un mensaje</h3>
+                <div class="form-group">
+                    <label for="name">Nombre</label>
+                    <input type="text" id="name" required placeholder="Tu nombre o empresa">
+                </div>
+                <div class="form-group">
+                    <label for="email">Email</label>
+                    <input type="email" id="email" required placeholder="tu@email.com">
+                </div>
+                <div class="form-group">
+                    <label for="message">Mensaje / Detalle de Cotización</label>
+                    <textarea id="message" rows="4" required placeholder="Cuéntanos qué necesitas..."></textarea>
+                </div>
+                <button type="submit" class="btn btn-primary btn-block">Enviar Cotización</button>
+            </form>
+        </div>
+        
+        <footer class="main-footer">
+            <div class="container footer-content">
+                <div class="footer-brand">
+                    <span class="logo-text">POLIMER.</span>
+                    <p>25 años garantizando la mejor calidad en envases flexibles y bolsas en Chile.</p>
+                </div>
+                <div class="footer-links">
+                    <a href="#inicio">Inicio</a>
+                    <a href="#nosotros">Nosotros</a>
+                    <a href="#productos">Productos</a>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2026 Polimer Ltda. Todos los derechos reservados.</p>
+            </div>
+        </footer>
+    </section>
+
+    <!-- Floating WhatsApp Button -->
+    <a href="https://wa.me/56944843503" target="_blank" class="floating-whatsapp" aria-label="Chat en WhatsApp">
+        <svg viewBox="0 0 32 32" width="32" height="32" fill="white">
+            <path d="M16 2C8.268 2 2 8.268 2 16c0 2.493.652 4.887 1.887 6.945L2.17 29.83l7.04-1.848 A13.918 13.918 0 0 0 16 30c7.732 0 14-6.268 14-14S23.732 2 16 2zm0 25.688c-2.148 0-4.25-.568-6.096-1.642l-.438-.256-4.148 1.09.112-4.045-.28-.445A11.66 11.66 0 0 1 4.25 16C4.25 9.522 9.522 4.25 16 4.25c6.477 0 11.75 5.272 11.75 11.75S22.477 27.688 16 27.688zm6.54-9.3c-.358-.18-2.126-1.05-2.455-1.17-.328-.12-.567-.18-.806.18-.24.36-.926 1.17-1.135 1.41-.21.24-.42.27-.78.09-.358-.18-1.516-.558-2.887-1.78-.135-.12-.423-.393-.728-.75-.25-.292-.516-.628-.686-.88-.17-.253.25-.246.425-.42.18-.18.36-.42.54-.66.18-.24.24-.42.36-.66.12-.24.06-.48-.03-.66-.09-.18-.806-1.94-1.106-2.66-.29-.7-.59-.6-8.06-.61-.24-.01-.63.09-.96.45-.33.36-1.255 1.23-1.255 3 0 1.77 1.285 3.48 1.465 3.72.18.24 2.536 3.87 6.146 5.43 3.61 1.56 3.61 1.05 4.27 1.05.65 0 2.125-.87 2.42-1.71.298-.84.298-1.56.21-1.71-.09-.15-.33-.24-.686-.42z"/>
+        </svg>
+    </a>
+
+    <!-- Product Modal -->
+    <div class="modal" id="productModal">
+        <div class="modal-overlay" id="modalOverlay"></div>
+        <div class="modal-content glass-card">
+            <button class="modal-close" id="modalClose" aria-label="Cerrar">&times;</button>
+            <div class="modal-body">
+                <div class="modal-icon" id="modalIcon"></div>
+                <h2 class="modal-title" id="modalTitle"></h2>
+                <p class="modal-desc" id="modalDesc"></p>
+                <div class="modal-details" id="modalDetails"></div>
+                
+                <div class="modal-actions">
+                    <a href="#" id="modalWaBtn" target="_blank" class="btn btn-primary btn-block">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 8px;"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path></svg>
+                        Cotizar por WhatsApp
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="main.js"></script>
+</body>
+</html>
