@@ -321,8 +321,12 @@ img {
   line-height: 1.1;
   letter-spacing: -0.03em;
   max-width: 900px;
-  min-height: 2.3em;
   animation: fadeInUp 0.8s ease-out 0.2s both;
+}
+
+#heroTypewriter {
+  display: block;
+  min-height: 1.2em;
 }
 
 .hero p {
