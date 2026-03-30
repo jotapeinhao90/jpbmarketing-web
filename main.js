@@ -308,6 +308,7 @@ class CardGlow {
 // ---- Parallax Effect ----
 class Parallax {
   constructor() {
+    if (!window.matchMedia('(pointer: fine)').matches) return;
     this.elements = document.querySelectorAll('[data-parallax]');
     if (this.elements.length) {
       window.addEventListener('scroll', () => this.update(), { passive: true });
