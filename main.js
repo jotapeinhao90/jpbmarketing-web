@@ -619,11 +619,8 @@ function initForm() {
     });
   });
 
-  form.addEventListener('submit', (e) => {
-    e.preventDefault();
+  form.addEventListener('submit', () => {
     const btn = form.querySelector('button[type="submit"]');
-    const originalHTML = btn.innerHTML;
-
     btn.innerHTML = `
       <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" class="spinner">
         <circle cx="12" cy="12" r="10" stroke-dasharray="30" stroke-dashoffset="10"/>
@@ -631,25 +628,6 @@ function initForm() {
       Enviando...
     `;
     btn.disabled = true;
-
-    setTimeout(() => {
-      btn.innerHTML = `
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 6L9 17l-5-5"/></svg>
-        ¡Mensaje enviado!
-      `;
-      btn.style.background = 'linear-gradient(135deg, #10b981, #059669)';
-
-      // Success confetti
-      createConfetti();
-
-      setTimeout(() => {
-        btn.innerHTML = originalHTML;
-        btn.style.background = '';
-        btn.disabled = false;
-        form.reset();
-        form.querySelectorAll('.form-group').forEach(fg => fg.classList.remove('focused'));
-      }, 3000);
-    }, 1500);
   });
 }
 

@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>The Kem Barbershop — 10% de Descuento</title>
+  <link rel="stylesheet" href="./style.css">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+</head>
+<body>
+
+  <!-- Ambient background -->
+  <div class="bg-orbs" aria-hidden="true">
+    <div class="orb orb-1"></div>
+    <div class="orb orb-2"></div>
+    <div class="orb orb-3"></div>
+  </div>
+
+  <!-- ─── HERO ─── -->
+  <section class="hero">
+    <img src="./kem_logo.png" alt="The Kem Barbershop" class="logo" onerror="this.style.display='none'">
+    <p class="brand-name">THE KEM</p>
+    <p class="brand-tagline">Premium Barbershop</p>
+
+    <div class="badge">OFERTA EXCLUSIVA</div>
+
+    <h1 class="hero-headline">
+      Suscríbete y obtén<br>
+      <span class="discount">10% OFF</span><br>
+      en tu próximo corte
+    </h1>
+
+    <p class="hero-sub">
+      Regístrate gratis y recibe tu código de descuento directo por WhatsApp.<br>
+      Además te avisamos automáticamente cuando sea hora de tu corte.
+    </p>
+
+    <a href="#registro" class="cta-hero">Quiero mi descuento</a>
+
+    <div class="trust-row">
+      <div class="trust-item">
+        <span class="trust-num">500+</span>
+        <span class="trust-label">Clientes felices</span>
+      </div>
+      <div class="trust-divider"></div>
+      <div class="trust-item">
+        <span class="trust-num">5★</span>
+        <span class="trust-label">Calificación</span>
+      </div>
+      <div class="trust-divider"></div>
+      <div class="trust-item">
+        <span class="trust-num">100%</span>
+        <span class="trust-label">Gratis registrarte</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ─── BENEFITS ─── -->
+  <section class="benefits">
+    <div class="benefits-grid">
+      <div class="benefit-card">
+        <div class="benefit-icon">✂️</div>
+        <h3>Cortes de Precisión</h3>
+        <p>Barberos expertos que dominan las técnicas más actuales para que salgas impecable.</p>
+      </div>
+      <div class="benefit-card">
+        <div class="benefit-icon">💈</div>
+        <h3>Ambiente Premium</h3>
+        <p>Un espacio pensado para que el corte sea una experiencia, no solo un trámite.</p>
+      </div>
+      <div class="benefit-card">
+        <div class="benefit-icon">🔔</div>
+        <h3>Recordatorios por WhatsApp</h3>
+        <p>Te avisamos cuando es hora de tu corte según tu frecuencia. Sin que tengas que acordarte.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ─── FORM ─── -->
+  <section class="form-section" id="registro">
+    <div class="form-card">
+      <div class="form-header">
+        <div class="discount-pill">10% OFF</div>
+        <h2>Registra tus datos</h2>
+        <p class="form-sub">Tu código llega directo a tu WhatsApp en minutos. Válido por <strong>30 días</strong>.</p>
+      </div>
+
+      <!-- Registration Form -->
+      <form id="register-form" class="register-form" novalidate>
+        <div class="field-row">
+          <div class="field">
+            <label for="firstName">Nombre</label>
+            <input type="text" id="firstName" name="firstName" required placeholder="Juan">
+          </div>
+          <div class="field">
+            <label for="lastName">Apellido</label>
+            <input type="text" id="lastName" name="lastName" required placeholder="Pérez">
+          </div>
+        </div>
+
+        <div class="field">
+          <label for="email">Correo Electrónico</label>
+          <input type="email" id="email" name="email" required placeholder="juan@correo.com">
+        </div>
+
+        <div class="field">
+          <label for="phone">WhatsApp</label>
+          <input type="tel" id="phone" name="phone" required placeholder="+56 9 1234 5678">
+        </div>
+
+        <div class="field">
+          <label for="frequency">¿Cada cuánto te cortas?</label>
+          <select id="frequency" name="frequency">
+            <option value="Cada 7 días">Cada 7 días</option>
+            <option value="Cada 14 días" selected>Cada 14 días</option>
+            <option value="Mensual">Mensual</option>
+            <option value="Ocasionalmente">Ocasionalmente</option>
+          </select>
+        </div>
+
+        <div class="field checkbox-field">
+          <label class="checkbox-label">
+            <input type="checkbox" id="terms" name="terms" required>
+            <span>Acepto recibir comunicaciones de The Kem Barbershop</span>
+          </label>
+        </div>
+
+        <button type="submit" id="submit-btn" class="submit-btn">
+          <span id="btn-text">Quiero mi 10% de descuento</span>
+          <span id="btn-loader" class="loader" style="display:none"></span>
+        </button>
+      </form>
+
+      <!-- Success State -->
+      <div id="success-panel" class="success-panel" style="display:none">
+        <div class="success-check">✓</div>
+        <h2>¡Listo, ya estás dentro!</h2>
+        <p>En unos minutos recibirás un mensaje de WhatsApp con tu <strong>código de 10% de descuento</strong>. Muéstralo en tu próxima visita.</p>
+        <div class="success-reminder">
+          <span class="reminder-icon">🔔</span>
+          <p>También te avisaremos por WhatsApp cuando sea hora de tu próximo corte, según la frecuencia que elegiste.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ─── FOOTER ─── -->
+  <footer class="footer">
+    <p>&copy; <span id="year"></span> The Kem Barbershop. Todos los derechos reservados.</p>
+  </footer>
+
+  <script src="./script.js"></script>
+</body>
+</html>

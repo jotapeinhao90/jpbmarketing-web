@@ -1,0 +1,313 @@
+{
+    "name": "The Kem Barbershop - Registro + Descuento + Recordatorios",
+    "flow": [
+        {
+            "id": 1,
+            "module": "gateway:CustomWebHook",
+            "version": 1,
+            "parameters": {
+                "hook": null
+            },
+            "mapper": {},
+            "metadata": {
+                "designer": { "x": 0, "y": 0 },
+                "restore": {
+                    "parameters": {
+                        "hook": { "label": "The Kem - Registro Landing Page" }
+                    }
+                },
+                "parameters": [
+                    {
+                        "name": "hook",
+                        "type": "hook:custom",
+                        "label": "Webhook"
+                    }
+                ],
+                "expect": [
+                    { "name": "firstName", "type": "text", "label": "Nombre" },
+                    { "name": "lastName", "type": "text", "label": "Apellido" },
+                    { "name": "email", "type": "text", "label": "Email" },
+                    { "name": "phone", "type": "text", "label": "WhatsApp" },
+                    { "name": "frequency", "type": "text", "label": "Frecuencia" },
+                    { "name": "source", "type": "text", "label": "Fuente" },
+                    { "name": "timestamp", "type": "text", "label": "Fecha Registro" }
+                ]
+            }
+        },
+        {
+            "id": 2,
+            "module": "google-sheets:addRow",
+            "version": 2,
+            "parameters": {
+                "spreadsheetId": null,
+                "sheetId": null
+            },
+            "mapper": {
+                "values": {
+                    "0": "{{1.firstName}}",
+                    "1": "{{1.lastName}}",
+                    "2": "{{1.email}}",
+                    "3": "{{1.phone}}",
+                    "4": "{{1.frequency}}",
+                    "5": "{{1.source}}",
+                    "6": "{{1.timestamp}}",
+                    "7": "Activo"
+                }
+            },
+            "metadata": {
+                "designer": { "x": 300, "y": 0 },
+                "restore": {
+                    "parameters": {
+                        "spreadsheetId": { "label": "The Kem - Base de Datos Clientes" },
+                        "sheetId": { "label": "Registros" }
+                    }
+                },
+                "parameters": [
+                    { "name": "spreadsheetId", "type": "select", "label": "Spreadsheet" },
+                    { "name": "sheetId", "type": "select", "label": "Sheet" }
+                ],
+                "expect": [
+                    { "name": "values", "type": "collection", "label": "Values",
+                      "spec": [
+                        { "name": "0", "label": "A - Nombre" },
+                        { "name": "1", "label": "B - Apellido" },
+                        { "name": "2", "label": "C - Email" },
+                        { "name": "3", "label": "D - WhatsApp" },
+                        { "name": "4", "label": "E - Frecuencia" },
+                        { "name": "5", "label": "F - Fuente" },
+                        { "name": "6", "label": "G - Fecha Registro" },
+                        { "name": "7", "label": "H - Estado" }
+                      ]
+                    }
+                ]
+            }
+        },
+        {
+            "id": 3,
+            "module": "email:ActionSendEmail",
+            "version": 3,
+            "parameters": {
+                "account": null
+            },
+            "mapper": {
+                "to": "{{1.email}}",
+                "subject": "¡Bienvenido a The Kem! Tu 10% de descuento está listo 🎉",
+                "html": "<div style='font-family:Inter,Arial,sans-serif;max-width:600px;margin:0 auto;background:#111;color:#f1f1f1;padding:40px;border-radius:16px'><div style='text-align:center;margin-bottom:30px'><h1 style='color:#d4af37;font-size:28px;margin:0'>THE KEM</h1><p style='color:#888;margin:5px 0'>Premium Barbershop</p></div><div style='background:rgba(212,175,55,0.1);border:1px solid rgba(212,175,55,0.3);border-radius:12px;padding:30px;text-align:center;margin-bottom:30px'><p style='margin:0 0 10px;font-size:16px'>Tu código de descuento:</p><h2 style='color:#d4af37;font-size:36px;margin:0;letter-spacing:4px'>THEKEM10</h2><p style='color:#888;margin:10px 0 0;font-size:14px'>Válido por 30 días desde hoy</p></div><p style='font-size:16px;line-height:1.6'>Hola <strong>{{1.firstName}}</strong>,</p><p style='font-size:16px;line-height:1.6'>¡Gracias por registrarte en The Kem Barbershop! Muestra este código en tu próxima visita para obtener un <strong style='color:#d4af37'>10% de descuento</strong>.</p><p style='font-size:16px;line-height:1.6'>Además, te avisaremos por WhatsApp cuando sea hora de tu próximo corte ({{1.frequency}}).</p><div style='text-align:center;margin-top:30px;padding-top:20px;border-top:1px solid #333'><p style='color:#666;font-size:12px'>© 2026 The Kem Barbershop. Todos los derechos reservados.</p></div></div>"
+            },
+            "metadata": {
+                "designer": { "x": 600, "y": 0 },
+                "restore": {
+                    "parameters": {
+                        "account": { "label": "Gmail The Kem" }
+                    }
+                },
+                "parameters": [
+                    { "name": "account", "type": "account:email", "label": "Connection" }
+                ]
+            }
+        },
+        {
+            "id": 4,
+            "module": "builtin:BasicRouter",
+            "version": 1,
+            "parameters": {
+                "routes": [
+                    {
+                        "flow": [
+                            {
+                                "id": 5,
+                                "module": "builtin:Sleep",
+                                "version": 1,
+                                "parameters": {},
+                                "mapper": {
+                                    "timeout": 604800
+                                },
+                                "metadata": {
+                                    "designer": { "x": 1100, "y": -200 },
+                                    "parameters": [],
+                                    "expect": [
+                                        { "name": "timeout", "type": "uinteger", "label": "Delay (seconds)" }
+                                    ]
+                                }
+                            },
+                            {
+                                "id": 9,
+                                "module": "http:ActionSendData",
+                                "version": 3,
+                                "parameters": {},
+                                "mapper": {
+                                    "url": "https://graph.facebook.com/v18.0/TU_PHONE_NUMBER_ID/messages",
+                                    "method": "POST",
+                                    "headers": [
+                                        { "name": "Authorization", "value": "Bearer TU_ACCESS_TOKEN" },
+                                        { "name": "Content-Type", "value": "application/json" }
+                                    ],
+                                    "body": "{\"messaging_product\":\"whatsapp\",\"to\":\"{{1.phone}}\",\"type\":\"text\",\"text\":{\"body\":\"¡Hola {{1.firstName}}! 👋 Soy de The Kem Barbershop. Ya han pasado 7 días desde tu último corte. ¿Quieres agendar tu próxima visita? Recuerda que tu descuento del 10% aún podría estar vigente 🔥 Escríbenos para reservar.\"}}"
+                                },
+                                "metadata": {
+                                    "designer": { "x": 1400, "y": -200 }
+                                }
+                            }
+                        ],
+                        "label": "Cada 7 días",
+                        "filter": {
+                            "name": "freq_7",
+                            "conditions": [[{ "a": "{{1.frequency}}", "b": "Cada 7 días", "o": "text:equal" }]]
+                        }
+                    },
+                    {
+                        "flow": [
+                            {
+                                "id": 6,
+                                "module": "builtin:Sleep",
+                                "version": 1,
+                                "parameters": {},
+                                "mapper": {
+                                    "timeout": 1209600
+                                },
+                                "metadata": {
+                                    "designer": { "x": 1100, "y": 0 },
+                                    "parameters": [],
+                                    "expect": [
+                                        { "name": "timeout", "type": "uinteger", "label": "Delay (seconds)" }
+                                    ]
+                                }
+                            },
+                            {
+                                "id": 10,
+                                "module": "http:ActionSendData",
+                                "version": 3,
+                                "parameters": {},
+                                "mapper": {
+                                    "url": "https://graph.facebook.com/v18.0/TU_PHONE_NUMBER_ID/messages",
+                                    "method": "POST",
+                                    "headers": [
+                                        { "name": "Authorization", "value": "Bearer TU_ACCESS_TOKEN" },
+                                        { "name": "Content-Type", "value": "application/json" }
+                                    ],
+                                    "body": "{\"messaging_product\":\"whatsapp\",\"to\":\"{{1.phone}}\",\"type\":\"text\",\"text\":{\"body\":\"¡Hola {{1.firstName}}! 👋 Soy de The Kem Barbershop. Ya han pasado 2 semanas. ¿Es hora de un nuevo corte? 💈 Recuerda que aún podrías usar tu descuento del 10%. ¡Escríbenos para agendar!\"}}"
+                                },
+                                "metadata": {
+                                    "designer": { "x": 1400, "y": 0 }
+                                }
+                            }
+                        ],
+                        "label": "Cada 14 días",
+                        "filter": {
+                            "name": "freq_14",
+                            "conditions": [[{ "a": "{{1.frequency}}", "b": "Cada 14 días", "o": "text:equal" }]]
+                        }
+                    },
+                    {
+                        "flow": [
+                            {
+                                "id": 7,
+                                "module": "builtin:Sleep",
+                                "version": 1,
+                                "parameters": {},
+                                "mapper": {
+                                    "timeout": 2592000
+                                },
+                                "metadata": {
+                                    "designer": { "x": 1100, "y": 200 },
+                                    "parameters": [],
+                                    "expect": [
+                                        { "name": "timeout", "type": "uinteger", "label": "Delay (seconds)" }
+                                    ]
+                                }
+                            },
+                            {
+                                "id": 11,
+                                "module": "http:ActionSendData",
+                                "version": 3,
+                                "parameters": {},
+                                "mapper": {
+                                    "url": "https://graph.facebook.com/v18.0/TU_PHONE_NUMBER_ID/messages",
+                                    "method": "POST",
+                                    "headers": [
+                                        { "name": "Authorization", "value": "Bearer TU_ACCESS_TOKEN" },
+                                        { "name": "Content-Type", "value": "application/json" }
+                                    ],
+                                    "body": "{\"messaging_product\":\"whatsapp\",\"to\":\"{{1.phone}}\",\"type\":\"text\",\"text\":{\"body\":\"¡Hola {{1.firstName}}! 👋 Ya pasó un mes desde tu último corte. ¿Listo para renovar tu look en The Kem? 💈 Tu descuento del 10% podría estar por vencer. ¡Escríbenos para reservar tu hora!\"}}"
+                                },
+                                "metadata": {
+                                    "designer": { "x": 1400, "y": 200 }
+                                }
+                            }
+                        ],
+                        "label": "Mensual",
+                        "filter": {
+                            "name": "freq_mensual",
+                            "conditions": [[{ "a": "{{1.frequency}}", "b": "Mensual", "o": "text:equal" }]]
+                        }
+                    },
+                    {
+                        "flow": [
+                            {
+                                "id": 8,
+                                "module": "builtin:Sleep",
+                                "version": 1,
+                                "parameters": {},
+                                "mapper": {
+                                    "timeout": 5184000
+                                },
+                                "metadata": {
+                                    "designer": { "x": 1100, "y": 400 },
+                                    "parameters": [],
+                                    "expect": [
+                                        { "name": "timeout", "type": "uinteger", "label": "Delay (seconds)" }
+                                    ]
+                                }
+                            },
+                            {
+                                "id": 12,
+                                "module": "http:ActionSendData",
+                                "version": 3,
+                                "parameters": {},
+                                "mapper": {
+                                    "url": "https://graph.facebook.com/v18.0/TU_PHONE_NUMBER_ID/messages",
+                                    "method": "POST",
+                                    "headers": [
+                                        { "name": "Authorization", "value": "Bearer TU_ACCESS_TOKEN" },
+                                        { "name": "Content-Type", "value": "application/json" }
+                                    ],
+                                    "body": "{\"messaging_product\":\"whatsapp\",\"to\":\"{{1.phone}}\",\"type\":\"text\",\"text\":{\"body\":\"¡Hola {{1.firstName}}! 👋 Ha pasado un buen tiempo. ¿Extrañas la experiencia The Kem? 💈 ¡Ven a visitarnos! Escríbenos para agendar tu próximo corte.\"}}"
+                                },
+                                "metadata": {
+                                    "designer": { "x": 1400, "y": 400 }
+                                }
+                            }
+                        ],
+                        "label": "Ocasionalmente",
+                        "filter": {
+                            "name": "freq_ocasional",
+                            "conditions": [[{ "a": "{{1.frequency}}", "b": "Ocasionalmente", "o": "text:equal" }]]
+                        }
+                    }
+                ]
+            },
+            "mapper": {},
+            "metadata": {
+                "designer": { "x": 900, "y": 0 }
+            }
+        }
+    ],
+    "metadata": {
+        "version": 1,
+        "scenario": {
+            "roundtrips": 1,
+            "maxErrors": 3,
+            "autoCommit": true,
+            "autoCommitTriggerLast": true,
+            "sequential": false,
+            "confidential": false,
+            "dataloss": false,
+            "dlq": false,
+            "freshVariables": false
+        },
+        "designer": {
+            "orphans": []
+        },
+        "zone": "us2.make.com"
+    }
+}

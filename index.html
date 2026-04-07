@@ -457,45 +457,51 @@
             </div>
           </div>
         </div>
-        <form class="contact-form reveal" id="contactForm">
+        <form class="contact-form reveal" id="contactForm" action="https://formsubmit.co/jpbayas@jpbmarketing.cl" method="POST">
+          <!-- Formsubmit.co config -->
+          <input type="hidden" name="_subject" value="🏭 Nuevo Lead B2B desde jpbmarketing.cl">
+          <input type="hidden" name="_next" value="https://jpbmarketing.cl">
+          <input type="hidden" name="_captcha" value="false">
+          <input type="hidden" name="_template" value="table">
+          <input type="text" name="_honey" style="display:none">
           <div class="form-row">
             <div class="form-group">
               <label for="name">Nombre completo</label>
-              <input type="text" id="name" placeholder="Tu nombre" required>
+              <input type="text" id="name" name="Nombre" placeholder="Tu nombre" required>
               <div class="input-focus-line"></div>
             </div>
             <div class="form-group">
               <label for="email">Email corporativo</label>
-              <input type="email" id="email" placeholder="tu@empresa.cl" required>
+              <input type="email" id="email" name="Email" placeholder="tu@empresa.cl" required>
               <div class="input-focus-line"></div>
             </div>
           </div>
           <div class="form-row">
             <div class="form-group">
               <label for="company">Empresa</label>
-              <input type="text" id="company" placeholder="Nombre de tu empresa" required>
+              <input type="text" id="company" name="Empresa" placeholder="Nombre de tu empresa" required>
               <div class="input-focus-line"></div>
             </div>
             <div class="form-group">
               <label for="cargo">Cargo</label>
-              <input type="text" id="cargo" placeholder="Ej: Gerente Comercial">
+              <input type="text" id="cargo" name="Cargo" placeholder="Ej: Gerente Comercial">
               <div class="input-focus-line"></div>
             </div>
           </div>
           <div class="form-group">
             <label for="service">Servicio de interés</label>
-            <select id="service">
+            <select id="service" name="Servicio">
               <option value="">Selecciona un servicio</option>
-              <option value="vendedor">Vendedor Externo / Portafolio</option>
-              <option value="prospeccion">Prospección B2B Industrial</option>
-              <option value="ia">Transformación Digital Integral</option>
-              <option value="web">Página Web Industrial</option>
-              <option value="integral">Paquete Integral</option>
+              <option value="Vendedor Externo / Portafolio">Vendedor Externo / Portafolio</option>
+              <option value="Prospección B2B Industrial">Prospección B2B Industrial</option>
+              <option value="Transformación Digital Integral">Transformación Digital Integral</option>
+              <option value="Página Web Industrial">Página Web Industrial</option>
+              <option value="Paquete Integral">Paquete Integral</option>
             </select>
           </div>
           <div class="form-group">
             <label for="message">¿Qué desafío comercial enfrenta tu empresa?</label>
-            <textarea id="message" placeholder="Cuéntanos sobre tu fábrica, productos y objetivos de venta..." required></textarea>
+            <textarea id="message" name="Mensaje" placeholder="Cuéntanos sobre tu fábrica, productos y objetivos de venta..." required></textarea>
             <div class="input-focus-line"></div>
           </div>
           <button type="submit" class="btn-cta btn-primary btn-ripple">
