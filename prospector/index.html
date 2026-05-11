@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Prospector B2B | JPB Marketing</title>
+<meta name="description" content="Herramienta de prospección B2B industrial. Encuentra empresas manufactureras, distribuidoras e industriales en cualquier ciudad de Chile.">
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>⚙️</text></svg>">
+<style>
+  :root {
+    --bg: #0a0a0f; --bg2: #12121a; --card: #1a1a2e; --border: #2a2a3e;
+    --text: #e4e4e7; --muted: #8888a0; --accent: #6c63ff; --accent2: #00d4ff;
+    --gradient: linear-gradient(135deg, #6c63ff 0%, #00d4ff 100%);
+    --success: #10b981; --danger: #ef4444; --warning: #f59e0b;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Segoe UI', system-ui, -apple-system, sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; }
+  a { color: var(--accent2); text-decoration: none; }
+
+  /* Nav */
+  .nav { background: rgba(10,10,15,.9); backdrop-filter: blur(12px); border-bottom: 1px solid var(--border); padding: 16px 32px; display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; z-index: 100; }
+  .nav-brand { display: flex; align-items: center; gap: 10px; font-weight: 700; font-size: 16px; color: var(--text); text-decoration: none; }
+  .nav-brand .icon { width: 36px; height: 36px; background: var(--gradient); border-radius: 8px; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 14px; color: #fff; }
+  .nav-brand span { background: var(--gradient); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+  .nav-back { color: var(--muted); font-size: 13px; transition: color .2s; }
+  .nav-back:hover { color: var(--text); }
+
+  /* Container */
+  .container { max-width: 1100px; margin: 0 auto; padding: 32px 24px; }
+
+  /* Hero */
+  .hero { text-align: center; padding: 48px 24px 32px; }
+  .hero h1 { font-size: 36px; font-weight: 800; background: var(--gradient); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin-bottom: 12px; }
+  .hero p { color: var(--muted); font-size: 16px; max-width: 600px; margin: 0 auto; }
+
+  /* Card */
+  .card { background: var(--card); border: 1px solid var(--border); border-radius: 16px; padding: 24px; margin-bottom: 24px; }
+  .card h3 { font-size: 15px; color: var(--muted); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 16px; }
+
+  /* Forms */
+  .form-row { display: flex; gap: 12px; flex-wrap: wrap; align-items: flex-end; }
+  .form-group { flex: 1; min-width: 200px; }
+  .form-group label { display: block; font-size: 12px; color: var(--muted); margin-bottom: 6px; text-transform: uppercase; letter-spacing: .5px; }
+  .form-group input { width: 100%; padding: 12px 16px; background: var(--bg); border: 1px solid var(--border); border-radius: 10px; color: var(--text); font-size: 14px; transition: border .2s; }
+  .form-group input:focus { outline: none; border-color: var(--accent); box-shadow: 0 0 0 3px rgba(108,99,255,.15); }
+  .form-group input::placeholder { color: #555; }
+
+  /* Buttons */
+  .btn { display: inline-flex; align-items: center; gap: 8px; padding: 12px 28px; border: none; border-radius: 10px; font-size: 14px; font-weight: 600; cursor: pointer; transition: all .2s; }
+  .btn-primary { background: var(--gradient); color: #fff; }
+  .btn-primary:hover { opacity: .9; transform: translateY(-1px); }
+  .btn-primary:disabled { opacity: .4; cursor: not-allowed; transform: none; }
+  .btn-success { background: var(--success); color: #fff; }
+  .btn-warning { background: var(--warning); color: #fff; }
+  .btn-outline { background: transparent; border: 1px solid var(--border); color: var(--text); }
+  .btn-outline:hover { border-color: var(--accent); }
+
+  /* Stats */
+  .stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 12px; margin-bottom: 24px; }
+  .stat-card { background: var(--bg2); border: 1px solid var(--border); border-radius: 12px; padding: 20px; text-align: center; }
+  .stat-card .num { font-size: 32px; font-weight: 800; background: var(--gradient); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+  .stat-card .label { font-size: 11px; color: var(--muted); text-transform: uppercase; letter-spacing: .5px; margin-top: 4px; }
+
+  /* Progress */
+  .progress-track { width: 100%; height: 6px; background: var(--bg); border-radius: 3px; overflow: hidden; margin: 12px 0; }
+  .progress-fill { height: 100%; background: var(--gradient); border-radius: 3px; transition: width .3s; }
+  .progress-info { display: flex; justify-content: space-between; font-size: 12px; color: var(--muted); }
+
+  /* Table */
+  .table-wrap { overflow-x: auto; max-height: 600px; overflow-y: auto; }
+  table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  thead th { background: var(--bg); color: var(--accent2); font-weight: 600; text-align: left; padding: 12px 14px; font-size: 11px; text-transform: uppercase; letter-spacing: .5px; position: sticky; top: 0; z-index: 1; }
+  tbody tr { border-bottom: 1px solid var(--border); transition: background .15s; }
+  tbody tr:hover { background: rgba(108,99,255,.06); }
+  tbody td { padding: 10px 14px; }
+  .no-web { color: var(--danger); font-size: 12px; }
+  .badge { display: inline-block; padding: 3px 10px; border-radius: 20px; font-size: 11px; font-weight: 600; }
+  .badge-good { background: rgba(16,185,129,.15); color: var(--success); }
+  .badge-low { background: rgba(239,68,68,.15); color: var(--danger); }
+
+  /* Filter */
+  .filter-input { width: 100%; padding: 10px 16px; background: var(--bg); border: 1px solid var(--border); border-radius: 10px; color: var(--text); font-size: 13px; margin-bottom: 12px; }
+  .filter-input:focus { outline: none; border-color: var(--accent); }
+  .filter-input::placeholder { color: #555; }
+
+  /* Log */
+  .log { background: #050508; border: 1px solid var(--border); border-radius: 10px; padding: 14px; font-family: 'Fira Code', monospace; font-size: 11px; color: var(--muted); max-height: 180px; overflow-y: auto; white-space: pre-wrap; display: none; margin-top: 12px; }
+  .log-toggle { font-size: 12px; color: var(--muted); cursor: pointer; margin-top: 8px; }
+  .log-toggle:hover { color: var(--text); }
+
+  /* Export bar */
+  .export-bar { display: flex; gap: 8px; flex-wrap: wrap; }
+
+  @media (max-width: 600px) {
+    .hero h1 { font-size: 24px; }
+    .container { padding: 16px; }
+    .form-row { flex-direction: column; }
+  }
+</style>
+</head>
+<body>
+
+<nav class="nav">
+  <a href="https://jpbmarketing.cl" class="nav-brand">
+    <div class="icon">JP</div>
+    JPB <span>Marketing</span>
+  </a>
+  <a href="https://jpbmarketing.cl" class="nav-back">Volver al sitio</a>
+</nav>
+
+<div class="hero">
+  <h1>Prospector B2B Industrial</h1>
+  <p>Encuentra empresas manufactureras, distribuidoras e industriales en cualquier ciudad. Exporta los datos en Excel, CSV o JSON.</p>
+</div>
+
+<div class="container">
+
+  <div class="card">
+    <h3>Configuracion</h3>
+    <div class="form-row">
+      <div class="form-group" style="flex:0 0 320px;">
+        <label>API Key de Google</label>
+        <input type="password" id="apiKey" placeholder="Tu API Key...">
+      </div>
+      <div class="form-group">
+        <label>Ciudad</label>
+        <input type="text" id="city" value="Santiago, Chile" placeholder="Santiago, Chile">
+      </div>
+      <div class="form-group" style="flex:0 0 auto;">
+        <label>&nbsp;</label>
+        <button class="btn btn-primary" id="btnSearch" onclick="startSearch()">Buscar Empresas</button>
+      </div>
+    </div>
+    <span class="log-toggle" onclick="document.getElementById('log').style.display=document.getElementById('log').style.display==='none'?'block':'none'">Ver log de busqueda</span>
+    <div class="log" id="log"></div>
+  </div>
+
+  <div id="progressCard" class="card" style="display:none;">
+    <div class="progress-info">
+      <span id="progressLabel">Iniciando...</span>
+      <span id="progressCount">0%</span>
+    </div>
+    <div class="progress-track"><div class="progress-fill" id="progressBar" style="width:0%"></div></div>
+  </div>
+
+  <div id="statsGrid" class="stats" style="display:none;">
+    <div class="stat-card"><div class="num" id="statTotal">0</div><div class="label">Total Empresas</div></div>
+    <div class="stat-card"><div class="num" id="statWeb">0</div><div class="label">Con Sitio Web</div></div>
+    <div class="stat-card"><div class="num" id="statNoWeb">0</div><div class="label">Sin Sitio Web</div></div>
+    <div class="stat-card"><div class="num" id="statPhone">0</div><div class="label">Con Telefono</div></div>
+  </div>
+
+  <div id="resultsCard" class="card" style="display:none;">
+    <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;margin-bottom:16px;">
+      <h3 style="margin:0;">Resultados</h3>
+      <div class="export-bar">
+        <button class="btn btn-success" onclick="exportCSV()">Exportar CSV</button>
+        <button class="btn btn-warning" onclick="exportJSON()">Exportar JSON</button>
+      </div>
+    </div>
+    <input type="text" class="filter-input" placeholder="Filtrar por nombre, direccion, tipo..." oninput="filterTable(this.value)">
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>#</th><th>Nombre</th><th>Telefono</th><th>Sitio Web</th><th>Direccion</th><th>Rating</th><th>Resenas</th></tr></thead>
+        <tbody id="tbody"></tbody>
+      </table>
+    </div>
+  </div>
+
+</div>
+
+<script>
+const QUERIES=[
+  "empresas manufactureras en {c}","fabricas en {c}","empresas industriales en {c}",
+  "plantas industriales en {c}","industria metalurgica en {c}","industria alimentaria en {c}",
+  "industria textil en {c}","industria del plastico en {c}","industria quimica en {c}",
+  "industria de envases en {c}","distribuidoras en {c}","empresas de logistica en {c}",
+  "bodegas industriales en {c}","empresas de transporte de carga en {c}",
+  "importadoras en {c}","exportadoras en {c}","trading company en {c}",
+  "constructoras en {c}","empresas de ingenieria en {c}",
+  "empresas de construccion industrial en {c}","empresas de obras civiles en {c}",
+  "empresas de tecnologia en {c}","empresas de software en {c}",
+  "empresas de automatizacion industrial en {c}","empresas de telecomunicaciones en {c}",
+  "empresas mineras en {c}","proveedores mineros en {c}",
+  "empresas de energia en {c}","empresas de energia solar en {c}",
+  "proveedores industriales en {c}","ferreteria industrial en {c}",
+  "insumos industriales en {c}","maquinaria industrial en {c}",
+  "agroindustria en {c}","empresas agricolas en {c}","procesadoras de alimentos en {c}",
+  "consultoras en {c}","empresas de contabilidad en {c}",
+  "empresas de recursos humanos en {c}","empresas de seguridad industrial en {c}",
+  "empresas de limpieza industrial en {c}","talleres industriales en {c}",
+  "empresas automotrices en {c}","repuestos industriales en {c}",
+  "laboratorios en {c}","empresas farmaceuticas en {c}","equipamiento medico en {c}",
+  "imprentas en {c}","empresas de packaging en {c}","empresas de embalaje en {c}"
+];
+const FM="places.id,places.displayName,places.formattedAddress,places.nationalPhoneNumber,places.internationalPhoneNumber,places.websiteUri,places.types,places.rating,places.userRatingCount,places.googleMapsUri,nextPageToken";
+let results=[],seen=new Set(),running=false;
+
+function log(m){const e=document.getElementById('log');e.textContent+=m+'\n';e.scrollTop=e.scrollHeight;}
+
+async function api(key,query,pt){
+  const h={'Content-Type':'application/json','X-Goog-Api-Key':key,'X-Goog-FieldMask':FM};
+  const b={textQuery:query,languageCode:'es',maxResultCount:20};
+  if(pt)b.pageToken=pt;
+  try{const r=await fetch('https://places.googleapis.com/v1/places:searchText',{method:'POST',headers:h,body:JSON.stringify(b)});
+    if(!r.ok){log('  Error '+r.status);return{};}return await r.json();
+  }catch(e){log('  '+e.message);return{};}
+}
+
+function proc(p){
+  const id=p.id||'';if(!id||seen.has(id))return null;seen.add(id);
+  return{id,nombre:(p.displayName||{}).text||'',direccion:p.formattedAddress||'',
+    telefono:p.nationalPhoneNumber||p.internationalPhoneNumber||'',
+    sitio_web:p.websiteUri||'',rating:p.rating||0,
+    total_resenas:p.userRatingCount||0,tipos:(p.types||[]).join(', '),
+    google_maps:p.googleMapsUri||''};
+}
+
+function updateStats(){
+  const t=results.length,w=results.filter(r=>r.sitio_web).length,p=results.filter(r=>r.telefono).length;
+  document.getElementById('statTotal').textContent=t;
+  document.getElementById('statWeb').textContent=w;
+  document.getElementById('statNoWeb').textContent=t-w;
+  document.getElementById('statPhone').textContent=p;
+}
+
+function render(){
+  const tb=document.getElementById('tbody');tb.innerHTML='';
+  results.forEach((r,i)=>{
+    const w=r.sitio_web?'<a href="'+r.sitio_web+'" target="_blank">'+r.sitio_web.replace(/^https?:\/\//,'').slice(0,35)+'</a>':'<span class="no-web">Sin sitio web</span>';
+    const rt=r.rating?'<span class="badge '+(r.rating>=4?'badge-good':'badge-low')+'">'+r.rating+'</span>':'—';
+    tb.innerHTML+='<tr><td>'+(i+1)+'</td><td><strong>'+r.nombre+'</strong></td><td>'+(r.telefono||'—')+'</td><td>'+w+'</td><td>'+r.direccion+'</td><td>'+rt+'</td><td>'+(r.total_resenas||'—')+'</td></tr>';
+  });
+}
+
+function filterTable(q){
+  q=q.toLowerCase();
+  document.querySelectorAll('#tbody tr').forEach(r=>{r.style.display=r.textContent.toLowerCase().includes(q)?'':'none';});
+}
+
+async function startSearch(){
+  if(running)return;
+  const key=document.getElementById('apiKey').value.trim();
+  const city=document.getElementById('city').value.trim();
+  if(!key){alert('Ingresa tu API Key de Google');return;}
+  if(!city){alert('Ingresa una ciudad');return;}
+  running=true;results=[];seen=new Set();
+  document.getElementById('btnSearch').disabled=true;
+  document.getElementById('btnSearch').textContent='Buscando...';
+  document.getElementById('progressCard').style.display='block';
+  document.getElementById('statsGrid').style.display='grid';
+  document.getElementById('resultsCard').style.display='block';
+  document.getElementById('log').textContent='';
+  document.getElementById('log').style.display='block';
+  const qs=QUERIES.map(q=>q.replace('{c}',city));
+  for(let i=0;i<qs.length;i++){
+    const pct=Math.round(((i+1)/qs.length)*100);
+    document.getElementById('progressBar').style.width=pct+'%';
+    document.getElementById('progressLabel').textContent=qs[i];
+    document.getElementById('progressCount').textContent=pct+'%';
+    log('['+( i+1)+'/'+qs.length+'] '+qs[i]);
+    let d=await api(key,qs[i]);
+    (d.places||[]).forEach(p=>{const r=proc(p);if(r)results.push(r);});
+    let pg=1;
+    while(d.nextPageToken&&pg<3){pg++;log('  Pagina '+pg);await new Promise(ok=>setTimeout(ok,300));d=await api(key,qs[i],d.nextPageToken);(d.places||[]).forEach(p=>{const r=proc(p);if(r)results.push(r);});}
+    log('  Total: '+results.length+' empresas');
+    updateStats();render();
+    await new Promise(ok=>setTimeout(ok,200));
+  }
+  document.getElementById('progressLabel').textContent='Busqueda completada';
+  document.getElementById('btnSearch').disabled=false;
+  document.getElementById('btnSearch').textContent='Buscar Empresas';
+  running=false;
+  log('\nFinalizado. '+results.length+' empresas unicas.');
+}
+
+function exportJSON(){
+  const o={metadata:{ciudad:document.getElementById('city').value,fecha:new Date().toISOString().slice(0,10),total:results.length},empresas:results};
+  const b=new Blob([JSON.stringify(o,null,2)],{type:'application/json'});
+  const a=document.createElement('a');a.href=URL.createObjectURL(b);a.download='prospectos_'+new Date().toISOString().slice(0,10)+'.json';a.click();
+}
+
+function exportCSV(){
+  let c='Nombre,Telefono,Sitio Web,Direccion,Rating,Resenas,Google Maps\n';
+  results.forEach(r=>{c+=[r.nombre,r.telefono,r.sitio_web,r.direccion,r.rating,r.total_resenas,r.google_maps].map(v=>'"'+String(v).replace(/"/g,'""')+'"').join(',')+'\n';});
+  const b=new Blob(['﻿'+c],{type:'text/csv;charset=utf-8'});
+  const a=document.createElement('a');a.href=URL.createObjectURL(b);a.download='prospectos_'+new Date().toISOString().slice(0,10)+'.csv';a.click();
+}
+
+const p=new URLSearchParams(location.search);
+if(p.get('key'))document.getElementById('apiKey').value=p.get('key');
+if(p.get('city'))document.getElementById('city').value=p.get('city');
+</script>
+</body>
+</html>
