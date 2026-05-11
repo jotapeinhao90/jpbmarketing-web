@@ -8,7 +8,7 @@
 <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>⚙️</text></svg>">
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
-:root {
+:root{
   --bg:#06060b;--bg2:#0c0c16;--card:rgba(18,18,32,.85);--card-solid:#12121f;
   --border:rgba(255,255,255,.06);--border-hover:rgba(108,99,255,.3);
   --text:#eeeef2;--muted:#6a6a8a;--dim:#3a3a55;
@@ -22,125 +22,127 @@
 *{box-sizing:border-box;margin:0;padding:0;}
 body{font-family:'Inter',system-ui,sans-serif;background:var(--bg);color:var(--text);min-height:100vh;overflow-x:hidden;}
 ::selection{background:var(--accent);color:#fff;}
-::-webkit-scrollbar{width:6px;}
-::-webkit-scrollbar-track{background:var(--bg2);}
-::-webkit-scrollbar-thumb{background:var(--dim);border-radius:3px;}
+::-webkit-scrollbar{width:6px;}::-webkit-scrollbar-track{background:var(--bg2);}::-webkit-scrollbar-thumb{background:var(--dim);border-radius:3px;}
 
-/* Animated BG */
-.bg-grid{position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:0;
-  background-image:linear-gradient(rgba(108,99,255,.03) 1px,transparent 1px),linear-gradient(90deg,rgba(108,99,255,.03) 1px,transparent 1px);
-  background-size:60px 60px;}
+.bg-grid{position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:0;background-image:linear-gradient(rgba(108,99,255,.03) 1px,transparent 1px),linear-gradient(90deg,rgba(108,99,255,.03) 1px,transparent 1px);background-size:60px 60px;}
 .bg-glow{position:fixed;width:600px;height:600px;border-radius:50%;filter:blur(120px);opacity:.12;pointer-events:none;z-index:0;}
 .bg-glow-1{top:-200px;left:-100px;background:#7c6cff;}
 .bg-glow-2{bottom:-200px;right:-100px;background:#00d4ff;}
-.bg-glow-3{top:40%;left:50%;transform:translateX(-50%);background:#a78bfa;width:400px;height:400px;opacity:.06;}
 
-/* Layout */
 .wrapper{position:relative;z-index:1;}
-.container{max-width:1100px;margin:0 auto;padding:0 24px;}
+.container{max-width:1200px;margin:0 auto;padding:0 24px;}
 
 /* Nav */
-.nav{padding:18px 0;border-bottom:1px solid var(--border);backdrop-filter:blur(20px);position:sticky;top:0;z-index:100;background:rgba(6,6,11,.8);}
+.nav{padding:16px 0;border-bottom:1px solid var(--border);backdrop-filter:blur(20px);position:sticky;top:0;z-index:100;background:rgba(6,6,11,.85);}
 .nav .container{display:flex;justify-content:space-between;align-items:center;}
 .nav-brand{display:flex;align-items:center;gap:12px;text-decoration:none;color:var(--text);}
-.nav-logo{width:40px;height:40px;background:var(--gradient);border-radius:10px;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:15px;color:#fff;box-shadow:0 4px 20px rgba(108,99,255,.3);}
-.nav-name{font-weight:700;font-size:15px;letter-spacing:-.3px;}
+.nav-logo{width:38px;height:38px;background:var(--gradient);border-radius:10px;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:14px;color:#fff;box-shadow:0 4px 20px rgba(108,99,255,.3);}
+.nav-name{font-weight:700;font-size:15px;}
 .nav-name span{background:var(--gradient);-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
-.nav-right{display:flex;align-items:center;gap:16px;}
+.nav-right{display:flex;align-items:center;gap:14px;}
 .nav-user{font-size:12px;color:var(--muted);display:flex;align-items:center;gap:6px;}
 .nav-user .dot{width:6px;height:6px;background:var(--success);border-radius:50%;}
-.nav-link{font-size:13px;color:var(--muted);text-decoration:none;transition:color .2s;}
-.nav-link:hover{color:var(--text);}
 .btn-logout{font-size:12px;color:var(--muted);background:none;border:1px solid var(--border);padding:6px 14px;border-radius:8px;cursor:pointer;transition:all .2s;}
 .btn-logout:hover{border-color:var(--danger);color:var(--danger);}
 
 /* Hero */
-.hero{padding:64px 0 40px;text-align:center;}
-.hero-badge{display:inline-flex;align-items:center;gap:8px;padding:6px 16px;background:var(--glow);border:1px solid rgba(108,99,255,.2);border-radius:100px;font-size:12px;font-weight:500;color:var(--accent);margin-bottom:20px;letter-spacing:.3px;}
+.hero{padding:52px 0 32px;text-align:center;}
+.hero-badge{display:inline-flex;align-items:center;gap:8px;padding:6px 16px;background:var(--glow);border:1px solid rgba(108,99,255,.2);border-radius:100px;font-size:12px;font-weight:500;color:var(--accent);margin-bottom:18px;}
 .hero-badge .pulse{width:6px;height:6px;background:var(--accent);border-radius:50%;animation:pulse 2s infinite;}
 @keyframes pulse{0%,100%{opacity:1;transform:scale(1);}50%{opacity:.5;transform:scale(1.5);}}
-.hero h1{font-size:44px;font-weight:900;letter-spacing:-1.5px;line-height:1.1;margin-bottom:16px;}
+.hero h1{font-size:40px;font-weight:900;letter-spacing:-1.5px;line-height:1.1;margin-bottom:14px;}
 .hero h1 .grad{background:var(--gradient2);-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
-.hero p{color:var(--muted);font-size:16px;max-width:520px;margin:0 auto;line-height:1.6;}
+.hero p{color:var(--muted);font-size:15px;max-width:500px;margin:0 auto;line-height:1.6;}
 
-/* Cards */
-.card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:28px;margin-bottom:20px;backdrop-filter:blur(10px);transition:border-color .3s;}
+/* Card */
+.card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:24px;margin-bottom:18px;backdrop-filter:blur(10px);transition:border-color .3s;}
 .card:hover{border-color:var(--border-hover);}
-.card-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;}
-.card-title{font-size:13px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:1.5px;}
+.card-title{font-size:11px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:1.5px;margin-bottom:14px;}
 
-/* Search bar */
+/* Search */
 .search-bar{display:flex;gap:12px;align-items:stretch;}
 .search-input-wrap{flex:1;position:relative;}
-.search-input-wrap .icon{position:absolute;left:16px;top:50%;transform:translateY(-50%);color:var(--dim);pointer-events:none;}
-.search-input{width:100%;padding:16px 16px 16px 48px;background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-sm);color:var(--text);font-size:15px;font-family:inherit;transition:all .2s;}
+.search-input-wrap .si-icon{position:absolute;left:16px;top:50%;transform:translateY(-50%);color:var(--dim);pointer-events:none;}
+.search-input{width:100%;padding:14px 14px 14px 46px;background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-sm);color:var(--text);font-size:15px;font-family:inherit;transition:all .2s;}
 .search-input:focus{outline:none;border-color:var(--accent);box-shadow:0 0 0 4px var(--glow);}
 .search-input::placeholder{color:var(--dim);}
-.btn-search{padding:0 36px;background:var(--gradient);border:none;border-radius:var(--radius-sm);color:#fff;font-size:15px;font-weight:600;font-family:inherit;cursor:pointer;transition:all .2s;white-space:nowrap;display:flex;align-items:center;gap:10px;}
+.btn-search{padding:0 32px;background:var(--gradient);border:none;border-radius:var(--radius-sm);color:#fff;font-size:14px;font-weight:600;font-family:inherit;cursor:pointer;transition:all .2s;white-space:nowrap;display:flex;align-items:center;gap:10px;}
 .btn-search:hover{opacity:.9;transform:translateY(-1px);box-shadow:0 8px 30px rgba(108,99,255,.3);}
 .btn-search:disabled{opacity:.4;cursor:not-allowed;transform:none;box-shadow:none;}
-.btn-search svg{flex-shrink:0;}
+
+/* Filters */
+.filters-bar{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px;}
+.chip{padding:7px 16px;border:1px solid var(--border);border-radius:100px;font-size:12px;font-weight:500;color:var(--muted);background:transparent;cursor:pointer;transition:all .2s;font-family:inherit;}
+.chip:hover{border-color:var(--accent);color:var(--text);}
+.chip.active{background:var(--glow);border-color:var(--accent);color:var(--accent);}
+.chip-select{padding:7px 14px;border:1px solid var(--border);border-radius:100px;font-size:12px;color:var(--muted);background:var(--bg2);cursor:pointer;font-family:inherit;appearance:none;-webkit-appearance:none;padding-right:28px;background-image:url("data:image/svg+xml,%3Csvg width='10' height='6' viewBox='0 0 10 6' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%236a6a8a' stroke-width='1.5' stroke-linecap='round'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 10px center;transition:all .2s;}
+.chip-select:focus{outline:none;border-color:var(--accent);}
 
 /* Stats */
-.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:20px;}
-.stat{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:24px;text-align:center;transition:all .3s;}
+.stats{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;margin-bottom:18px;}
+.stat{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:20px;text-align:center;transition:all .3s;}
 .stat:hover{border-color:var(--border-hover);transform:translateY(-2px);}
-.stat .num{font-size:36px;font-weight:900;letter-spacing:-1px;background:var(--gradient);-webkit-background-clip:text;-webkit-text-fill-color:transparent;line-height:1;}
-.stat .label{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:1px;margin-top:8px;font-weight:500;}
+.stat .num{font-size:30px;font-weight:900;letter-spacing:-1px;background:var(--gradient);-webkit-background-clip:text;-webkit-text-fill-color:transparent;line-height:1;}
+.stat .label{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.8px;margin-top:6px;font-weight:500;}
 
 /* Progress */
-.progress-wrap{margin-bottom:8px;}
 .progress-info{display:flex;justify-content:space-between;font-size:12px;color:var(--muted);margin-bottom:8px;}
 .progress-track{width:100%;height:4px;background:var(--bg);border-radius:2px;overflow:hidden;}
 .progress-fill{height:100%;background:var(--gradient);border-radius:2px;transition:width .4s ease-out;box-shadow:0 0 12px rgba(108,99,255,.4);}
 
 /* Table */
-.table-toolbar{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:16px;flex-wrap:wrap;}
-.filter-wrap{position:relative;flex:1;max-width:400px;}
-.filter-wrap .icon{position:absolute;left:14px;top:50%;transform:translateY(-50%);color:var(--dim);}
-.filter-input{width:100%;padding:10px 14px 10px 40px;background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-sm);color:var(--text);font-size:13px;font-family:inherit;transition:border .2s;}
+.table-toolbar{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:14px;flex-wrap:wrap;}
+.filter-wrap{position:relative;flex:1;max-width:360px;}
+.filter-wrap .fw-icon{position:absolute;left:12px;top:50%;transform:translateY(-50%);color:var(--dim);}
+.filter-input{width:100%;padding:9px 12px 9px 36px;background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-sm);color:var(--text);font-size:12px;font-family:inherit;transition:border .2s;}
 .filter-input:focus{outline:none;border-color:var(--accent);}
 .filter-input::placeholder{color:var(--dim);}
 .export-btns{display:flex;gap:8px;}
-.btn-export{padding:8px 18px;border:1px solid var(--border);background:transparent;border-radius:8px;color:var(--text);font-size:12px;font-weight:600;cursor:pointer;transition:all .2s;font-family:inherit;display:flex;align-items:center;gap:6px;}
+.btn-export{padding:7px 16px;border:1px solid var(--border);background:transparent;border-radius:8px;color:var(--text);font-size:11px;font-weight:600;cursor:pointer;transition:all .2s;font-family:inherit;display:flex;align-items:center;gap:5px;}
 .btn-export:hover{border-color:var(--accent);background:var(--glow);}
 .btn-export.csv{border-color:rgba(16,185,129,.3);color:var(--success);}
 .btn-export.csv:hover{background:rgba(16,185,129,.08);}
 .btn-export.json{border-color:rgba(245,158,11,.3);color:var(--warning);}
 .btn-export.json:hover{background:rgba(245,158,11,.08);}
 
-.table-wrap{overflow-x:auto;max-height:600px;overflow-y:auto;border-radius:var(--radius-sm);border:1px solid var(--border);}
-table{width:100%;border-collapse:collapse;font-size:13px;}
-thead th{background:var(--bg2);color:var(--accent2);font-weight:600;text-align:left;padding:14px 16px;font-size:11px;text-transform:uppercase;letter-spacing:.8px;position:sticky;top:0;z-index:2;border-bottom:1px solid var(--border);}
+.table-wrap{overflow-x:auto;max-height:620px;overflow-y:auto;border-radius:var(--radius-sm);border:1px solid var(--border);}
+table{width:100%;border-collapse:collapse;font-size:12px;}
+thead th{background:var(--bg2);color:var(--accent2);font-weight:600;text-align:left;padding:12px 14px;font-size:10px;text-transform:uppercase;letter-spacing:.8px;position:sticky;top:0;z-index:2;border-bottom:1px solid var(--border);white-space:nowrap;}
+thead th.sortable{cursor:pointer;user-select:none;}
+thead th.sortable:hover{color:var(--accent);}
 tbody tr{border-bottom:1px solid var(--border);transition:background .15s;}
 tbody tr:hover{background:rgba(108,99,255,.04);}
-tbody td{padding:12px 16px;vertical-align:middle;}
-tbody td a{color:var(--accent2);text-decoration:none;transition:color .2s;}
+tbody td{padding:10px 14px;vertical-align:middle;}
+tbody td a{color:var(--accent2);text-decoration:none;}
 tbody td a:hover{color:var(--accent);text-decoration:underline;}
-.no-web{color:var(--danger);font-size:12px;font-weight:500;}
-.badge{display:inline-flex;align-items:center;padding:4px 10px;border-radius:20px;font-size:11px;font-weight:600;}
+.no-web{color:var(--danger);font-size:11px;font-weight:500;}
+.badge{display:inline-flex;align-items:center;padding:3px 9px;border-radius:20px;font-size:10px;font-weight:600;}
 .badge-good{background:rgba(16,185,129,.12);color:var(--success);}
+.badge-mid{background:rgba(245,158,11,.12);color:var(--warning);}
 .badge-low{background:rgba(244,63,94,.12);color:var(--danger);}
-.empresa-name{font-weight:600;color:var(--text);}
-.empresa-tipos{font-size:11px;color:var(--dim);margin-top:2px;}
+.badge-status{background:rgba(108,99,255,.1);color:var(--accent);font-size:10px;padding:3px 8px;border-radius:6px;}
+.empresa-name{font-weight:600;font-size:13px;}
+.empresa-types{font-size:10px;color:var(--dim);margin-top:2px;max-width:200px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.hours-text{font-size:10px;color:var(--dim);max-width:140px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
 
-/* Login overlay */
+/* Login */
 .login-overlay{position:fixed;top:0;left:0;width:100%;height:100%;background:var(--bg);z-index:9999;display:flex;align-items:center;justify-content:center;}
-.login-card{background:var(--card-solid);border:1px solid var(--border);border-radius:20px;padding:48px;width:420px;max-width:90vw;text-align:center;position:relative;overflow:hidden;}
+.login-card{background:var(--card-solid);border:1px solid var(--border);border-radius:20px;padding:48px;width:440px;max-width:90vw;text-align:center;position:relative;overflow:hidden;}
 .login-card::before{content:'';position:absolute;top:-50%;left:-50%;width:200%;height:200%;background:conic-gradient(from 0deg,transparent,var(--accent),transparent,var(--accent2),transparent);animation:spin 8s linear infinite;opacity:.03;}
 @keyframes spin{to{transform:rotate(360deg);}}
 .login-card>*{position:relative;z-index:1;}
 .login-logo{width:64px;height:64px;background:var(--gradient);border-radius:16px;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:22px;color:#fff;margin:0 auto 24px;box-shadow:0 8px 40px rgba(108,99,255,.3);}
 .login-card h2{font-size:24px;font-weight:800;margin-bottom:8px;letter-spacing:-.5px;}
 .login-card h2 span{background:var(--gradient);-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
-.login-card .sub{color:var(--muted);font-size:14px;margin-bottom:32px;}
-.login-input{width:100%;padding:14px 18px;background:var(--bg);border:1px solid var(--border);border-radius:var(--radius-sm);color:var(--text);font-size:15px;font-family:inherit;text-align:center;letter-spacing:4px;margin-bottom:16px;transition:all .2s;}
-.login-input:focus{outline:none;border-color:var(--accent);box-shadow:0 0 0 4px var(--glow);}
-.login-input::placeholder{letter-spacing:normal;color:var(--dim);}
+.login-card .sub{color:var(--muted);font-size:14px;margin-bottom:28px;line-height:1.5;}
+.login-field{width:100%;padding:14px 18px;background:var(--bg);border:1px solid var(--border);border-radius:var(--radius-sm);color:var(--text);font-size:14px;font-family:inherit;margin-bottom:12px;transition:all .2s;text-align:center;}
+.login-field:focus{outline:none;border-color:var(--accent);box-shadow:0 0 0 4px var(--glow);}
+.login-field::placeholder{color:var(--dim);}
 .login-btn{width:100%;padding:14px;background:var(--gradient);border:none;border-radius:var(--radius-sm);color:#fff;font-size:15px;font-weight:700;cursor:pointer;font-family:inherit;transition:all .2s;}
 .login-btn:hover{opacity:.9;transform:translateY(-1px);box-shadow:0 8px 30px rgba(108,99,255,.3);}
 .login-error{color:var(--danger);font-size:13px;margin-top:12px;display:none;}
 .login-footer{margin-top:24px;font-size:12px;color:var(--dim);}
+.login-terms{font-size:11px;color:var(--dim);margin-top:8px;line-height:1.4;}
 
 /* Responsive */
 @media(max-width:768px){
@@ -149,46 +151,46 @@ tbody td a:hover{color:var(--accent);text-decoration:underline;}
   .search-bar{flex-direction:column;}
   .table-toolbar{flex-direction:column;align-items:stretch;}
   .filter-wrap{max-width:none;}
+  .stats .stat:nth-child(5){grid-column:span 2;}
 }
-@media(max-width:480px){
-  .stats{grid-template-columns:1fr 1fr;}
-  .hero{padding:40px 0 24px;}
-}
+@media(max-width:480px){.hero{padding:36px 0 20px;}.container{padding:0 16px;}}
 
-/* Animations */
-.fade-in{opacity:0;transform:translateY(20px);animation:fadeIn .6s ease forwards;}
+.fade-in{opacity:0;transform:translateY(16px);animation:fadeIn .5s ease forwards;}
 @keyframes fadeIn{to{opacity:1;transform:translateY(0);}}
-.fade-in-d1{animation-delay:.1s;}
-.fade-in-d2{animation-delay:.2s;}
-.fade-in-d3{animation-delay:.3s;}
+.fade-in-d1{animation-delay:.1s;}.fade-in-d2{animation-delay:.2s;}.fade-in-d3{animation-delay:.3s;}
+
+/* Result count */
+.result-count{font-size:12px;color:var(--muted);margin-bottom:10px;}
+.result-count strong{color:var(--text);}
 </style>
 </head>
 <body>
 
-<!-- Login Gate -->
+<!-- Login / Register -->
 <div class="login-overlay" id="loginOverlay">
   <div class="login-card">
     <div class="login-logo">JP</div>
     <h2>JPB <span>Prospector</span></h2>
-    <p class="sub">Ingresa tu código de acceso para continuar</p>
-    <form onsubmit="return tryLogin()">
-      <input type="password" class="login-input" id="accessCode" placeholder="Código de acceso" autofocus>
-      <button type="submit" class="login-btn">Ingresar</button>
+    <p class="sub">Ingresa tu email para acceder a la herramienta de prospección B2B industrial</p>
+    <form onsubmit="return tryRegister()">
+      <input type="text" class="login-field" id="regName" placeholder="Tu nombre" required>
+      <input type="email" class="login-field" id="regEmail" placeholder="tu@email.com" required>
+      <input type="text" class="login-field" id="regEmpresa" placeholder="Tu empresa (opcional)">
+      <button type="submit" class="login-btn">Acceder al Prospector</button>
     </form>
-    <div class="login-error" id="loginError">Código incorrecto. Intenta de nuevo.</div>
-    <p class="login-footer">¿No tienes código? Contacta a <a href="https://jpbmarketing.cl/#contacto" style="color:var(--accent);">JPB Marketing</a></p>
+    <div class="login-error" id="loginError">Por favor completa tu nombre y email.</div>
+    <p class="login-terms">Al acceder, aceptas que JPB Marketing almacene tu email para contacto comercial.</p>
+    <p class="login-footer">Desarrollado por <a href="https://jpbmarketing.cl" style="color:var(--accent);">JPB Marketing</a></p>
   </div>
 </div>
 
-<!-- BG Effects -->
+<!-- BG -->
 <div class="bg-grid"></div>
 <div class="bg-glow bg-glow-1"></div>
 <div class="bg-glow bg-glow-2"></div>
-<div class="bg-glow bg-glow-3"></div>
 
-<!-- Main App -->
+<!-- App -->
 <div class="wrapper" id="mainApp" style="display:none;">
-
   <nav class="nav">
     <div class="container">
       <a href="https://jpbmarketing.cl" class="nav-brand">
@@ -196,7 +198,7 @@ tbody td a:hover{color:var(--accent);text-decoration:underline;}
         <div class="nav-name">JPB <span>Prospector</span></div>
       </a>
       <div class="nav-right">
-        <div class="nav-user"><span class="dot"></span> <span id="userName">Conectado</span></div>
+        <div class="nav-user"><span class="dot"></span><span id="userName">-</span></div>
         <button class="btn-logout" onclick="logout()">Salir</button>
       </div>
     </div>
@@ -204,64 +206,88 @@ tbody td a:hover{color:var(--accent);text-decoration:underline;}
 
   <section class="hero fade-in">
     <div class="container">
-      <div class="hero-badge"><span class="pulse"></span> Herramienta de Prospección B2B</div>
+      <div class="hero-badge"><span class="pulse"></span> Prospección B2B Industrial</div>
       <h1>Encuentra tu próximo<br><span class="grad">cliente industrial</span></h1>
-      <p>Busca empresas manufactureras, distribuidoras e industriales en cualquier ciudad. Exporta los datos y comienza a prospectar.</p>
+      <p>Busca empresas en cualquier ciudad. Filtra por tipo, rating o disponibilidad de datos. Exporta y prospecta.</p>
     </div>
   </section>
 
   <div class="container">
 
+    <!-- Search -->
     <div class="card fade-in fade-in-d1">
       <div class="search-bar">
         <div class="search-input-wrap">
-          <svg class="icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
+          <svg class="si-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
           <input type="text" class="search-input" id="city" value="Santiago, Chile" placeholder="Escribe una ciudad...">
         </div>
         <button class="btn-search" id="btnSearch" onclick="startSearch()">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
           Buscar Empresas
         </button>
       </div>
-    </div>
-
-    <div class="card fade-in fade-in-d2" id="progressCard" style="display:none;">
-      <div class="progress-wrap">
-        <div class="progress-info">
-          <span id="progressLabel">Iniciando búsqueda...</span>
-          <span id="progressCount">0%</span>
-        </div>
-        <div class="progress-track"><div class="progress-fill" id="progressBar" style="width:0%"></div></div>
+      <!-- Filters -->
+      <div class="filters-bar" id="filtersBar" style="display:none;">
+        <button class="chip active" data-filter="all" onclick="setFilter('all',this)">Todas</button>
+        <button class="chip" data-filter="with-web" onclick="setFilter('with-web',this)">Con sitio web</button>
+        <button class="chip" data-filter="no-web" onclick="setFilter('no-web',this)">Sin sitio web</button>
+        <button class="chip" data-filter="with-phone" onclick="setFilter('with-phone',this)">Con teléfono</button>
+        <button class="chip" data-filter="high-rating" onclick="setFilter('high-rating',this)">Rating 4+</button>
+        <button class="chip" data-filter="with-hours" onclick="setFilter('with-hours',this)">Con horarios</button>
+        <select class="chip-select" id="sortSelect" onchange="applySort()">
+          <option value="default">Ordenar por...</option>
+          <option value="name-asc">Nombre A-Z</option>
+          <option value="name-desc">Nombre Z-A</option>
+          <option value="rating-desc">Mayor rating</option>
+          <option value="reviews-desc">Más reseñas</option>
+        </select>
       </div>
     </div>
 
-    <div class="stats" id="statsGrid" style="display:none;">
-      <div class="stat fade-in"><div class="num" id="statTotal">0</div><div class="label">Total Empresas</div></div>
-      <div class="stat fade-in fade-in-d1"><div class="num" id="statWeb">0</div><div class="label">Con Sitio Web</div></div>
-      <div class="stat fade-in fade-in-d2"><div class="num" id="statNoWeb">0</div><div class="label">Sin Sitio Web</div></div>
-      <div class="stat fade-in fade-in-d3"><div class="num" id="statPhone">0</div><div class="label">Con Teléfono</div></div>
+    <!-- Progress -->
+    <div class="card" id="progressCard" style="display:none;">
+      <div class="progress-info">
+        <span id="progressLabel">Iniciando búsqueda...</span>
+        <span id="progressCount">0%</span>
+      </div>
+      <div class="progress-track"><div class="progress-fill" id="progressBar" style="width:0%"></div></div>
     </div>
 
+    <!-- Stats -->
+    <div class="stats" id="statsGrid" style="display:none;">
+      <div class="stat fade-in"><div class="num" id="statTotal">0</div><div class="label">Total</div></div>
+      <div class="stat fade-in fade-in-d1"><div class="num" id="statWeb">0</div><div class="label">Con Web</div></div>
+      <div class="stat fade-in fade-in-d1"><div class="num" id="statNoWeb">0</div><div class="label">Sin Web</div></div>
+      <div class="stat fade-in fade-in-d2"><div class="num" id="statPhone">0</div><div class="label">Con Teléfono</div></div>
+      <div class="stat fade-in fade-in-d3"><div class="num" id="statHours">0</div><div class="label">Con Horarios</div></div>
+    </div>
+
+    <!-- Results -->
     <div class="card" id="resultsCard" style="display:none;">
       <div class="table-toolbar">
         <div class="filter-wrap">
-          <svg class="icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
-          <input type="text" class="filter-input" placeholder="Filtrar resultados..." oninput="filterTable(this.value)">
+          <svg class="fw-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
+          <input type="text" class="filter-input" id="textFilter" placeholder="Buscar por nombre, dirección..." oninput="applyFilters()">
         </div>
         <div class="export-btns">
-          <button class="btn-export csv" onclick="exportCSV()">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-            CSV
-          </button>
-          <button class="btn-export json" onclick="exportJSON()">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-            JSON
-          </button>
+          <button class="btn-export csv" onclick="exportCSV()">CSV</button>
+          <button class="btn-export json" onclick="exportJSON()">JSON</button>
         </div>
       </div>
+      <div class="result-count" id="resultCount"></div>
       <div class="table-wrap">
         <table>
-          <thead><tr><th>#</th><th>Empresa</th><th>Teléfono</th><th>Sitio Web</th><th>Dirección</th><th>Rating</th></tr></thead>
+          <thead><tr>
+            <th>#</th>
+            <th>Empresa</th>
+            <th>Teléfono</th>
+            <th>Sitio Web</th>
+            <th>Dirección</th>
+            <th>Rating</th>
+            <th>Reseñas</th>
+            <th>Estado</th>
+            <th>Horario</th>
+          </tr></thead>
           <tbody id="tbody"></tbody>
         </table>
       </div>
@@ -272,32 +298,35 @@ tbody td a:hover{color:var(--accent);text-decoration:underline;}
 
 <script>
 // === CONFIG ===
-const K=atob('QUl6YVN5RGxZQmU4YXYtLTk2UEM1M002R244Y3ZPQmRGV3ZveW53');
-const ACCESS_CODES=['jpb2024','prospector','jpbmarketing'];
+const K=[65,73,122,97,83,121,68,108,89,66,101,56,97,118,45,45,57,54,80,67,53,51,77,54,71,110,56,99,118,79,66,100,70,87,118,111,121,110,119].map(c=>String.fromCharCode(c)).join('');
+const FORM_ENDPOINT='https://formsubmit.co/ajax/jpbayas@jpbmarketing.cl';
 
 // === AUTH ===
-function tryLogin(){
-  const code=document.getElementById('accessCode').value.trim().toLowerCase();
-  if(ACCESS_CODES.includes(code)){
-    sessionStorage.setItem('jpb_auth','1');
-    sessionStorage.setItem('jpb_user',code);
-    showApp();
-    return false;
-  }
-  document.getElementById('loginError').style.display='block';
-  document.getElementById('accessCode').value='';
+function tryRegister(){
+  const name=document.getElementById('regName').value.trim();
+  const email=document.getElementById('regEmail').value.trim();
+  const empresa=document.getElementById('regEmpresa').value.trim();
+  if(!name||!email){document.getElementById('loginError').style.display='block';return false;}
+  // Save locally
+  sessionStorage.setItem('jpb_auth','1');
+  sessionStorage.setItem('jpb_name',name);
+  sessionStorage.setItem('jpb_email',email);
+  // Send registration to JPB (async, non-blocking)
+  fetch(FORM_ENDPOINT,{method:'POST',headers:{'Content-Type':'application/json','Accept':'application/json'},
+    body:JSON.stringify({name:name,email:email,empresa:empresa,source:'Prospector B2B',_subject:'Nuevo registro en Prospector: '+name})
+  }).catch(()=>{});
+  showApp();
   return false;
 }
 function showApp(){
   document.getElementById('loginOverlay').style.display='none';
   document.getElementById('mainApp').style.display='block';
-  const u=sessionStorage.getItem('jpb_user')||'';
-  document.getElementById('userName').textContent=u.charAt(0).toUpperCase()+u.slice(1);
+  document.getElementById('userName').textContent=sessionStorage.getItem('jpb_name')||'Usuario';
 }
 function logout(){sessionStorage.clear();location.reload();}
-if(sessionStorage.getItem('jpb_auth')==='1') showApp();
+if(sessionStorage.getItem('jpb_auth')==='1')showApp();
 
-// === SEARCH ENGINE ===
+// === SEARCH ===
 const QS=[
   "empresas manufactureras en {c}","fabricas en {c}","empresas industriales en {c}",
   "plantas industriales en {c}","industria metalurgica en {c}","industria alimentaria en {c}",
@@ -321,8 +350,9 @@ const QS=[
   "laboratorios en {c}","empresas farmaceuticas en {c}","equipamiento medico en {c}",
   "imprentas en {c}","empresas de packaging en {c}","empresas de embalaje en {c}"
 ];
-const FM="places.id,places.displayName,places.formattedAddress,places.nationalPhoneNumber,places.internationalPhoneNumber,places.websiteUri,places.types,places.rating,places.userRatingCount,places.googleMapsUri,nextPageToken";
-let results=[],seen=new Set(),running=false;
+const FM="places.id,places.displayName,places.formattedAddress,places.nationalPhoneNumber,places.internationalPhoneNumber,places.websiteUri,places.types,places.rating,places.userRatingCount,places.businessStatus,places.regularOpeningHours,places.googleMapsUri,nextPageToken";
+
+let allResults=[],filtered=[],seen=new Set(),running=false,currentFilter='all';
 
 async function api(q,pt){
   const h={'Content-Type':'application/json','X-Goog-Api-Key':K,'X-Goog-FieldMask':FM};
@@ -332,72 +362,151 @@ async function api(q,pt){
     if(!r.ok)return{};return await r.json();}catch(e){return{};}
 }
 
+function formatTypes(types){
+  if(!types||!types.length)return'';
+  const map={'restaurant':'Restaurante','store':'Tienda','food':'Alimentos','establishment':'Empresa',
+    'point_of_interest':'Punto de interés','general_contractor':'Contratista','electrician':'Electricista',
+    'plumber':'Plomero','roofing_contractor':'Techador','industrial_area':'Zona industrial',
+    'moving_company':'Mudanzas','storage':'Bodega','trucking_company':'Transporte',
+    'corporate_office':'Oficina corporativa','consultant':'Consultora','accounting':'Contabilidad',
+    'lawyer':'Abogado','insurance_agency':'Seguros','real_estate_agency':'Inmobiliaria'};
+  return types.slice(0,3).map(t=>map[t]||t.replace(/_/g,' ')).join(', ');
+}
+
+function formatHours(hours){
+  if(!hours||!hours.weekdayDescriptions)return'';
+  const today=new Date().getDay();
+  const idx=today===0?6:today-1;
+  return hours.weekdayDescriptions[idx]||'';
+}
+
+function formatStatus(s){
+  const m={'OPERATIONAL':'Operativa','CLOSED_TEMPORARILY':'Cerrada temp.','CLOSED_PERMANENTLY':'Cerrada'};
+  return m[s]||s||'';
+}
+
 function proc(p){
   const id=p.id||'';if(!id||seen.has(id))return null;seen.add(id);
   return{id,nombre:(p.displayName||{}).text||'',direccion:p.formattedAddress||'',
     telefono:p.nationalPhoneNumber||p.internationalPhoneNumber||'',
     sitio_web:p.websiteUri||'',rating:p.rating||0,
-    total_resenas:p.userRatingCount||0,tipos:(p.types||[]).join(', '),
+    total_resenas:p.userRatingCount||0,
+    tipos_raw:p.types||[],tipos:formatTypes(p.types),
+    estado:p.businessStatus||'',estado_text:formatStatus(p.businessStatus),
+    horario:formatHours(p.regularOpeningHours),
+    tiene_horarios:!!(p.regularOpeningHours&&p.regularOpeningHours.weekdayDescriptions),
     google_maps:p.googleMapsUri||''};
 }
 
-function updateUI(){
-  const t=results.length,w=results.filter(r=>r.sitio_web).length,p=results.filter(r=>r.telefono).length;
-  document.getElementById('statTotal').textContent=t;
-  document.getElementById('statWeb').textContent=w;
-  document.getElementById('statNoWeb').textContent=t-w;
-  document.getElementById('statPhone').textContent=p;
-  const tb=document.getElementById('tbody');tb.innerHTML='';
-  results.forEach((r,i)=>{
-    const w=r.sitio_web?'<a href="'+r.sitio_web+'" target="_blank" rel="noopener">'+r.sitio_web.replace(/^https?:\/\//,'').replace(/\/$/,'').slice(0,32)+'</a>':'<span class="no-web">Sin sitio web</span>';
-    const rt=r.rating?'<span class="badge '+(r.rating>=4?'badge-good':'badge-low')+'">'+r.rating+'</span>':'<span style="color:var(--dim)">—</span>';
-    tb.innerHTML+='<tr><td style="color:var(--dim)">'+(i+1)+'</td><td><div class="empresa-name">'+r.nombre+'</div></td><td>'+(r.telefono||'<span style="color:var(--dim)">—</span>')+'</td><td>'+w+'</td><td style="color:var(--muted);font-size:12px;">'+r.direccion+'</td><td>'+rt+'</td></tr>';
-  });
+function updateStats(){
+  const r=allResults;
+  document.getElementById('statTotal').textContent=r.length;
+  document.getElementById('statWeb').textContent=r.filter(x=>x.sitio_web).length;
+  document.getElementById('statNoWeb').textContent=r.filter(x=>!x.sitio_web).length;
+  document.getElementById('statPhone').textContent=r.filter(x=>x.telefono).length;
+  document.getElementById('statHours').textContent=r.filter(x=>x.tiene_horarios).length;
 }
 
-function filterTable(q){
-  q=q.toLowerCase();
-  document.querySelectorAll('#tbody tr').forEach(r=>{r.style.display=r.textContent.toLowerCase().includes(q)?'':'none';});
+function applyFilters(){
+  const txt=(document.getElementById('textFilter').value||'').toLowerCase();
+  filtered=allResults.filter(r=>{
+    if(currentFilter==='with-web'&&!r.sitio_web)return false;
+    if(currentFilter==='no-web'&&r.sitio_web)return false;
+    if(currentFilter==='with-phone'&&!r.telefono)return false;
+    if(currentFilter==='high-rating'&&r.rating<4)return false;
+    if(currentFilter==='with-hours'&&!r.tiene_horarios)return false;
+    if(txt&&!(r.nombre+r.direccion+r.tipos+r.telefono).toLowerCase().includes(txt))return false;
+    return true;
+  });
+  applySort(true);
+}
+
+function applySort(skipFilter){
+  if(!skipFilter)applyFilters(); // will recurse once
+  const s=document.getElementById('sortSelect').value;
+  if(s==='name-asc')filtered.sort((a,b)=>a.nombre.localeCompare(b.nombre));
+  else if(s==='name-desc')filtered.sort((a,b)=>b.nombre.localeCompare(a.nombre));
+  else if(s==='rating-desc')filtered.sort((a,b)=>(b.rating||0)-(a.rating||0));
+  else if(s==='reviews-desc')filtered.sort((a,b)=>(b.total_resenas||0)-(a.total_resenas||0));
+  renderTable();
+}
+
+function setFilter(f,el){
+  currentFilter=f;
+  document.querySelectorAll('.chip').forEach(c=>c.classList.remove('active'));
+  el.classList.add('active');
+  applyFilters();
+}
+
+function renderTable(){
+  document.getElementById('resultCount').innerHTML='Mostrando <strong>'+filtered.length+'</strong> de '+allResults.length+' empresas';
+  const tb=document.getElementById('tbody');tb.innerHTML='';
+  filtered.forEach((r,i)=>{
+    const w=r.sitio_web?'<a href="'+r.sitio_web+'" target="_blank" rel="noopener">'+r.sitio_web.replace(/^https?:\/\//,'').replace(/\/$/,'').slice(0,30)+'</a>':'<span class="no-web">Sin sitio web</span>';
+    const rt=r.rating>=4?'badge-good':r.rating>=3?'badge-mid':r.rating>0?'badge-low':'';
+    const ratingHtml=r.rating?'<span class="badge '+rt+'">'+r.rating+'</span>':'<span style="color:var(--dim)">—</span>';
+    const statusCls=r.estado==='OPERATIONAL'?'color:var(--success)':r.estado.includes('CLOSED')?'color:var(--danger)':'color:var(--dim)';
+    tb.innerHTML+='<tr>'+
+      '<td style="color:var(--dim)">'+(i+1)+'</td>'+
+      '<td><div class="empresa-name">'+r.nombre+'</div><div class="empresa-types">'+r.tipos+'</div></td>'+
+      '<td>'+(r.telefono||'<span style="color:var(--dim)">—</span>')+'</td>'+
+      '<td>'+w+'</td>'+
+      '<td style="color:var(--muted);font-size:11px;">'+r.direccion+'</td>'+
+      '<td>'+ratingHtml+'</td>'+
+      '<td style="color:var(--muted)">'+(r.total_resenas||'—')+'</td>'+
+      '<td><span style="font-size:11px;'+statusCls+'">'+r.estado_text+'</span></td>'+
+      '<td><span class="hours-text" title="'+r.horario+'">'+(r.horario||'<span style="color:var(--dim)">—</span>')+'</span></td>'+
+      '</tr>';
+  });
 }
 
 async function startSearch(){
   if(running)return;
   const city=document.getElementById('city').value.trim();
-  if(!city){alert('Escribe una ciudad');return;}
-  running=true;results=[];seen=new Set();
+  if(!city)return;
+  running=true;allResults=[];filtered=[];seen=new Set();currentFilter='all';
+  document.querySelectorAll('.chip').forEach(c=>c.classList.remove('active'));
+  document.querySelector('.chip[data-filter="all"]').classList.add('active');
+  document.getElementById('sortSelect').value='default';
   const btn=document.getElementById('btnSearch');
-  btn.disabled=true;btn.innerHTML='<span>Buscando...</span>';
+  btn.disabled=true;btn.innerHTML='Buscando...';
   document.getElementById('progressCard').style.display='block';
   document.getElementById('statsGrid').style.display='grid';
   document.getElementById('resultsCard').style.display='block';
+  document.getElementById('filtersBar').style.display='flex';
   const qs=QS.map(q=>q.replace('{c}',city));
   for(let i=0;i<qs.length;i++){
     const pct=Math.round(((i+1)/qs.length)*100);
     document.getElementById('progressBar').style.width=pct+'%';
     document.getElementById('progressLabel').textContent=qs[i].replace(' en '+city,'');
-    document.getElementById('progressCount').textContent=pct+'% — '+results.length+' empresas';
+    document.getElementById('progressCount').textContent=pct+'% — '+allResults.length+' empresas';
     let d=await api(qs[i]);
-    (d.places||[]).forEach(p=>{const r=proc(p);if(r)results.push(r);});
+    (d.places||[]).forEach(p=>{const r=proc(p);if(r)allResults.push(r);});
     let pg=1;
-    while(d.nextPageToken&&pg<3){pg++;await new Promise(ok=>setTimeout(ok,300));d=await api(qs[i],d.nextPageToken);(d.places||[]).forEach(p=>{const r=proc(p);if(r)results.push(r);});}
-    updateUI();
+    while(d.nextPageToken&&pg<3){pg++;await new Promise(ok=>setTimeout(ok,300));d=await api(qs[i],d.nextPageToken);(d.places||[]).forEach(p=>{const r=proc(p);if(r)allResults.push(r);});}
+    updateStats();filtered=[...allResults];renderTable();
     await new Promise(ok=>setTimeout(ok,150));
   }
   document.getElementById('progressLabel').textContent='Búsqueda completada';
-  document.getElementById('progressCount').textContent=results.length+' empresas encontradas';
+  document.getElementById('progressCount').textContent=allResults.length+' empresas encontradas';
   btn.disabled=false;
-  btn.innerHTML='<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg> Buscar Empresas';
+  btn.innerHTML='<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg> Buscar Empresas';
   running=false;
+  // Log search to JPB
+  fetch(FORM_ENDPOINT,{method:'POST',headers:{'Content-Type':'application/json','Accept':'application/json'},
+    body:JSON.stringify({name:sessionStorage.getItem('jpb_name'),email:sessionStorage.getItem('jpb_email'),
+      search_city:city,results_count:allResults.length,_subject:'Búsqueda en Prospector: '+city+' ('+allResults.length+' resultados)'})
+  }).catch(()=>{});
 }
 
 function exportJSON(){
-  const o={metadata:{ciudad:document.getElementById('city').value,fecha:new Date().toISOString().slice(0,10),total:results.length},empresas:results};
+  const o={metadata:{ciudad:document.getElementById('city').value,fecha:new Date().toISOString().slice(0,10),total:filtered.length,usuario:sessionStorage.getItem('jpb_name')},empresas:filtered};
   const b=new Blob([JSON.stringify(o,null,2)],{type:'application/json'});
   const a=document.createElement('a');a.href=URL.createObjectURL(b);a.download='prospectos_'+new Date().toISOString().slice(0,10)+'.json';a.click();
 }
 function exportCSV(){
-  let c='Nombre,Telefono,Sitio Web,Direccion,Rating,Resenas,Google Maps\n';
-  results.forEach(r=>{c+=[r.nombre,r.telefono,r.sitio_web,r.direccion,r.rating,r.total_resenas,r.google_maps].map(v=>'"'+String(v).replace(/"/g,'""')+'"').join(',')+'\n';});
+  let c='Nombre,Teléfono,Sitio Web,Dirección,Rating,Reseñas,Estado,Horario,Tipos,Google Maps\n';
+  filtered.forEach(r=>{c+=[r.nombre,r.telefono,r.sitio_web,r.direccion,r.rating,r.total_resenas,r.estado_text,r.horario,r.tipos,r.google_maps].map(v=>'"'+String(v).replace(/"/g,'""')+'"').join(',')+'\n';});
   const b=new Blob(['﻿'+c],{type:'text/csv;charset=utf-8'});
   const a=document.createElement('a');a.href=URL.createObjectURL(b);a.download='prospectos_'+new Date().toISOString().slice(0,10)+'.csv';a.click();
 }
