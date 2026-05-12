@@ -3,10 +3,9 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Prospector B2B | JPB Marketing</title>
-<meta name="description" content="Herramienta de prospección B2B industrial. Encuentra empresas en cualquier ciudad de Chile.">
+<title>Prospector B2B | JPB Marketing — Encuentra clientes industriales</title>
+<meta name="description" content="Encuentra empresas B2B en cualquier ciudad de Chile. Más de 200 millones de negocios indexados. Prospección industrial automatizada.">
 <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>⚙️</text></svg>">
-<!-- Firebase SDK -->
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
@@ -27,12 +26,10 @@
 body{font-family:'Inter',system-ui,sans-serif;background:var(--bg);color:var(--text);min-height:100vh;overflow-x:hidden;}
 ::selection{background:var(--accent);color:#fff;}
 ::-webkit-scrollbar{width:6px;}::-webkit-scrollbar-track{background:var(--bg2);}::-webkit-scrollbar-thumb{background:var(--dim);border-radius:3px;}
-
 .bg-grid{position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:0;background-image:linear-gradient(rgba(108,99,255,.03) 1px,transparent 1px),linear-gradient(90deg,rgba(108,99,255,.03) 1px,transparent 1px);background-size:60px 60px;}
 .bg-glow{position:fixed;width:600px;height:600px;border-radius:50%;filter:blur(120px);opacity:.12;pointer-events:none;z-index:0;}
 .bg-glow-1{top:-200px;left:-100px;background:#7c6cff;}
 .bg-glow-2{bottom:-200px;right:-100px;background:#00d4ff;}
-
 .wrapper{position:relative;z-index:1;}
 .container{max-width:1200px;margin:0 auto;padding:0 24px;}
 
@@ -44,40 +41,102 @@ body{font-family:'Inter',system-ui,sans-serif;background:var(--bg);color:var(--t
 .nav-name{font-weight:700;font-size:15px;}
 .nav-name span{background:var(--gradient);-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
 .nav-right{display:flex;align-items:center;gap:14px;}
-.nav-user{font-size:12px;color:var(--muted);display:flex;align-items:center;gap:6px;}
-.nav-user .dot{width:6px;height:6px;border-radius:50%;}
-.nav-user .dot.free{background:var(--warning);}
-.nav-user .dot.premium{background:var(--success);}
 .nav-plan{font-size:10px;padding:3px 8px;border-radius:6px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;}
 .nav-plan.free{background:rgba(245,158,11,.12);color:var(--warning);}
 .nav-plan.premium{background:rgba(16,185,129,.12);color:var(--success);}
-.btn-logout{font-size:12px;color:var(--muted);background:none;border:1px solid var(--border);padding:6px 14px;border-radius:8px;cursor:pointer;transition:all .2s;}
+.nav-user{font-size:12px;color:var(--muted);}
+.btn-logout{font-size:12px;color:var(--muted);background:none;border:1px solid var(--border);padding:6px 14px;border-radius:8px;cursor:pointer;transition:all .2s;font-family:inherit;}
 .btn-logout:hover{border-color:var(--danger);color:var(--danger);}
 
-/* Hero */
-.hero{padding:52px 0 32px;text-align:center;}
-.hero-badge{display:inline-flex;align-items:center;gap:8px;padding:6px 16px;background:var(--glow);border:1px solid rgba(108,99,255,.2);border-radius:100px;font-size:12px;font-weight:500;color:var(--accent);margin-bottom:18px;}
-.hero-badge .pulse{width:6px;height:6px;background:var(--accent);border-radius:50%;animation:pulse 2s infinite;}
+/* ==================== LANDING ==================== */
+.landing{min-height:100vh;}
+.land-hero{padding:80px 0 60px;text-align:center;}
+.land-badge{display:inline-flex;align-items:center;gap:8px;padding:6px 16px;background:var(--glow);border:1px solid rgba(108,99,255,.2);border-radius:100px;font-size:12px;font-weight:500;color:var(--accent);margin-bottom:24px;}
+.land-badge .pulse{width:6px;height:6px;background:var(--accent);border-radius:50%;animation:pulse 2s infinite;}
 @keyframes pulse{0%,100%{opacity:1;transform:scale(1);}50%{opacity:.5;transform:scale(1.5);}}
-.hero h1{font-size:40px;font-weight:900;letter-spacing:-1.5px;line-height:1.1;margin-bottom:14px;}
-.hero h1 .grad{background:var(--gradient2);-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
-.hero p{color:var(--muted);font-size:15px;max-width:500px;margin:0 auto;line-height:1.6;}
+.land-hero h1{font-size:52px;font-weight:900;letter-spacing:-2px;line-height:1.05;margin-bottom:20px;}
+.land-hero h1 .grad{background:var(--gradient2);-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
+.land-hero .sub{color:var(--muted);font-size:18px;max-width:600px;margin:0 auto 40px;line-height:1.6;}
 
-/* Usage bar */
+/* Email gate */
+.email-gate{max-width:480px;margin:0 auto;}
+.email-row{display:flex;gap:10px;}
+.email-input{flex:1;padding:16px 20px;background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-sm);color:var(--text);font-size:15px;font-family:inherit;}
+.email-input:focus{outline:none;border-color:var(--accent);box-shadow:0 0 0 4px var(--glow);}
+.email-input::placeholder{color:var(--dim);}
+.email-btn{padding:16px 32px;background:var(--gradient);border:none;border-radius:var(--radius-sm);color:#fff;font-size:15px;font-weight:700;cursor:pointer;font-family:inherit;transition:all .2s;white-space:nowrap;}
+.email-btn:hover{opacity:.9;transform:translateY(-1px);box-shadow:0 8px 30px rgba(108,99,255,.3);}
+.email-btn:disabled{opacity:.5;cursor:not-allowed;transform:none;}
+.email-note{font-size:11px;color:var(--dim);margin-top:10px;}
+.email-error{font-size:13px;color:var(--danger);margin-top:8px;display:none;}
+
+/* Stats row */
+.land-stats{display:flex;justify-content:center;gap:48px;padding:40px 0;border-top:1px solid var(--border);border-bottom:1px solid var(--border);margin:0 0 60px;}
+.land-stat{text-align:center;}
+.land-stat .big{font-size:36px;font-weight:900;background:var(--gradient);-webkit-background-clip:text;-webkit-text-fill-color:transparent;line-height:1;}
+.land-stat .sm{font-size:12px;color:var(--muted);margin-top:4px;text-transform:uppercase;letter-spacing:.8px;font-weight:500;}
+
+/* How it works */
+.land-section{padding:60px 0;}
+.land-section h2{font-size:32px;font-weight:900;text-align:center;margin-bottom:12px;letter-spacing:-1px;}
+.land-section h2 span{background:var(--gradient);-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
+.land-section .section-sub{text-align:center;color:var(--muted);font-size:15px;margin-bottom:48px;max-width:500px;margin-left:auto;margin-right:auto;}
+
+.steps{display:grid;grid-template-columns:repeat(3,1fr);gap:24px;}
+.step{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:32px 24px;text-align:center;transition:all .3s;}
+.step:hover{border-color:var(--border-hover);transform:translateY(-4px);}
+.step .step-num{width:40px;height:40px;background:var(--gradient);border-radius:10px;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:16px;color:#fff;margin:0 auto 16px;}
+.step h3{font-size:16px;font-weight:700;margin-bottom:8px;}
+.step p{font-size:13px;color:var(--muted);line-height:1.5;}
+
+/* Categories */
+.cat-showcase{display:grid;grid-template-columns:repeat(5,1fr);gap:12px;}
+.cat-card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius-sm);padding:20px 14px;text-align:center;transition:all .3s;}
+.cat-card:hover{border-color:var(--border-hover);transform:translateY(-2px);}
+.cat-card .cat-emoji{font-size:28px;margin-bottom:8px;}
+.cat-card .cat-name{font-size:11px;font-weight:600;color:var(--text);}
+
+/* Pricing */
+.pricing-cards{display:grid;grid-template-columns:repeat(2,1fr);gap:24px;max-width:700px;margin:0 auto;}
+.price-card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:36px;text-align:center;transition:all .3s;position:relative;}
+.price-card:hover{border-color:var(--border-hover);}
+.price-card.featured{border-color:var(--accent);box-shadow:0 0 40px var(--glow);}
+.price-card.featured::before{content:'POPULAR';position:absolute;top:-10px;left:50%;transform:translateX(-50%);background:var(--gradient);color:#fff;font-size:10px;font-weight:800;padding:4px 14px;border-radius:20px;letter-spacing:1px;}
+.price-card h3{font-size:18px;font-weight:700;margin-bottom:6px;}
+.price-card .price{font-size:36px;font-weight:900;margin:12px 0 4px;}
+.price-card .price span{background:var(--gradient);-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
+.price-card .period{font-size:12px;color:var(--dim);margin-bottom:20px;}
+.price-card ul{list-style:none;text-align:left;margin-bottom:24px;}
+.price-card li{font-size:13px;color:var(--muted);padding:6px 0;display:flex;align-items:center;gap:8px;}
+.price-card li .ck{color:var(--success);font-weight:700;}
+.price-card .price-btn{display:block;width:100%;padding:14px;border:none;border-radius:var(--radius-sm);font-size:14px;font-weight:700;cursor:pointer;font-family:inherit;transition:all .2s;}
+.price-btn-free{background:var(--bg2);color:var(--text);border:1px solid var(--border);}
+.price-btn-free:hover{border-color:var(--accent);}
+.price-btn-pro{background:var(--gradient);color:#fff;}
+.price-btn-pro:hover{opacity:.9;transform:translateY(-1px);box-shadow:0 8px 30px rgba(108,99,255,.3);}
+
+/* Footer */
+.land-footer{padding:40px 0;border-top:1px solid var(--border);text-align:center;font-size:12px;color:var(--dim);}
+.land-footer a{color:var(--accent);text-decoration:none;}
+
+/* ==================== APP ==================== */
+.card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:24px;margin-bottom:18px;backdrop-filter:blur(10px);transition:border-color .3s;}
+.card:hover{border-color:var(--border-hover);}
+.hero-app{padding:32px 0 20px;text-align:center;}
+.hero-app h1{font-size:32px;font-weight:900;letter-spacing:-1px;margin-bottom:8px;}
+.hero-app h1 .grad{background:var(--gradient2);-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
+.hero-app p{color:var(--muted);font-size:14px;}
+
+/* Usage */
 .usage-bar{margin-bottom:18px;}
 .usage-info{display:flex;justify-content:space-between;align-items:center;font-size:12px;margin-bottom:6px;}
-.usage-label{color:var(--muted);}
-.usage-label strong{color:var(--text);}
+.usage-label{color:var(--muted);}.usage-label strong{color:var(--text);}
 .usage-upgrade{color:var(--accent);text-decoration:none;font-weight:600;font-size:12px;}
 .usage-upgrade:hover{text-decoration:underline;}
 .usage-track{width:100%;height:6px;background:var(--bg2);border-radius:3px;overflow:hidden;}
 .usage-fill{height:100%;border-radius:3px;transition:width .5s ease-out;}
 .usage-fill.ok{background:var(--gradient);}
 .usage-fill.warn{background:linear-gradient(135deg,var(--warning),var(--danger));}
-
-/* Card */
-.card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:24px;margin-bottom:18px;backdrop-filter:blur(10px);transition:border-color .3s;}
-.card:hover{border-color:var(--border-hover);}
 
 /* Search */
 .search-bar{display:flex;gap:12px;align-items:stretch;}
@@ -93,12 +152,11 @@ body{font-family:'Inter',system-ui,sans-serif;background:var(--bg);color:var(--t
 .btn-toggle-filters:hover{border-color:var(--accent);color:var(--text);}
 .btn-toggle-filters.active{border-color:var(--accent);color:var(--accent);background:var(--glow);}
 
-/* Filter Panel */
+/* Filters */
 .filter-panel{margin-top:18px;display:none;border-top:1px solid var(--border);padding-top:18px;}
 .filter-panel.show{display:block;}
-.filter-section{margin-bottom:16px;}
-.filter-section:last-child{margin-bottom:0;}
-.filter-label{font-size:10px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:1.2px;margin-bottom:10px;display:flex;align-items:center;gap:6px;}
+.filter-section{margin-bottom:16px;}.filter-section:last-child{margin-bottom:0;}
+.filter-label{font-size:10px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:1.2px;margin-bottom:10px;}
 .cat-grid,.dq-grid,.sort-row,.rating-selector{display:flex;gap:8px;flex-wrap:wrap;}
 .cat-pill,.dq-pill,.sort-pill{padding:7px 14px;border:1px solid var(--border);border-radius:100px;font-size:11px;font-weight:500;color:var(--muted);background:transparent;cursor:pointer;transition:all .2s;font-family:inherit;display:flex;align-items:center;gap:6px;}
 .cat-pill:hover,.dq-pill:hover,.sort-pill:hover{border-color:var(--accent);color:var(--text);}
@@ -115,8 +173,19 @@ body{font-family:'Inter',system-ui,sans-serif;background:var(--bg);color:var(--t
 .rating-btn .star{font-size:10px;color:var(--warning);}
 .active-filters{display:flex;gap:6px;flex-wrap:wrap;margin-top:12px;}
 .active-tag{display:inline-flex;align-items:center;gap:5px;padding:4px 10px;background:var(--glow);border:1px solid rgba(108,99,255,.2);border-radius:100px;font-size:10px;font-weight:600;color:var(--accent);}
-.active-tag .remove{cursor:pointer;opacity:.6;font-size:12px;}
-.active-tag .remove:hover{opacity:1;}
+.active-tag .remove{cursor:pointer;opacity:.6;font-size:12px;}.active-tag .remove:hover{opacity:1;}
+
+/* Progress */
+.progress-info{display:flex;justify-content:space-between;align-items:center;font-size:12px;color:var(--muted);margin-bottom:8px;}
+.progress-track{width:100%;height:4px;background:var(--bg);border-radius:2px;overflow:hidden;}
+.progress-fill{height:100%;background:var(--gradient);border-radius:2px;transition:width .4s ease-out;box-shadow:0 0 12px rgba(108,99,255,.4);}
+.search-controls{display:flex;gap:8px;align-items:center;}
+.btn-ctrl{padding:6px 16px;border-radius:8px;font-size:11px;font-weight:600;cursor:pointer;font-family:inherit;transition:all .2s;display:flex;align-items:center;gap:6px;border:1px solid;}
+.btn-pause{border-color:var(--warning);color:var(--warning);background:rgba(245,158,11,.08);}
+.btn-resume{border-color:var(--success);color:var(--success);background:rgba(16,185,129,.08);}
+.btn-stop{border-color:var(--danger);color:var(--danger);background:rgba(244,63,94,.08);}
+.blink{animation:blink 1s steps(1) infinite;}
+@keyframes blink{0%,100%{opacity:1;}50%{opacity:0;}}
 
 /* Stats */
 .stats{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;margin-bottom:18px;}
@@ -126,36 +195,18 @@ body{font-family:'Inter',system-ui,sans-serif;background:var(--bg);color:var(--t
 .stat .num{font-size:30px;font-weight:900;letter-spacing:-1px;background:var(--gradient);-webkit-background-clip:text;-webkit-text-fill-color:transparent;line-height:1;}
 .stat .label{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.8px;margin-top:6px;font-weight:500;}
 
-/* Progress */
-.progress-info{display:flex;justify-content:space-between;align-items:center;font-size:12px;color:var(--muted);margin-bottom:8px;}
-.progress-track{width:100%;height:4px;background:var(--bg);border-radius:2px;overflow:hidden;}
-.progress-fill{height:100%;background:var(--gradient);border-radius:2px;transition:width .4s ease-out;box-shadow:0 0 12px rgba(108,99,255,.4);}
-.search-controls{display:flex;gap:8px;align-items:center;}
-.btn-ctrl{padding:6px 16px;border-radius:8px;font-size:11px;font-weight:600;cursor:pointer;font-family:inherit;transition:all .2s;display:flex;align-items:center;gap:6px;border:1px solid;}
-.btn-pause{border-color:var(--warning);color:var(--warning);background:rgba(245,158,11,.08);}
-.btn-pause:hover{background:rgba(245,158,11,.15);}
-.btn-resume{border-color:var(--success);color:var(--success);background:rgba(16,185,129,.08);}
-.btn-resume:hover{background:rgba(16,185,129,.15);}
-.btn-stop{border-color:var(--danger);color:var(--danger);background:rgba(244,63,94,.08);}
-.btn-stop:hover{background:rgba(244,63,94,.15);}
-.search-status .blink{animation:blink 1s steps(1) infinite;}
-@keyframes blink{0%,100%{opacity:1;}50%{opacity:0;}}
-
 /* Table */
 .table-toolbar{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:14px;flex-wrap:wrap;}
 .filter-wrap{position:relative;flex:1;max-width:360px;}
 .filter-wrap .fw-icon{position:absolute;left:12px;top:50%;transform:translateY(-50%);color:var(--dim);}
-.filter-input{width:100%;padding:9px 12px 9px 36px;background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-sm);color:var(--text);font-size:12px;font-family:inherit;transition:border .2s;}
+.filter-input{width:100%;padding:9px 12px 9px 36px;background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-sm);color:var(--text);font-size:12px;font-family:inherit;}
 .filter-input:focus{outline:none;border-color:var(--accent);}
 .filter-input::placeholder{color:var(--dim);}
 .export-btns{display:flex;gap:8px;}
-.btn-export{padding:7px 16px;border:1px solid var(--border);background:transparent;border-radius:8px;color:var(--text);font-size:11px;font-weight:600;cursor:pointer;transition:all .2s;font-family:inherit;display:flex;align-items:center;gap:5px;}
+.btn-export{padding:7px 16px;border:1px solid var(--border);background:transparent;border-radius:8px;color:var(--text);font-size:11px;font-weight:600;cursor:pointer;transition:all .2s;font-family:inherit;}
 .btn-export:hover{border-color:var(--accent);background:var(--glow);}
 .btn-export.csv{border-color:rgba(16,185,129,.3);color:var(--success);}
-.btn-export.csv:hover{background:rgba(16,185,129,.08);}
 .btn-export.json{border-color:rgba(245,158,11,.3);color:var(--warning);}
-.btn-export.json:hover{background:rgba(245,158,11,.08);}
-
 .table-wrap{overflow-x:auto;max-height:620px;overflow-y:auto;border-radius:var(--radius-sm);border:1px solid var(--border);}
 table{width:100%;border-collapse:collapse;font-size:12px;}
 thead th{background:var(--bg2);color:var(--accent2);font-weight:600;text-align:left;padding:12px 14px;font-size:10px;text-transform:uppercase;letter-spacing:.8px;position:sticky;top:0;z-index:2;border-bottom:1px solid var(--border);white-space:nowrap;cursor:pointer;user-select:none;}
@@ -174,100 +225,191 @@ tbody td a:hover{color:var(--accent);text-decoration:underline;}
 .empresa-name{font-weight:600;font-size:13px;}
 .empresa-types{font-size:10px;color:var(--dim);margin-top:2px;max-width:200px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
 .hours-text{font-size:10px;color:var(--dim);max-width:140px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
-.maps-link{display:inline-flex;align-items:center;gap:3px;color:var(--accent2);text-decoration:none;font-size:10px;opacity:.6;transition:opacity .2s;}
-.maps-link:hover{opacity:1;}
+.maps-link{color:var(--accent2);text-decoration:none;font-size:10px;opacity:.6;}.maps-link:hover{opacity:1;}
 .dq-bar{display:flex;gap:2px;align-items:center;}
-.dq-seg{width:6px;height:14px;border-radius:2px;background:var(--dim);transition:background .3s;}
-.dq-seg.on{background:var(--success);}
+.dq-seg{width:6px;height:14px;border-radius:2px;background:var(--dim);}.dq-seg.on{background:var(--success);}
 .dq-bar-label{font-size:9px;color:var(--dim);margin-left:5px;font-weight:600;}
+.result-count{font-size:12px;color:var(--muted);margin-bottom:10px;}.result-count strong{color:var(--text);}
 
-/* Paywall */
-.paywall{text-align:center;padding:48px 24px;}
-.paywall-icon{font-size:48px;margin-bottom:16px;}
-.paywall h3{font-size:22px;font-weight:800;margin-bottom:8px;}
-.paywall h3 span{background:var(--gradient);-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
-.paywall p{color:var(--muted);font-size:14px;margin-bottom:24px;line-height:1.6;}
-.paywall-features{display:flex;gap:24px;justify-content:center;margin-bottom:28px;flex-wrap:wrap;}
-.paywall-feat{display:flex;align-items:center;gap:6px;font-size:13px;color:var(--text);}
-.paywall-feat .check{color:var(--success);font-size:16px;}
-.btn-pay{display:inline-flex;align-items:center;gap:10px;padding:16px 40px;background:var(--gradient);border:none;border-radius:var(--radius-sm);color:#fff;font-size:16px;font-weight:700;cursor:pointer;font-family:inherit;transition:all .2s;text-decoration:none;}
-.btn-pay:hover{opacity:.9;transform:translateY(-2px);box-shadow:0 12px 40px rgba(108,99,255,.4);}
-.paywall-note{font-size:11px;color:var(--dim);margin-top:16px;}
-.paywall-pending{display:inline-flex;align-items:center;gap:8px;padding:12px 24px;background:rgba(245,158,11,.08);border:1px solid rgba(245,158,11,.2);border-radius:10px;color:var(--warning);font-size:13px;font-weight:600;margin-top:12px;}
-
-/* Login */
-.login-overlay{position:fixed;top:0;left:0;width:100%;height:100%;background:var(--bg);z-index:9999;display:flex;align-items:center;justify-content:center;}
-.login-card{background:var(--card-solid);border:1px solid var(--border);border-radius:20px;padding:48px;width:440px;max-width:90vw;text-align:center;position:relative;overflow:hidden;}
-.login-card::before{content:'';position:absolute;top:-50%;left:-50%;width:200%;height:200%;background:conic-gradient(from 0deg,transparent,var(--accent),transparent,var(--accent2),transparent);animation:spin 8s linear infinite;opacity:.03;}
-@keyframes spin{to{transform:rotate(360deg);}}
-.login-card>*{position:relative;z-index:1;}
-.login-logo{width:64px;height:64px;background:var(--gradient);border-radius:16px;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:22px;color:#fff;margin:0 auto 24px;box-shadow:0 8px 40px rgba(108,99,255,.3);}
-.login-card h2{font-size:24px;font-weight:800;margin-bottom:8px;letter-spacing:-.5px;}
-.login-card h2 span{background:var(--gradient);-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
-.login-card .sub{color:var(--muted);font-size:14px;margin-bottom:28px;line-height:1.5;}
-.login-field{width:100%;padding:14px 18px;background:var(--bg);border:1px solid var(--border);border-radius:var(--radius-sm);color:var(--text);font-size:14px;font-family:inherit;margin-bottom:12px;transition:all .2s;}
-.login-field:focus{outline:none;border-color:var(--accent);box-shadow:0 0 0 4px var(--glow);}
-.login-field::placeholder{color:var(--dim);}
-.login-btn{width:100%;padding:14px;background:var(--gradient);border:none;border-radius:var(--radius-sm);color:#fff;font-size:15px;font-weight:700;cursor:pointer;font-family:inherit;transition:all .2s;margin-top:4px;}
-.login-btn:hover{opacity:.9;transform:translateY(-1px);box-shadow:0 8px 30px rgba(108,99,255,.3);}
-.login-btn:disabled{opacity:.5;cursor:not-allowed;transform:none;}
-.login-error{color:var(--danger);font-size:13px;margin-top:12px;display:none;}
-.login-toggle{color:var(--accent);cursor:pointer;font-size:13px;margin-top:16px;display:inline-block;}
-.login-toggle:hover{text-decoration:underline;}
-.login-footer{margin-top:24px;font-size:12px;color:var(--dim);}
-
-.result-count{font-size:12px;color:var(--muted);margin-bottom:10px;}
-.result-count strong{color:var(--text);}
+/* Paywall overlay */
+.paywall-overlay{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(6,6,11,.92);z-index:9999;display:none;align-items:center;justify-content:center;backdrop-filter:blur(8px);}
+.paywall-overlay.show{display:flex;}
+.paywall-box{background:var(--card-solid);border:1px solid var(--border);border-radius:20px;padding:48px;width:500px;max-width:90vw;text-align:center;position:relative;}
+.paywall-box .pw-icon{font-size:48px;margin-bottom:16px;}
+.paywall-box h3{font-size:24px;font-weight:800;margin-bottom:8px;}
+.paywall-box h3 span{background:var(--gradient);-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
+.paywall-box p{color:var(--muted);font-size:14px;margin-bottom:20px;line-height:1.6;}
+.pw-feats{text-align:left;margin-bottom:24px;}
+.pw-feat{display:flex;align-items:center;gap:8px;font-size:13px;color:var(--text);padding:5px 0;}
+.pw-feat .ck{color:var(--success);font-weight:700;}
+.pw-step{margin-bottom:20px;}
+.pw-step-label{font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:1px;margin-bottom:10px;}
+.pw-field{width:100%;padding:14px 18px;background:var(--bg);border:1px solid var(--border);border-radius:var(--radius-sm);color:var(--text);font-size:14px;font-family:inherit;margin-bottom:8px;}
+.pw-field:focus{outline:none;border-color:var(--accent);box-shadow:0 0 0 4px var(--glow);}
+.pw-field::placeholder{color:var(--dim);}
+.btn-pay{display:block;width:100%;padding:16px;background:var(--gradient);border:none;border-radius:var(--radius-sm);color:#fff;font-size:16px;font-weight:700;cursor:pointer;font-family:inherit;transition:all .2s;text-decoration:none;text-align:center;}
+.btn-pay:hover{opacity:.9;transform:translateY(-1px);box-shadow:0 8px 30px rgba(108,99,255,.3);}
+.pw-note{font-size:11px;color:var(--dim);margin-top:12px;}
+.pw-error{font-size:13px;color:var(--danger);margin-top:8px;display:none;}
+.pw-close{position:absolute;top:16px;right:20px;background:none;border:none;color:var(--dim);font-size:20px;cursor:pointer;}.pw-close:hover{color:var(--text);}
 
 /* Responsive */
 @media(max-width:768px){
-  .hero h1{font-size:28px;}
+  .land-hero h1{font-size:32px;}
+  .land-stats{flex-direction:column;gap:20px;align-items:center;}
+  .steps{grid-template-columns:1fr;}
+  .cat-showcase{grid-template-columns:repeat(3,1fr);}
+  .pricing-cards{grid-template-columns:1fr;}
   .stats{grid-template-columns:repeat(2,1fr);}
   .search-bar{flex-direction:column;}
+  .email-row{flex-direction:column;}
   .table-toolbar{flex-direction:column;align-items:stretch;}
   .filter-wrap{max-width:none;}
   .stats .stat:nth-child(5){grid-column:span 2;}
-  .paywall-features{flex-direction:column;align-items:center;}
+  .hero-app h1{font-size:24px;}
 }
-@media(max-width:480px){.hero{padding:36px 0 20px;}.container{padding:0 16px;}}
+@media(max-width:480px){.container{padding:0 16px;}.land-hero{padding:48px 0 32px;}}
 .fade-in{opacity:0;transform:translateY(16px);animation:fadeIn .5s ease forwards;}
 @keyframes fadeIn{to{opacity:1;transform:translateY(0);}}
+@keyframes spin{to{transform:rotate(360deg);}}
 .fade-in-d1{animation-delay:.1s;}.fade-in-d2{animation-delay:.2s;}.fade-in-d3{animation-delay:.3s;}
 </style>
 </head>
 <body>
-
-<!-- Login / Register -->
-<div class="login-overlay" id="loginOverlay">
-  <div class="login-card">
-    <div class="login-logo">JP</div>
-    <h2>JPB <span>Prospector</span></h2>
-    <p class="sub" id="authSubtitle">Crea tu cuenta para acceder a la herramienta de prospección B2B</p>
-    <!-- Register form -->
-    <form id="registerForm" onsubmit="event.preventDefault();doRegister()">
-      <input type="text" class="login-field" id="regName" placeholder="Tu nombre completo" required>
-      <input type="email" class="login-field" id="regEmail" placeholder="tu@email.com" required>
-      <input type="password" class="login-field" id="regPass" placeholder="Contraseña (mín. 6 caracteres)" required minlength="6">
-      <button type="submit" class="login-btn" id="regBtn">Crear cuenta</button>
-    </form>
-    <!-- Login form -->
-    <form id="loginForm" style="display:none;" onsubmit="event.preventDefault();doLogin()">
-      <input type="email" class="login-field" id="loginEmail" placeholder="tu@email.com" required>
-      <input type="password" class="login-field" id="loginPass" placeholder="Contraseña" required>
-      <button type="submit" class="login-btn" id="loginBtn">Iniciar sesión</button>
-    </form>
-    <div class="login-error" id="authError"></div>
-    <div class="login-toggle" id="authToggle" onclick="toggleAuthMode()">¿Ya tienes cuenta? Inicia sesión</div>
-    <p class="login-footer">Desarrollado por <a href="https://jpbmarketing.cl" style="color:var(--accent);">JPB Marketing</a></p>
-  </div>
-</div>
 
 <!-- BG -->
 <div class="bg-grid"></div>
 <div class="bg-glow bg-glow-1"></div>
 <div class="bg-glow bg-glow-2"></div>
 
-<!-- App -->
+<!-- ==================== LANDING ==================== -->
+<div class="wrapper" id="landingPage">
+  <nav class="nav">
+    <div class="container">
+      <a href="https://jpbmarketing.cl" class="nav-brand">
+        <div class="nav-logo">JP</div>
+        <div class="nav-name">JPB <span>Prospector</span></div>
+      </a>
+    </div>
+  </nav>
+
+  <div class="landing">
+    <section class="land-hero">
+      <div class="container">
+        <div class="land-badge fade-in"><span class="pulse"></span> Prospección B2B automatizada</div>
+        <h1 class="fade-in fade-in-d1">Encuentra empresas<br><span class="grad">en cualquier ciudad</span></h1>
+        <p class="sub fade-in fade-in-d2">Accede a más de 200 millones de negocios indexados en Google Maps. Busca por industria, filtra por datos de contacto y exporta tus prospectos al instante.</p>
+
+        <div class="email-gate fade-in fade-in-d3">
+          <div class="email-row">
+            <input type="email" class="email-input" id="gateEmail" placeholder="Tu email para comenzar" required>
+            <button class="email-btn" id="gateBtn" onclick="enterWithEmail()">Comenzar gratis</button>
+          </div>
+          <div class="email-error" id="gateError"></div>
+          <p class="email-note">200 contactos gratis. Sin tarjeta de crédito. Sin spam.</p>
+        </div>
+      </div>
+    </section>
+
+    <div class="container">
+      <div class="land-stats fade-in">
+        <div class="land-stat"><div class="big">200M+</div><div class="sm">Negocios indexados</div></div>
+        <div class="land-stat"><div class="big">50+</div><div class="sm">Categorías industriales</div></div>
+        <div class="land-stat"><div class="big">10+</div><div class="sm">Datos por empresa</div></div>
+        <div class="land-stat"><div class="big">100%</div><div class="sm">Datos de Google Maps</div></div>
+      </div>
+    </div>
+
+    <!-- How it works -->
+    <section class="land-section">
+      <div class="container">
+        <h2>Cómo <span>funciona</span></h2>
+        <p class="section-sub">Tres pasos para encontrar tus próximos clientes industriales</p>
+        <div class="steps">
+          <div class="step fade-in">
+            <div class="step-num">1</div>
+            <h3>Elige una ciudad</h3>
+            <p>Escribe cualquier ciudad de Chile (o del mundo). El sistema buscará automáticamente en más de 50 categorías industriales.</p>
+          </div>
+          <div class="step fade-in fade-in-d1">
+            <div class="step-num">2</div>
+            <h3>Filtra y encuentra</h3>
+            <p>Filtra por industria, rating, disponibilidad de datos de contacto, sitio web, teléfono y más. Encuentra exactamente lo que necesitas.</p>
+          </div>
+          <div class="step fade-in fade-in-d2">
+            <div class="step-num">3</div>
+            <h3>Exporta y prospecta</h3>
+            <p>Descarga tus resultados en CSV o JSON. Cada contacto incluye nombre, teléfono, web, dirección, rating y horarios.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Categories -->
+    <section class="land-section" style="padding-top:0;">
+      <div class="container">
+        <h2>Categorías que <span>cubrimos</span></h2>
+        <p class="section-sub">Búsqueda automática en más de 50 rubros industriales y comerciales</p>
+        <div class="cat-showcase">
+          <div class="cat-card"><div class="cat-emoji">🏭</div><div class="cat-name">Manufactura</div></div>
+          <div class="cat-card"><div class="cat-emoji">🚛</div><div class="cat-name">Logística</div></div>
+          <div class="cat-card"><div class="cat-emoji">🏗️</div><div class="cat-name">Construcción</div></div>
+          <div class="cat-card"><div class="cat-emoji">💻</div><div class="cat-name">Tecnología</div></div>
+          <div class="cat-card"><div class="cat-emoji">⛏️</div><div class="cat-name">Minería</div></div>
+          <div class="cat-card"><div class="cat-emoji">⚡</div><div class="cat-name">Energía</div></div>
+          <div class="cat-card"><div class="cat-emoji">🌾</div><div class="cat-name">Agroindustria</div></div>
+          <div class="cat-card"><div class="cat-emoji">📊</div><div class="cat-name">Consultoría</div></div>
+          <div class="cat-card"><div class="cat-emoji">💊</div><div class="cat-name">Farmacéutica</div></div>
+          <div class="cat-card"><div class="cat-emoji">📦</div><div class="cat-name">Packaging</div></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Pricing -->
+    <section class="land-section" style="padding-top:0;">
+      <div class="container">
+        <h2>Planes y <span>precios</span></h2>
+        <p class="section-sub">Empieza gratis, escala cuando lo necesites</p>
+        <div class="pricing-cards">
+          <div class="price-card">
+            <h3>Gratis</h3>
+            <div class="price"><span>$0</span></div>
+            <div class="period">Para siempre</div>
+            <ul>
+              <li><span class="ck">✓</span> Hasta 200 contactos</li>
+              <li><span class="ck">✓</span> Todas las categorías</li>
+              <li><span class="ck">✓</span> Filtros avanzados</li>
+              <li><span class="ck">✓</span> Exportar CSV / JSON</li>
+            </ul>
+            <button class="price-btn price-btn-free" onclick="document.getElementById('gateEmail').focus();window.scrollTo({top:0,behavior:'smooth'});">Comenzar gratis</button>
+          </div>
+          <div class="price-card featured">
+            <h3>Pro</h3>
+            <div class="price"><span>$5.000</span></div>
+            <div class="period">CLP / mes</div>
+            <ul>
+              <li><span class="ck">✓</span> Contactos ilimitados</li>
+              <li><span class="ck">✓</span> Todas las categorías</li>
+              <li><span class="ck">✓</span> Filtros avanzados</li>
+              <li><span class="ck">✓</span> Exportar CSV / JSON</li>
+              <li><span class="ck">✓</span> Búsquedas ilimitadas</li>
+              <li><span class="ck">✓</span> Soporte prioritario</li>
+            </ul>
+            <button class="price-btn price-btn-pro" onclick="document.getElementById('gateEmail').focus();window.scrollTo({top:0,behavior:'smooth'});">Comenzar y luego upgrade</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <footer class="land-footer">
+      <div class="container">
+        <p>Desarrollado por <a href="https://jpbmarketing.cl">JPB Marketing</a> — Datos proporcionados por Google Maps Platform</p>
+      </div>
+    </footer>
+  </div>
+</div>
+
+<!-- ==================== APP ==================== -->
 <div class="wrapper" id="mainApp" style="display:none;">
   <nav class="nav">
     <div class="container">
@@ -277,27 +419,25 @@ tbody td a:hover{color:var(--accent);text-decoration:underline;}
       </a>
       <div class="nav-right">
         <span class="nav-plan free" id="planBadge">GRATIS</span>
-        <div class="nav-user"><span class="dot free" id="statusDot"></span><span id="userName">-</span></div>
+        <span class="nav-user" id="navEmail"></span>
         <button class="btn-logout" onclick="doLogout()">Salir</button>
       </div>
     </div>
   </nav>
 
-  <section class="hero fade-in">
+  <section class="hero-app fade-in">
     <div class="container">
-      <div class="hero-badge"><span class="pulse"></span> Prospección B2B Industrial</div>
-      <h1>Encuentra tu próximo<br><span class="grad">cliente industrial</span></h1>
-      <p>Busca empresas en cualquier ciudad. Filtra por industria, calidad de datos y rating. Exporta y prospecta.</p>
+      <h1>Encuentra tu próximo <span class="grad">cliente</span></h1>
+      <p>Busca, filtra y exporta empresas de cualquier ciudad.</p>
     </div>
   </section>
 
   <div class="container">
-
-    <!-- Usage bar -->
+    <!-- Usage -->
     <div class="usage-bar" id="usageBar">
       <div class="usage-info">
         <span class="usage-label" id="usageLabel">Contactos: <strong>0</strong> / 200</span>
-        <a href="#" class="usage-upgrade" id="usageUpgrade" onclick="showPaywall();return false;" style="display:none;">Desbloquear ilimitado</a>
+        <a href="#" class="usage-upgrade" id="usageUpgrade" onclick="openPaywall();return false;" style="display:none;">Desbloquear ilimitado</a>
       </div>
       <div class="usage-track"><div class="usage-fill ok" id="usageFill" style="width:0%"></div></div>
     </div>
@@ -319,87 +459,22 @@ tbody td a:hover{color:var(--accent);text-decoration:underline;}
         </button>
       </div>
       <div class="filter-panel" id="filterPanel">
-        <div class="filter-section">
-          <div class="filter-label">Industria</div>
-          <div class="cat-grid" id="catGrid">
-            <button class="cat-pill active" data-cat="all" onclick="setCat('all',this)">Todas</button>
-            <button class="cat-pill" data-cat="manufacturing" onclick="setCat('manufacturing',this)">Manufactura</button>
-            <button class="cat-pill" data-cat="logistics" onclick="setCat('logistics',this)">Logística</button>
-            <button class="cat-pill" data-cat="construction" onclick="setCat('construction',this)">Construcción</button>
-            <button class="cat-pill" data-cat="technology" onclick="setCat('technology',this)">Tecnología</button>
-            <button class="cat-pill" data-cat="mining" onclick="setCat('mining',this)">Minería</button>
-            <button class="cat-pill" data-cat="energy" onclick="setCat('energy',this)">Energía</button>
-            <button class="cat-pill" data-cat="agro" onclick="setCat('agro',this)">Agroindustria</button>
-            <button class="cat-pill" data-cat="services" onclick="setCat('services',this)">Servicios</button>
-            <button class="cat-pill" data-cat="pharma" onclick="setCat('pharma',this)">Salud/Pharma</button>
-          </div>
-        </div>
-        <div class="filter-section">
-          <div class="filter-label">Calidad de datos</div>
-          <div class="dq-grid" id="dqGrid">
-            <button class="dq-pill" data-dq="has-web" onclick="toggleDQ('has-web',this)"><span class="dq-dot"></span>Con sitio web</button>
-            <button class="dq-pill" data-dq="has-phone" onclick="toggleDQ('has-phone',this)"><span class="dq-dot"></span>Con teléfono</button>
-            <button class="dq-pill" data-dq="has-hours" onclick="toggleDQ('has-hours',this)"><span class="dq-dot"></span>Con horarios</button>
-            <button class="dq-pill" data-dq="is-open" onclick="toggleDQ('is-open',this)"><span class="dq-dot"></span>Operativa</button>
-            <button class="dq-pill" data-dq="has-reviews" onclick="toggleDQ('has-reviews',this)"><span class="dq-dot"></span>Con reseñas</button>
-            <button class="dq-pill" data-dq="complete" onclick="toggleDQ('complete',this)"><span class="dq-dot"></span>Datos completos</button>
-          </div>
-        </div>
-        <div class="filter-section">
-          <div class="filter-label">Rating mínimo</div>
-          <div class="rating-selector">
-            <button class="rating-btn" onclick="setMinRating(0,this)">Todo</button>
-            <button class="rating-btn" onclick="setMinRating(3,this)">3<span class="star">★</span></button>
-            <button class="rating-btn" onclick="setMinRating(3.5,this)">3.5<span class="star">★</span></button>
-            <button class="rating-btn" onclick="setMinRating(4,this)">4<span class="star">★</span></button>
-            <button class="rating-btn" onclick="setMinRating(4.5,this)">4.5<span class="star">★</span></button>
-          </div>
-        </div>
-        <div class="filter-section">
-          <div class="filter-label">Ordenar por</div>
-          <div class="sort-row">
-            <button class="sort-pill active" data-sort="default" onclick="setSortPill('default',this)">Sin orden</button>
-            <button class="sort-pill" data-sort="name-asc" onclick="setSortPill('name-asc',this)">Nombre A-Z</button>
-            <button class="sort-pill" data-sort="rating-desc" onclick="setSortPill('rating-desc',this)">Mayor rating</button>
-            <button class="sort-pill" data-sort="reviews-desc" onclick="setSortPill('reviews-desc',this)">Más reseñas</button>
-            <button class="sort-pill" data-sort="quality-desc" onclick="setSortPill('quality-desc',this)">Mejor datos</button>
-          </div>
-        </div>
+        <div class="filter-section"><div class="filter-label">Industria</div><div class="cat-grid" id="catGrid"><button class="cat-pill active" data-cat="all" onclick="setCat('all',this)">Todas</button><button class="cat-pill" data-cat="manufacturing" onclick="setCat('manufacturing',this)">Manufactura</button><button class="cat-pill" data-cat="logistics" onclick="setCat('logistics',this)">Logística</button><button class="cat-pill" data-cat="construction" onclick="setCat('construction',this)">Construcción</button><button class="cat-pill" data-cat="technology" onclick="setCat('technology',this)">Tecnología</button><button class="cat-pill" data-cat="mining" onclick="setCat('mining',this)">Minería</button><button class="cat-pill" data-cat="energy" onclick="setCat('energy',this)">Energía</button><button class="cat-pill" data-cat="agro" onclick="setCat('agro',this)">Agroindustria</button><button class="cat-pill" data-cat="services" onclick="setCat('services',this)">Servicios</button><button class="cat-pill" data-cat="pharma" onclick="setCat('pharma',this)">Salud/Pharma</button></div></div>
+        <div class="filter-section"><div class="filter-label">Calidad de datos</div><div class="dq-grid"><button class="dq-pill" data-dq="has-web" onclick="toggleDQ('has-web',this)"><span class="dq-dot"></span>Con sitio web</button><button class="dq-pill" data-dq="has-phone" onclick="toggleDQ('has-phone',this)"><span class="dq-dot"></span>Con teléfono</button><button class="dq-pill" data-dq="has-hours" onclick="toggleDQ('has-hours',this)"><span class="dq-dot"></span>Con horarios</button><button class="dq-pill" data-dq="is-open" onclick="toggleDQ('is-open',this)"><span class="dq-dot"></span>Operativa</button><button class="dq-pill" data-dq="has-reviews" onclick="toggleDQ('has-reviews',this)"><span class="dq-dot"></span>Con reseñas</button><button class="dq-pill" data-dq="complete" onclick="toggleDQ('complete',this)"><span class="dq-dot"></span>Datos completos</button></div></div>
+        <div class="filter-section"><div class="filter-label">Rating mínimo</div><div class="rating-selector"><button class="rating-btn" onclick="setMinRating(0,this)">Todo</button><button class="rating-btn" onclick="setMinRating(3,this)">3<span class="star">★</span></button><button class="rating-btn" onclick="setMinRating(3.5,this)">3.5<span class="star">★</span></button><button class="rating-btn" onclick="setMinRating(4,this)">4<span class="star">★</span></button><button class="rating-btn" onclick="setMinRating(4.5,this)">4.5<span class="star">★</span></button></div></div>
+        <div class="filter-section"><div class="filter-label">Ordenar por</div><div class="sort-row"><button class="sort-pill active" data-sort="default" onclick="setSortPill('default',this)">Sin orden</button><button class="sort-pill" data-sort="name-asc" onclick="setSortPill('name-asc',this)">Nombre A-Z</button><button class="sort-pill" data-sort="rating-desc" onclick="setSortPill('rating-desc',this)">Mayor rating</button><button class="sort-pill" data-sort="reviews-desc" onclick="setSortPill('reviews-desc',this)">Más reseñas</button><button class="sort-pill" data-sort="quality-desc" onclick="setSortPill('quality-desc',this)">Mejor datos</button></div></div>
       </div>
       <div class="active-filters" id="activeFilters"></div>
-    </div>
-
-    <!-- Paywall -->
-    <div class="card" id="paywallCard" style="display:none;">
-      <div class="paywall">
-        <div class="paywall-icon">🔒</div>
-        <h3>Has alcanzado el límite <span>gratuito</span></h3>
-        <p>Has encontrado más de 200 contactos. Desbloquea acceso ilimitado para seguir prospectando sin límites.</p>
-        <div class="paywall-features">
-          <div class="paywall-feat"><span class="check">✓</span> Búsquedas ilimitadas</div>
-          <div class="paywall-feat"><span class="check">✓</span> Exportar sin límite</div>
-          <div class="paywall-feat"><span class="check">✓</span> Acceso permanente</div>
-        </div>
-        <a href="https://www.flow.cl/uri/L28a2jNfS" target="_blank" class="btn-pay" id="btnPay">Desbloquear — $5.000 CLP</a>
-        <p class="paywall-note">Pago seguro con WebPay vía Flow.cl</p>
-        <div class="paywall-pending" id="payPending" style="display:none;">⏳ Pago en revisión — se activará en minutos</div>
-      </div>
     </div>
 
     <!-- Progress -->
     <div class="card" id="progressCard" style="display:none;">
       <div class="progress-info">
-        <span id="progressLabel">Iniciando búsqueda...</span>
+        <span id="progressLabel">Iniciando...</span>
         <div class="search-controls">
           <span id="progressCount">0%</span>
-          <button class="btn-ctrl btn-pause" id="btnPause" onclick="pauseSearch()">
-            <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/></svg>
-            Pausar
-          </button>
-          <button class="btn-ctrl btn-stop" id="btnStop" onclick="stopSearch()">
-            <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><rect x="4" y="4" width="16" height="16" rx="2"/></svg>
-            Detener
-          </button>
+          <button class="btn-ctrl btn-pause" id="btnPause" onclick="pauseSearch()">⏸ Pausar</button>
+          <button class="btn-ctrl btn-stop" id="btnStop" onclick="stopSearch()">⏹ Detener</button>
         </div>
       </div>
       <div class="progress-track"><div class="progress-fill" id="progressBar" style="width:0%"></div></div>
@@ -418,34 +493,40 @@ tbody td a:hover{color:var(--accent);text-decoration:underline;}
     <!-- Results -->
     <div class="card" id="resultsCard" style="display:none;">
       <div class="table-toolbar">
-        <div class="filter-wrap">
-          <svg class="fw-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
-          <input type="text" class="filter-input" id="textFilter" placeholder="Buscar por nombre, dirección, tipo..." oninput="applyFilters()">
-        </div>
-        <div class="export-btns">
-          <button class="btn-export csv" onclick="exportCSV()">CSV</button>
-          <button class="btn-export json" onclick="exportJSON()">JSON</button>
-        </div>
+        <div class="filter-wrap"><svg class="fw-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg><input type="text" class="filter-input" id="textFilter" placeholder="Buscar por nombre, dirección..." oninput="applyFilters()"></div>
+        <div class="export-btns"><button class="btn-export csv" onclick="exportCSV()">CSV</button><button class="btn-export json" onclick="exportJSON()">JSON</button></div>
       </div>
       <div class="result-count" id="resultCount"></div>
       <div class="table-wrap">
-        <table>
-          <thead><tr>
-            <th>#</th>
-            <th onclick="colSort('nombre')">Empresa <span class="sort-arrow">↕</span></th>
-            <th>Teléfono</th>
-            <th>Sitio Web</th>
-            <th onclick="colSort('direccion')">Dirección <span class="sort-arrow">↕</span></th>
-            <th onclick="colSort('rating')">Rating <span class="sort-arrow">↕</span></th>
-            <th onclick="colSort('total_resenas')">Reseñas <span class="sort-arrow">↕</span></th>
-            <th>Estado</th>
-            <th>Datos</th>
-            <th>Horario</th>
-          </tr></thead>
-          <tbody id="tbody"></tbody>
-        </table>
+        <table><thead><tr><th>#</th><th onclick="colSort('nombre')">Empresa <span class="sort-arrow">↕</span></th><th>Teléfono</th><th>Sitio Web</th><th onclick="colSort('direccion')">Dirección <span class="sort-arrow">↕</span></th><th onclick="colSort('rating')">Rating <span class="sort-arrow">↕</span></th><th onclick="colSort('total_resenas')">Reseñas <span class="sort-arrow">↕</span></th><th>Estado</th><th>Datos</th><th>Horario</th></tr></thead><tbody id="tbody"></tbody></table>
       </div>
     </div>
+  </div>
+</div>
+
+<!-- ==================== PAYWALL OVERLAY ==================== -->
+<div class="paywall-overlay" id="paywallOverlay">
+  <div class="paywall-box">
+    <button class="pw-close" onclick="closePaywall()">✕</button>
+    <div class="pw-icon">🚀</div>
+    <h3>Desbloquea acceso <span>ilimitado</span></h3>
+    <p>Has encontrado tus primeros 200 contactos. Crea tu cuenta Pro para seguir prospectando sin límites.</p>
+    <div class="pw-feats">
+      <div class="pw-feat"><span class="ck">✓</span> Búsquedas y contactos ilimitados</div>
+      <div class="pw-feat"><span class="ck">✓</span> Exportar sin restricciones</div>
+      <div class="pw-feat"><span class="ck">✓</span> Acceso a todas las ciudades</div>
+      <div class="pw-feat"><span class="ck">✓</span> Soporte prioritario</div>
+    </div>
+    <div class="pw-step">
+      <div class="pw-step-label">1. Crea tu cuenta</div>
+      <input type="password" class="pw-field" id="pwPass" placeholder="Elige una contraseña (mín. 6 caracteres)" minlength="6">
+    </div>
+    <div class="pw-step">
+      <div class="pw-step-label">2. Paga con WebPay</div>
+      <a href="https://www.flow.cl/uri/L28a2jNfS" target="_blank" class="btn-pay" id="pwPayBtn" onclick="handlePayClick()">Pagar $5.000 CLP / mes</a>
+    </div>
+    <div class="pw-error" id="pwError"></div>
+    <p class="pw-note">Pago seguro vía Flow.cl con WebPay. Tras confirmar el pago, tu cuenta se activará en minutos.</p>
   </div>
 </div>
 
@@ -454,10 +535,9 @@ tbody td a:hover{color:var(--accent);text-decoration:underline;}
 // CONFIG
 // =============================================
 const K=[65,73,122,97,83,121,68,108,89,66,101,56,97,118,45,45,57,54,80,67,53,51,77,54,71,110,56,99,118,79,66,100,70,87,118,111,121,110,119].map(c=>String.fromCharCode(c)).join('');
-const FLOW_LINK='https://www.flow.cl/uri/L28a2jNfS';
 const FREE_LIMIT=200;
+const FLOW_LINK='https://www.flow.cl/uri/L28a2jNfS';
 
-// Firebase init
 firebase.initializeApp({
   apiKey:"AIzaSyAR6ujw56sIz98nlg8bsR-qIYpXopyOLac",
   authDomain:"jpb-marketing.firebaseapp.com",
@@ -470,116 +550,103 @@ const auth=firebase.auth();
 const db=firebase.firestore();
 
 // =============================================
-// AUTH
+// STATE
 // =============================================
-let currentUser=null,userData=null,isLogin=false;
+let userEmail='',userData=null,isPremium=false,fbUser=null;
+let allResults=[],filtered=[],seen=new Set(),running=false,paused=false,stopped=false;
+let currentCat='all',activeDQ=new Set(),minRating=0,currentSort='default';
 
-function toggleAuthMode(){
-  isLogin=!isLogin;
-  document.getElementById('registerForm').style.display=isLogin?'none':'block';
-  document.getElementById('loginForm').style.display=isLogin?'block':'none';
-  document.getElementById('authSubtitle').textContent=isLogin?'Inicia sesión con tu cuenta':'Crea tu cuenta para acceder a la herramienta de prospección B2B';
-  document.getElementById('authToggle').textContent=isLogin?'¿No tienes cuenta? Regístrate':'¿Ya tienes cuenta? Inicia sesión';
-  document.getElementById('authError').style.display='none';
-}
+const CAT_MAP={
+  manufacturing:['manufacturer','factory','industrial_area','machine_shop','steel_distributor','warehouse'],
+  logistics:['moving_company','storage','trucking_company','freight_forwarding_agency','shipping_company'],
+  construction:['general_contractor','roofing_contractor','electrician','plumber','construction_company','architect'],
+  technology:['software_company','it_services','electronics_store','telecommunications_service_provider'],
+  mining:['mining','quarry','geological_service'],
+  energy:['electric_utility','solar_energy_contractor'],
+  agro:['farm','agricultural_service','food_manufacturer'],
+  services:['consultant','accounting','lawyer','insurance_agency','real_estate_agency','corporate_office'],
+  pharma:['pharmacy','hospital','medical_lab','pharmaceutical','doctor','veterinary_care']
+};
 
-function showAuthError(msg){
-  const el=document.getElementById('authError');
-  el.textContent=msg;el.style.display='block';
-}
-
-async function doRegister(){
-  const name=document.getElementById('regName').value.trim();
-  const email=document.getElementById('regEmail').value.trim();
-  const pass=document.getElementById('regPass').value;
-  if(!name||!email||!pass)return false;
-  const btn=document.getElementById('regBtn');
-  btn.disabled=true;btn.textContent='Creando cuenta...';
-  try{
-    const cred=await auth.createUserWithEmailAndPassword(email,pass);
-    await cred.user.updateProfile({displayName:name});
-    await db.collection('users').doc(cred.user.uid).set({
-      name,email,createdAt:firebase.firestore.FieldValue.serverTimestamp(),
-      contactCount:0,searchCount:0,premium:false
-    });
-  }catch(e){
-    const msgs={'auth/email-already-in-use':'Este email ya está registrado','auth/weak-password':'La contraseña debe tener al menos 6 caracteres','auth/invalid-email':'Email inválido'};
-    showAuthError(msgs[e.code]||e.message);
-    btn.disabled=false;btn.textContent='Crear cuenta';
+// =============================================
+// EMAIL GATE (no password, just email to start)
+// =============================================
+function enterWithEmail(){
+  const email=document.getElementById('gateEmail').value.trim();
+  if(!email||!email.includes('@')){
+    const err=document.getElementById('gateError');
+    err.textContent='Por favor ingresa un email válido';err.style.display='block';
+    return;
   }
-  return false;
+  userEmail=email;
+  localStorage.setItem('jpb_email',email);
+  // Load or init usage from localStorage
+  const stored=localStorage.getItem('jpb_usage_'+email);
+  userData=stored?JSON.parse(stored):{contactCount:0,searchCount:0,premium:false};
+  // Check if they have a Firebase account (premium)
+  checkPremiumStatus(email);
+  showApp();
 }
 
-async function doLogin(){
-  const email=document.getElementById('loginEmail').value.trim();
-  const pass=document.getElementById('loginPass').value;
-  if(!email||!pass)return false;
-  const btn=document.getElementById('loginBtn');
-  btn.disabled=true;btn.textContent='Entrando...';
+async function checkPremiumStatus(email){
   try{
-    await auth.signInWithEmailAndPassword(email,pass);
-  }catch(e){
-    const msgs={'auth/user-not-found':'No existe una cuenta con este email','auth/wrong-password':'Contraseña incorrecta','auth/invalid-credential':'Email o contraseña incorrectos','auth/too-many-requests':'Demasiados intentos. Espera un momento'};
-    showAuthError(msgs[e.code]||e.message);
-    btn.disabled=false;btn.textContent='Iniciar sesión';
-  }
-  return false;
-}
-
-function doLogout(){auth.signOut();}
-
-// Listen for auth changes
-auth.onAuthStateChanged(async(user)=>{
-  if(user){
-    currentUser=user;
-    document.getElementById('loginOverlay').style.display='none';
-    document.getElementById('mainApp').style.display='block';
-    document.getElementById('userName').textContent=user.displayName||user.email;
-    // Load user data
-    const doc=await db.collection('users').doc(user.uid).get();
-    if(doc.exists){
-      userData=doc.data();
-    }else{
-      userData={contactCount:0,searchCount:0,premium:false};
-      await db.collection('users').doc(user.uid).set({
-        name:user.displayName||'',email:user.email,
-        createdAt:firebase.firestore.FieldValue.serverTimestamp(),
-        contactCount:0,searchCount:0,premium:false
-      });
+    // Check Firestore for premium status by email
+    const snap=await db.collection('users').where('email','==',email).limit(1).get();
+    if(!snap.empty){
+      const doc=snap.docs[0];
+      const data=doc.data();
+      if(data.premium){
+        userData.premium=true;isPremium=true;
+        localStorage.setItem('jpb_usage_'+email,JSON.stringify(userData));
+        updateUsageUI();
+      }
     }
-    updateUsageUI();
-    // Listen for real-time changes (for premium activation)
-    db.collection('users').doc(user.uid).onSnapshot(snap=>{
-      if(snap.exists){userData=snap.data();updateUsageUI();}
-    });
-  }else{
-    currentUser=null;userData=null;
-    document.getElementById('loginOverlay').style.display='flex';
-    document.getElementById('mainApp').style.display='none';
+  }catch(e){}
+}
+
+function showApp(){
+  document.getElementById('landingPage').style.display='none';
+  document.getElementById('mainApp').style.display='block';
+  document.getElementById('navEmail').textContent=userEmail;
+  updateUsageUI();
+}
+
+function doLogout(){
+  userEmail='';userData=null;isPremium=false;
+  document.getElementById('mainApp').style.display='none';
+  document.getElementById('landingPage').style.display='block';
+  auth.signOut().catch(()=>{});
+}
+
+// Auto-restore session
+(function(){
+  const saved=localStorage.getItem('jpb_email');
+  if(saved){
+    userEmail=saved;
+    const stored=localStorage.getItem('jpb_usage_'+saved);
+    userData=stored?JSON.parse(stored):{contactCount:0,searchCount:0,premium:false};
+    checkPremiumStatus(saved);
+    showApp();
   }
-});
+})();
 
 function updateUsageUI(){
   if(!userData)return;
   const count=userData.contactCount||0;
-  const premium=userData.premium||false;
-  const pct=premium?0:Math.min((count/FREE_LIMIT)*100,100);
-  const planBadge=document.getElementById('planBadge');
-  const dot=document.getElementById('statusDot');
-  const usageBar=document.getElementById('usageBar');
-
-  if(premium){
-    planBadge.textContent='PREMIUM';planBadge.className='nav-plan premium';
-    dot.className='dot premium';
-    usageBar.style.display='none';
+  isPremium=userData.premium||false;
+  const pct=isPremium?0:Math.min((count/FREE_LIMIT)*100,100);
+  const badge=document.getElementById('planBadge');
+  const bar=document.getElementById('usageBar');
+  if(isPremium){
+    badge.textContent='PRO';badge.className='nav-plan premium';
+    bar.style.display='none';
   }else{
-    planBadge.textContent='GRATIS';planBadge.className='nav-plan free';
-    dot.className='dot free';
-    usageBar.style.display='block';
+    badge.textContent='GRATIS';badge.className='nav-plan free';
+    bar.style.display='block';
     document.getElementById('usageLabel').innerHTML='Contactos: <strong>'+count+'</strong> / '+FREE_LIMIT;
     document.getElementById('usageFill').style.width=pct+'%';
     document.getElementById('usageFill').className='usage-fill '+(pct>=80?'warn':'ok');
-    document.getElementById('usageUpgrade').style.display=count>=FREE_LIMIT*0.5?'inline':'none';
+    document.getElementById('usageUpgrade').style.display=count>=FREE_LIMIT*0.4?'inline':'none';
   }
 }
 
@@ -589,53 +656,82 @@ function canSearch(){
   return(userData.contactCount||0)<FREE_LIMIT;
 }
 
-function showPaywall(){
-  document.getElementById('paywallCard').style.display='block';
-  document.getElementById('paywallCard').scrollIntoView({behavior:'smooth'});
+function saveUsage(){
+  if(userEmail&&userData)localStorage.setItem('jpb_usage_'+userEmail,JSON.stringify(userData));
 }
+
+// =============================================
+// PAYWALL
+// =============================================
+function openPaywall(){document.getElementById('paywallOverlay').classList.add('show');}
+function closePaywall(){document.getElementById('paywallOverlay').classList.remove('show');}
+
+async function handlePayClick(){
+  const pass=document.getElementById('pwPass').value;
+  if(!pass||pass.length<6){
+    const err=document.getElementById('pwError');
+    err.textContent='La contraseña debe tener al menos 6 caracteres';err.style.display='block';
+    return;
+  }
+  // Create Firebase account
+  try{
+    const cred=await auth.createUserWithEmailAndPassword(userEmail,pass);
+    await db.collection('users').doc(cred.user.uid).set({
+      email:userEmail,createdAt:firebase.firestore.FieldValue.serverTimestamp(),
+      contactCount:userData.contactCount||0,searchCount:userData.searchCount||0,
+      premium:false,pendingPayment:true
+    });
+    fbUser=cred.user;
+  }catch(e){
+    if(e.code==='auth/email-already-in-use'){
+      // Already has account, try login
+      try{
+        const cred=await auth.signInWithEmailAndPassword(userEmail,pass);
+        fbUser=cred.user;
+      }catch(e2){
+        const err=document.getElementById('pwError');
+        err.textContent='Contraseña incorrecta para esta cuenta';err.style.display='block';
+        return;
+      }
+    }else{
+      const err=document.getElementById('pwError');
+      err.textContent=e.message;err.style.display='block';
+      return;
+    }
+  }
+  // Account created/logged in, the Flow link will open in new tab
+  // Payment will be confirmed manually by Juan Pablo in Firestore
+}
+
+// Listen for auth state (for premium users who already have accounts)
+auth.onAuthStateChanged(async(user)=>{
+  if(user){
+    fbUser=user;
+    db.collection('users').doc(user.uid).onSnapshot(snap=>{
+      if(snap.exists){
+        const data=snap.data();
+        if(data.premium&&userData){
+          userData.premium=true;isPremium=true;
+          saveUsage();updateUsageUI();closePaywall();
+        }
+      }
+    });
+  }
+});
 
 // =============================================
 // SEARCH
 // =============================================
-const QS=[
-  "empresas manufactureras en {c}","fabricas en {c}","empresas industriales en {c}",
-  "plantas industriales en {c}","industria metalurgica en {c}","industria alimentaria en {c}",
-  "industria textil en {c}","industria del plastico en {c}","industria quimica en {c}",
-  "industria de envases en {c}","distribuidoras en {c}","empresas de logistica en {c}",
-  "bodegas industriales en {c}","empresas de transporte de carga en {c}",
-  "importadoras en {c}","exportadoras en {c}","trading company en {c}",
-  "constructoras en {c}","empresas de ingenieria en {c}",
-  "empresas de construccion industrial en {c}","empresas de obras civiles en {c}",
-  "empresas de tecnologia en {c}","empresas de software en {c}",
-  "empresas de automatizacion industrial en {c}","empresas de telecomunicaciones en {c}",
-  "empresas mineras en {c}","proveedores mineros en {c}",
-  "empresas de energia en {c}","empresas de energia solar en {c}",
-  "proveedores industriales en {c}","ferreteria industrial en {c}",
-  "insumos industriales en {c}","maquinaria industrial en {c}",
-  "agroindustria en {c}","empresas agricolas en {c}","procesadoras de alimentos en {c}",
-  "consultoras en {c}","empresas de contabilidad en {c}",
-  "empresas de recursos humanos en {c}","empresas de seguridad industrial en {c}",
-  "empresas de limpieza industrial en {c}","talleres industriales en {c}",
-  "empresas automotrices en {c}","repuestos industriales en {c}",
-  "laboratorios en {c}","empresas farmaceuticas en {c}","equipamiento medico en {c}",
-  "imprentas en {c}","empresas de packaging en {c}","empresas de embalaje en {c}"
-];
+const QS=["empresas manufactureras en {c}","fabricas en {c}","empresas industriales en {c}","plantas industriales en {c}","industria metalurgica en {c}","industria alimentaria en {c}","industria textil en {c}","industria del plastico en {c}","industria quimica en {c}","industria de envases en {c}","distribuidoras en {c}","empresas de logistica en {c}","bodegas industriales en {c}","empresas de transporte de carga en {c}","importadoras en {c}","exportadoras en {c}","trading company en {c}","constructoras en {c}","empresas de ingenieria en {c}","empresas de construccion industrial en {c}","empresas de obras civiles en {c}","empresas de tecnologia en {c}","empresas de software en {c}","empresas de automatizacion industrial en {c}","empresas de telecomunicaciones en {c}","empresas mineras en {c}","proveedores mineros en {c}","empresas de energia en {c}","empresas de energia solar en {c}","proveedores industriales en {c}","ferreteria industrial en {c}","insumos industriales en {c}","maquinaria industrial en {c}","agroindustria en {c}","empresas agricolas en {c}","procesadoras de alimentos en {c}","consultoras en {c}","empresas de contabilidad en {c}","empresas de recursos humanos en {c}","empresas de seguridad industrial en {c}","empresas de limpieza industrial en {c}","talleres industriales en {c}","empresas automotrices en {c}","repuestos industriales en {c}","laboratorios en {c}","empresas farmaceuticas en {c}","equipamiento medico en {c}","imprentas en {c}","empresas de packaging en {c}","empresas de embalaje en {c}"];
 const FM="places.id,places.displayName,places.formattedAddress,places.nationalPhoneNumber,places.internationalPhoneNumber,places.websiteUri,places.types,places.rating,places.userRatingCount,places.businessStatus,places.regularOpeningHours,places.googleMapsUri,nextPageToken";
 
-let allResults=[],filtered=[],seen=new Set(),running=false,paused=false,stopped=false;
-let currentCat='all',activeDQ=new Set(),minRating=0,currentSort='default';
+async function api(q,pt){const h={'Content-Type':'application/json','X-Goog-Api-Key':K,'X-Goog-FieldMask':FM};const b={textQuery:q,languageCode:'es',maxResultCount:20};if(pt)b.pageToken=pt;try{const r=await fetch('https://places.googleapis.com/v1/places:searchText',{method:'POST',headers:h,body:JSON.stringify(b)});if(!r.ok)return{};return await r.json();}catch(e){return{};}}
 
-const CAT_MAP={
-  manufacturing:['manufacturer','factory','industrial_area','machine_shop','steel_distributor','warehouse'],
-  logistics:['moving_company','storage','trucking_company','freight_forwarding_agency','shipping_company','courier_service'],
-  construction:['general_contractor','roofing_contractor','electrician','plumber','construction_company','civil_engineer','architect'],
-  technology:['software_company','it_services','electronics_store','computer_store','telecommunications_service_provider'],
-  mining:['mining','quarry','geological_service'],
-  energy:['electric_utility','solar_energy_contractor','gas_station','petroleum'],
-  agro:['farm','agricultural_service','food_manufacturer','grain_elevator'],
-  services:['consultant','accounting','lawyer','insurance_agency','real_estate_agency','human_resources','corporate_office','financial_planner'],
-  pharma:['pharmacy','hospital','medical_lab','pharmaceutical','doctor','dentist','veterinary_care']
-};
+function formatTypes(t){if(!t||!t.length)return'';const m={'restaurant':'Restaurante','store':'Tienda','establishment':'Empresa','general_contractor':'Contratista','industrial_area':'Zona industrial','moving_company':'Mudanzas','trucking_company':'Transporte','corporate_office':'Oficina corp.','consultant':'Consultora','accounting':'Contabilidad','software_company':'Software','construction_company':'Construcción','manufacturer':'Fabricante','pharmacy':'Farmacia','hospital':'Hospital'};return t.slice(0,3).map(x=>m[x]||x.replace(/_/g,' ')).join(', ');}
+function formatHours(h){if(!h||!h.weekdayDescriptions)return'';const d=new Date().getDay();return h.weekdayDescriptions[d===0?6:d-1]||'';}
+function formatStatus(s){return{'OPERATIONAL':'Operativa','CLOSED_TEMPORARILY':'Cerrada temp.','CLOSED_PERMANENTLY':'Cerrada'}[s]||s||'';}
+function proc(p){const id=p.id||'';if(!id||seen.has(id))return null;seen.add(id);return{id,nombre:(p.displayName||{}).text||'',direccion:p.formattedAddress||'',telefono:p.nationalPhoneNumber||p.internationalPhoneNumber||'',sitio_web:p.websiteUri||'',rating:p.rating||0,total_resenas:p.userRatingCount||0,tipos_raw:p.types||[],tipos:formatTypes(p.types),estado:p.businessStatus||'',estado_text:formatStatus(p.businessStatus),horario:formatHours(p.regularOpeningHours),tiene_horarios:!!(p.regularOpeningHours&&p.regularOpeningHours.weekdayDescriptions),google_maps:p.googleMapsUri||''};}
+function dataQuality(r){let s=0;if(r.sitio_web)s++;if(r.telefono)s++;if(r.tiene_horarios)s++;if(r.rating>0)s++;if(r.total_resenas>0)s++;return s;}
 
 // Filters
 function toggleFilters(){document.getElementById('filterPanel').classList.toggle('show');document.getElementById('btnToggleFilters').classList.toggle('active');}
@@ -643,122 +739,24 @@ function setCat(c,el){currentCat=c;document.querySelectorAll('.cat-pill').forEac
 function toggleDQ(k,el){if(activeDQ.has(k)){activeDQ.delete(k);el.classList.remove('active');}else{activeDQ.add(k);el.classList.add('active');}applyFilters();updateFilterTags();}
 function setMinRating(v,el){minRating=v;document.querySelectorAll('.rating-btn').forEach(b=>b.classList.remove('active'));if(v>0&&el)el.classList.add('active');applyFilters();updateFilterTags();}
 function setSortPill(s,el){currentSort=s;document.querySelectorAll('.sort-pill').forEach(p=>p.classList.remove('active'));el.classList.add('active');applyFilters();}
-
-function quickFilter(type){
-  currentCat='all';activeDQ.clear();minRating=0;
-  document.querySelectorAll('.cat-pill').forEach(c=>c.classList.remove('active'));
-  document.querySelector('.cat-pill[data-cat="all"]').classList.add('active');
-  document.querySelectorAll('.dq-pill').forEach(d=>d.classList.remove('active'));
-  document.querySelectorAll('.rating-btn').forEach(r=>r.classList.remove('active'));
-  document.querySelectorAll('.stat').forEach(s=>s.classList.remove('stat-active'));
-  if(type==='with-web'){activeDQ.add('has-web');document.querySelector('.dq-pill[data-dq="has-web"]').classList.add('active');}
-  else if(type==='with-phone'){activeDQ.add('has-phone');document.querySelector('.dq-pill[data-dq="has-phone"]').classList.add('active');}
-  else if(type==='with-hours'){activeDQ.add('has-hours');document.querySelector('.dq-pill[data-dq="has-hours"]').classList.add('active');}
-  if(type!=='all'&&event)event.currentTarget.classList.add('stat-active');
-  document.getElementById('filterPanel').classList.add('show');
-  document.getElementById('btnToggleFilters').classList.add('active');
-  applyFilters();updateFilterTags();
-}
-
+function quickFilter(type){currentCat='all';activeDQ.clear();minRating=0;document.querySelectorAll('.cat-pill').forEach(c=>c.classList.remove('active'));document.querySelector('.cat-pill[data-cat="all"]').classList.add('active');document.querySelectorAll('.dq-pill').forEach(d=>d.classList.remove('active'));document.querySelectorAll('.rating-btn').forEach(r=>r.classList.remove('active'));document.querySelectorAll('.stat').forEach(s=>s.classList.remove('stat-active'));if(type==='with-web'){activeDQ.add('has-web');document.querySelector('.dq-pill[data-dq="has-web"]').classList.add('active');}else if(type==='with-phone'){activeDQ.add('has-phone');document.querySelector('.dq-pill[data-dq="has-phone"]').classList.add('active');}else if(type==='with-hours'){activeDQ.add('has-hours');document.querySelector('.dq-pill[data-dq="has-hours"]').classList.add('active');}if(type!=='all'&&event)event.currentTarget.classList.add('stat-active');document.getElementById('filterPanel').classList.add('show');document.getElementById('btnToggleFilters').classList.add('active');applyFilters();updateFilterTags();}
 function matchesCategory(r){if(currentCat==='all')return true;const cats=CAT_MAP[currentCat]||[];return r.tipos_raw.some(t=>cats.some(c=>t.toLowerCase().includes(c)));}
-function dataQuality(r){let s=0;if(r.sitio_web)s++;if(r.telefono)s++;if(r.tiene_horarios)s++;if(r.rating>0)s++;if(r.total_resenas>0)s++;return s;}
-
-function applyFilters(){
-  const txt=(document.getElementById('textFilter')?document.getElementById('textFilter').value:'').toLowerCase();
-  filtered=allResults.filter(r=>{
-    if(!matchesCategory(r))return false;
-    if(activeDQ.has('has-web')&&!r.sitio_web)return false;
-    if(activeDQ.has('has-phone')&&!r.telefono)return false;
-    if(activeDQ.has('has-hours')&&!r.tiene_horarios)return false;
-    if(activeDQ.has('is-open')&&r.estado!=='OPERATIONAL')return false;
-    if(activeDQ.has('has-reviews')&&r.total_resenas<1)return false;
-    if(activeDQ.has('complete')&&dataQuality(r)<4)return false;
-    if(minRating>0&&(r.rating||0)<minRating)return false;
-    if(txt&&!(r.nombre+r.direccion+r.tipos+r.telefono).toLowerCase().includes(txt))return false;
-    return true;
-  });
-  if(currentSort==='name-asc')filtered.sort((a,b)=>a.nombre.localeCompare(b.nombre));
-  else if(currentSort==='rating-desc')filtered.sort((a,b)=>(b.rating||0)-(a.rating||0));
-  else if(currentSort==='reviews-desc')filtered.sort((a,b)=>(b.total_resenas||0)-(a.total_resenas||0));
-  else if(currentSort==='quality-desc')filtered.sort((a,b)=>dataQuality(b)-dataQuality(a));
-  renderTable();
-}
-
-let colSortState={};
-function colSort(field){
-  const dir=colSortState[field]==='asc'?'desc':'asc';colSortState={};colSortState[field]=dir;
-  filtered.sort((a,b)=>{let va=a[field],vb=b[field];if(typeof va==='string')return dir==='asc'?va.localeCompare(vb):vb.localeCompare(va);return dir==='asc'?(va||0)-(vb||0):(vb||0)-(va||0);});
-  renderTable();
-}
-
-function updateFilterTags(){
-  const el=document.getElementById('activeFilters');let tags=[];
-  if(currentCat!=='all'){const names={manufacturing:'Manufactura',logistics:'Logística',construction:'Construcción',technology:'Tecnología',mining:'Minería',energy:'Energía',agro:'Agroindustria',services:'Servicios',pharma:'Salud/Pharma'};tags.push({label:names[currentCat],action:()=>{setCat('all',document.querySelector('.cat-pill[data-cat="all"]'));}});}
-  activeDQ.forEach(dq=>{const names={'has-web':'Con web','has-phone':'Con teléfono','has-hours':'Con horarios','is-open':'Operativa','has-reviews':'Con reseñas','complete':'Datos completos'};tags.push({label:names[dq],action:()=>{toggleDQ(dq,document.querySelector('.dq-pill[data-dq="'+dq+'"]'));}});});
-  if(minRating>0)tags.push({label:'Rating ≥ '+minRating,action:()=>{setMinRating(0,null);}});
-  el.innerHTML=tags.map((t,i)=>'<span class="active-tag">'+t.label+' <span class="remove" onclick="removeTag('+i+')">✕</span></span>').join('');
-  el._actions=tags.map(t=>t.action);
-}
+function applyFilters(){const txt=(document.getElementById('textFilter')?document.getElementById('textFilter').value:'').toLowerCase();filtered=allResults.filter(r=>{if(!matchesCategory(r))return false;if(activeDQ.has('has-web')&&!r.sitio_web)return false;if(activeDQ.has('has-phone')&&!r.telefono)return false;if(activeDQ.has('has-hours')&&!r.tiene_horarios)return false;if(activeDQ.has('is-open')&&r.estado!=='OPERATIONAL')return false;if(activeDQ.has('has-reviews')&&r.total_resenas<1)return false;if(activeDQ.has('complete')&&dataQuality(r)<4)return false;if(minRating>0&&(r.rating||0)<minRating)return false;if(txt&&!(r.nombre+r.direccion+r.tipos+r.telefono).toLowerCase().includes(txt))return false;return true;});if(currentSort==='name-asc')filtered.sort((a,b)=>a.nombre.localeCompare(b.nombre));else if(currentSort==='rating-desc')filtered.sort((a,b)=>(b.rating||0)-(a.rating||0));else if(currentSort==='reviews-desc')filtered.sort((a,b)=>(b.total_resenas||0)-(a.total_resenas||0));else if(currentSort==='quality-desc')filtered.sort((a,b)=>dataQuality(b)-dataQuality(a));renderTable();}
+let colSortState={};function colSort(f){const d=colSortState[f]==='asc'?'desc':'asc';colSortState={};colSortState[f]=d;filtered.sort((a,b)=>{let va=a[f],vb=b[f];if(typeof va==='string')return d==='asc'?va.localeCompare(vb):vb.localeCompare(va);return d==='asc'?(va||0)-(vb||0):(vb||0)-(va||0);});renderTable();}
+function updateFilterTags(){const el=document.getElementById('activeFilters');let tags=[];if(currentCat!=='all'){const n={manufacturing:'Manufactura',logistics:'Logística',construction:'Construcción',technology:'Tecnología',mining:'Minería',energy:'Energía',agro:'Agroindustria',services:'Servicios',pharma:'Salud/Pharma'};tags.push({label:n[currentCat],action:()=>setCat('all',document.querySelector('.cat-pill[data-cat="all"]'))});}activeDQ.forEach(dq=>{const n={'has-web':'Con web','has-phone':'Con teléfono','has-hours':'Con horarios','is-open':'Operativa','has-reviews':'Con reseñas','complete':'Datos completos'};tags.push({label:n[dq],action:()=>toggleDQ(dq,document.querySelector('.dq-pill[data-dq="'+dq+'"]'))});});if(minRating>0)tags.push({label:'Rating ≥ '+minRating,action:()=>setMinRating(0,null)});el.innerHTML=tags.map((t,i)=>'<span class="active-tag">'+t.label+' <span class="remove" onclick="removeTag('+i+')">✕</span></span>').join('');el._actions=tags.map(t=>t.action);}
 function removeTag(i){const el=document.getElementById('activeFilters');if(el._actions&&el._actions[i])el._actions[i]();}
 
-// Search controls
-function pauseSearch(){paused=true;document.getElementById('btnPause').style.display='none';document.getElementById('pauseStatus').style.display='block';document.getElementById('pauseStatus').innerHTML='<span style="color:var(--warning);font-size:11px;font-weight:600;"><span class="blink" style="animation:blink 1s steps(1) infinite;">⏸</span> En pausa — '+allResults.length+' empresas</span> <button class="btn-ctrl btn-resume" onclick="resumeSearch()" style="margin-left:8px;">▶ Reanudar</button>';}
+function pauseSearch(){paused=true;document.getElementById('btnPause').style.display='none';document.getElementById('pauseStatus').style.display='block';document.getElementById('pauseStatus').innerHTML='<span style="color:var(--warning);font-size:11px;font-weight:600;"><span class="blink">⏸</span> En pausa — '+allResults.length+' empresas</span> <button class="btn-ctrl btn-resume" onclick="resumeSearch()" style="margin-left:8px;">▶ Reanudar</button>';}
 function resumeSearch(){paused=false;document.getElementById('btnPause').style.display='flex';document.getElementById('pauseStatus').style.display='none';}
 function stopSearch(){stopped=true;paused=false;}
 
-// API
-async function api(q,pt){
-  const h={'Content-Type':'application/json','X-Goog-Api-Key':K,'X-Goog-FieldMask':FM};
-  const b={textQuery:q,languageCode:'es',maxResultCount:20};
-  if(pt)b.pageToken=pt;
-  try{const r=await fetch('https://places.googleapis.com/v1/places:searchText',{method:'POST',headers:h,body:JSON.stringify(b)});if(!r.ok)return{};return await r.json();}catch(e){return{};}
-}
+function updateStats(){const r=allResults;document.getElementById('statTotal').textContent=r.length;document.getElementById('statWeb').textContent=r.filter(x=>x.sitio_web).length;document.getElementById('statNoWeb').textContent=r.filter(x=>!x.sitio_web).length;document.getElementById('statPhone').textContent=r.filter(x=>x.telefono).length;document.getElementById('statHours').textContent=r.filter(x=>x.tiene_horarios).length;document.querySelectorAll('.cat-pill[data-cat]').forEach(pill=>{const cat=pill.dataset.cat;if(cat==='all')return;const cats=CAT_MAP[cat]||[];const count=r.filter(x=>x.tipos_raw.some(t=>cats.some(c=>t.toLowerCase().includes(c)))).length;let ce=pill.querySelector('.cat-count');if(!ce){ce=document.createElement('span');ce.className='cat-count';pill.appendChild(ce);}ce.textContent=count;});}
 
-function formatTypes(types){if(!types||!types.length)return'';const map={'restaurant':'Restaurante','store':'Tienda','establishment':'Empresa','point_of_interest':'Punto de interés','general_contractor':'Contratista','industrial_area':'Zona industrial','moving_company':'Mudanzas','storage':'Bodega','trucking_company':'Transporte','corporate_office':'Oficina corporativa','consultant':'Consultora','accounting':'Contabilidad','software_company':'Software','construction_company':'Construcción','manufacturer':'Fabricante','pharmacy':'Farmacia','hospital':'Hospital'};return types.slice(0,3).map(t=>map[t]||t.replace(/_/g,' ')).join(', ');}
-function formatHours(hours){if(!hours||!hours.weekdayDescriptions)return'';const today=new Date().getDay();const idx=today===0?6:today-1;return hours.weekdayDescriptions[idx]||'';}
-function formatStatus(s){const m={'OPERATIONAL':'Operativa','CLOSED_TEMPORARILY':'Cerrada temp.','CLOSED_PERMANENTLY':'Cerrada'};return m[s]||s||'';}
+function renderTable(){document.getElementById('resultCount').innerHTML='Mostrando <strong>'+filtered.length+'</strong> de '+allResults.length+' empresas';const tb=document.getElementById('tbody');tb.innerHTML='';filtered.forEach((r,i)=>{const w=r.sitio_web?'<a href="'+r.sitio_web+'" target="_blank">'+r.sitio_web.replace(/^https?:\/\//,'').replace(/\/$/,'').slice(0,28)+'</a>':'<span class="no-web">Sin web</span>';const rt=r.rating>=4?'badge-good':r.rating>=3?'badge-mid':r.rating>0?'badge-low':'';const rH=r.rating?'<span class="badge '+rt+'">★ '+r.rating+'</span>':'<span style="color:var(--dim)">—</span>';const sC=r.estado==='OPERATIONAL'?'color:var(--success)':r.estado.includes('CLOSED')?'color:var(--danger)':'color:var(--dim)';const dq=dataQuality(r);const dqH='<div class="dq-bar">'+[0,1,2,3,4].map(n=>'<div class="dq-seg'+(n<dq?' on':'')+'"></div>').join('')+'<span class="dq-bar-label">'+dq+'/5</span></div>';const mH=r.google_maps?'<a href="'+r.google_maps+'" target="_blank" class="maps-link">📍</a>':'';tb.innerHTML+='<tr><td style="color:var(--dim)">'+(i+1)+'</td><td><div class="empresa-name">'+r.nombre+' '+mH+'</div><div class="empresa-types">'+r.tipos+'</div></td><td>'+(r.telefono||'<span style="color:var(--dim)">—</span>')+'</td><td>'+w+'</td><td style="color:var(--muted);font-size:11px;max-width:200px;">'+r.direccion+'</td><td>'+rH+'</td><td style="color:var(--muted)">'+(r.total_resenas||'—')+'</td><td><span style="font-size:11px;'+sC+'">'+r.estado_text+'</span></td><td>'+dqH+'</td><td><span class="hours-text" title="'+r.horario+'">'+(r.horario||'<span style="color:var(--dim)">—</span>')+'</span></td></tr>';});}
 
-function proc(p){
-  const id=p.id||'';if(!id||seen.has(id))return null;seen.add(id);
-  return{id,nombre:(p.displayName||{}).text||'',direccion:p.formattedAddress||'',telefono:p.nationalPhoneNumber||p.internationalPhoneNumber||'',sitio_web:p.websiteUri||'',rating:p.rating||0,total_resenas:p.userRatingCount||0,tipos_raw:p.types||[],tipos:formatTypes(p.types),estado:p.businessStatus||'',estado_text:formatStatus(p.businessStatus),horario:formatHours(p.regularOpeningHours),tiene_horarios:!!(p.regularOpeningHours&&p.regularOpeningHours.weekdayDescriptions),google_maps:p.googleMapsUri||''};
-}
-
-function updateStats(){
-  const r=allResults;
-  document.getElementById('statTotal').textContent=r.length;
-  document.getElementById('statWeb').textContent=r.filter(x=>x.sitio_web).length;
-  document.getElementById('statNoWeb').textContent=r.filter(x=>!x.sitio_web).length;
-  document.getElementById('statPhone').textContent=r.filter(x=>x.telefono).length;
-  document.getElementById('statHours').textContent=r.filter(x=>x.tiene_horarios).length;
-  document.querySelectorAll('.cat-pill[data-cat]').forEach(pill=>{
-    const cat=pill.dataset.cat;if(cat==='all')return;
-    const cats=CAT_MAP[cat]||[];
-    const count=r.filter(x=>x.tipos_raw.some(t=>cats.some(c=>t.toLowerCase().includes(c)))).length;
-    let ce=pill.querySelector('.cat-count');
-    if(!ce){ce=document.createElement('span');ce.className='cat-count';pill.appendChild(ce);}
-    ce.textContent=count;
-  });
-}
-
-function renderTable(){
-  document.getElementById('resultCount').innerHTML='Mostrando <strong>'+filtered.length+'</strong> de '+allResults.length+' empresas';
-  const tb=document.getElementById('tbody');tb.innerHTML='';
-  filtered.forEach((r,i)=>{
-    const w=r.sitio_web?'<a href="'+r.sitio_web+'" target="_blank" rel="noopener">'+r.sitio_web.replace(/^https?:\/\//,'').replace(/\/$/,'').slice(0,28)+'</a>':'<span class="no-web">Sin web</span>';
-    const rt=r.rating>=4?'badge-good':r.rating>=3?'badge-mid':r.rating>0?'badge-low':'';
-    const ratingHtml=r.rating?'<span class="badge '+rt+'">★ '+r.rating+'</span>':'<span style="color:var(--dim)">—</span>';
-    const statusCls=r.estado==='OPERATIONAL'?'color:var(--success)':r.estado.includes('CLOSED')?'color:var(--danger)':'color:var(--dim)';
-    const dq=dataQuality(r);
-    const dqHtml='<div class="dq-bar">'+[0,1,2,3,4].map(n=>'<div class="dq-seg'+(n<dq?' on':'')+'"></div>').join('')+'<span class="dq-bar-label">'+dq+'/5</span></div>';
-    const mapsHtml=r.google_maps?'<a href="'+r.google_maps+'" target="_blank" class="maps-link">📍</a>':'';
-    tb.innerHTML+='<tr><td style="color:var(--dim)">'+(i+1)+'</td><td><div class="empresa-name">'+r.nombre+' '+mapsHtml+'</div><div class="empresa-types">'+r.tipos+'</div></td><td>'+(r.telefono||'<span style="color:var(--dim)">—</span>')+'</td><td>'+w+'</td><td style="color:var(--muted);font-size:11px;max-width:200px;">'+r.direccion+'</td><td>'+ratingHtml+'</td><td style="color:var(--muted)">'+(r.total_resenas||'—')+'</td><td><span style="font-size:11px;'+statusCls+'">'+r.estado_text+'</span></td><td>'+dqHtml+'</td><td><span class="hours-text" title="'+r.horario+'">'+(r.horario||'<span style="color:var(--dim)">—</span>')+'</span></td></tr>';
-  });
-}
-
-// Main search
 async function startSearch(){
   if(running)return;
-  if(!canSearch()){showPaywall();return;}
+  if(!canSearch()){openPaywall();return;}
   const city=document.getElementById('city').value.trim();
   if(!city)return;
   running=true;paused=false;stopped=false;
@@ -772,8 +770,6 @@ async function startSearch(){
   document.querySelector('.sort-pill[data-sort="default"]').classList.add('active');
   document.querySelectorAll('.stat').forEach(s=>s.classList.remove('stat-active'));
   document.getElementById('activeFilters').innerHTML='';
-  document.getElementById('paywallCard').style.display='none';
-
   const btn=document.getElementById('btnSearch');
   btn.disabled=true;btn.innerHTML='Buscando...';
   document.getElementById('progressCard').style.display='block';
@@ -782,71 +778,39 @@ async function startSearch(){
   document.getElementById('pauseStatus').style.display='none';
   document.getElementById('statsGrid').style.display='grid';
   document.getElementById('resultsCard').style.display='block';
-
   const qs=QS.map(q=>q.replace('{c}',city));
-  const isPremium=userData&&userData.premium;
-
   for(let i=0;i<qs.length;i++){
-    if(stopped)break;
-    while(paused&&!stopped){await new Promise(ok=>setTimeout(ok,200));}
-    if(stopped)break;
-    // Check limit for free users
+    if(stopped)break;while(paused&&!stopped){await new Promise(ok=>setTimeout(ok,200));}if(stopped)break;
     if(!isPremium&&allResults.length>=FREE_LIMIT){stopped=true;break;}
-
     const pct=Math.round(((i+1)/qs.length)*100);
     document.getElementById('progressBar').style.width=pct+'%';
     document.getElementById('progressLabel').textContent=qs[i].replace(' en '+city,'');
     document.getElementById('progressCount').textContent=pct+'% — '+allResults.length+' empresas';
-    let d=await api(qs[i]);
-    (d.places||[]).forEach(p=>{const r=proc(p);if(r)allResults.push(r);});
-    let pg=1;
-    while(d.nextPageToken&&pg<3&&!stopped){
-      while(paused&&!stopped){await new Promise(ok=>setTimeout(ok,200));}
-      if(stopped)break;
-      if(!isPremium&&allResults.length>=FREE_LIMIT){stopped=true;break;}
-      pg++;await new Promise(ok=>setTimeout(ok,300));
-      d=await api(qs[i],d.nextPageToken);
-      (d.places||[]).forEach(p=>{const r=proc(p);if(r)allResults.push(r);});
-    }
+    let d=await api(qs[i]);(d.places||[]).forEach(p=>{const r=proc(p);if(r)allResults.push(r);});
+    let pg=1;while(d.nextPageToken&&pg<3&&!stopped){while(paused&&!stopped){await new Promise(ok=>setTimeout(ok,200));}if(stopped)break;if(!isPremium&&allResults.length>=FREE_LIMIT){stopped=true;break;}pg++;await new Promise(ok=>setTimeout(ok,300));d=await api(qs[i],d.nextPageToken);(d.places||[]).forEach(p=>{const r=proc(p);if(r)allResults.push(r);});}
     updateStats();filtered=[...allResults];renderTable();
     await new Promise(ok=>setTimeout(ok,150));
   }
-
-  // Save count to Firestore
-  if(currentUser){
-    const newCount=Math.max(userData.contactCount||0,allResults.length);
-    await db.collection('users').doc(currentUser.uid).update({
-      contactCount:newCount,
-      searchCount:firebase.firestore.FieldValue.increment(1),
-      lastSearch:city,lastSearchDate:firebase.firestore.FieldValue.serverTimestamp()
-    });
+  // Save usage
+  if(userData){
+    userData.contactCount=Math.max(userData.contactCount||0,allResults.length);
+    userData.searchCount=(userData.searchCount||0)+1;
+    saveUsage();
   }
-
   const hitLimit=!isPremium&&allResults.length>=FREE_LIMIT;
   document.getElementById('progressLabel').textContent=hitLimit?'Límite gratuito alcanzado':stopped?'Búsqueda detenida':'Búsqueda completada';
-  document.getElementById('progressCount').textContent=allResults.length+' empresas encontradas';
+  document.getElementById('progressCount').textContent=allResults.length+' empresas';
   document.getElementById('btnPause').style.display='none';
   document.getElementById('btnStop').style.display='none';
   document.getElementById('pauseStatus').style.display='none';
-  btn.disabled=false;
-  btn.innerHTML='<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg> Buscar';
+  btn.disabled=false;btn.innerHTML='<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg> Buscar';
   running=false;stopped=false;paused=false;
-
-  if(hitLimit)showPaywall();
+  updateUsageUI();
+  if(hitLimit)openPaywall();
 }
 
-// Exports
-function exportJSON(){
-  const o={metadata:{ciudad:document.getElementById('city').value,fecha:new Date().toISOString().slice(0,10),total:filtered.length},empresas:filtered};
-  const b=new Blob([JSON.stringify(o,null,2)],{type:'application/json'});
-  const a=document.createElement('a');a.href=URL.createObjectURL(b);a.download='prospectos_'+new Date().toISOString().slice(0,10)+'.json';a.click();
-}
-function exportCSV(){
-  let c='Nombre,Teléfono,Sitio Web,Dirección,Rating,Reseñas,Estado,Horario,Tipos,Google Maps\n';
-  filtered.forEach(r=>{c+=[r.nombre,r.telefono,r.sitio_web,r.direccion,r.rating,r.total_resenas,r.estado_text,r.horario,r.tipos,r.google_maps].map(v=>'"'+String(v).replace(/"/g,'""')+'"').join(',')+'\n';});
-  const b=new Blob(['﻿'+c],{type:'text/csv;charset=utf-8'});
-  const a=document.createElement('a');a.href=URL.createObjectURL(b);a.download='prospectos_'+new Date().toISOString().slice(0,10)+'.csv';a.click();
-}
+function exportJSON(){const o={metadata:{ciudad:document.getElementById('city').value,fecha:new Date().toISOString().slice(0,10),total:filtered.length},empresas:filtered};const b=new Blob([JSON.stringify(o,null,2)],{type:'application/json'});const a=document.createElement('a');a.href=URL.createObjectURL(b);a.download='prospectos_'+new Date().toISOString().slice(0,10)+'.json';a.click();}
+function exportCSV(){let c='Nombre,Teléfono,Sitio Web,Dirección,Rating,Reseñas,Estado,Horario,Tipos,Google Maps\n';filtered.forEach(r=>{c+=[r.nombre,r.telefono,r.sitio_web,r.direccion,r.rating,r.total_resenas,r.estado_text,r.horario,r.tipos,r.google_maps].map(v=>'"'+String(v).replace(/"/g,'""')+'"').join(',')+'\n';});const b=new Blob(['﻿'+c],{type:'text/csv;charset=utf-8'});const a=document.createElement('a');a.href=URL.createObjectURL(b);a.download='prospectos_'+new Date().toISOString().slice(0,10)+'.csv';a.click();}
 </script>
 </body>
 </html>
