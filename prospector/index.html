@@ -70,25 +70,74 @@ body{font-family:'Inter',system-ui,sans-serif;background:var(--bg);color:var(--t
 .btn-search:hover{opacity:.9;transform:translateY(-1px);box-shadow:0 8px 30px rgba(108,99,255,.3);}
 .btn-search:disabled{opacity:.4;cursor:not-allowed;transform:none;box-shadow:none;}
 
-/* Filters */
-.filters-bar{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px;}
-.chip{padding:7px 16px;border:1px solid var(--border);border-radius:100px;font-size:12px;font-weight:500;color:var(--muted);background:transparent;cursor:pointer;transition:all .2s;font-family:inherit;}
-.chip:hover{border-color:var(--accent);color:var(--text);}
-.chip.active{background:var(--glow);border-color:var(--accent);color:var(--accent);}
-.chip-select{padding:7px 14px;border:1px solid var(--border);border-radius:100px;font-size:12px;color:var(--muted);background:var(--bg2);cursor:pointer;font-family:inherit;appearance:none;-webkit-appearance:none;padding-right:28px;background-image:url("data:image/svg+xml,%3Csvg width='10' height='6' viewBox='0 0 10 6' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%236a6a8a' stroke-width='1.5' stroke-linecap='round'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 10px center;transition:all .2s;}
-.chip-select:focus{outline:none;border-color:var(--accent);}
+/* Filter Panel */
+.filter-panel{margin-top:18px;display:none;border-top:1px solid var(--border);padding-top:18px;}
+.filter-panel.show{display:block;}
+.filter-section{margin-bottom:16px;}
+.filter-section:last-child{margin-bottom:0;}
+.filter-label{font-size:10px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:1.2px;margin-bottom:10px;display:flex;align-items:center;gap:6px;}
+.filter-label svg{opacity:.5;}
+
+/* Toggle filter button */
+.btn-toggle-filters{padding:10px 20px;background:transparent;border:1px solid var(--border);border-radius:var(--radius-sm);color:var(--muted);font-size:13px;font-weight:500;font-family:inherit;cursor:pointer;transition:all .2s;display:flex;align-items:center;gap:8px;white-space:nowrap;}
+.btn-toggle-filters:hover{border-color:var(--accent);color:var(--text);}
+.btn-toggle-filters.active{border-color:var(--accent);color:var(--accent);background:var(--glow);}
+
+/* Category pills */
+.cat-grid{display:flex;gap:8px;flex-wrap:wrap;}
+.cat-pill{padding:7px 14px;border:1px solid var(--border);border-radius:100px;font-size:11px;font-weight:500;color:var(--muted);background:transparent;cursor:pointer;transition:all .2s;font-family:inherit;display:flex;align-items:center;gap:6px;}
+.cat-pill:hover{border-color:var(--accent);color:var(--text);}
+.cat-pill.active{background:var(--glow);border-color:var(--accent);color:var(--accent);}
+.cat-pill .cat-icon{font-size:13px;}
+.cat-pill .cat-count{font-size:9px;background:rgba(255,255,255,.06);padding:2px 6px;border-radius:10px;margin-left:2px;}
+.cat-pill.active .cat-count{background:rgba(108,99,255,.25);}
+
+/* Data quality pills */
+.dq-grid{display:flex;gap:8px;flex-wrap:wrap;}
+.dq-pill{padding:7px 14px;border:1px solid var(--border);border-radius:100px;font-size:11px;font-weight:500;color:var(--muted);background:transparent;cursor:pointer;transition:all .2s;font-family:inherit;display:flex;align-items:center;gap:6px;}
+.dq-pill:hover{border-color:var(--accent);color:var(--text);}
+.dq-pill.active{border-color:var(--success);color:var(--success);background:rgba(16,185,129,.08);}
+.dq-pill .dq-dot{width:6px;height:6px;border-radius:50%;background:var(--dim);}
+.dq-pill.active .dq-dot{background:var(--success);}
+
+/* Rating selector */
+.rating-selector{display:flex;gap:6px;align-items:center;}
+.rating-btn{width:44px;height:36px;border:1px solid var(--border);border-radius:8px;background:transparent;color:var(--muted);font-size:12px;font-weight:600;cursor:pointer;transition:all .2s;font-family:inherit;display:flex;align-items:center;justify-content:center;gap:3px;}
+.rating-btn:hover{border-color:var(--warning);color:var(--warning);}
+.rating-btn.active{border-color:var(--warning);color:var(--warning);background:rgba(245,158,11,.1);}
+.rating-btn .star{font-size:10px;color:var(--warning);}
+
+/* Sort row */
+.sort-row{display:flex;gap:8px;align-items:center;flex-wrap:wrap;}
+.sort-pill{padding:7px 14px;border:1px solid var(--border);border-radius:100px;font-size:11px;font-weight:500;color:var(--muted);background:transparent;cursor:pointer;transition:all .2s;font-family:inherit;}
+.sort-pill:hover{border-color:var(--accent2);color:var(--text);}
+.sort-pill.active{border-color:var(--accent2);color:var(--accent2);background:rgba(0,212,255,.08);}
 
 /* Stats */
 .stats{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;margin-bottom:18px;}
-.stat{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:20px;text-align:center;transition:all .3s;}
+.stat{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:20px;text-align:center;transition:all .3s;cursor:pointer;}
 .stat:hover{border-color:var(--border-hover);transform:translateY(-2px);}
+.stat.stat-active{border-color:var(--accent);box-shadow:0 0 20px var(--glow);}
 .stat .num{font-size:30px;font-weight:900;letter-spacing:-1px;background:var(--gradient);-webkit-background-clip:text;-webkit-text-fill-color:transparent;line-height:1;}
 .stat .label{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.8px;margin-top:6px;font-weight:500;}
 
 /* Progress */
-.progress-info{display:flex;justify-content:space-between;font-size:12px;color:var(--muted);margin-bottom:8px;}
+.progress-info{display:flex;justify-content:space-between;align-items:center;font-size:12px;color:var(--muted);margin-bottom:8px;}
 .progress-track{width:100%;height:4px;background:var(--bg);border-radius:2px;overflow:hidden;}
 .progress-fill{height:100%;background:var(--gradient);border-radius:2px;transition:width .4s ease-out;box-shadow:0 0 12px rgba(108,99,255,.4);}
+
+/* Search controls (pause/stop) */
+.search-controls{display:flex;gap:8px;align-items:center;}
+.btn-ctrl{padding:6px 16px;border-radius:8px;font-size:11px;font-weight:600;cursor:pointer;font-family:inherit;transition:all .2s;display:flex;align-items:center;gap:6px;border:1px solid;}
+.btn-pause{border-color:var(--warning);color:var(--warning);background:rgba(245,158,11,.08);}
+.btn-pause:hover{background:rgba(245,158,11,.15);}
+.btn-resume{border-color:var(--success);color:var(--success);background:rgba(16,185,129,.08);}
+.btn-resume:hover{background:rgba(16,185,129,.15);}
+.btn-stop{border-color:var(--danger);color:var(--danger);background:rgba(244,63,94,.08);}
+.btn-stop:hover{background:rgba(244,63,94,.15);}
+.search-status{font-size:11px;color:var(--warning);font-weight:600;display:flex;align-items:center;gap:5px;}
+.search-status .blink{animation:blink 1s steps(1) infinite;}
+@keyframes blink{0%,100%{opacity:1;}50%{opacity:0;}}
 
 /* Table */
 .table-toolbar{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:14px;flex-wrap:wrap;}
@@ -104,12 +153,15 @@ body{font-family:'Inter',system-ui,sans-serif;background:var(--bg);color:var(--t
 .btn-export.csv:hover{background:rgba(16,185,129,.08);}
 .btn-export.json{border-color:rgba(245,158,11,.3);color:var(--warning);}
 .btn-export.json:hover{background:rgba(245,158,11,.08);}
+.btn-export.excel{border-color:rgba(108,99,255,.3);color:var(--accent);}
+.btn-export.excel:hover{background:rgba(108,99,255,.08);}
 
 .table-wrap{overflow-x:auto;max-height:620px;overflow-y:auto;border-radius:var(--radius-sm);border:1px solid var(--border);}
 table{width:100%;border-collapse:collapse;font-size:12px;}
-thead th{background:var(--bg2);color:var(--accent2);font-weight:600;text-align:left;padding:12px 14px;font-size:10px;text-transform:uppercase;letter-spacing:.8px;position:sticky;top:0;z-index:2;border-bottom:1px solid var(--border);white-space:nowrap;}
-thead th.sortable{cursor:pointer;user-select:none;}
-thead th.sortable:hover{color:var(--accent);}
+thead th{background:var(--bg2);color:var(--accent2);font-weight:600;text-align:left;padding:12px 14px;font-size:10px;text-transform:uppercase;letter-spacing:.8px;position:sticky;top:0;z-index:2;border-bottom:1px solid var(--border);white-space:nowrap;cursor:pointer;user-select:none;}
+thead th:hover{color:var(--accent);}
+thead th .sort-arrow{opacity:.3;margin-left:4px;}
+thead th.sorted .sort-arrow{opacity:1;color:var(--accent2);}
 tbody tr{border-bottom:1px solid var(--border);transition:background .15s;}
 tbody tr:hover{background:rgba(108,99,255,.04);}
 tbody td{padding:10px 14px;vertical-align:middle;}
@@ -124,6 +176,14 @@ tbody td a:hover{color:var(--accent);text-decoration:underline;}
 .empresa-name{font-weight:600;font-size:13px;}
 .empresa-types{font-size:10px;color:var(--dim);margin-top:2px;max-width:200px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
 .hours-text{font-size:10px;color:var(--dim);max-width:140px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.maps-link{display:inline-flex;align-items:center;gap:3px;color:var(--accent2);text-decoration:none;font-size:10px;opacity:.6;transition:opacity .2s;}
+.maps-link:hover{opacity:1;}
+
+/* Data quality bar */
+.dq-bar{display:flex;gap:2px;align-items:center;}
+.dq-seg{width:6px;height:14px;border-radius:2px;background:var(--dim);transition:background .3s;}
+.dq-seg.on{background:var(--success);}
+.dq-bar-label{font-size:9px;color:var(--dim);margin-left:5px;font-weight:600;}
 
 /* Login */
 .login-overlay{position:fixed;top:0;left:0;width:100%;height:100%;background:var(--bg);z-index:9999;display:flex;align-items:center;justify-content:center;}
@@ -144,6 +204,12 @@ tbody td a:hover{color:var(--accent);text-decoration:underline;}
 .login-footer{margin-top:24px;font-size:12px;color:var(--dim);}
 .login-terms{font-size:11px;color:var(--dim);margin-top:8px;line-height:1.4;}
 
+/* Active filters summary */
+.active-filters{display:flex;gap:6px;flex-wrap:wrap;margin-top:12px;}
+.active-tag{display:inline-flex;align-items:center;gap:5px;padding:4px 10px;background:var(--glow);border:1px solid rgba(108,99,255,.2);border-radius:100px;font-size:10px;font-weight:600;color:var(--accent);}
+.active-tag .remove{cursor:pointer;opacity:.6;font-size:12px;line-height:1;}
+.active-tag .remove:hover{opacity:1;}
+
 /* Responsive */
 @media(max-width:768px){
   .hero h1{font-size:28px;}
@@ -152,6 +218,7 @@ tbody td a:hover{color:var(--accent);text-decoration:underline;}
   .table-toolbar{flex-direction:column;align-items:stretch;}
   .filter-wrap{max-width:none;}
   .stats .stat:nth-child(5){grid-column:span 2;}
+  .cat-grid,.dq-grid,.sort-row,.rating-selector{flex-wrap:wrap;}
 }
 @media(max-width:480px){.hero{padding:36px 0 20px;}.container{padding:0 16px;}}
 
@@ -159,7 +226,6 @@ tbody td a:hover{color:var(--accent);text-decoration:underline;}
 @keyframes fadeIn{to{opacity:1;transform:translateY(0);}}
 .fade-in-d1{animation-delay:.1s;}.fade-in-d2{animation-delay:.2s;}.fade-in-d3{animation-delay:.3s;}
 
-/* Result count */
 .result-count{font-size:12px;color:var(--muted);margin-bottom:10px;}
 .result-count strong{color:var(--text);}
 </style>
@@ -208,7 +274,7 @@ tbody td a:hover{color:var(--accent);text-decoration:underline;}
     <div class="container">
       <div class="hero-badge"><span class="pulse"></span> Prospección B2B Industrial</div>
       <h1>Encuentra tu próximo<br><span class="grad">cliente industrial</span></h1>
-      <p>Busca empresas en cualquier ciudad. Filtra por tipo, rating o disponibilidad de datos. Exporta y prospecta.</p>
+      <p>Busca empresas en cualquier ciudad. Filtra por industria, calidad de datos y rating. Exporta y prospecta.</p>
     </div>
   </section>
 
@@ -221,45 +287,117 @@ tbody td a:hover{color:var(--accent);text-decoration:underline;}
           <svg class="si-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
           <input type="text" class="search-input" id="city" value="Santiago, Chile" placeholder="Escribe una ciudad...">
         </div>
+        <button class="btn-toggle-filters" id="btnToggleFilters" onclick="toggleFilters()">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 3H2l8 9.46V19l4 2v-8.54L22 3z"/></svg>
+          Filtros
+        </button>
         <button class="btn-search" id="btnSearch" onclick="startSearch()">
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
-          Buscar Empresas
+          Buscar
         </button>
       </div>
-      <!-- Filters -->
-      <div class="filters-bar" id="filtersBar" style="display:none;">
-        <button class="chip active" data-filter="all" onclick="setFilter('all',this)">Todas</button>
-        <button class="chip" data-filter="with-web" onclick="setFilter('with-web',this)">Con sitio web</button>
-        <button class="chip" data-filter="no-web" onclick="setFilter('no-web',this)">Sin sitio web</button>
-        <button class="chip" data-filter="with-phone" onclick="setFilter('with-phone',this)">Con teléfono</button>
-        <button class="chip" data-filter="high-rating" onclick="setFilter('high-rating',this)">Rating 4+</button>
-        <button class="chip" data-filter="with-hours" onclick="setFilter('with-hours',this)">Con horarios</button>
-        <select class="chip-select" id="sortSelect" onchange="applySort()">
-          <option value="default">Ordenar por...</option>
-          <option value="name-asc">Nombre A-Z</option>
-          <option value="name-desc">Nombre Z-A</option>
-          <option value="rating-desc">Mayor rating</option>
-          <option value="reviews-desc">Más reseñas</option>
-        </select>
+
+      <!-- Filter Panel -->
+      <div class="filter-panel" id="filterPanel">
+        <!-- Industry Categories -->
+        <div class="filter-section">
+          <div class="filter-label">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 20h20"/><path d="M5 20V8l7-5 7 5v12"/><path d="M9 20v-4h6v4"/></svg>
+            Industria
+          </div>
+          <div class="cat-grid" id="catGrid">
+            <button class="cat-pill active" data-cat="all" onclick="setCat('all',this)"><span class="cat-icon">🔍</span>Todas</button>
+            <button class="cat-pill" data-cat="manufacturing" onclick="setCat('manufacturing',this)"><span class="cat-icon">🏭</span>Manufactura</button>
+            <button class="cat-pill" data-cat="logistics" onclick="setCat('logistics',this)"><span class="cat-icon">🚛</span>Logística</button>
+            <button class="cat-pill" data-cat="construction" onclick="setCat('construction',this)"><span class="cat-icon">🏗️</span>Construcción</button>
+            <button class="cat-pill" data-cat="technology" onclick="setCat('technology',this)"><span class="cat-icon">💻</span>Tecnología</button>
+            <button class="cat-pill" data-cat="mining" onclick="setCat('mining',this)"><span class="cat-icon">⛏️</span>Minería</button>
+            <button class="cat-pill" data-cat="energy" onclick="setCat('energy',this)"><span class="cat-icon">⚡</span>Energía</button>
+            <button class="cat-pill" data-cat="agro" onclick="setCat('agro',this)"><span class="cat-icon">🌾</span>Agroindustria</button>
+            <button class="cat-pill" data-cat="services" onclick="setCat('services',this)"><span class="cat-icon">📊</span>Servicios</button>
+            <button class="cat-pill" data-cat="pharma" onclick="setCat('pharma',this)"><span class="cat-icon">💊</span>Salud/Pharma</button>
+          </div>
+        </div>
+
+        <!-- Data Quality -->
+        <div class="filter-section">
+          <div class="filter-label">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+            Calidad de datos
+          </div>
+          <div class="dq-grid" id="dqGrid">
+            <button class="dq-pill" data-dq="has-web" onclick="toggleDQ('has-web',this)"><span class="dq-dot"></span>Con sitio web</button>
+            <button class="dq-pill" data-dq="has-phone" onclick="toggleDQ('has-phone',this)"><span class="dq-dot"></span>Con teléfono</button>
+            <button class="dq-pill" data-dq="has-hours" onclick="toggleDQ('has-hours',this)"><span class="dq-dot"></span>Con horarios</button>
+            <button class="dq-pill" data-dq="is-open" onclick="toggleDQ('is-open',this)"><span class="dq-dot"></span>Operativa</button>
+            <button class="dq-pill" data-dq="has-reviews" onclick="toggleDQ('has-reviews',this)"><span class="dq-dot"></span>Con reseñas</button>
+            <button class="dq-pill" data-dq="complete" onclick="toggleDQ('complete',this)"><span class="dq-dot"></span>Datos completos</button>
+          </div>
+        </div>
+
+        <!-- Rating -->
+        <div class="filter-section">
+          <div class="filter-label">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+            Rating mínimo
+          </div>
+          <div class="rating-selector" id="ratingSelector">
+            <button class="rating-btn" data-min="0" onclick="setMinRating(0,this)">Todo</button>
+            <button class="rating-btn" data-min="3" onclick="setMinRating(3,this)">3<span class="star">★</span></button>
+            <button class="rating-btn" data-min="3.5" onclick="setMinRating(3.5,this)">3.5<span class="star">★</span></button>
+            <button class="rating-btn" data-min="4" onclick="setMinRating(4,this)">4<span class="star">★</span></button>
+            <button class="rating-btn" data-min="4.5" onclick="setMinRating(4.5,this)">4.5<span class="star">★</span></button>
+          </div>
+        </div>
+
+        <!-- Sort -->
+        <div class="filter-section">
+          <div class="filter-label">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 5h10"/><path d="M11 9h7"/><path d="M11 13h4"/><path d="M3 17l3 3 3-3"/><path d="M6 18V4"/></svg>
+            Ordenar por
+          </div>
+          <div class="sort-row" id="sortRow">
+            <button class="sort-pill active" data-sort="default" onclick="setSortPill('default',this)">Sin orden</button>
+            <button class="sort-pill" data-sort="name-asc" onclick="setSortPill('name-asc',this)">Nombre A-Z</button>
+            <button class="sort-pill" data-sort="name-desc" onclick="setSortPill('name-desc',this)">Nombre Z-A</button>
+            <button class="sort-pill" data-sort="rating-desc" onclick="setSortPill('rating-desc',this)">Mayor rating</button>
+            <button class="sort-pill" data-sort="reviews-desc" onclick="setSortPill('reviews-desc',this)">Más reseñas</button>
+            <button class="sort-pill" data-sort="quality-desc" onclick="setSortPill('quality-desc',this)">Mejor datos</button>
+          </div>
+        </div>
       </div>
+
+      <!-- Active filter tags -->
+      <div class="active-filters" id="activeFilters"></div>
     </div>
 
     <!-- Progress -->
     <div class="card" id="progressCard" style="display:none;">
       <div class="progress-info">
         <span id="progressLabel">Iniciando búsqueda...</span>
-        <span id="progressCount">0%</span>
+        <div class="search-controls" id="searchControls">
+          <span id="progressCount">0%</span>
+          <button class="btn-ctrl btn-pause" id="btnPause" onclick="pauseSearch()">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/></svg>
+            Pausar
+          </button>
+          <button class="btn-ctrl btn-stop" id="btnStop" onclick="stopSearch()">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><rect x="4" y="4" width="16" height="16" rx="2"/></svg>
+            Detener
+          </button>
+        </div>
       </div>
       <div class="progress-track"><div class="progress-fill" id="progressBar" style="width:0%"></div></div>
+      <div id="pauseStatus" style="margin-top:8px;display:none;"></div>
     </div>
 
     <!-- Stats -->
     <div class="stats" id="statsGrid" style="display:none;">
-      <div class="stat fade-in"><div class="num" id="statTotal">0</div><div class="label">Total</div></div>
-      <div class="stat fade-in fade-in-d1"><div class="num" id="statWeb">0</div><div class="label">Con Web</div></div>
-      <div class="stat fade-in fade-in-d1"><div class="num" id="statNoWeb">0</div><div class="label">Sin Web</div></div>
-      <div class="stat fade-in fade-in-d2"><div class="num" id="statPhone">0</div><div class="label">Con Teléfono</div></div>
-      <div class="stat fade-in fade-in-d3"><div class="num" id="statHours">0</div><div class="label">Con Horarios</div></div>
+      <div class="stat fade-in" onclick="quickFilter('all')" title="Ver todas"><div class="num" id="statTotal">0</div><div class="label">Total</div></div>
+      <div class="stat fade-in fade-in-d1" onclick="quickFilter('with-web')" title="Filtrar con web"><div class="num" id="statWeb">0</div><div class="label">Con Web</div></div>
+      <div class="stat fade-in fade-in-d1" onclick="quickFilter('no-web')" title="Filtrar sin web"><div class="num" id="statNoWeb">0</div><div class="label">Sin Web</div></div>
+      <div class="stat fade-in fade-in-d2" onclick="quickFilter('with-phone')" title="Filtrar con teléfono"><div class="num" id="statPhone">0</div><div class="label">Con Teléfono</div></div>
+      <div class="stat fade-in fade-in-d3" onclick="quickFilter('with-hours')" title="Filtrar con horarios"><div class="num" id="statHours">0</div><div class="label">Con Horarios</div></div>
     </div>
 
     <!-- Results -->
@@ -267,9 +405,13 @@ tbody td a:hover{color:var(--accent);text-decoration:underline;}
       <div class="table-toolbar">
         <div class="filter-wrap">
           <svg class="fw-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
-          <input type="text" class="filter-input" id="textFilter" placeholder="Buscar por nombre, dirección..." oninput="applyFilters()">
+          <input type="text" class="filter-input" id="textFilter" placeholder="Buscar por nombre, dirección, tipo..." oninput="applyFilters()">
         </div>
         <div class="export-btns">
+          <button class="btn-export excel" onclick="exportExcel()">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+            Excel
+          </button>
           <button class="btn-export csv" onclick="exportCSV()">CSV</button>
           <button class="btn-export json" onclick="exportJSON()">JSON</button>
         </div>
@@ -279,13 +421,14 @@ tbody td a:hover{color:var(--accent);text-decoration:underline;}
         <table>
           <thead><tr>
             <th>#</th>
-            <th>Empresa</th>
+            <th onclick="colSort('nombre')">Empresa <span class="sort-arrow">↕</span></th>
             <th>Teléfono</th>
             <th>Sitio Web</th>
-            <th>Dirección</th>
-            <th>Rating</th>
-            <th>Reseñas</th>
+            <th onclick="colSort('direccion')">Dirección <span class="sort-arrow">↕</span></th>
+            <th onclick="colSort('rating')">Rating <span class="sort-arrow">↕</span></th>
+            <th onclick="colSort('total_resenas')">Reseñas <span class="sort-arrow">↕</span></th>
             <th>Estado</th>
+            <th>Datos</th>
             <th>Horario</th>
           </tr></thead>
           <tbody id="tbody"></tbody>
@@ -307,16 +450,13 @@ function tryRegister(){
   const email=document.getElementById('regEmail').value.trim();
   const empresa=document.getElementById('regEmpresa').value.trim();
   if(!name||!email){document.getElementById('loginError').style.display='block';return false;}
-  // Save locally
   sessionStorage.setItem('jpb_auth','1');
   sessionStorage.setItem('jpb_name',name);
   sessionStorage.setItem('jpb_email',email);
-  // Send registration to JPB (async, non-blocking)
   fetch(FORM_ENDPOINT,{method:'POST',headers:{'Content-Type':'application/json','Accept':'application/json'},
-    body:JSON.stringify({name:name,email:email,empresa:empresa,source:'Prospector B2B',_subject:'Nuevo registro en Prospector: '+name})
+    body:JSON.stringify({name,email,empresa,source:'Prospector B2B',_subject:'Nuevo registro en Prospector: '+name})
   }).catch(()=>{});
-  showApp();
-  return false;
+  showApp();return false;
 }
 function showApp(){
   document.getElementById('loginOverlay').style.display='none';
@@ -326,7 +466,7 @@ function showApp(){
 function logout(){sessionStorage.clear();location.reload();}
 if(sessionStorage.getItem('jpb_auth')==='1')showApp();
 
-// === SEARCH ===
+// === SEARCH QUERIES ===
 const QS=[
   "empresas manufactureras en {c}","fabricas en {c}","empresas industriales en {c}",
   "plantas industriales en {c}","industria metalurgica en {c}","industria alimentaria en {c}",
@@ -352,8 +492,177 @@ const QS=[
 ];
 const FM="places.id,places.displayName,places.formattedAddress,places.nationalPhoneNumber,places.internationalPhoneNumber,places.websiteUri,places.types,places.rating,places.userRatingCount,places.businessStatus,places.regularOpeningHours,places.googleMapsUri,nextPageToken";
 
-let allResults=[],filtered=[],seen=new Set(),running=false,currentFilter='all';
+// === STATE ===
+let allResults=[],filtered=[],seen=new Set(),running=false,paused=false,stopped=false;
+let currentCat='all',activeDQ=new Set(),minRating=0,currentSort='default';
 
+// Category mapping
+const CAT_MAP={
+  manufacturing:['manufacturer','factory','industrial_area','machine_shop','steel_distributor','warehouse'],
+  logistics:['moving_company','storage','trucking_company','freight_forwarding_agency','shipping_company','courier_service'],
+  construction:['general_contractor','roofing_contractor','electrician','plumber','construction_company','civil_engineer','architect'],
+  technology:['software_company','it_services','electronics_store','computer_store','telecommunications_service_provider'],
+  mining:['mining','quarry','geological_service'],
+  energy:['electric_utility','solar_energy_contractor','gas_station','petroleum'],
+  agro:['farm','agricultural_service','food_manufacturer','grain_elevator'],
+  services:['consultant','accounting','lawyer','insurance_agency','real_estate_agency','human_resources','corporate_office','financial_planner'],
+  pharma:['pharmacy','hospital','medical_lab','pharmaceutical','doctor','dentist','veterinary_care']
+};
+
+// === FILTER LOGIC ===
+function toggleFilters(){
+  const panel=document.getElementById('filterPanel');
+  const btn=document.getElementById('btnToggleFilters');
+  panel.classList.toggle('show');
+  btn.classList.toggle('active');
+}
+
+function setCat(cat,el){
+  currentCat=cat;
+  document.querySelectorAll('.cat-pill').forEach(c=>c.classList.remove('active'));
+  el.classList.add('active');
+  applyFilters();updateFilterTags();
+}
+
+function toggleDQ(key,el){
+  if(activeDQ.has(key)){activeDQ.delete(key);el.classList.remove('active');}
+  else{activeDQ.add(key);el.classList.add('active');}
+  applyFilters();updateFilterTags();
+}
+
+function setMinRating(val,el){
+  minRating=val;
+  document.querySelectorAll('.rating-btn').forEach(b=>b.classList.remove('active'));
+  if(val>0)el.classList.add('active');
+  applyFilters();updateFilterTags();
+}
+
+function setSortPill(sort,el){
+  currentSort=sort;
+  document.querySelectorAll('.sort-pill').forEach(s=>s.classList.remove('active'));
+  el.classList.add('active');
+  applyFilters();
+}
+
+function quickFilter(type){
+  // Reset all filters first
+  currentCat='all';activeDQ.clear();minRating=0;
+  document.querySelectorAll('.cat-pill').forEach(c=>c.classList.remove('active'));
+  document.querySelector('.cat-pill[data-cat="all"]').classList.add('active');
+  document.querySelectorAll('.dq-pill').forEach(d=>d.classList.remove('active'));
+  document.querySelectorAll('.rating-btn').forEach(r=>r.classList.remove('active'));
+  // Highlight stat
+  document.querySelectorAll('.stat').forEach(s=>s.classList.remove('stat-active'));
+
+  if(type==='with-web'){activeDQ.add('has-web');document.querySelector('.dq-pill[data-dq="has-web"]').classList.add('active');}
+  else if(type==='no-web'){/* special: handled in filter */}
+  else if(type==='with-phone'){activeDQ.add('has-phone');document.querySelector('.dq-pill[data-dq="has-phone"]').classList.add('active');}
+  else if(type==='with-hours'){activeDQ.add('has-hours');document.querySelector('.dq-pill[data-dq="has-hours"]').classList.add('active');}
+
+  if(type!=='all')event.currentTarget.classList.add('stat-active');
+
+  // Show filter panel
+  document.getElementById('filterPanel').classList.add('show');
+  document.getElementById('btnToggleFilters').classList.add('active');
+
+  applyFilters();updateFilterTags();
+}
+
+function matchesCategory(r){
+  if(currentCat==='all')return true;
+  const cats=CAT_MAP[currentCat]||[];
+  return r.tipos_raw.some(t=>cats.some(c=>t.toLowerCase().includes(c)));
+}
+
+function dataQuality(r){
+  let score=0;
+  if(r.sitio_web)score++;
+  if(r.telefono)score++;
+  if(r.tiene_horarios)score++;
+  if(r.rating>0)score++;
+  if(r.total_resenas>0)score++;
+  return score;
+}
+
+function applyFilters(){
+  const txt=(document.getElementById('textFilter')?document.getElementById('textFilter').value:'').toLowerCase();
+  filtered=allResults.filter(r=>{
+    if(!matchesCategory(r))return false;
+    if(activeDQ.has('has-web')&&!r.sitio_web)return false;
+    if(activeDQ.has('has-phone')&&!r.telefono)return false;
+    if(activeDQ.has('has-hours')&&!r.tiene_horarios)return false;
+    if(activeDQ.has('is-open')&&r.estado!=='OPERATIONAL')return false;
+    if(activeDQ.has('has-reviews')&&r.total_resenas<1)return false;
+    if(activeDQ.has('complete')&&dataQuality(r)<4)return false;
+    if(minRating>0&&(r.rating||0)<minRating)return false;
+    if(txt&&!(r.nombre+r.direccion+r.tipos+r.telefono).toLowerCase().includes(txt))return false;
+    return true;
+  });
+  // Sort
+  if(currentSort==='name-asc')filtered.sort((a,b)=>a.nombre.localeCompare(b.nombre));
+  else if(currentSort==='name-desc')filtered.sort((a,b)=>b.nombre.localeCompare(a.nombre));
+  else if(currentSort==='rating-desc')filtered.sort((a,b)=>(b.rating||0)-(a.rating||0));
+  else if(currentSort==='reviews-desc')filtered.sort((a,b)=>(b.total_resenas||0)-(a.total_resenas||0));
+  else if(currentSort==='quality-desc')filtered.sort((a,b)=>dataQuality(b)-dataQuality(a));
+  renderTable();
+}
+
+// Column sort from table headers
+let colSortState={};
+function colSort(field){
+  const dir=colSortState[field]==='asc'?'desc':'asc';
+  colSortState={};colSortState[field]=dir;
+  filtered.sort((a,b)=>{
+    let va=a[field],vb=b[field];
+    if(typeof va==='string')return dir==='asc'?va.localeCompare(vb):vb.localeCompare(va);
+    return dir==='asc'?(va||0)-(vb||0):(vb||0)-(va||0);
+  });
+  renderTable();
+}
+
+function updateFilterTags(){
+  const el=document.getElementById('activeFilters');
+  let tags=[];
+  if(currentCat!=='all'){
+    const names={manufacturing:'Manufactura',logistics:'Logística',construction:'Construcción',technology:'Tecnología',mining:'Minería',energy:'Energía',agro:'Agroindustria',services:'Servicios',pharma:'Salud/Pharma'};
+    tags.push({label:names[currentCat]||currentCat,action:()=>{setCat('all',document.querySelector('.cat-pill[data-cat="all"]'));}});
+  }
+  activeDQ.forEach(dq=>{
+    const names={'has-web':'Con web','has-phone':'Con teléfono','has-hours':'Con horarios','is-open':'Operativa','has-reviews':'Con reseñas','complete':'Datos completos'};
+    tags.push({label:names[dq]||dq,action:()=>{const btn=document.querySelector('.dq-pill[data-dq="'+dq+'"]');toggleDQ(dq,btn);}});
+  });
+  if(minRating>0){
+    tags.push({label:'Rating ≥ '+minRating,action:()=>{setMinRating(0,null);document.querySelectorAll('.rating-btn').forEach(b=>b.classList.remove('active'));}});
+  }
+  el.innerHTML=tags.map((t,i)=>'<span class="active-tag">'+t.label+' <span class="remove" onclick="removeTag('+i+')">✕</span></span>').join('');
+  el._actions=tags.map(t=>t.action);
+}
+function removeTag(i){
+  const el=document.getElementById('activeFilters');
+  if(el._actions&&el._actions[i])el._actions[i]();
+}
+
+// === SEARCH CONTROLS ===
+function pauseSearch(){
+  if(!running)return;
+  paused=true;
+  document.getElementById('btnPause').style.display='none';
+  document.getElementById('pauseStatus').style.display='block';
+  document.getElementById('pauseStatus').innerHTML='<span class="search-status"><span class="blink">⏸</span> Búsqueda en pausa — '+allResults.length+' empresas encontradas</span> <button class="btn-ctrl btn-resume" onclick="resumeSearch()" style="margin-left:8px;"><svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"/></svg> Reanudar</button>';
+}
+
+function resumeSearch(){
+  paused=false;
+  document.getElementById('btnPause').style.display='flex';
+  document.getElementById('pauseStatus').style.display='none';
+}
+
+function stopSearch(){
+  if(!running)return;
+  stopped=true;paused=false;
+}
+
+// === API ===
 async function api(q,pt){
   const h={'Content-Type':'application/json','X-Goog-Api-Key':K,'X-Goog-FieldMask':FM};
   const b={textQuery:q,languageCode:'es',maxResultCount:20};
@@ -362,6 +671,7 @@ async function api(q,pt){
     if(!r.ok)return{};return await r.json();}catch(e){return{};}
 }
 
+// === DATA PROCESSING ===
 function formatTypes(types){
   if(!types||!types.length)return'';
   const map={'restaurant':'Restaurante','store':'Tienda','food':'Alimentos','establishment':'Empresa',
@@ -369,7 +679,10 @@ function formatTypes(types){
     'plumber':'Plomero','roofing_contractor':'Techador','industrial_area':'Zona industrial',
     'moving_company':'Mudanzas','storage':'Bodega','trucking_company':'Transporte',
     'corporate_office':'Oficina corporativa','consultant':'Consultora','accounting':'Contabilidad',
-    'lawyer':'Abogado','insurance_agency':'Seguros','real_estate_agency':'Inmobiliaria'};
+    'lawyer':'Abogado','insurance_agency':'Seguros','real_estate_agency':'Inmobiliaria',
+    'software_company':'Software','it_services':'TI','construction_company':'Construcción',
+    'manufacturer':'Fabricante','mining':'Minería','farm':'Agrícola','pharmacy':'Farmacia',
+    'hospital':'Hospital','laboratory':'Laboratorio','financial_planner':'Finanzas'};
   return types.slice(0,3).map(t=>map[t]||t.replace(/_/g,' ')).join(', ');
 }
 
@@ -405,77 +718,80 @@ function updateStats(){
   document.getElementById('statNoWeb').textContent=r.filter(x=>!x.sitio_web).length;
   document.getElementById('statPhone').textContent=r.filter(x=>x.telefono).length;
   document.getElementById('statHours').textContent=r.filter(x=>x.tiene_horarios).length;
-}
-
-function applyFilters(){
-  const txt=(document.getElementById('textFilter').value||'').toLowerCase();
-  filtered=allResults.filter(r=>{
-    if(currentFilter==='with-web'&&!r.sitio_web)return false;
-    if(currentFilter==='no-web'&&r.sitio_web)return false;
-    if(currentFilter==='with-phone'&&!r.telefono)return false;
-    if(currentFilter==='high-rating'&&r.rating<4)return false;
-    if(currentFilter==='with-hours'&&!r.tiene_horarios)return false;
-    if(txt&&!(r.nombre+r.direccion+r.tipos+r.telefono).toLowerCase().includes(txt))return false;
-    return true;
+  // Update category counts
+  document.querySelectorAll('.cat-pill[data-cat]').forEach(pill=>{
+    const cat=pill.dataset.cat;
+    if(cat==='all')return;
+    const cats=CAT_MAP[cat]||[];
+    const count=r.filter(x=>x.tipos_raw.some(t=>cats.some(c=>t.toLowerCase().includes(c)))).length;
+    let countEl=pill.querySelector('.cat-count');
+    if(!countEl){countEl=document.createElement('span');countEl.className='cat-count';pill.appendChild(countEl);}
+    countEl.textContent=count;
   });
-  applySort(true);
-}
-
-function applySort(skipFilter){
-  if(!skipFilter)applyFilters(); // will recurse once
-  const s=document.getElementById('sortSelect').value;
-  if(s==='name-asc')filtered.sort((a,b)=>a.nombre.localeCompare(b.nombre));
-  else if(s==='name-desc')filtered.sort((a,b)=>b.nombre.localeCompare(a.nombre));
-  else if(s==='rating-desc')filtered.sort((a,b)=>(b.rating||0)-(a.rating||0));
-  else if(s==='reviews-desc')filtered.sort((a,b)=>(b.total_resenas||0)-(a.total_resenas||0));
-  renderTable();
-}
-
-function setFilter(f,el){
-  currentFilter=f;
-  document.querySelectorAll('.chip').forEach(c=>c.classList.remove('active'));
-  el.classList.add('active');
-  applyFilters();
 }
 
 function renderTable(){
   document.getElementById('resultCount').innerHTML='Mostrando <strong>'+filtered.length+'</strong> de '+allResults.length+' empresas';
   const tb=document.getElementById('tbody');tb.innerHTML='';
   filtered.forEach((r,i)=>{
-    const w=r.sitio_web?'<a href="'+r.sitio_web+'" target="_blank" rel="noopener">'+r.sitio_web.replace(/^https?:\/\//,'').replace(/\/$/,'').slice(0,30)+'</a>':'<span class="no-web">Sin sitio web</span>';
+    const w=r.sitio_web?'<a href="'+r.sitio_web+'" target="_blank" rel="noopener">'+r.sitio_web.replace(/^https?:\/\//,'').replace(/\/$/,'').slice(0,28)+'</a>':'<span class="no-web">Sin web</span>';
     const rt=r.rating>=4?'badge-good':r.rating>=3?'badge-mid':r.rating>0?'badge-low':'';
-    const ratingHtml=r.rating?'<span class="badge '+rt+'">'+r.rating+'</span>':'<span style="color:var(--dim)">—</span>';
+    const ratingHtml=r.rating?'<span class="badge '+rt+'">★ '+r.rating+'</span>':'<span style="color:var(--dim)">—</span>';
     const statusCls=r.estado==='OPERATIONAL'?'color:var(--success)':r.estado.includes('CLOSED')?'color:var(--danger)':'color:var(--dim)';
+    // Data quality indicator
+    const dq=dataQuality(r);
+    const dqHtml='<div class="dq-bar">'+[0,1,2,3,4].map(n=>'<div class="dq-seg'+(n<dq?' on':'')+'"></div>').join('')+'<span class="dq-bar-label">'+dq+'/5</span></div>';
+    // Maps link
+    const mapsHtml=r.google_maps?'<a href="'+r.google_maps+'" target="_blank" rel="noopener" class="maps-link" title="Ver en Google Maps">📍</a>':'';
     tb.innerHTML+='<tr>'+
       '<td style="color:var(--dim)">'+(i+1)+'</td>'+
-      '<td><div class="empresa-name">'+r.nombre+'</div><div class="empresa-types">'+r.tipos+'</div></td>'+
+      '<td><div class="empresa-name">'+r.nombre+' '+mapsHtml+'</div><div class="empresa-types">'+r.tipos+'</div></td>'+
       '<td>'+(r.telefono||'<span style="color:var(--dim)">—</span>')+'</td>'+
       '<td>'+w+'</td>'+
-      '<td style="color:var(--muted);font-size:11px;">'+r.direccion+'</td>'+
+      '<td style="color:var(--muted);font-size:11px;max-width:200px;">'+r.direccion+'</td>'+
       '<td>'+ratingHtml+'</td>'+
       '<td style="color:var(--muted)">'+(r.total_resenas||'—')+'</td>'+
       '<td><span style="font-size:11px;'+statusCls+'">'+r.estado_text+'</span></td>'+
+      '<td>'+dqHtml+'</td>'+
       '<td><span class="hours-text" title="'+r.horario+'">'+(r.horario||'<span style="color:var(--dim)">—</span>')+'</span></td>'+
       '</tr>';
   });
 }
 
+// === MAIN SEARCH ===
 async function startSearch(){
   if(running)return;
   const city=document.getElementById('city').value.trim();
   if(!city)return;
-  running=true;allResults=[];filtered=[];seen=new Set();currentFilter='all';
-  document.querySelectorAll('.chip').forEach(c=>c.classList.remove('active'));
-  document.querySelector('.chip[data-filter="all"]').classList.add('active');
-  document.getElementById('sortSelect').value='default';
+  running=true;paused=false;stopped=false;
+  allResults=[];filtered=[];seen=new Set();
+  // Reset filters
+  currentCat='all';activeDQ.clear();minRating=0;currentSort='default';
+  document.querySelectorAll('.cat-pill').forEach(c=>c.classList.remove('active'));
+  document.querySelector('.cat-pill[data-cat="all"]').classList.add('active');
+  document.querySelectorAll('.dq-pill').forEach(d=>d.classList.remove('active'));
+  document.querySelectorAll('.rating-btn').forEach(r=>r.classList.remove('active'));
+  document.querySelectorAll('.sort-pill').forEach(s=>s.classList.remove('active'));
+  document.querySelector('.sort-pill[data-sort="default"]').classList.add('active');
+  document.querySelectorAll('.stat').forEach(s=>s.classList.remove('stat-active'));
+  document.getElementById('activeFilters').innerHTML='';
+
   const btn=document.getElementById('btnSearch');
   btn.disabled=true;btn.innerHTML='Buscando...';
   document.getElementById('progressCard').style.display='block';
+  document.getElementById('btnPause').style.display='flex';
+  document.getElementById('pauseStatus').style.display='none';
   document.getElementById('statsGrid').style.display='grid';
   document.getElementById('resultsCard').style.display='block';
-  document.getElementById('filtersBar').style.display='flex';
+
   const qs=QS.map(q=>q.replace('{c}',city));
   for(let i=0;i<qs.length;i++){
+    // Check if stopped
+    if(stopped)break;
+    // Wait while paused
+    while(paused&&!stopped){await new Promise(ok=>setTimeout(ok,200));}
+    if(stopped)break;
+
     const pct=Math.round(((i+1)/qs.length)*100);
     document.getElementById('progressBar').style.width=pct+'%';
     document.getElementById('progressLabel').textContent=qs[i].replace(' en '+city,'');
@@ -483,22 +799,34 @@ async function startSearch(){
     let d=await api(qs[i]);
     (d.places||[]).forEach(p=>{const r=proc(p);if(r)allResults.push(r);});
     let pg=1;
-    while(d.nextPageToken&&pg<3){pg++;await new Promise(ok=>setTimeout(ok,300));d=await api(qs[i],d.nextPageToken);(d.places||[]).forEach(p=>{const r=proc(p);if(r)allResults.push(r);});}
+    while(d.nextPageToken&&pg<3&&!stopped){
+      while(paused&&!stopped){await new Promise(ok=>setTimeout(ok,200));}
+      if(stopped)break;
+      pg++;await new Promise(ok=>setTimeout(ok,300));
+      d=await api(qs[i],d.nextPageToken);
+      (d.places||[]).forEach(p=>{const r=proc(p);if(r)allResults.push(r);});
+    }
     updateStats();filtered=[...allResults];renderTable();
     await new Promise(ok=>setTimeout(ok,150));
   }
-  document.getElementById('progressLabel').textContent='Búsqueda completada';
+
+  const endMsg=stopped?'Búsqueda detenida':'Búsqueda completada';
+  document.getElementById('progressLabel').textContent=endMsg;
   document.getElementById('progressCount').textContent=allResults.length+' empresas encontradas';
+  document.getElementById('btnPause').style.display='none';
+  document.getElementById('btnStop').style.display='none';
+  document.getElementById('pauseStatus').style.display='none';
   btn.disabled=false;
-  btn.innerHTML='<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg> Buscar Empresas';
-  running=false;
-  // Log search to JPB
+  btn.innerHTML='<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg> Buscar';
+  running=false;stopped=false;paused=false;
+  // Log
   fetch(FORM_ENDPOINT,{method:'POST',headers:{'Content-Type':'application/json','Accept':'application/json'},
     body:JSON.stringify({name:sessionStorage.getItem('jpb_name'),email:sessionStorage.getItem('jpb_email'),
       search_city:city,results_count:allResults.length,_subject:'Búsqueda en Prospector: '+city+' ('+allResults.length+' resultados)'})
   }).catch(()=>{});
 }
 
+// === EXPORTS ===
 function exportJSON(){
   const o={metadata:{ciudad:document.getElementById('city').value,fecha:new Date().toISOString().slice(0,10),total:filtered.length,usuario:sessionStorage.getItem('jpb_name')},empresas:filtered};
   const b=new Blob([JSON.stringify(o,null,2)],{type:'application/json'});
@@ -510,6 +838,24 @@ function exportCSV(){
   const b=new Blob(['﻿'+c],{type:'text/csv;charset=utf-8'});
   const a=document.createElement('a');a.href=URL.createObjectURL(b);a.download='prospectos_'+new Date().toISOString().slice(0,10)+'.csv';a.click();
 }
+function exportExcel(){
+  // Generate a real XLSX-compatible XML (SpreadsheetML)
+  const rows=filtered.map(r=>[r.nombre,r.telefono,r.sitio_web,r.direccion,r.rating,r.total_resenas,r.estado_text,r.horario,r.tipos,r.google_maps]);
+  const header=['Nombre','Teléfono','Sitio Web','Dirección','Rating','Reseñas','Estado','Horario','Tipos','Google Maps'];
+  let xml='<?xml version="1.0"?><?mso-application progid="Excel.Sheet"?>';
+  xml+='<Workbook xmlns="urn:schemas-microsoft-com:office:spreadsheet" xmlns:ss="urn:schemas-microsoft-com:office:spreadsheet">';
+  xml+='<Styles><Style ss:ID="head"><Font ss:Bold="1" ss:Size="11"/><Interior ss:Color="#7C6CFF" ss:Pattern="Solid"/><Font ss:Color="#FFFFFF" ss:Bold="1"/></Style></Styles>';
+  xml+='<Worksheet ss:Name="Prospectos"><Table>';
+  xml+='<Row>'+header.map(h=>'<Cell ss:StyleID="head"><Data ss:Type="String">'+esc(h)+'</Data></Cell>').join('')+'</Row>';
+  rows.forEach(row=>{xml+='<Row>'+row.map((v,i)=>{
+    const type=(i===4||i===5)?'Number':'String';
+    return '<Cell><Data ss:Type="'+type+'">'+esc(String(v))+'</Data></Cell>';
+  }).join('')+'</Row>';});
+  xml+='</Table></Worksheet></Workbook>';
+  const b=new Blob([xml],{type:'application/vnd.ms-excel'});
+  const a=document.createElement('a');a.href=URL.createObjectURL(b);a.download='prospectos_'+new Date().toISOString().slice(0,10)+'.xls';a.click();
+}
+function esc(s){return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
 </script>
 </body>
 </html>
