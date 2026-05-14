@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CineMax | La Mejor Experiencia de Cine</title>
+    <meta name="description" content="Compra tus entradas de cine online. Cartelera actualizada, mejores películas en 2D, 3D y 4DX.">
+    <link rel="stylesheet" href="styles.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Bebas+Neue&display=swap" rel="stylesheet">
+</head>
+<body>
+
+<!-- NAVBAR -->
+<nav class="navbar">
+    <div class="nav-container">
+        <div class="nav-left">
+            <a href="#" class="logo">CINE<span>MAX</span></a>
+            <div class="nav-links">
+                <a href="#cartelera" class="active">Cartelera</a>
+                <a href="#proximos">Próximos estrenos</a>
+                <a href="#experiencias">Experiencias</a>
+                <a href="#snacks">Snacks</a>
+                <a href="#corporativo">Corporativo</a>
+            </div>
+        </div>
+        <div class="nav-right">
+            <div class="nav-search">
+                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+                <input type="text" placeholder="Buscar película...">
+            </div>
+            <button class="btn-nav">Iniciar sesión</button>
+        </div>
+    </div>
+</nav>
+
+<!-- CITY SELECTOR -->
+<div class="city-bar">
+    <div class="nav-container">
+        <div class="city-selector">
+            <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+            <span>Santiago</span>
+            <svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg>
+        </div>
+        <div class="date-tabs">
+            <button class="date-tab active">Hoy<br><small>Jue 10</small></button>
+            <button class="date-tab">Mañana<br><small>Vie 11</small></button>
+            <button class="date-tab">Sáb<br><small>12</small></button>
+            <button class="date-tab">Dom<br><small>13</small></button>
+            <button class="date-tab">Lun<br><small>14</small></button>
+            <button class="date-tab">Mar<br><small>15</small></button>
+        </div>
+        <div class="format-filters">
+            <button class="filter-btn active">Todos</button>
+            <button class="filter-btn">2D</button>
+            <button class="filter-btn">3D</button>
+            <button class="filter-btn">IMAX</button>
+            <button class="filter-btn">4DX</button>
+            <button class="filter-btn">Subtitulada</button>
+        </div>
+    </div>
+</div>
+
+<!-- HERO CAROUSEL -->
+<section class="hero" id="hero">
+    <div class="hero-slides">
+        <div class="hero-slide active" style="background-image: url('https://image.tmdb.org/t/p/original/q6y0Go1tsGEsmtFryDOJo3dEmqu.jpg')">
+            <div class="hero-gradient"></div>
+            <div class="hero-content">
+                <div class="hero-badges">
+                    <span class="badge badge-rating">+14</span>
+                    <span class="badge badge-format">IMAX</span>
+                    <span class="badge badge-format">3D</span>
+                </div>
+                <h1>Thunderbolts*</h1>
+                <div class="hero-meta">
+                    <span>Acción · Aventura</span>
+                    <span class="dot">·</span>
+                    <span>2h 7min</span>
+                    <span class="dot">·</span>
+                    <div class="stars">★★★★☆</div>
+                    <span>8.2/10</span>
+                </div>
+                <p class="hero-desc">Un grupo de antihéroes y villanos reformados son reclutados por el gobierno para una misión suicida que podría cambiar el destino del mundo.</p>
+                <div class="hero-actions">
+                    <button class="btn-primary" onclick="openMovie('thunderbolts')">
+                        <svg width="18" height="18" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+                        Comprar entradas
+                    </button>
+                    <button class="btn-secondary" onclick="openTrailer('thunderbolts')">
+                        <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polygon points="10 8 16 12 10 16 10 8"/></svg>
+                        Ver tráiler
+                    </button>
+                </div>
+            </div>
+        </div>
+        <div class="hero-slide" style="background-image: url('https://image.tmdb.org/t/p/original/xg27NrXi7VXCGUr7MG75UqLl6Vg.jpg')">
+            <div class="hero-gradient"></div>
+            <div class="hero-content">
+                <div class="hero-badges">
+                    <span class="badge badge-rating">+14</span>
+                    <span class="badge badge-format">2D</span>
+                    <span class="badge badge-format">Subtitulada</span>
+                </div>
+                <h1>Misión Imposible: Sentencia Final</h1>
+                <div class="hero-meta">
+                    <span>Acción · Espionaje</span>
+                    <span class="dot">·</span>
+                    <span>2h 43min</span>
+                    <span class="dot">·</span>
+                    <div class="stars">★★★★★</div>
+                    <span>9.0/10</span>
+                </div>
+                <p class="hero-desc">Ethan Hunt y su equipo se enfrentan a su misión más peligrosa: localizar una IA letal que controla el mundo.</p>
+                <div class="hero-actions">
+                    <button class="btn-primary" onclick="openMovie('mision')">
+                        <svg width="18" height="18" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+                        Comprar entradas
+                    </button>
+                    <button class="btn-secondary">
+                        <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polygon points="10 8 16 12 10 16 10 8"/></svg>
+                        Ver tráiler
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="hero-controls">
+        <button class="hero-prev" onclick="prevSlide()">
+            <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg>
+        </button>
+        <div class="hero-dots">
+            <span class="hero-dot active" onclick="goSlide(0)"></span>
+            <span class="hero-dot" onclick="goSlide(1)"></span>
+        </div>
+        <button class="hero-next" onclick="nextSlide()">
+            <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg>
+        </button>
+    </div>
+</section>
+
+<!-- CARTELERA -->
+<section class="section" id="cartelera">
+    <div class="section-container">
+        <div class="section-header">
+            <h2>En Cartelera</h2>
+            <a href="#" class="see-all">Ver todas →</a>
+        </div>
+        <div class="movies-grid" id="moviesGrid"></div>
+    </div>
+</section>
+
+<!-- PRÓXIMOS ESTRENOS -->
+<section class="section section-dark" id="proximos">
+    <div class="section-container">
+        <div class="section-header">
+            <h2>Próximos Estrenos</h2>
+            <a href="#" class="see-all">Ver todos →</a>
+        </div>
+        <div class="upcoming-grid" id="upcomingGrid"></div>
+    </div>
+</section>
+
+<!-- EXPERIENCIAS -->
+<section class="section" id="experiencias">
+    <div class="section-container">
+        <h2 style="text-align:center; margin-bottom: 2rem;">Nuestras Experiencias</h2>
+        <div class="experiences-grid">
+            <div class="experience-card imax">
+                <div class="exp-icon">
+                    <svg width="40" height="40" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+                </div>
+                <h3>IMAX</h3>
+                <p>La pantalla más grande con sonido envolvente de última generación. Una experiencia sin igual.</p>
+                <span class="exp-badge">Disponible</span>
+            </div>
+            <div class="experience-card fourdx">
+                <div class="exp-icon">
+                    <svg width="40" height="40" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
+                </div>
+                <h3>4DX</h3>
+                <p>Siente cada escena con movimiento de asientos, viento, agua y efectos especiales en sincronía.</p>
+                <span class="exp-badge">Disponible</span>
+            </div>
+            <div class="experience-card premium">
+                <div class="exp-icon">
+                    <svg width="40" height="40" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+                </div>
+                <h3>Premium</h3>
+                <p>Asientos reclinables de cuero, servicio de snacks en sala y la máxima comodidad para tu película.</p>
+                <span class="exp-badge">Disponible</span>
+            </div>
+            <div class="experience-card vip">
+                <div class="exp-icon">
+                    <svg width="40" height="40" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+                </div>
+                <h3>VIP Lounge</h3>
+                <p>Acceso exclusivo a sala privada con meseros, menú gourmet y ambiente de lujo.</p>
+                <span class="exp-badge">Exclusivo</span>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- SNACKS BANNER -->
+<section class="snacks-banner">
+    <div class="section-container">
+        <div class="snacks-content">
+            <div>
+                <h2>Pide tus snacks antes de llegar</h2>
+                <p>Selecciona tu combo favorito al comprar tus entradas y recógelo directo en sala, sin filas.</p>
+                <button class="btn-primary" onclick="openSnacks()">Ver combos disponibles</button>
+            </div>
+            <div class="snacks-images">
+                <div class="snack-item">🍿 Popcorn Grande</div>
+                <div class="snack-item">🥤 Bebida</div>
+                <div class="snack-item">🍫 Chocolate</div>
+                <div class="snack-item">🌮 Nachos</div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- FOOTER -->
+<footer class="footer">
+    <div class="section-container">
+        <div class="footer-grid">
+            <div class="footer-brand">
+                <a href="#" class="logo">CINE<span>MAX</span></a>
+                <p>La mejor experiencia de cine en Chile. Múltiples salas en Santiago, Viña del Mar, Concepción y más ciudades.</p>
+                <div class="social-links">
+                    <a href="#" aria-label="Instagram">
+                        <svg width="20" height="20" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 1 0 0 12.324 6.162 6.162 0 0 0 0-12.324zM12 16a4 4 0 1 1 0-8 4 4 0 0 1 0 8zm6.406-11.845a1.44 1.44 0 1 0 0 2.881 1.44 1.44 0 0 0 0-2.881z"/></svg>
+                    </a>
+                    <a href="#" aria-label="Facebook">
+                        <svg width="20" height="20" fill="currentColor" viewBox="0 0 24 24"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
+                    </a>
+                    <a href="#" aria-label="Twitter/X">
+                        <svg width="20" height="20" fill="currentColor" viewBox="0 0 24 24"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+                    </a>
+                </div>
+            </div>
+            <div class="footer-col">
+                <h4>Cartelera</h4>
+                <ul>
+                    <li><a href="#">Películas en 2D</a></li>
+                    <li><a href="#">Películas en 3D</a></li>
+                    <li><a href="#">IMAX</a></li>
+                    <li><a href="#">4DX</a></li>
+                    <li><a href="#">Próximos estrenos</a></li>
+                </ul>
+            </div>
+            <div class="footer-col">
+                <h4>Servicios</h4>
+                <ul>
+                    <li><a href="#">Comprar entradas</a></li>
+                    <li><a href="#">Gift Card</a></li>
+                    <li><a href="#">Cumpleaños en sala</a></li>
+                    <li><a href="#">Corporativo</a></li>
+                    <li><a href="#">Cine para colegios</a></li>
+                </ul>
+            </div>
+            <div class="footer-col">
+                <h4>Ayuda</h4>
+                <ul>
+                    <li><a href="#">Preguntas frecuentes</a></li>
+                    <li><a href="#">Cambios y devoluciones</a></li>
+                    <li><a href="#">Contacto</a></li>
+                    <li><a href="#">Términos y condiciones</a></li>
+                    <li><a href="#">Política de privacidad</a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>© 2026 CineMax Chile. Todos los derechos reservados.</p>
+            <div class="payment-icons">
+                <span class="payment-icon">VISA</span>
+                <span class="payment-icon">MC</span>
+                <span class="payment-icon">AMEX</span>
+                <span class="payment-icon">Webpay</span>
+            </div>
+        </div>
+    </div>
+</footer>
+
+<!-- MODAL PELICULA -->
+<div class="modal-overlay" id="movieModal" onclick="closeModal(event)">
+    <div class="modal" id="modalContent">
+        <button class="modal-close" onclick="closeMovieModal()">
+            <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+        </button>
+        <div class="modal-body" id="modalBody"></div>
+    </div>
+</div>
+
+<!-- MODAL ASIENTOS -->
+<div class="modal-overlay" id="seatsModal" onclick="closeSeatsEvent(event)">
+    <div class="modal modal-seats" id="seatsContent">
+        <button class="modal-close" onclick="closeSeatsModal()">
+            <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+        </button>
+        <div id="seatsBody"></div>
+    </div>
+</div>
+
+<!-- MODAL SNACKS -->
+<div class="modal-overlay" id="snacksModal" onclick="closeSnacksEvent(event)">
+    <div class="modal modal-snacks">
+        <button class="modal-close" onclick="closeSnacksModal()">
+            <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+        </button>
+        <div id="snacksBody"></div>
+    </div>
+</div>
+
+<!-- MODAL CONFIRMACION -->
+<div class="modal-overlay" id="confirmModal">
+    <div class="modal modal-confirm">
+        <div class="confirm-body">
+            <div class="confirm-icon">✓</div>
+            <h2>¡Compra exitosa!</h2>
+            <p id="confirmText">Tu compra fue procesada correctamente.</p>
+            <p class="confirm-sub">Recibirás tu entrada en el correo registrado.</p>
+            <button class="btn-primary" onclick="closeConfirm()">Volver al inicio</button>
+        </div>
+    </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
+
+<script src="main.js"></script>
+</body>
+</html>
