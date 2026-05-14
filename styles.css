@@ -21,7 +21,7 @@
   --shadow-lg: 0 8px 40px rgba(37,99,235,0.18);
   --radius: 12px;
   --radius-lg: 20px;
-  --navbar-h: 72px;
+  --navbar-h: 80px;
   --ease: 0.3s ease;
 }
 
@@ -135,7 +135,7 @@ h4 { font-size: 1.125rem; font-weight: 600; }
   color: var(--heading);
 }
 .nav-logo-img {
-  height: 40px;
+  height: 56px;
   width: auto;
   object-fit: contain;
   display: block;
@@ -152,9 +152,9 @@ h4 { font-size: 1.125rem; font-weight: 600; }
   font-size: 0.875rem;
   flex-shrink: 0;
 }
-.nav-links { display: flex; align-items: center; gap: 4px; }
+.nav-links { display: flex; align-items: center; gap: 12px; }
 .nav-links a {
-  padding: 8px 14px;
+  padding: 8px 16px;
   border-radius: 8px;
   font-size: 0.9rem;
   font-weight: 500;
