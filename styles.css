@@ -21,7 +21,7 @@
   --shadow-lg: 0 8px 40px rgba(37,99,235,0.18);
   --radius: 12px;
   --radius-lg: 20px;
-  --navbar-h: 80px;
+  --navbar-h: 88px;
   --ease: 0.3s ease;
 }
 
@@ -125,52 +125,37 @@ h4 { font-size: 1.125rem; font-weight: 600; }
   align-items: center;
   justify-content: space-between;
   height: 100%;
-  position: relative;
 }
 .nav-logo {
   display: flex;
-  align-items: center;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: center;
+  gap: 2px;
   flex-shrink: 0;
 }
 .nav-logo-img {
-  height: 64px;
+  height: 44px;
   width: auto;
   object-fit: contain;
   display: block;
   transition: transform 0.35s ease, filter 0.35s ease;
 }
 .nav-logo:hover .nav-logo-img {
-  transform: scale(1.08);
-  filter: drop-shadow(0 0 12px rgba(37,99,235,0.4));
+  transform: scale(1.06);
+  filter: drop-shadow(0 0 10px rgba(37,99,235,0.35));
 }
-/* Centered brand name */
-.nav-brand-center {
-  position: absolute;
-  left: 50%;
-  transform: translateX(-50%);
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 2px;
-  pointer-events: none;
-}
-.nav-brand-main {
-  font-size: 1.4rem;
+.nav-logo-name {
+  font-size: 1.05rem;
   font-weight: 900;
   letter-spacing: -0.01em;
-  background: linear-gradient(90deg, #1e3a5f 0%, #2563eb 40%, #0ea5e9 70%, #1e3a5f 100%);
+  background: linear-gradient(90deg, #1e3a5f 0%, #2563eb 45%, #0ea5e9 70%, #1e3a5f 100%);
   background-size: 300%;
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
   animation: brand-flow 5s ease-in-out infinite;
-}
-.nav-brand-sub {
-  font-size: 0.58rem;
-  font-weight: 600;
-  letter-spacing: 0.22em;
-  text-transform: uppercase;
-  color: var(--light);
+  line-height: 1;
 }
 @keyframes brand-flow {
   0%   { background-position: 0%; }
