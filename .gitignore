@@ -1,0 +1,8 @@
+.DS_Store
+cine-hoyts/
+polimer-etp/
+polimer-etp-cl/
+polymer-cl/
+*.docx
+*.py
+node_modules/
