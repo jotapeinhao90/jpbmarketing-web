@@ -89,33 +89,108 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   // ── Dashboard live animation (hero card) ───────────────
-  const notifContainer = document.getElementById('dashNotifs');
-  if (notifContainer) {
-    const msgs = [
-      { icon: '📨', title: 'Nueva respuesta',      msg: '"Me interesa agendar una llamada..."',    time: 'ahora' },
-      { icon: '📅', title: 'Reunión confirmada',   msg: '"¿Martes a las 10am te acomoda?"',        time: '1m' },
-      { icon: '💼', title: 'Lead calificado',      msg: '"Somos 45 personas, necesitamos..."',     time: '2m' },
-      { icon: '✉️', title: 'Follow-up enviado',    msg: '"Hola Juan, como te comenté antes..."',   time: '3m' },
-      { icon: '🤝', title: 'Propuesta solicitada', msg: '"¿Puedes enviarme una propuesta?"',        time: '4m' },
+  const dashBody = document.getElementById('dashBody');
+  if (dashBody) {
+    const campaigns = [
+      {
+        name: '🔩 Metales y Aceros — Región Metro.',
+        emails: 1247, barPct: '78%', respuestas: 23, openRate: '4.2%', reuniones: 8,
+        notifs: [
+          { icon: '📨', title: 'Nueva respuesta',    msg: '"Me interesa agendar una llamada..."', time: 'ahora' },
+          { icon: '📅', title: 'Reunión confirmada', msg: '"¿Martes a las 10am te acomoda?"',    time: '3m' },
+        ],
+        tickMsgs: [
+          { icon: '📨', title: 'Nueva respuesta',    msg: '"¿Cuánto cuesta el servicio?"',        time: 'ahora' },
+          { icon: '💼', title: 'Lead calificado',    msg: '"Somos 80 personas, necesitamos..."',  time: 'ahora' },
+          { icon: '🤝', title: 'Propuesta solicitada', msg: '"¿Puedes enviar una propuesta?"',   time: 'ahora' },
+        ],
+      },
+      {
+        name: '🛍️ Bolsas Plásticas — Valparaíso',
+        emails: 892, barPct: '61%', respuestas: 18, openRate: '3.8%', reuniones: 5,
+        notifs: [
+          { icon: '💼', title: 'Lead calificado',    msg: '"Necesitamos 50.000 unidades/mes"',   time: 'ahora' },
+          { icon: '✉️', title: 'Propuesta solicitada', msg: '"¿Puedes enviarme una cotización?"', time: '2m' },
+        ],
+        tickMsgs: [
+          { icon: '📨', title: 'Nueva respuesta',    msg: '"Nos interesa conocer precios..."',    time: 'ahora' },
+          { icon: '📅', title: 'Reunión agendada',   msg: '"Jueves 11am nos acomoda bien"',       time: 'ahora' },
+          { icon: '🤝', title: 'Pedido inicial',     msg: '"Queremos hacer una prueba de 5k..."', time: 'ahora' },
+        ],
+      },
+      {
+        name: '🍎 Alimentos y Bebidas — Biobío',
+        emails: 1543, barPct: '88%', respuestas: 31, openRate: '5.1%', reuniones: 11,
+        notifs: [
+          { icon: '🤝', title: 'Reunión agendada',   msg: '"Hablamos el miércoles a las 3pm"',   time: 'ahora' },
+          { icon: '📨', title: 'Nueva respuesta',    msg: '"Tenemos interés en sus servicios"',   time: '4m' },
+        ],
+        tickMsgs: [
+          { icon: '📨', title: 'Nueva respuesta',    msg: '"Muy interesante, coordinemos..."',    time: 'ahora' },
+          { icon: '💼', title: 'Oportunidad grande', msg: '"Somos distribuidores en 3 regiones"', time: 'ahora' },
+          { icon: '📅', title: 'Llamada agendada',   msg: '"Lunes 9am, ¿te acomoda?"',            time: 'ahora' },
+        ],
+      },
     ];
-    let idx = 0;
-    const dashCount = document.getElementById('dashCount');
-    const respCount = document.getElementById('respCount');
-    let emails = 1247, resps = 23;
 
+    let campIdx = 0;
+    let tickIdx = 0;
+    let liveEmails = campaigns[0].emails;
+    let liveResps  = campaigns[0].respuestas;
+
+    const elCampName  = document.getElementById('dashCampName');
+    const elEmails    = document.getElementById('dashEmailCount');
+    const elBar       = document.getElementById('dashBarFill');
+    const elResps     = document.getElementById('dashRespNum');
+    const elOpen      = document.getElementById('dashOpenRate');
+    const elMeetings  = document.getElementById('dashMeetings');
+    const elNotifs    = document.getElementById('dashNotifs');
+
+    function makeNotif(n) {
+      const d = document.createElement('div');
+      d.className = 'dash-notif';
+      d.innerHTML = `<div class="dash-notif-icon">${n.icon}</div><div class="dash-notif-body"><div class="dash-notif-title">${n.title}</div><div class="dash-notif-msg">${n.msg}</div></div><span class="dash-notif-time">${n.time}</span>`;
+      return d;
+    }
+
+    // Tick: add notification + increment counters every ~3.5s
     setInterval(() => {
-      idx = (idx + 1) % msgs.length;
-      const m = msgs[idx];
-      const el = document.createElement('div');
-      el.className = 'dash-notif';
-      el.innerHTML = `<div class="dash-notif-icon">${m.icon}</div><div class="dash-notif-body"><div class="dash-notif-title">${m.title}</div><div class="dash-notif-msg">${m.msg}</div></div><span class="dash-notif-time">${m.time}</span>`;
-      notifContainer.insertBefore(el, notifContainer.firstChild);
-      while (notifContainer.children.length > 2) notifContainer.removeChild(notifContainer.lastChild);
-      emails += Math.floor(Math.random() * 8) + 2;
-      resps++;
-      if (dashCount) dashCount.textContent = emails.toLocaleString('en-US');
-      if (respCount) respCount.textContent = resps;
-    }, 3800);
+      const c = campaigns[campIdx];
+      liveEmails += Math.floor(Math.random() * 7) + 2;
+      liveResps++;
+      if (elEmails) elEmails.textContent = liveEmails.toLocaleString('en-US');
+      if (elResps)  elResps.textContent  = liveResps;
+
+      const msgs = c.tickMsgs;
+      tickIdx = (tickIdx + 1) % msgs.length;
+      if (elNotifs) {
+        elNotifs.insertBefore(makeNotif(msgs[tickIdx]), elNotifs.firstChild);
+        while (elNotifs.children.length > 2) elNotifs.removeChild(elNotifs.lastChild);
+      }
+    }, 3500);
+
+    // Campaign switch every 5s
+    setInterval(() => {
+      dashBody.classList.add('dash-fade');
+
+      setTimeout(() => {
+        campIdx = (campIdx + 1) % campaigns.length;
+        const c = campaigns[campIdx];
+        liveEmails = c.emails;
+        liveResps  = c.respuestas;
+        tickIdx    = 0;
+
+        if (elCampName) elCampName.textContent       = c.name;
+        if (elEmails)   elEmails.textContent         = c.emails.toLocaleString('en-US');
+        if (elBar)      elBar.style.width            = c.barPct;
+        if (elResps)    elResps.textContent          = c.respuestas;
+        if (elOpen)     elOpen.textContent           = c.openRate;
+        if (elMeetings) elMeetings.textContent       = c.reuniones;
+        if (elNotifs)   elNotifs.innerHTML           = c.notifs.map(n => makeNotif(n).outerHTML).join('');
+
+        dashBody.classList.remove('dash-fade');
+      }, 350);
+    }, 5000);
   }
 
 });

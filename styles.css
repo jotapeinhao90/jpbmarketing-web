@@ -743,7 +743,16 @@ select { cursor: pointer; }
 .text-center { text-align: center; }
 
 /* ── Hero Visual (Dashboard Card) ───────────────────────────── */
-.hero-visual { position: relative; }
+.hero-visual { position: relative; padding-bottom: 48px; }
+
+/* Dash body fade transition between campaigns */
+.dash-body {
+  transition: opacity 0.35s ease, transform 0.35s ease;
+}
+.dash-body.dash-fade {
+  opacity: 0;
+  transform: translateY(8px);
+}
 
 .dash-card {
   background: var(--white);
@@ -853,7 +862,7 @@ select { cursor: pointer; }
   z-index: 2;
 }
 .badge-1 { top: -16px; right: 16px; animation: badge-bob 4s ease-in-out infinite; }
-.badge-2 { bottom: 40px; left: -24px; animation: badge-bob 4s ease-in-out 1.5s infinite; }
+.badge-2 { bottom: 4px; left: 8px; animation: badge-bob 4s ease-in-out 1.5s infinite; }
 @keyframes badge-bob {
   0%, 100% { transform: translateY(0); }
   50%       { transform: translateY(-7px); }
