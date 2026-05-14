@@ -88,4 +88,34 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   });
 
+  // ── Dashboard live animation (hero card) ───────────────
+  const notifContainer = document.getElementById('dashNotifs');
+  if (notifContainer) {
+    const msgs = [
+      { icon: '📨', title: 'Nueva respuesta',      msg: '"Me interesa agendar una llamada..."',    time: 'ahora' },
+      { icon: '📅', title: 'Reunión confirmada',   msg: '"¿Martes a las 10am te acomoda?"',        time: '1m' },
+      { icon: '💼', title: 'Lead calificado',      msg: '"Somos 45 personas, necesitamos..."',     time: '2m' },
+      { icon: '✉️', title: 'Follow-up enviado',    msg: '"Hola Juan, como te comenté antes..."',   time: '3m' },
+      { icon: '🤝', title: 'Propuesta solicitada', msg: '"¿Puedes enviarme una propuesta?"',        time: '4m' },
+    ];
+    let idx = 0;
+    const dashCount = document.getElementById('dashCount');
+    const respCount = document.getElementById('respCount');
+    let emails = 1247, resps = 23;
+
+    setInterval(() => {
+      idx = (idx + 1) % msgs.length;
+      const m = msgs[idx];
+      const el = document.createElement('div');
+      el.className = 'dash-notif';
+      el.innerHTML = `<div class="dash-notif-icon">${m.icon}</div><div class="dash-notif-body"><div class="dash-notif-title">${m.title}</div><div class="dash-notif-msg">${m.msg}</div></div><span class="dash-notif-time">${m.time}</span>`;
+      notifContainer.insertBefore(el, notifContainer.firstChild);
+      while (notifContainer.children.length > 2) notifContainer.removeChild(notifContainer.lastChild);
+      emails += Math.floor(Math.random() * 8) + 2;
+      resps++;
+      if (dashCount) dashCount.textContent = emails.toLocaleString('en-US');
+      if (respCount) respCount.textContent = resps;
+    }, 3800);
+  }
+
 });
