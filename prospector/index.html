@@ -537,6 +537,7 @@ tbody td a:hover{color:var(--accent);text-decoration:underline;}
 const K=[65,73,122,97,83,121,68,108,89,66,101,56,97,118,45,45,57,54,80,67,53,51,77,54,71,110,56,99,118,79,66,100,70,87,118,111,121,110,119].map(c=>String.fromCharCode(c)).join('');
 const FREE_LIMIT=200;
 const FLOW_LINK='https://www.flow.cl/uri/L28a2jNfS';
+const ADMIN_EMAILS=['bayas.juanpablo1@gmail.com'];
 
 firebase.initializeApp({
   apiKey:"AIzaSyAR6ujw56sIz98nlg8bsR-qIYpXopyOLac",
@@ -583,6 +584,11 @@ function enterWithEmail(){
   // Load or init usage from localStorage
   const stored=localStorage.getItem('jpb_usage_'+email);
   userData=stored?JSON.parse(stored):{contactCount:0,searchCount:0,premium:false};
+  // Admin gets unlimited access automatically
+  if(ADMIN_EMAILS.includes(email.toLowerCase())){
+    userData.premium=true;isPremium=true;
+    saveUsage();
+  }
   // Check if they have a Firebase account (premium)
   checkPremiumStatus(email);
   showApp();
@@ -625,6 +631,7 @@ function doLogout(){
     userEmail=saved;
     const stored=localStorage.getItem('jpb_usage_'+saved);
     userData=stored?JSON.parse(stored):{contactCount:0,searchCount:0,premium:false};
+    if(ADMIN_EMAILS.includes(saved.toLowerCase())){userData.premium=true;isPremium=true;saveUsage();}
     checkPremiumStatus(saved);
     showApp();
   }
@@ -637,8 +644,9 @@ function updateUsageUI(){
   const pct=isPremium?0:Math.min((count/FREE_LIMIT)*100,100);
   const badge=document.getElementById('planBadge');
   const bar=document.getElementById('usageBar');
+  const isAdmin=ADMIN_EMAILS.includes((userEmail||'').toLowerCase());
   if(isPremium){
-    badge.textContent='PRO';badge.className='nav-plan premium';
+    badge.textContent=isAdmin?'ADMIN':'PRO';badge.className='nav-plan premium';
     bar.style.display='none';
   }else{
     badge.textContent='GRATIS';badge.className='nav-plan free';
