@@ -1188,6 +1188,8 @@ select { cursor: pointer; }
   .lead-magnet { grid-template-columns: 1fr; }
   .contact-layout { grid-template-columns: 1fr; }
   .icp-grid { grid-template-columns: repeat(2, 1fr); }
+  .prospector-offer-grid { grid-template-columns: 1fr; gap: 48px; }
+  .prospector-offer-content h2 { font-size: clamp(1.6rem, 3vw, 2.2rem); }
 }
 
 @media (max-width: 768px) {
@@ -1199,6 +1201,12 @@ select { cursor: pointer; }
   .brand-strip-tag { display: none; }
   .brand-strip-sep { display: none; }
   .hero-grid { gap: 40px; }
+  .prospector-offer { padding: 64px 0; }
+  .prospector-offer-grid { gap: 32px; }
+  .prospector-price-num { font-size: 2.2rem; }
+  .prospector-actions { flex-direction: column; }
+  .prospector-actions .btn { justify-content: center; text-align: center; }
+  .db-preview-card { font-size: 0.9rem; }
   .services-grid { grid-template-columns: 1fr; }
   .stats-grid { grid-template-columns: repeat(2, 1fr); }
   .stat-item { border-bottom: 1px solid rgba(255,255,255,0.07); }
