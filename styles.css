@@ -167,7 +167,7 @@ h4 { font-size: 1.125rem; font-weight: 600; }
   flex-shrink: 0;
 }
 .nav-logo-img {
-  height: calc(var(--navbar-h) - 2px);
+  height: var(--navbar-h);
   width: auto;
   object-fit: contain;
   display: block;
@@ -1197,7 +1197,7 @@ select { cursor: pointer; }
   section { padding: 60px 0; }
   .nav-links { display: none; }
   .nav-hamburger { display: flex; }
-  .nav-logo-img { height: calc(var(--navbar-h) - 2px); }
+  .nav-logo-img { height: var(--navbar-h); }
   .brand-strip-tag { display: none; }
   .brand-strip-sep { display: none; }
   .hero-grid { gap: 40px; }
