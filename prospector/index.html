@@ -589,6 +589,11 @@ function enterWithEmail(){
     userData.premium=true;isPremium=true;
     saveUsage();
   }
+  // Access code unlocks unlimited
+  if(localStorage.getItem('jpb_unlimited_access')==='1'){
+    userData.premium=true;isPremium=true;
+    saveUsage();
+  }
   // Check if they have a Firebase account (premium)
   checkPremiumStatus(email);
   showApp();
@@ -631,7 +636,7 @@ function doLogout(){
     userEmail=saved;
     const stored=localStorage.getItem('jpb_usage_'+saved);
     userData=stored?JSON.parse(stored):{contactCount:0,searchCount:0,premium:false};
-    if(ADMIN_EMAILS.includes(saved.toLowerCase())){userData.premium=true;isPremium=true;saveUsage();}
+    if(ADMIN_EMAILS.includes(saved.toLowerCase())||localStorage.getItem('jpb_unlimited_access')==='1'){userData.premium=true;isPremium=true;saveUsage();}
     checkPremiumStatus(saved);
     showApp();
   }
