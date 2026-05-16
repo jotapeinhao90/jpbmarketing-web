@@ -1035,6 +1035,7 @@ async function startSearch(){
     let d=await api(qs[i]);(d.places||[]).forEach(p=>{const r=proc(p);if(r)allResults.push(r);});
     let pg=1;while(d.nextPageToken&&pg<3&&!stopped){while(paused&&!stopped){await new Promise(ok=>setTimeout(ok,200));}if(stopped)break;if(allResults.length>=effectiveLimit){stopped=true;break;}pg++;await new Promise(ok=>setTimeout(ok,300));d=await api(qs[i],d.nextPageToken);(d.places||[]).forEach(p=>{const r=proc(p);if(r)allResults.push(r);});}
     updateStats();
+    if(i===0||i%5===4){filtered=[...allResults];renderTable();}
     await new Promise(ok=>setTimeout(ok,150));
   }
   // Save usage
