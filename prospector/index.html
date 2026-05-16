@@ -797,9 +797,36 @@ function pauseSearch(){paused=true;document.getElementById('btnPause').style.dis
 function resumeSearch(){paused=false;document.getElementById('btnPause').style.display='flex';document.getElementById('pauseStatus').style.display='none';}
 function stopSearch(){stopped=true;paused=false;}
 
-function updateStats(){const r=allResults;document.getElementById('statTotal').textContent=r.length;document.getElementById('statWeb').textContent=r.filter(x=>x.sitio_web).length;document.getElementById('statNoWeb').textContent=r.filter(x=>!x.sitio_web).length;document.getElementById('statPhone').textContent=r.filter(x=>x.telefono).length;document.getElementById('statHours').textContent=r.filter(x=>x.tiene_horarios).length;document.querySelectorAll('.cat-pill[data-cat]').forEach(pill=>{const cat=pill.dataset.cat;if(cat==='all')return;const cats=CAT_MAP[cat]||[];const count=r.filter(x=>x.tipos_raw.some(t=>cats.some(c=>t.toLowerCase().includes(c)))).length;let ce=pill.querySelector('.cat-count');if(!ce){ce=document.createElement('span');ce.className='cat-count';pill.appendChild(ce);}ce.textContent=count;});}
+const DISPLAY_LIMIT=500;
 
-function renderTable(){document.getElementById('resultCount').innerHTML='Mostrando <strong>'+filtered.length+'</strong> de '+allResults.length+' empresas';const tb=document.getElementById('tbody');tb.innerHTML='';filtered.forEach((r,i)=>{const w=r.sitio_web?'<a href="'+r.sitio_web+'" target="_blank">'+r.sitio_web.replace(/^https?:\/\//,'').replace(/\/$/,'').slice(0,28)+'</a>':'<span class="no-web">Sin web</span>';const rt=r.rating>=4?'badge-good':r.rating>=3?'badge-mid':r.rating>0?'badge-low':'';const rH=r.rating?'<span class="badge '+rt+'">★ '+r.rating+'</span>':'<span style="color:var(--dim)">—</span>';const sC=r.estado==='OPERATIONAL'?'color:var(--success)':r.estado.includes('CLOSED')?'color:var(--danger)':'color:var(--dim)';const dq=dataQuality(r);const dqH='<div class="dq-bar">'+[0,1,2,3,4].map(n=>'<div class="dq-seg'+(n<dq?' on':'')+'"></div>').join('')+'<span class="dq-bar-label">'+dq+'/5</span></div>';const mH=r.google_maps?'<a href="'+r.google_maps+'" target="_blank" class="maps-link">📍</a>':'';tb.innerHTML+='<tr><td style="color:var(--dim)">'+(i+1)+'</td><td><div class="empresa-name">'+r.nombre+' '+mH+'</div><div class="empresa-types">'+r.tipos+'</div></td><td>'+(r.telefono||'<span style="color:var(--dim)">—</span>')+'</td><td>'+w+'</td><td style="color:var(--muted);font-size:11px;max-width:200px;">'+r.direccion+'</td><td>'+rH+'</td><td style="color:var(--muted)">'+(r.total_resenas||'—')+'</td><td><span style="font-size:11px;'+sC+'">'+r.estado_text+'</span></td><td>'+dqH+'</td><td><span class="hours-text" title="'+r.horario+'">'+(r.horario||'<span style="color:var(--dim)">—</span>')+'</span></td></tr>';});}
+function updateStats(){
+  const r=allResults;
+  document.getElementById('statTotal').textContent=r.length;
+  let web=0,noWeb=0,phone=0,hours=0;
+  r.forEach(x=>{if(x.sitio_web)web++;else noWeb++;if(x.telefono)phone++;if(x.tiene_horarios)hours++;});
+  document.getElementById('statWeb').textContent=web;
+  document.getElementById('statNoWeb').textContent=noWeb;
+  document.getElementById('statPhone').textContent=phone;
+  document.getElementById('statHours').textContent=hours;
+}
+
+function renderTable(){
+  const shown=filtered.slice(0,DISPLAY_LIMIT);
+  const total=filtered.length;
+  document.getElementById('resultCount').innerHTML='Mostrando <strong>'+shown.length+'</strong> de '+total+' empresas'+(total>DISPLAY_LIMIT?' <span style="color:var(--warning);font-size:11px;">(máx. '+DISPLAY_LIMIT+' filas — exporta CSV para ver todos)</span>':'');
+  const tb=document.getElementById('tbody');
+  const rows=shown.map((r,i)=>{
+    const w=r.sitio_web?'<a href="'+r.sitio_web+'" target="_blank">'+r.sitio_web.replace(/^https?:\/\//,'').replace(/\/$/,'').slice(0,28)+'</a>':'<span class="no-web">Sin web</span>';
+    const rt=r.rating>=4?'badge-good':r.rating>=3?'badge-mid':r.rating>0?'badge-low':'';
+    const rH=r.rating?'<span class="badge '+rt+'">★ '+r.rating+'</span>':'<span style="color:var(--dim)">—</span>';
+    const sC=r.estado==='OPERATIONAL'?'color:var(--success)':r.estado.includes('CLOSED')?'color:var(--danger)':'color:var(--dim)';
+    const dq=dataQuality(r);
+    const dqH='<div class="dq-bar">'+[0,1,2,3,4].map(n=>'<div class="dq-seg'+(n<dq?' on':'')+'"></div>').join('')+'<span class="dq-bar-label">'+dq+'/5</span></div>';
+    const mH=r.google_maps?'<a href="'+r.google_maps+'" target="_blank" class="maps-link">📍</a>':'';
+    return '<tr><td style="color:var(--dim)">'+(i+1)+'</td><td><div class="empresa-name">'+r.nombre+' '+mH+'</div><div class="empresa-types">'+r.tipos+'</div></td><td>'+(r.telefono||'<span style="color:var(--dim)">—</span>')+'</td><td>'+w+'</td><td style="color:var(--muted);font-size:11px;max-width:200px;">'+r.direccion+'</td><td>'+rH+'</td><td style="color:var(--muted)">'+(r.total_resenas||'—')+'</td><td><span style="font-size:11px;'+sC+'">'+r.estado_text+'</span></td><td>'+dqH+'</td><td><span class="hours-text" title="'+r.horario+'">'+(r.horario||'<span style="color:var(--dim)">—</span>')+'</span></td></tr>';
+  });
+  tb.innerHTML=rows.join('');
+}
 
 async function startSearch(){
   if(running)return;
@@ -835,7 +862,7 @@ async function startSearch(){
     document.getElementById('progressCount').textContent=pct+'% — '+allResults.length+' empresas';
     let d=await api(qs[i]);(d.places||[]).forEach(p=>{const r=proc(p);if(r)allResults.push(r);});
     let pg=1;while(d.nextPageToken&&pg<3&&!stopped){while(paused&&!stopped){await new Promise(ok=>setTimeout(ok,200));}if(stopped)break;if(!isPremium&&allResults.length>=FREE_LIMIT){stopped=true;break;}pg++;await new Promise(ok=>setTimeout(ok,300));d=await api(qs[i],d.nextPageToken);(d.places||[]).forEach(p=>{const r=proc(p);if(r)allResults.push(r);});}
-    updateStats();filtered=[...allResults];renderTable();
+    updateStats();
     await new Promise(ok=>setTimeout(ok,150));
   }
   // Save usage
@@ -844,6 +871,9 @@ async function startSearch(){
     userData.searchCount=(userData.searchCount||0)+1;
     saveUsage();
   }
+  // Render table once at the end
+  filtered=[...allResults];
+  renderTable();
   const hitLimit=!isPremium&&allResults.length>=FREE_LIMIT;
   document.getElementById('progressLabel').textContent=hitLimit?'Límite gratuito alcanzado':stopped?'Búsqueda detenida':'Búsqueda completada';
   document.getElementById('progressCount').textContent=allResults.length+' empresas';
