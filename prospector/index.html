@@ -167,13 +167,23 @@ body{font-family:'Inter',system-ui,sans-serif;background:var(--bg);color:var(--t
 .dq-pill .dq-dot{width:6px;height:6px;border-radius:50%;background:var(--dim);}
 .dq-pill.active .dq-dot{background:var(--success);}
 .sort-pill.active{border-color:var(--accent2);color:var(--accent2);background:rgba(0,212,255,.08);}
-.rating-btn{width:44px;height:36px;border:1px solid var(--border);border-radius:8px;background:transparent;color:var(--muted);font-size:12px;font-weight:600;cursor:pointer;transition:all .2s;font-family:inherit;display:flex;align-items:center;justify-content:center;gap:3px;}
+.rating-btn{min-width:44px;width:auto;padding:0 12px;height:34px;border:1px solid var(--border);border-radius:8px;background:transparent;color:var(--muted);font-size:12px;font-weight:600;cursor:pointer;transition:all .2s;font-family:inherit;display:inline-flex;align-items:center;justify-content:center;gap:3px;}
 .rating-btn:hover{border-color:var(--warning);color:var(--warning);}
 .rating-btn.active{border-color:var(--warning);color:var(--warning);background:rgba(245,158,11,.1);}
 .rating-btn .star{font-size:10px;color:var(--warning);}
+.reviews-btn{min-width:44px;width:auto;padding:0 12px;height:34px;border:1px solid var(--border);border-radius:8px;background:transparent;color:var(--muted);font-size:12px;font-weight:600;cursor:pointer;transition:all .2s;font-family:inherit;display:inline-flex;align-items:center;justify-content:center;}
+.reviews-btn:hover{border-color:var(--accent2);color:var(--accent2);}
+.reviews-btn.active{border-color:var(--accent2);color:var(--accent2);background:rgba(0,212,255,.08);}
+.limit-pill{padding:7px 14px;border:1px solid var(--border);border-radius:100px;font-size:11px;font-weight:500;color:var(--muted);background:transparent;cursor:pointer;transition:all .2s;font-family:inherit;}
+.limit-pill:hover{border-color:var(--accent);color:var(--text);}
+.limit-pill.active{background:var(--glow);border-color:var(--accent);color:var(--accent);}
+.filter-grid{display:grid;grid-template-columns:1fr 1fr;gap:0 24px;}
+.filter-divider{height:1px;background:var(--border);margin:12px 0 16px;}
+.filter-hint{font-size:9px;color:var(--dim);text-transform:none;letter-spacing:0;font-weight:400;margin-left:4px;}
 .active-filters{display:flex;gap:6px;flex-wrap:wrap;margin-top:12px;}
 .active-tag{display:inline-flex;align-items:center;gap:5px;padding:4px 10px;background:var(--glow);border:1px solid rgba(108,99,255,.2);border-radius:100px;font-size:10px;font-weight:600;color:var(--accent);}
 .active-tag .remove{cursor:pointer;opacity:.6;font-size:12px;}.active-tag .remove:hover{opacity:1;}
+@media(max-width:768px){.filter-grid{grid-template-columns:1fr;}}
 
 /* Progress */
 .progress-info{display:flex;justify-content:space-between;align-items:center;font-size:12px;color:var(--muted);margin-bottom:8px;}
@@ -472,10 +482,86 @@ tbody td a:hover{color:var(--accent);text-decoration:underline;}
         </button>
       </div>
       <div class="filter-panel" id="filterPanel">
-        <div class="filter-section"><div class="filter-label">Industria</div><div class="cat-grid" id="catGrid"><button class="cat-pill active" data-cat="all" onclick="setCat('all',this)">Todas</button><button class="cat-pill" data-cat="manufacturing" onclick="setCat('manufacturing',this)">Manufactura</button><button class="cat-pill" data-cat="logistics" onclick="setCat('logistics',this)">Logística</button><button class="cat-pill" data-cat="construction" onclick="setCat('construction',this)">Construcción</button><button class="cat-pill" data-cat="technology" onclick="setCat('technology',this)">Tecnología</button><button class="cat-pill" data-cat="mining" onclick="setCat('mining',this)">Minería</button><button class="cat-pill" data-cat="energy" onclick="setCat('energy',this)">Energía</button><button class="cat-pill" data-cat="agro" onclick="setCat('agro',this)">Agroindustria</button><button class="cat-pill" data-cat="services" onclick="setCat('services',this)">Servicios</button><button class="cat-pill" data-cat="pharma" onclick="setCat('pharma',this)">Salud/Pharma</button></div></div>
-        <div class="filter-section"><div class="filter-label">Calidad de datos</div><div class="dq-grid"><button class="dq-pill" data-dq="has-web" onclick="toggleDQ('has-web',this)"><span class="dq-dot"></span>Con sitio web</button><button class="dq-pill" data-dq="has-phone" onclick="toggleDQ('has-phone',this)"><span class="dq-dot"></span>Con teléfono</button><button class="dq-pill" data-dq="has-hours" onclick="toggleDQ('has-hours',this)"><span class="dq-dot"></span>Con horarios</button><button class="dq-pill" data-dq="is-open" onclick="toggleDQ('is-open',this)"><span class="dq-dot"></span>Operativa</button><button class="dq-pill" data-dq="has-reviews" onclick="toggleDQ('has-reviews',this)"><span class="dq-dot"></span>Con reseñas</button><button class="dq-pill" data-dq="complete" onclick="toggleDQ('complete',this)"><span class="dq-dot"></span>Datos completos</button></div></div>
-        <div class="filter-section"><div class="filter-label">Rating mínimo</div><div class="rating-selector"><button class="rating-btn" onclick="setMinRating(0,this)">Todo</button><button class="rating-btn" onclick="setMinRating(3,this)">3<span class="star">★</span></button><button class="rating-btn" onclick="setMinRating(3.5,this)">3.5<span class="star">★</span></button><button class="rating-btn" onclick="setMinRating(4,this)">4<span class="star">★</span></button><button class="rating-btn" onclick="setMinRating(4.5,this)">4.5<span class="star">★</span></button></div></div>
-        <div class="filter-section"><div class="filter-label">Ordenar por</div><div class="sort-row"><button class="sort-pill active" data-sort="default" onclick="setSortPill('default',this)">Sin orden</button><button class="sort-pill" data-sort="name-asc" onclick="setSortPill('name-asc',this)">Nombre A-Z</button><button class="sort-pill" data-sort="rating-desc" onclick="setSortPill('rating-desc',this)">Mayor rating</button><button class="sort-pill" data-sort="reviews-desc" onclick="setSortPill('reviews-desc',this)">Más reseñas</button><button class="sort-pill" data-sort="quality-desc" onclick="setSortPill('quality-desc',this)">Mejor datos</button></div></div>
+        <div class="filter-grid">
+          <div class="filter-section">
+            <div class="filter-label">Industria <span class="filter-hint">(selección múltiple)</span></div>
+            <div class="cat-grid" id="catGrid">
+              <button class="cat-pill active" data-cat="all" onclick="clearCats(this)">Todas</button>
+              <button class="cat-pill" data-cat="manufacturing" onclick="toggleCat('manufacturing',this)">🏭 Manufactura</button>
+              <button class="cat-pill" data-cat="logistics" onclick="toggleCat('logistics',this)">🚛 Logística</button>
+              <button class="cat-pill" data-cat="construction" onclick="toggleCat('construction',this)">🏗️ Construcción</button>
+              <button class="cat-pill" data-cat="technology" onclick="toggleCat('technology',this)">💻 Tecnología</button>
+              <button class="cat-pill" data-cat="mining" onclick="toggleCat('mining',this)">⛏️ Minería</button>
+              <button class="cat-pill" data-cat="energy" onclick="toggleCat('energy',this)">⚡ Energía</button>
+              <button class="cat-pill" data-cat="agro" onclick="toggleCat('agro',this)">🌾 Agroindustria</button>
+              <button class="cat-pill" data-cat="services" onclick="toggleCat('services',this)">📊 Servicios</button>
+              <button class="cat-pill" data-cat="pharma" onclick="toggleCat('pharma',this)">💊 Salud</button>
+            </div>
+          </div>
+          <div class="filter-section">
+            <div class="filter-label">Datos disponibles</div>
+            <div class="dq-grid">
+              <button class="dq-pill" data-dq="has-web" onclick="toggleDQ('has-web',this)"><span class="dq-dot"></span>Con sitio web</button>
+              <button class="dq-pill" data-dq="has-phone" onclick="toggleDQ('has-phone',this)"><span class="dq-dot"></span>Con teléfono</button>
+              <button class="dq-pill" data-dq="has-hours" onclick="toggleDQ('has-hours',this)"><span class="dq-dot"></span>Con horarios</button>
+              <button class="dq-pill" data-dq="is-open" onclick="toggleDQ('is-open',this)"><span class="dq-dot"></span>Solo operativas</button>
+              <button class="dq-pill" data-dq="has-reviews" onclick="toggleDQ('has-reviews',this)"><span class="dq-dot"></span>Con reseñas</button>
+              <button class="dq-pill" data-dq="complete" onclick="toggleDQ('complete',this)"><span class="dq-dot"></span>Datos completos (4/5)</button>
+            </div>
+          </div>
+        </div>
+        <div class="filter-divider"></div>
+        <div class="filter-grid">
+          <div class="filter-section">
+            <div class="filter-label">Rating mínimo</div>
+            <div class="rating-selector" id="ratingSelector">
+              <button class="rating-btn active" onclick="setMinRating(0,this)">Todo</button>
+              <button class="rating-btn" onclick="setMinRating(1,this)">1<span class="star">★</span></button>
+              <button class="rating-btn" onclick="setMinRating(2,this)">2<span class="star">★</span></button>
+              <button class="rating-btn" onclick="setMinRating(3,this)">3<span class="star">★</span></button>
+              <button class="rating-btn" onclick="setMinRating(3.5,this)">3.5<span class="star">★</span></button>
+              <button class="rating-btn" onclick="setMinRating(4,this)">4<span class="star">★</span></button>
+              <button class="rating-btn" onclick="setMinRating(4.5,this)">4.5<span class="star">★</span></button>
+              <button class="rating-btn" onclick="setMinRating(5,this)">5<span class="star">★</span></button>
+            </div>
+          </div>
+          <div class="filter-section">
+            <div class="filter-label">Reseñas mínimas</div>
+            <div class="rating-selector" id="reviewsSelector">
+              <button class="reviews-btn active" onclick="setMinReviews(0,this)">Todo</button>
+              <button class="reviews-btn" onclick="setMinReviews(5,this)">≥5</button>
+              <button class="reviews-btn" onclick="setMinReviews(10,this)">≥10</button>
+              <button class="reviews-btn" onclick="setMinReviews(25,this)">≥25</button>
+              <button class="reviews-btn" onclick="setMinReviews(50,this)">≥50</button>
+              <button class="reviews-btn" onclick="setMinReviews(100,this)">≥100</button>
+              <button class="reviews-btn" onclick="setMinReviews(200,this)">≥200</button>
+            </div>
+          </div>
+        </div>
+        <div class="filter-divider"></div>
+        <div class="filter-section">
+          <div class="filter-label">Contactos a buscar</div>
+          <div class="sort-row" id="limitSelector">
+            <button class="limit-pill active" onclick="setContactLimit(0,this)">Automático</button>
+            <button class="limit-pill" onclick="setContactLimit(100,this)">100</button>
+            <button class="limit-pill" onclick="setContactLimit(200,this)">200</button>
+            <button class="limit-pill" onclick="setContactLimit(500,this)">500</button>
+            <button class="limit-pill" onclick="setContactLimit(1000,this)">1.000</button>
+            <button class="limit-pill" onclick="setContactLimit(-1,this)">Sin límite</button>
+          </div>
+        </div>
+        <div class="filter-divider"></div>
+        <div class="filter-section" style="margin-bottom:0;">
+          <div class="filter-label">Ordenar resultados por</div>
+          <div class="sort-row">
+            <button class="sort-pill active" data-sort="default" onclick="setSortPill('default',this)">Sin orden</button>
+            <button class="sort-pill" data-sort="name-asc" onclick="setSortPill('name-asc',this)">Nombre A→Z</button>
+            <button class="sort-pill" data-sort="name-desc" onclick="setSortPill('name-desc',this)">Nombre Z→A</button>
+            <button class="sort-pill" data-sort="rating-desc" onclick="setSortPill('rating-desc',this)">Mayor rating</button>
+            <button class="sort-pill" data-sort="reviews-desc" onclick="setSortPill('reviews-desc',this)">Más reseñas</button>
+            <button class="sort-pill" data-sort="quality-desc" onclick="setSortPill('quality-desc',this)">Mejor datos</button>
+          </div>
+        </div>
       </div>
       <div class="active-filters" id="activeFilters"></div>
     </div>
@@ -568,7 +654,7 @@ const db=firebase.firestore();
 // =============================================
 let userEmail='',userData=null,isPremium=false,fbUser=null;
 let allResults=[],filtered=[],seen=new Set(),running=false,paused=false,stopped=false;
-let currentCat='all',activeDQ=new Set(),minRating=0,currentSort='default';
+let activeCats=new Set(),activeDQ=new Set(),minRating=0,minReviews=0,contactLimit=0,currentSort='default';
 
 const CAT_MAP={
   manufacturing:['manufacturer','factory','industrial_area','machine_shop','steel_distributor','warehouse'],
@@ -782,15 +868,97 @@ function dataQuality(r){let s=0;if(r.sitio_web)s++;if(r.telefono)s++;if(r.tiene_
 
 // Filters
 function toggleFilters(){document.getElementById('filterPanel').classList.toggle('show');document.getElementById('btnToggleFilters').classList.toggle('active');}
-function setCat(c,el){currentCat=c;document.querySelectorAll('.cat-pill').forEach(p=>p.classList.remove('active'));el.classList.add('active');applyFilters();updateFilterTags();}
+
+function clearCats(el){
+  activeCats.clear();
+  document.querySelectorAll('.cat-pill').forEach(p=>p.classList.remove('active'));
+  el.classList.add('active');
+  applyFilters();updateFilterTags();
+}
+function toggleCat(c,el){
+  document.querySelector('.cat-pill[data-cat="all"]').classList.remove('active');
+  if(activeCats.has(c)){activeCats.delete(c);el.classList.remove('active');}
+  else{activeCats.add(c);el.classList.add('active');}
+  if(activeCats.size===0)document.querySelector('.cat-pill[data-cat="all"]').classList.add('active');
+  applyFilters();updateFilterTags();
+}
 function toggleDQ(k,el){if(activeDQ.has(k)){activeDQ.delete(k);el.classList.remove('active');}else{activeDQ.add(k);el.classList.add('active');}applyFilters();updateFilterTags();}
-function setMinRating(v,el){minRating=v;document.querySelectorAll('.rating-btn').forEach(b=>b.classList.remove('active'));if(v>0&&el)el.classList.add('active');applyFilters();updateFilterTags();}
+function setMinRating(v,el){
+  minRating=v;
+  document.getElementById('ratingSelector').querySelectorAll('button').forEach(b=>b.classList.remove('active'));
+  if(el)el.classList.add('active');
+  applyFilters();updateFilterTags();
+}
+function setMinReviews(v,el){
+  minReviews=v;
+  document.getElementById('reviewsSelector').querySelectorAll('button').forEach(b=>b.classList.remove('active'));
+  if(el)el.classList.add('active');
+  applyFilters();updateFilterTags();
+}
+function setContactLimit(v,el){
+  contactLimit=v;
+  document.getElementById('limitSelector').querySelectorAll('button').forEach(b=>b.classList.remove('active'));
+  if(el)el.classList.add('active');
+}
 function setSortPill(s,el){currentSort=s;document.querySelectorAll('.sort-pill').forEach(p=>p.classList.remove('active'));el.classList.add('active');applyFilters();}
-function quickFilter(type){currentCat='all';activeDQ.clear();minRating=0;document.querySelectorAll('.cat-pill').forEach(c=>c.classList.remove('active'));document.querySelector('.cat-pill[data-cat="all"]').classList.add('active');document.querySelectorAll('.dq-pill').forEach(d=>d.classList.remove('active'));document.querySelectorAll('.rating-btn').forEach(r=>r.classList.remove('active'));document.querySelectorAll('.stat').forEach(s=>s.classList.remove('stat-active'));if(type==='with-web'){activeDQ.add('has-web');document.querySelector('.dq-pill[data-dq="has-web"]').classList.add('active');}else if(type==='with-phone'){activeDQ.add('has-phone');document.querySelector('.dq-pill[data-dq="has-phone"]').classList.add('active');}else if(type==='with-hours'){activeDQ.add('has-hours');document.querySelector('.dq-pill[data-dq="has-hours"]').classList.add('active');}if(type!=='all'&&event)event.currentTarget.classList.add('stat-active');document.getElementById('filterPanel').classList.add('show');document.getElementById('btnToggleFilters').classList.add('active');applyFilters();updateFilterTags();}
-function matchesCategory(r){if(currentCat==='all')return true;const cats=CAT_MAP[currentCat]||[];return r.tipos_raw.some(t=>cats.some(c=>t.toLowerCase().includes(c)));}
-function applyFilters(){const txt=(document.getElementById('textFilter')?document.getElementById('textFilter').value:'').toLowerCase();filtered=allResults.filter(r=>{if(!matchesCategory(r))return false;if(activeDQ.has('has-web')&&!r.sitio_web)return false;if(activeDQ.has('has-phone')&&!r.telefono)return false;if(activeDQ.has('has-hours')&&!r.tiene_horarios)return false;if(activeDQ.has('is-open')&&r.estado!=='OPERATIONAL')return false;if(activeDQ.has('has-reviews')&&r.total_resenas<1)return false;if(activeDQ.has('complete')&&dataQuality(r)<4)return false;if(minRating>0&&(r.rating||0)<minRating)return false;if(txt&&!(r.nombre+r.direccion+r.tipos+r.telefono).toLowerCase().includes(txt))return false;return true;});if(currentSort==='name-asc')filtered.sort((a,b)=>a.nombre.localeCompare(b.nombre));else if(currentSort==='rating-desc')filtered.sort((a,b)=>(b.rating||0)-(a.rating||0));else if(currentSort==='reviews-desc')filtered.sort((a,b)=>(b.total_resenas||0)-(a.total_resenas||0));else if(currentSort==='quality-desc')filtered.sort((a,b)=>dataQuality(b)-dataQuality(a));renderTable();}
+
+function quickFilter(type){
+  activeCats.clear();activeDQ.clear();minRating=0;minReviews=0;
+  document.querySelectorAll('.cat-pill').forEach(c=>c.classList.remove('active'));
+  document.querySelector('.cat-pill[data-cat="all"]').classList.add('active');
+  document.querySelectorAll('.dq-pill').forEach(d=>d.classList.remove('active'));
+  document.getElementById('ratingSelector').querySelectorAll('button').forEach(b=>b.classList.remove('active'));
+  document.getElementById('ratingSelector').querySelector('button').classList.add('active');
+  document.getElementById('reviewsSelector').querySelectorAll('button').forEach(b=>b.classList.remove('active'));
+  document.getElementById('reviewsSelector').querySelector('button').classList.add('active');
+  document.querySelectorAll('.stat').forEach(s=>s.classList.remove('stat-active'));
+  if(type==='with-web'){activeDQ.add('has-web');document.querySelector('.dq-pill[data-dq="has-web"]').classList.add('active');}
+  else if(type==='with-phone'){activeDQ.add('has-phone');document.querySelector('.dq-pill[data-dq="has-phone"]').classList.add('active');}
+  else if(type==='with-hours'){activeDQ.add('has-hours');document.querySelector('.dq-pill[data-dq="has-hours"]').classList.add('active');}
+  if(type!=='all'&&event)event.currentTarget.classList.add('stat-active');
+  document.getElementById('filterPanel').classList.add('show');
+  document.getElementById('btnToggleFilters').classList.add('active');
+  applyFilters();updateFilterTags();
+}
+
+function matchesCategory(r){
+  if(activeCats.size===0)return true;
+  return Array.from(activeCats).some(cat=>{const cats=CAT_MAP[cat]||[];return r.tipos_raw.some(t=>cats.some(c=>t.toLowerCase().includes(c)));});
+}
+function applyFilters(){
+  const txt=(document.getElementById('textFilter')?document.getElementById('textFilter').value:'').toLowerCase();
+  filtered=allResults.filter(r=>{
+    if(!matchesCategory(r))return false;
+    if(activeDQ.has('has-web')&&!r.sitio_web)return false;
+    if(activeDQ.has('has-phone')&&!r.telefono)return false;
+    if(activeDQ.has('has-hours')&&!r.tiene_horarios)return false;
+    if(activeDQ.has('is-open')&&r.estado!=='OPERATIONAL')return false;
+    if(activeDQ.has('has-reviews')&&r.total_resenas<1)return false;
+    if(activeDQ.has('complete')&&dataQuality(r)<4)return false;
+    if(minRating>0&&(r.rating||0)<minRating)return false;
+    if(minReviews>0&&(r.total_resenas||0)<minReviews)return false;
+    if(txt&&!(r.nombre+r.direccion+r.tipos+r.telefono).toLowerCase().includes(txt))return false;
+    return true;
+  });
+  if(currentSort==='name-asc')filtered.sort((a,b)=>a.nombre.localeCompare(b.nombre));
+  else if(currentSort==='name-desc')filtered.sort((a,b)=>b.nombre.localeCompare(a.nombre));
+  else if(currentSort==='rating-desc')filtered.sort((a,b)=>(b.rating||0)-(a.rating||0));
+  else if(currentSort==='reviews-desc')filtered.sort((a,b)=>(b.total_resenas||0)-(a.total_resenas||0));
+  else if(currentSort==='quality-desc')filtered.sort((a,b)=>dataQuality(b)-dataQuality(a));
+  renderTable();
+}
 let colSortState={};function colSort(f){const d=colSortState[f]==='asc'?'desc':'asc';colSortState={};colSortState[f]=d;filtered.sort((a,b)=>{let va=a[f],vb=b[f];if(typeof va==='string')return d==='asc'?va.localeCompare(vb):vb.localeCompare(va);return d==='asc'?(va||0)-(vb||0):(vb||0)-(va||0);});renderTable();}
-function updateFilterTags(){const el=document.getElementById('activeFilters');let tags=[];if(currentCat!=='all'){const n={manufacturing:'Manufactura',logistics:'Logística',construction:'Construcción',technology:'Tecnología',mining:'Minería',energy:'Energía',agro:'Agroindustria',services:'Servicios',pharma:'Salud/Pharma'};tags.push({label:n[currentCat],action:()=>setCat('all',document.querySelector('.cat-pill[data-cat="all"]'))});}activeDQ.forEach(dq=>{const n={'has-web':'Con web','has-phone':'Con teléfono','has-hours':'Con horarios','is-open':'Operativa','has-reviews':'Con reseñas','complete':'Datos completos'};tags.push({label:n[dq],action:()=>toggleDQ(dq,document.querySelector('.dq-pill[data-dq="'+dq+'"]'))});});if(minRating>0)tags.push({label:'Rating ≥ '+minRating,action:()=>setMinRating(0,null)});el.innerHTML=tags.map((t,i)=>'<span class="active-tag">'+t.label+' <span class="remove" onclick="removeTag('+i+')">✕</span></span>').join('');el._actions=tags.map(t=>t.action);}
+
+function updateFilterTags(){
+  const el=document.getElementById('activeFilters');let tags=[];
+  const catNames={manufacturing:'Manufactura',logistics:'Logística',construction:'Construcción',technology:'Tecnología',mining:'Minería',energy:'Energía',agro:'Agroindustria',services:'Servicios',pharma:'Salud'};
+  activeCats.forEach(c=>tags.push({label:catNames[c]||c,action:()=>toggleCat(c,document.querySelector('.cat-pill[data-cat="'+c+'"]'))}));
+  activeDQ.forEach(dq=>{const n={'has-web':'Con web','has-phone':'Con teléfono','has-hours':'Con horarios','is-open':'Solo operativas','has-reviews':'Con reseñas','complete':'Datos completos'};tags.push({label:n[dq],action:()=>toggleDQ(dq,document.querySelector('.dq-pill[data-dq="'+dq+'"]'))});});
+  if(minRating>0)tags.push({label:'Rating ≥ '+minRating+'★',action:()=>setMinRating(0,document.getElementById('ratingSelector').querySelector('button'))});
+  if(minReviews>0)tags.push({label:'Reseñas ≥ '+minReviews,action:()=>setMinReviews(0,document.getElementById('reviewsSelector').querySelector('button'))});
+  el.innerHTML=tags.map((t,i)=>'<span class="active-tag">'+t.label+' <span class="remove" onclick="removeTag('+i+')">✕</span></span>').join('');
+  el._actions=tags.map(t=>t.action);
+}
 function removeTag(i){const el=document.getElementById('activeFilters');if(el._actions&&el._actions[i])el._actions[i]();}
 
 function pauseSearch(){paused=true;document.getElementById('btnPause').style.display='none';document.getElementById('pauseStatus').style.display='block';document.getElementById('pauseStatus').innerHTML='<span style="color:var(--warning);font-size:11px;font-weight:600;"><span class="blink">⏸</span> En pausa — '+allResults.length+' empresas</span> <button class="btn-ctrl btn-resume" onclick="resumeSearch()" style="margin-left:8px;">▶ Reanudar</button>';}
@@ -835,11 +1003,14 @@ async function startSearch(){
   if(!city)return;
   running=true;paused=false;stopped=false;
   allResults=[];filtered=[];seen=new Set();
-  currentCat='all';activeDQ.clear();minRating=0;currentSort='default';
+  activeCats.clear();activeDQ.clear();minRating=0;minReviews=0;currentSort='default';
   document.querySelectorAll('.cat-pill').forEach(c=>c.classList.remove('active'));
   document.querySelector('.cat-pill[data-cat="all"]').classList.add('active');
   document.querySelectorAll('.dq-pill').forEach(d=>d.classList.remove('active'));
-  document.querySelectorAll('.rating-btn').forEach(r=>r.classList.remove('active'));
+  document.getElementById('ratingSelector').querySelectorAll('button').forEach(b=>b.classList.remove('active'));
+  document.getElementById('ratingSelector').querySelector('button').classList.add('active');
+  document.getElementById('reviewsSelector').querySelectorAll('button').forEach(b=>b.classList.remove('active'));
+  document.getElementById('reviewsSelector').querySelector('button').classList.add('active');
   document.querySelectorAll('.sort-pill').forEach(s=>s.classList.remove('active'));
   document.querySelector('.sort-pill[data-sort="default"]').classList.add('active');
   document.querySelectorAll('.stat').forEach(s=>s.classList.remove('stat-active'));
@@ -852,16 +1023,17 @@ async function startSearch(){
   document.getElementById('pauseStatus').style.display='none';
   document.getElementById('statsGrid').style.display='grid';
   document.getElementById('resultsCard').style.display='block';
+  const effectiveLimit=contactLimit===-1?Infinity:contactLimit>0?contactLimit:(isPremium?Infinity:FREE_LIMIT);
   const qs=QS.map(q=>q.replace('{c}',city));
   for(let i=0;i<qs.length;i++){
     if(stopped)break;while(paused&&!stopped){await new Promise(ok=>setTimeout(ok,200));}if(stopped)break;
-    if(!isPremium&&allResults.length>=FREE_LIMIT){stopped=true;break;}
+    if(allResults.length>=effectiveLimit){stopped=true;break;}
     const pct=Math.round(((i+1)/qs.length)*100);
     document.getElementById('progressBar').style.width=pct+'%';
     document.getElementById('progressLabel').textContent=qs[i].replace(' en '+city,'');
     document.getElementById('progressCount').textContent=pct+'% — '+allResults.length+' empresas';
     let d=await api(qs[i]);(d.places||[]).forEach(p=>{const r=proc(p);if(r)allResults.push(r);});
-    let pg=1;while(d.nextPageToken&&pg<3&&!stopped){while(paused&&!stopped){await new Promise(ok=>setTimeout(ok,200));}if(stopped)break;if(!isPremium&&allResults.length>=FREE_LIMIT){stopped=true;break;}pg++;await new Promise(ok=>setTimeout(ok,300));d=await api(qs[i],d.nextPageToken);(d.places||[]).forEach(p=>{const r=proc(p);if(r)allResults.push(r);});}
+    let pg=1;while(d.nextPageToken&&pg<3&&!stopped){while(paused&&!stopped){await new Promise(ok=>setTimeout(ok,200));}if(stopped)break;if(allResults.length>=effectiveLimit){stopped=true;break;}pg++;await new Promise(ok=>setTimeout(ok,300));d=await api(qs[i],d.nextPageToken);(d.places||[]).forEach(p=>{const r=proc(p);if(r)allResults.push(r);});}
     updateStats();
     await new Promise(ok=>setTimeout(ok,150));
   }
