@@ -18,7 +18,8 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" onload="this.onload=null;this.rel='stylesheet'">
   <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap"></noscript>
-  <link rel="stylesheet" href="styles.css">
+  <link rel="preload" as="style" href="styles.css" onload="this.onload=null;this.rel='stylesheet'">
+  <noscript><link rel="stylesheet" href="styles.css"></noscript>
   <script type="application/ld+json">
   {"@context":"https://schema.org","@type":"Organization","name":"JPB Marketing","url":"https://jpbmarketing.cl","logo":"https://jpbmarketing.cl/assets/logo.webp","description":"Agencia B2B Industrial en Chile. Prospección, automatización con IA y presencia digital para fábricas.","telephone":"+56944843503","email":"jpbayas@jpbmarketing.cl","address":{"@type":"PostalAddress","addressLocality":"Santiago","addressCountry":"CL"}}
   </script>
@@ -34,16 +35,16 @@
 <nav class="navbar">
   <div class="container">
     <div class="nav-inner">
-      <a href="index.html" class="nav-logo">
-        <img src="assets/logo.webp" alt="JPB" class="nav-logo-img">
+      <a href="/" class="nav-logo">
+        <img src="assets/logo.webp" alt="JPB Marketing" title="JPB Marketing — Agencia B2B Industrial Chile" class="nav-logo-img">
 
       </a>      <div class="nav-links">
-        <a href="index.html">Inicio</a>
-        <a href="servicios.html">Servicios</a>
-        <a href="prospeccion.html">Prospección</a>
-        <a href="nosotros.html">Nosotros</a>
-        <a href="blog.html">Blog</a>
-        <a href="contacto.html" class="btn-nav-cta">Contacto</a>
+        <a href="/">Inicio</a>
+        <a href="/servicios">Servicios</a>
+        <a href="/prospeccion">Prospección</a>
+        <a href="/nosotros">Nosotros</a>
+        <a href="/blog">Blog</a>
+        <a href="/contacto" class="btn-nav-cta">Contacto</a>
       </div>
       <button class="nav-hamburger" aria-label="Menú">
         <span></span><span></span><span></span>
@@ -52,12 +53,12 @@
   </div>
 </nav>
 <div class="nav-mobile">
-  <a href="index.html">Inicio</a>
-  <a href="servicios.html">Servicios</a>
-  <a href="prospeccion.html">Prospección</a>
-  <a href="nosotros.html">Nosotros</a>
-  <a href="blog.html">Blog</a>
-  <a href="contacto.html" class="btn-nav-cta">Contacto</a>
+  <a href="/">Inicio</a>
+  <a href="/servicios">Servicios</a>
+  <a href="/prospeccion">Prospección</a>
+  <a href="/nosotros">Nosotros</a>
+  <a href="/blog">Blog</a>
+  <a href="/contacto" class="btn-nav-cta">Contacto</a>
 </div>
 
 <!-- HERO -->
@@ -81,8 +82,8 @@
           Automatización con IA, prospección industrial y presencia digital para fábricas que buscan escalar sus ventas B2B.
         </p>
         <div class="hero-actions reveal reveal-delay-3">
-          <a href="contacto.html" class="btn btn-primary btn-lg">Agenda una Llamada Estratégica</a>
-          <a href="servicios.html" class="btn btn-outline btn-lg">Ver Servicios</a>
+          <a href="/contacto" class="btn btn-primary btn-lg">Agenda una Llamada Estratégica</a>
+          <a href="/servicios" class="btn btn-outline btn-lg">Ver Servicios</a>
         </div>
         <div class="hero-trust reveal reveal-delay-4">
           <div class="trust-item">
@@ -221,7 +222,7 @@
 
         <div class="prospector-actions">
           <a href="/prospector/" class="btn btn-white-solid btn-lg">Probar gratis →</a>
-          <a href="prospeccion.html" class="btn btn-outline-white btn-lg">Cómo funciona</a>
+          <a href="/prospeccion" class="btn btn-outline-white btn-lg">Cómo funciona</a>
         </div>
 
         <div class="prospector-features">
@@ -300,37 +301,37 @@
       <p class="section-desc reveal reveal-delay-2">Soluciones integradas de marketing, prospección e inteligencia artificial diseñadas exclusivamente para el sector industrial chileno.</p>
     </div>
     <div class="services-grid">
-      <a href="servicios.html" class="service-card reveal">
+      <a href="/servicios" class="service-card reveal">
         <div class="service-icon"><img src="assets/images/ia-icon.png" alt="Transformación Digital"></div>
         <h3>Transformación Digital Integral</h3>
         <p>Implementamos IA para automatizar procesos comerciales, atención de consultas y generación de cotizaciones industriales.</p>
         <span class="service-card-link">Ver más <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></span>
       </a>
-      <a href="servicios.html" class="service-card reveal reveal-delay-1">
+      <a href="/servicios" class="service-card reveal reveal-delay-1">
         <div class="service-icon"><img src="assets/images/virtual_secretary_icon.png" alt="Secretaria IA WhatsApp"></div>
         <h3>Secretaria IA en WhatsApp</h3>
         <p>Agentes de IA que atienden tu WhatsApp 24/7. Filtran oportunidades y agendan reuniones con decisores reales.</p>
         <span class="service-card-link">Ver más <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></span>
       </a>
-      <a href="servicios.html" class="service-card reveal reveal-delay-2">
+      <a href="/servicios" class="service-card reveal reveal-delay-2">
         <div class="service-icon"><img src="assets/images/seo-icon.png" alt="Automatización con IA"></div>
         <h3>Automatización con IA</h3>
         <p>Automatizamos procesos con n8n, Make y Claude. Sistemas digitales que operan de forma completamente autónoma.</p>
         <span class="service-card-link">Ver más <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></span>
       </a>
-      <a href="servicios.html" class="service-card reveal">
+      <a href="/servicios" class="service-card reveal">
         <div class="service-icon"><img src="assets/images/web-industrial-icon.png" alt="Páginas Web Industriales"></div>
         <h3>Páginas Web Industriales</h3>
         <p>Diseño orientado a conversión B2B, integración CRM y optimización para el sector industrial chileno.</p>
         <span class="service-card-link">Ver más <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></span>
       </a>
-      <a href="servicios.html" class="service-card reveal reveal-delay-1">
+      <a href="/servicios" class="service-card reveal reveal-delay-1">
         <div class="service-icon"><img src="assets/images/vendedor-icon.png" alt="Vendedor Externo"></div>
         <h3>Vendedor Externo / Portafolio Permanente</h3>
         <p>Nos integramos como vendedor externo con portafolio activo. Representamos tus productos y generamos ventas continuas.</p>
         <span class="service-card-link">Ver más <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></span>
       </a>
-      <a href="servicios.html" class="service-card reveal reveal-delay-2">
+      <a href="/servicios" class="service-card reveal reveal-delay-2">
         <div class="service-icon"><img src="assets/images/prospeccion-icon.png" alt="Prospección B2B"></div>
         <h3>Prospección B2B Industrial</h3>
         <p>Sistema propietario de prospección en frío. 1,600 contactos diarios con tasas de respuesta 3x superiores al mercado.</p>
@@ -347,7 +348,7 @@
     <h2 class="reveal reveal-delay-1">Agenda una <span class="text-gradient">Llamada Estratégica</span></h2>
     <p class="reveal reveal-delay-2">Sin compromisos. En 30 minutos analizamos tu situación comercial y te mostramos cómo podemos integrarnos a tu equipo.</p>
     <div class="cta-actions reveal reveal-delay-3">
-      <a href="contacto.html" class="btn btn-primary btn-lg">Contactar ahora</a>
+      <a href="/contacto" class="btn btn-primary btn-lg">Contactar ahora</a>
       <a href="https://wa.me/56944843503" class="btn btn-outline btn-lg" target="_blank" rel="noopener">WhatsApp directo</a>
     </div>
   </div>
@@ -367,20 +368,20 @@
       <div class="footer-col">
         <h5>Servicios</h5>
         <ul>
-          <li><a href="servicios.html">Transformación Digital</a></li>
-          <li><a href="servicios.html">Secretaria IA WhatsApp</a></li>
-          <li><a href="servicios.html">Automatización con IA</a></li>
-          <li><a href="servicios.html">Páginas Web Industriales</a></li>
-          <li><a href="servicios.html">Vendedor Externo</a></li>
-          <li><a href="servicios.html">Prospección B2B</a></li>
+          <li><a href="/servicios">Transformación Digital</a></li>
+          <li><a href="/servicios">Secretaria IA WhatsApp</a></li>
+          <li><a href="/servicios">Automatización con IA</a></li>
+          <li><a href="/servicios">Páginas Web Industriales</a></li>
+          <li><a href="/servicios">Vendedor Externo</a></li>
+          <li><a href="/servicios">Prospección B2B</a></li>
         </ul>
       </div>
       <div class="footer-col">
         <h5>Empresa</h5>
         <ul>
-          <li><a href="nosotros.html">Nosotros</a></li>
-          <li><a href="prospeccion.html">Sistema de Prospección</a></li>
-          <li><a href="contacto.html">Contacto</a></li>
+          <li><a href="/nosotros">Nosotros</a></li>
+          <li><a href="/prospeccion">Sistema de Prospección</a></li>
+          <li><a href="/contacto">Contacto</a></li>
           <li><a href="/prospector/">Prospector Gratuito</a></li>
         </ul>
       </div>
@@ -398,7 +399,7 @@
       </div>
     </div>
     <div class="footer-bottom">
-      <span>© 2025 JPB Marketing. Todos los derechos reservados.</span>
+      <span>© 2026 JPB Marketing. Todos los derechos reservados.</span>
       <span>Santiago, Chile</span>
     </div>
   </div>
