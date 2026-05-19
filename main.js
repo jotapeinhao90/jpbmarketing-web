@@ -1,5 +1,12 @@
 /* JPB Marketing — main.js */
 
+// ── Preloader ──────────────────────────────────────────────
+window.addEventListener('load', () => {
+  const preloader = document.getElementById('preloader');
+  if (!preloader) return;
+  setTimeout(() => preloader.classList.add('hidden'), 1500);
+});
+
 document.addEventListener('DOMContentLoaded', () => {
 
   // ── Navbar scroll shadow ───────────────────────────────
