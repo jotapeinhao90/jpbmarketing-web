@@ -629,3 +629,66 @@ h2.center { text-align: center; }
   .c-form { padding: 22px 16px; }
   .cf-row { grid-template-columns: 1fr; }
 }
+
+/* ===========================
+   PAGE HEADER (subpáginas)
+   =========================== */
+.page-header {
+  background: var(--navy);
+  padding: 164px 0 60px;
+  text-align: center;
+}
+.page-header .eyebrow {
+  color: rgba(255,255,255,.5);
+  justify-content: center;
+}
+.page-header .eyebrow::before { display: none; }
+.page-header .eyebrow::after { content: ''; display: block; width: 18px; height: 1.5px; background: var(--orange); flex-shrink: 0; }
+.page-header h1 { color: #fff; font-size: clamp(30px, 4.5vw, 52px); margin-bottom: 0; }
+
+/* CTA section */
+.section-cta { text-align: center; padding: 56px 0; border-top: 1px solid var(--border); margin-top: 48px; }
+.section-cta p { font-size: 18px; color: var(--text-2); margin-bottom: 24px; }
+
+/* ===========================
+   EXPLORE GRID (home)
+   =========================== */
+.explore-grid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 16px;
+}
+.explore-card {
+  display: flex; flex-direction: column;
+  padding: 28px 22px; border-radius: var(--r-lg);
+  border: 1.5px solid var(--border);
+  background: var(--white);
+  transition: border-color .2s, box-shadow .2s, transform .2s;
+  color: inherit;
+}
+.explore-card:hover {
+  border-color: var(--orange);
+  box-shadow: var(--sh-lg);
+  transform: translateY(-4px);
+}
+.explore-card-cta { background: var(--navy); border-color: var(--navy); }
+.explore-card-cta h3, .explore-card-cta p, .explore-card-cta .explore-link { color: #fff; }
+.explore-card-cta .explore-ico { color: rgba(255,255,255,.7); }
+.explore-card-cta:hover { border-color: var(--orange); background: var(--navy); }
+
+.explore-ico {
+  width: 44px; height: 44px; margin-bottom: 16px;
+  color: var(--orange);
+}
+.explore-ico svg { width: 100%; height: 100%; }
+.explore-card h3 { font-size: 15px; font-weight: 700; margin-bottom: 8px; font-family: 'Inter', sans-serif; }
+.explore-card p  { font-size: 13px; color: var(--text-3); line-height: 1.6; flex: 1; margin-bottom: 16px; }
+.explore-link { font-size: 12.5px; font-weight: 600; color: var(--orange); letter-spacing: .03em; }
+.explore-card-cta .explore-link { color: rgba(255,255,255,.8); }
+
+@media (max-width: 900px) {
+  .explore-grid { grid-template-columns: repeat(3, 1fr); }
+}
+@media (max-width: 600px) {
+  .explore-grid { grid-template-columns: repeat(2, 1fr); }
+}

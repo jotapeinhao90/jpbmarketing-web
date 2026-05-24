@@ -11,22 +11,8 @@ tick();
    ===================== */
 function handleSearch(e) {
   e.preventDefault();
-  const target = document.getElementById('productos');
-  if (target) window.scrollTo({ top: target.getBoundingClientRect().top + window.scrollY - 130, behavior: 'smooth' });
+  window.location.href = 'productos.html';
 }
-
-/* =====================
-   Nav active link on scroll
-   ===================== */
-const sections = document.querySelectorAll('section[id], div[id]');
-const navLinks = document.querySelectorAll('.nav-link');
-window.addEventListener('scroll', () => {
-  let current = '';
-  sections.forEach(s => { if (window.scrollY >= s.offsetTop - 160) current = s.id; });
-  navLinks.forEach(a => {
-    a.classList.toggle('active', a.getAttribute('href') === '#' + current);
-  });
-}, { passive: true });
 
 /* =====================
    Mobile burger

@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Contacto — Conflex</title>
+  <meta name="description" content="Solicita tu cotización de sistemas PVC. Conflex responde en menos de 48 horas hábiles con precios directos de distribuidor." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Sora:wght@400;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+
+  <header class="nav" id="nav">
+    <div class="nav-top">
+      <div class="nav-top-inner">
+        <a href="index.html" class="logo">
+          <img src="img/logo-conflex-transparent.png" alt="Conflex" class="logo-img" />
+        </a>
+        <form class="nav-search" onsubmit="handleSearch(event)">
+          <input type="search" placeholder="Buscar acoples, tuberías, fittings PVC..." class="nav-search-input" />
+          <button type="submit" class="nav-search-btn" aria-label="Buscar">
+            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+          </button>
+        </form>
+        <a href="contacto.html" class="nav-cta">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+          Cotizar
+        </a>
+        <button class="burger" id="burger" aria-label="Menú">
+          <span></span><span></span><span></span>
+        </button>
+      </div>
+    </div>
+    <div class="nav-bottom">
+      <div class="nav-bottom-inner">
+        <nav class="nav-links">
+          <a href="index.html" class="nav-link">Inicio</a>
+          <a href="nosotros.html" class="nav-link">Nosotros</a>
+          <a href="productos.html" class="nav-link">Productos</a>
+          <a href="industrias.html" class="nav-link">Industrias</a>
+          <a href="partner.html" class="nav-link">Partner</a>
+        </nav>
+      </div>
+    </div>
+    <div class="nav-drawer" id="drawer">
+      <a href="index.html">Inicio</a>
+      <a href="nosotros.html">Nosotros</a>
+      <a href="productos.html">Productos</a>
+      <a href="industrias.html">Industrias</a>
+      <a href="partner.html">Partner</a>
+      <a href="contacto.html">Cotizar</a>
+    </div>
+  </header>
+
+  <main>
+
+    <div class="page-header">
+      <div class="container">
+        <p class="eyebrow center">Hablemos</p>
+        <h1>Solicita tu cotización</h1>
+      </div>
+    </div>
+
+    <!-- CONTACTO -->
+    <section class="section bg-off" id="contacto">
+      <div class="container">
+        <div class="contacto-wrap">
+          <div class="c-info fade-left">
+            <p class="eyebrow">Contacto</p>
+            <h2>Hablemos de<br />tu proyecto</h2>
+            <p class="body">Cotización detallada en menos de 48 horas hábiles.</p>
+            <div class="c-links">
+              <a href="mailto:contacto@conflex.cl" class="c-link">
+                <svg viewBox="0 0 20 20" fill="none"><path d="M3 6l7 5 7-5M3 6a1 1 0 011-1h12a1 1 0 011 1v8a1 1 0 01-1 1H4a1 1 0 01-1-1V6z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                contacto@conflex.cl
+              </a>
+              <a href="tel:+56222345678" class="c-link">
+                <svg viewBox="0 0 20 20" fill="none"><path d="M2.5 4.5A1 1 0 013.5 3.5h3l1.5 3.5L6.5 9a11 11 0 004.5 4.5l2-2 3.5 1.5v3a1 1 0 01-1 1C7.5 17 2.5 12 2.5 4.5z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                +56 2 2234 5678
+              </a>
+              <div class="c-link">
+                <svg viewBox="0 0 20 20" fill="none"><path d="M10 2C7.24 2 5 4.24 5 7c0 4 5 10 5 10s5-6 5-10c0-2.76-2.24-5-5-5zm0 6.5A1.5 1.5 0 1110 5a1.5 1.5 0 010 3.5z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                Región Metropolitana, Chile
+              </div>
+            </div>
+          </div>
+          <form class="c-form fade-right" id="cform" onsubmit="handleSubmit(event)">
+            <div class="cf-row">
+              <div class="cf-f"><label>Nombre</label><input type="text" placeholder="Tu nombre" required /></div>
+              <div class="cf-f"><label>Empresa</label><input type="text" placeholder="Tu empresa" /></div>
+            </div>
+            <div class="cf-f"><label>Email</label><input type="email" placeholder="tu@empresa.cl" required /></div>
+            <div class="cf-f"><label>Teléfono</label><input type="tel" placeholder="+56 9 ..." /></div>
+            <div class="cf-f"><label>Mensaje</label><textarea rows="4" placeholder="¿Qué producto o sistema necesitas?" required></textarea></div>
+            <button type="submit" class="btn-primary full" id="submit-btn">Enviar solicitud</button>
+            <div id="form-ok" class="form-ok" style="display:none">✓ Mensaje recibido. Te contactamos pronto.</div>
+          </form>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-top">
+        <div>
+          <a href="index.html" style="display:inline-flex;margin-bottom:14px;">
+            <img src="img/logo-conflex-transparent.png" alt="Conflex" style="height:44px;filter:brightness(0) invert(1);" />
+          </a>
+          <p>Especialistas en sistemas PVC para la industria chilena.<br />Partner oficial de Plastiservi.cl.</p>
+        </div>
+        <div class="footer-cols">
+          <div>
+            <h4>Empresa</h4>
+            <a href="nosotros.html">Nosotros</a>
+            <a href="industrias.html">Industrias</a>
+            <a href="partner.html">Partner Plastiservi</a>
+            <a href="contacto.html">Contacto</a>
+          </div>
+          <div>
+            <h4>Productos</h4>
+            <a href="productos.html">Tuberías PVC</a>
+            <a href="productos.html">Acoples</a>
+            <a href="productos.html">Válvulas</a>
+            <a href="productos.html">Riego</a>
+            <a href="productos.html">Sanitario</a>
+          </div>
+          <div>
+            <h4>Contacto</h4>
+            <a href="mailto:contacto@conflex.cl">contacto@conflex.cl</a>
+            <a href="tel:+56222345678">+56 2 2234 5678</a>
+            <span>Región Metropolitana</span>
+          </div>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <p>&copy; 2026 Conflex. Todos los derechos reservados.</p>
+        <p>Partner oficial <strong>Plastiservi.cl</strong></p>
+      </div>
+    </div>
+  </footer>
+
+  <script src="js/main.js"></script>
+</body>
+</html>

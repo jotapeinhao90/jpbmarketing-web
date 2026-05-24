@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Productos — Conflex</title>
+  <meta name="description" content="Catálogo completo de tuberías PVC, acoples, válvulas, sistema de riego, sanitario y proyectos a medida. Stock permanente en Chile." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Sora:wght@400;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+
+  <header class="nav" id="nav">
+    <div class="nav-top">
+      <div class="nav-top-inner">
+        <a href="index.html" class="logo">
+          <img src="img/logo-conflex-transparent.png" alt="Conflex" class="logo-img" />
+        </a>
+        <form class="nav-search" onsubmit="handleSearch(event)">
+          <input type="search" placeholder="Buscar acoples, tuberías, fittings PVC..." class="nav-search-input" />
+          <button type="submit" class="nav-search-btn" aria-label="Buscar">
+            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+          </button>
+        </form>
+        <a href="contacto.html" class="nav-cta">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+          Cotizar
+        </a>
+        <button class="burger" id="burger" aria-label="Menú">
+          <span></span><span></span><span></span>
+        </button>
+      </div>
+    </div>
+    <div class="nav-bottom">
+      <div class="nav-bottom-inner">
+        <nav class="nav-links">
+          <a href="index.html" class="nav-link">Inicio</a>
+          <a href="nosotros.html" class="nav-link">Nosotros</a>
+          <a href="productos.html" class="nav-link active">Productos</a>
+          <a href="industrias.html" class="nav-link">Industrias</a>
+          <a href="partner.html" class="nav-link">Partner</a>
+        </nav>
+      </div>
+    </div>
+    <div class="nav-drawer" id="drawer">
+      <a href="index.html">Inicio</a>
+      <a href="nosotros.html">Nosotros</a>
+      <a href="productos.html">Productos</a>
+      <a href="industrias.html">Industrias</a>
+      <a href="partner.html">Partner</a>
+      <a href="contacto.html">Cotizar</a>
+    </div>
+  </header>
+
+  <main>
+
+    <div class="page-header">
+      <div class="container">
+        <p class="eyebrow center">Catálogo</p>
+        <h1>Línea completa de productos PVC</h1>
+      </div>
+    </div>
+
+    <!-- PRODUCTOS -->
+    <section class="section bg-off">
+      <div class="container">
+        <div class="sec-head fade-up">
+          <p class="eyebrow center">Catálogo</p>
+          <h2 class="center">Línea completa de productos PVC</h2>
+        </div>
+        <div class="prod-grid">
+
+          <article class="prod fade-3d" style="--d:0s">
+            <div class="prod-ico">
+              <svg viewBox="0 0 40 40" fill="none"><rect x="4" y="15" width="32" height="10" rx="5" stroke="currentColor" stroke-width="1.5"/><circle cx="20" cy="20" r="3" fill="currentColor" opacity=".25"/></svg>
+            </div>
+            <h3>Tuberías PVC</h3>
+            <p>Sanitarias, presión y eléctricas. Diámetros ½" a 12". Norma NCh 399 y NCh 2071.</p>
+            <ul>
+              <li>PVC-U presión hasta 16 bar</li>
+              <li>PVC sanitario DICT / DICL</li>
+              <li>Conduit eléctrico</li>
+            </ul>
+            <a href="contacto.html">Consultar stock →</a>
+          </article>
+
+          <article class="prod prod-hl fade-3d" style="--d:.07s">
+            <div class="prod-tag">Más solicitado</div>
+            <div class="prod-ico">
+              <svg viewBox="0 0 40 40" fill="none"><path d="M6 20 C6 13 13 10 20 10 C27 10 34 13 34 20 C34 27 27 30 20 30 C13 30 6 27 6 20Z" stroke="currentColor" stroke-width="1.5"/><circle cx="6" cy="20" r="3" fill="currentColor" opacity=".35"/><circle cx="34" cy="20" r="3" fill="currentColor" opacity=".35"/></svg>
+            </div>
+            <h3>Acoples PVC</h3>
+            <p>Uniones, codos, tees y reducciones para conexiones herméticas de larga duración.</p>
+            <ul>
+              <li>Uniones rectas y de reparación</li>
+              <li>Codos 45° y 90°</li>
+              <li>Tees, cruces, reducciones</li>
+            </ul>
+            <a href="contacto.html">Consultar stock →</a>
+          </article>
+
+          <article class="prod fade-3d" style="--d:.14s">
+            <div class="prod-ico">
+              <svg viewBox="0 0 40 40" fill="none"><circle cx="20" cy="20" r="12" stroke="currentColor" stroke-width="1.5"/><path d="M14 20h12M20 14v12" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+            </div>
+            <h3>Válvulas y Control</h3>
+            <p>Válvulas de bola, compuerta y mariposa PVC para agua potable, riego e industria.</p>
+            <ul>
+              <li>Válvulas de bola PVC</li>
+              <li>Válvulas compuerta</li>
+              <li>Retención y check</li>
+            </ul>
+            <a href="contacto.html">Consultar stock →</a>
+          </article>
+
+          <article class="prod fade-3d" style="--d:.21s">
+            <div class="prod-ico">
+              <svg viewBox="0 0 40 40" fill="none"><rect x="10" y="10" width="20" height="20" rx="3" stroke="currentColor" stroke-width="1.5"/><path d="M10 20h20M20 10v20" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg>
+            </div>
+            <h3>Sistema de Riego</h3>
+            <p>Componentes PVC para riego agrícola y jardín: cabezales, distribuidores y filtros.</p>
+            <ul>
+              <li>Distribuidores de riego</li>
+              <li>Filtros y reguladores</li>
+              <li>Cintas y mangueras</li>
+            </ul>
+            <a href="contacto.html">Consultar stock →</a>
+          </article>
+
+          <article class="prod fade-3d" style="--d:.28s">
+            <div class="prod-ico">
+              <svg viewBox="0 0 40 40" fill="none"><path d="M13 32V17Q13 10 20 10Q27 10 27 17V32" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><path d="M16 32h8" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><path d="M11 22h18" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-dasharray="2 2"/></svg>
+            </div>
+            <h3>Sanitario</h3>
+            <p>Sistema completo para instalaciones sanitarias y evacuación de aguas lluvia y residuales.</p>
+            <ul>
+              <li>Bajadas de aguas lluvias</li>
+              <li>Sifones y cámaras</li>
+              <li>Tuberías HDPE</li>
+            </ul>
+            <a href="contacto.html">Consultar stock →</a>
+          </article>
+
+          <article class="prod fade-3d" style="--d:.35s">
+            <div class="prod-ico">
+              <svg viewBox="0 0 40 40" fill="none"><circle cx="20" cy="20" r="12" stroke="currentColor" stroke-width="1.5"/><path d="M15 20l3.5 3.5 6.5-7" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </div>
+            <h3>Proyectos a medida</h3>
+            <p>Diseño y abastecimiento completo para proyectos industriales de gran escala.</p>
+            <ul>
+              <li>Ingeniería de sistemas</li>
+              <li>Abastecimiento integral</li>
+              <li>Soporte post-venta</li>
+            </ul>
+            <a href="contacto.html">Hablar con un asesor →</a>
+          </article>
+
+        </div>
+
+        <div class="section-cta fade-up">
+          <p>¿Necesitas un producto específico?</p>
+          <a href="contacto.html" class="btn-primary">Solicitar cotización personalizada</a>
+        </div>
+
+      </div>
+    </section>
+
+  </main>
+
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-top">
+        <div>
+          <a href="index.html" style="display:inline-flex;margin-bottom:14px;">
+            <img src="img/logo-conflex-transparent.png" alt="Conflex" style="height:44px;filter:brightness(0) invert(1);" />
+          </a>
+          <p>Especialistas en sistemas PVC para la industria chilena.<br />Partner oficial de Plastiservi.cl.</p>
+        </div>
+        <div class="footer-cols">
+          <div>
+            <h4>Empresa</h4>
+            <a href="nosotros.html">Nosotros</a>
+            <a href="industrias.html">Industrias</a>
+            <a href="partner.html">Partner Plastiservi</a>
+            <a href="contacto.html">Contacto</a>
+          </div>
+          <div>
+            <h4>Productos</h4>
+            <a href="productos.html">Tuberías PVC</a>
+            <a href="productos.html">Acoples</a>
+            <a href="productos.html">Válvulas</a>
+            <a href="productos.html">Riego</a>
+            <a href="productos.html">Sanitario</a>
+          </div>
+          <div>
+            <h4>Contacto</h4>
+            <a href="mailto:contacto@conflex.cl">contacto@conflex.cl</a>
+            <a href="tel:+56222345678">+56 2 2234 5678</a>
+            <span>Región Metropolitana</span>
+          </div>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <p>&copy; 2026 Conflex. Todos los derechos reservados.</p>
+        <p>Partner oficial <strong>Plastiservi.cl</strong></p>
+      </div>
+    </div>
+  </footer>
+
+  <script src="js/main.js"></script>
+</body>
+</html>
