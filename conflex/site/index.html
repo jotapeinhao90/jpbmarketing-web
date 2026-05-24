@@ -13,22 +13,42 @@
 <body>
 
   <header class="nav" id="nav">
-    <div class="nav-inner">
-      <a href="#" class="logo">
-        <img src="img/logo-conflex-transparent.png" alt="Conflex" class="logo-img" />
-      </a>
-      <nav class="nav-links">
-        <a href="#nosotros">Nosotros</a>
-        <a href="#productos">Productos</a>
-        <a href="#industrias">Industrias</a>
-        <a href="#partner">Partner</a>
-        <a href="#contacto" class="nav-btn">Cotizar</a>
-      </nav>
-      <button class="burger" id="burger" aria-label="Menú">
-        <span></span><span></span><span></span>
-      </button>
+    <!-- Row 1: logo + search + CTA -->
+    <div class="nav-top">
+      <div class="nav-top-inner">
+        <a href="#" class="logo">
+          <img src="img/logo-conflex-transparent.png" alt="Conflex" class="logo-img" />
+        </a>
+        <form class="nav-search" onsubmit="handleSearch(event)">
+          <input type="search" placeholder="Buscar acoples, tuberías, fittings PVC..." class="nav-search-input" />
+          <button type="submit" class="nav-search-btn" aria-label="Buscar">
+            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+          </button>
+        </form>
+        <a href="#contacto" class="nav-cta">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+          Cotizar
+        </a>
+        <button class="burger" id="burger" aria-label="Menú">
+          <span></span><span></span><span></span>
+        </button>
+      </div>
     </div>
+    <!-- Row 2: navigation links -->
+    <div class="nav-bottom">
+      <div class="nav-bottom-inner">
+        <nav class="nav-links">
+          <a href="#inicio" class="nav-link active">Inicio</a>
+          <a href="#nosotros" class="nav-link">Nosotros</a>
+          <a href="#productos" class="nav-link">Productos</a>
+          <a href="#industrias" class="nav-link">Industrias</a>
+          <a href="#partner" class="nav-link">Partner</a>
+        </nav>
+      </div>
+    </div>
+    <!-- Mobile drawer -->
     <div class="nav-drawer" id="drawer">
+      <a href="#inicio">Inicio</a>
       <a href="#nosotros">Nosotros</a>
       <a href="#productos">Productos</a>
       <a href="#industrias">Industrias</a>
@@ -41,18 +61,24 @@
 
     <!-- HERO -->
     <section class="hero" id="inicio">
-      <div class="hero-inner">
+      <div class="hero-overlay"></div>
       <div class="hero-content">
         <p class="hero-label">Partner oficial · Plastiservi.cl</p>
-        <h1>Sistemas PVC<br /><span>de alta precisión</span><br />para la industria</h1>
-        <p class="hero-desc">Distribución de acoples, tuberías y accesorios PVC con stock permanente, asesoría técnica y los mejores precios del mercado chileno.</p>
+        <h1>Acoples y tuberías PVC<br />para la industria<br />en Chile</h1>
+        <p class="hero-desc"><strong>Stock permanente en bodega.</strong> Distribuidor oficial de sistemas PVC para minería, agricultura, construcción y saneamiento en todo el país.</p>
         <div class="hero-btns">
-          <a href="#productos" class="btn-primary">Ver catálogo</a>
-          <a href="#contacto" class="btn-secondary">Solicitar cotización</a>
+          <a href="#contacto" class="btn-primary hero-btn-fill">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+            Solicitar asesoría
+          </a>
+          <a href="#productos" class="btn-hero-outline">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
+            Explorar productos
+          </a>
         </div>
-      </div><!-- /hero-content -->
+      </div>
 
-      <div class="hero-visual">
+      <div class="hero-visual" style="display:none">
         <div class="hero-img-wrap">
 
           <!-- Pipe-network animation — 3D cylindrical PVC pipes -->
@@ -268,8 +294,7 @@
 
 
         </div>
-      </div><!-- /hero-visual -->
-      </div><!-- /hero-inner -->
+      </div><!-- /hero-visual (hidden) -->
     </section>
 
     <!-- STATS -->

@@ -1,10 +1,32 @@
 /* =====================
-   Nav scroll
+   Nav scroll shadow
    ===================== */
 const nav = document.getElementById('nav');
-const tick = () => nav.classList.toggle('scrolled', window.scrollY > 40);
+const tick = () => nav.classList.toggle('scrolled', window.scrollY > 10);
 window.addEventListener('scroll', tick, { passive: true });
 tick();
+
+/* =====================
+   Nav search
+   ===================== */
+function handleSearch(e) {
+  e.preventDefault();
+  const target = document.getElementById('productos');
+  if (target) window.scrollTo({ top: target.getBoundingClientRect().top + window.scrollY - 130, behavior: 'smooth' });
+}
+
+/* =====================
+   Nav active link on scroll
+   ===================== */
+const sections = document.querySelectorAll('section[id], div[id]');
+const navLinks = document.querySelectorAll('.nav-link');
+window.addEventListener('scroll', () => {
+  let current = '';
+  sections.forEach(s => { if (window.scrollY >= s.offsetTop - 160) current = s.id; });
+  navLinks.forEach(a => {
+    a.classList.toggle('active', a.getAttribute('href') === '#' + current);
+  });
+}, { passive: true });
 
 /* =====================
    Mobile burger
