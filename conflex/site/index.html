@@ -1,0 +1,672 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Conflex — Sistemas PVC | Chile</title>
+  <meta name="description" content="Conflex: distribución de acoples y tuberías PVC para industria y construcción en Chile. Partner oficial de Plastiservi." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Sora:wght@400;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+
+  <header class="nav" id="nav">
+    <div class="nav-inner">
+      <a href="#" class="logo">
+        <img src="img/logo-conflex-transparent.png" alt="Conflex" class="logo-img" />
+      </a>
+      <nav class="nav-links">
+        <a href="#nosotros">Nosotros</a>
+        <a href="#productos">Productos</a>
+        <a href="#industrias">Industrias</a>
+        <a href="#partner">Partner</a>
+        <a href="#contacto" class="nav-btn">Cotizar</a>
+      </nav>
+      <button class="burger" id="burger" aria-label="Menú">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+    <div class="nav-drawer" id="drawer">
+      <a href="#nosotros">Nosotros</a>
+      <a href="#productos">Productos</a>
+      <a href="#industrias">Industrias</a>
+      <a href="#partner">Partner</a>
+      <a href="#contacto">Cotizar</a>
+    </div>
+  </header>
+
+  <main>
+
+    <!-- HERO -->
+    <section class="hero" id="inicio">
+      <div class="hero-inner">
+      <div class="hero-content">
+        <p class="hero-label">Partner oficial · Plastiservi.cl</p>
+        <h1>Sistemas PVC<br /><span>de alta precisión</span><br />para la industria</h1>
+        <p class="hero-desc">Distribución de acoples, tuberías y accesorios PVC con stock permanente, asesoría técnica y los mejores precios del mercado chileno.</p>
+        <div class="hero-btns">
+          <a href="#productos" class="btn-primary">Ver catálogo</a>
+          <a href="#contacto" class="btn-secondary">Solicitar cotización</a>
+        </div>
+      </div><!-- /hero-content -->
+
+      <div class="hero-visual">
+        <div class="hero-img-wrap">
+
+          <!-- Pipe-network animation — 3D cylindrical PVC pipes -->
+          <svg class="pv-svg" viewBox="0 0 480 340" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+              <pattern id="pvg" width="26" height="26" patternUnits="userSpaceOnUse">
+                <path d="M26 0L0 0 0 26" stroke="rgba(255,255,255,.028)" stroke-width=".5" fill="none"/>
+              </pattern>
+              <!-- Horizontal pipe gradient: bright highlight top → main orange → dark shadow bottom -->
+              <linearGradient id="gradH" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0%"   stop-color="#fbb07a"/>
+                <stop offset="16%"  stop-color="#e85c1a"/>
+                <stop offset="74%"  stop-color="#b84810"/>
+                <stop offset="100%" stop-color="#5e1c06"/>
+              </linearGradient>
+              <!-- Vertical pipe gradient: bright highlight left → main orange → dark shadow right -->
+              <linearGradient id="gradV" x1="0" y1="0" x2="1" y2="0">
+                <stop offset="0%"   stop-color="#fbb07a"/>
+                <stop offset="16%"  stop-color="#e85c1a"/>
+                <stop offset="74%"  stop-color="#b84810"/>
+                <stop offset="100%" stop-color="#5e1c06"/>
+              </linearGradient>
+              <!-- T-fitting / flange gradient: darker than pipe body -->
+              <linearGradient id="gradFit" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0%"   stop-color="#c85018"/>
+                <stop offset="100%" stop-color="#3e1204"/>
+              </linearGradient>
+              <!-- Flow paths through pipe centers -->
+              <path id="fh"  d="M 28,90  H 452"/>
+              <path id="fhr" d="M 452,253 H 28"/>
+              <path id="fv1" d="M 120,90  V 253"/>
+              <path id="fv2" d="M 240,90  V 253"/>
+              <path id="fv3" d="M 360,90  V 253"/>
+            </defs>
+
+            <rect width="480" height="340" fill="url(#pvg)"/>
+
+            <!-- ── BRANCH PIPES (behind header so header caps junction) ── -->
+            <!-- Branch 1 — x=120 -->
+            <rect x="111" y="102" width="18" height="144" fill="url(#gradV)"/>
+            <rect x="112"   y="102" width="3.5" height="144" fill="rgba(255,255,255,.22)"/>
+            <rect x="125.5" y="102" width="3.5" height="144" fill="rgba(0,0,0,.26)"/>
+            <line x1="111" y1="102" x2="111" y2="246" stroke="#8a2c08" stroke-width=".8"/>
+            <line x1="129" y1="102" x2="129" y2="246" stroke="#2e0c02" stroke-width="1"/>
+
+            <!-- Branch 2 — x=240 -->
+            <rect x="231" y="102" width="18" height="144" fill="url(#gradV)"/>
+            <rect x="232"   y="102" width="3.5" height="144" fill="rgba(255,255,255,.22)"/>
+            <rect x="245.5" y="102" width="3.5" height="144" fill="rgba(0,0,0,.26)"/>
+            <line x1="231" y1="102" x2="231" y2="246" stroke="#8a2c08" stroke-width=".8"/>
+            <line x1="249" y1="102" x2="249" y2="246" stroke="#2e0c02" stroke-width="1"/>
+
+            <!-- Branch 3 — x=360 -->
+            <rect x="351" y="102" width="18" height="144" fill="url(#gradV)"/>
+            <rect x="352"   y="102" width="3.5" height="144" fill="rgba(255,255,255,.22)"/>
+            <rect x="365.5" y="102" width="3.5" height="144" fill="rgba(0,0,0,.26)"/>
+            <line x1="351" y1="102" x2="351" y2="246" stroke="#8a2c08" stroke-width=".8"/>
+            <line x1="369" y1="102" x2="369" y2="246" stroke="#2e0c02" stroke-width="1"/>
+
+            <!-- ── MAIN HEADER PIPE ── -->
+            <rect x="24" y="78" width="432" height="24" fill="url(#gradH)"/>
+            <rect x="24" y="79" width="432" height="4"  fill="rgba(255,255,255,.22)"/>
+            <rect x="24" y="98" width="432" height="4"  fill="rgba(0,0,0,.3)"/>
+            <line x1="24" y1="78"  x2="456" y2="78"  stroke="#8a2c08" stroke-width="1"/>
+            <line x1="24" y1="102" x2="456" y2="102" stroke="#2e0c02" stroke-width="1.2"/>
+            <!-- Spec band stripes -->
+            <rect x="58"  y="78" width="3" height="24" fill="rgba(255,255,255,.13)"/>
+            <rect x="419" y="78" width="3" height="24" fill="rgba(255,255,255,.13)"/>
+            <!-- Left end flange -->
+            <rect x="12" y="74" width="16" height="32" rx="3" fill="url(#gradFit)" stroke="#2e0c02" stroke-width="1.3"/>
+            <rect x="14" y="76" width="4"  height="28" fill="rgba(255,255,255,.16)"/>
+            <!-- Right end flange -->
+            <rect x="452" y="74" width="16" height="32" rx="3" fill="url(#gradFit)" stroke="#2e0c02" stroke-width="1.3"/>
+            <rect x="454" y="76" width="4"  height="28" fill="rgba(255,255,255,.16)"/>
+
+            <!-- ── RETURN PIPE ── -->
+            <rect x="24" y="244" width="432" height="18" fill="url(#gradH)"/>
+            <rect x="24" y="245" width="432" height="3"  fill="rgba(255,255,255,.2)"/>
+            <rect x="24" y="259" width="432" height="3"  fill="rgba(0,0,0,.28)"/>
+            <line x1="24" y1="244" x2="456" y2="244" stroke="#8a2c08" stroke-width=".8"/>
+            <line x1="24" y1="262" x2="456" y2="262" stroke="#2e0c02" stroke-width="1"/>
+            <!-- Left end flange -->
+            <rect x="12" y="241" width="16" height="24" rx="2" fill="url(#gradFit)" stroke="#2e0c02" stroke-width="1"/>
+            <rect x="14" y="243" width="4"  height="20" fill="rgba(255,255,255,.14)"/>
+            <!-- Right end flange -->
+            <rect x="452" y="241" width="16" height="24" rx="2" fill="url(#gradFit)" stroke="#2e0c02" stroke-width="1"/>
+            <rect x="454" y="243" width="4"  height="20" fill="rgba(255,255,255,.14)"/>
+
+            <!-- ── T-FITTING COLLARS (drawn on top of both pipes) ── -->
+            <!-- Branch 1 top T -->
+            <rect x="106" y="70" width="28" height="36" rx="3" fill="url(#gradFit)" stroke="#2e0c02" stroke-width="1.3"/>
+            <rect x="108" y="72" width="4.5" height="32" fill="rgba(255,255,255,.15)"/>
+            <!-- Branch 1 bottom T -->
+            <rect x="106" y="240" width="28" height="28" rx="3" fill="url(#gradFit)" stroke="#2e0c02" stroke-width="1.3"/>
+            <rect x="108" y="242" width="4.5" height="24" fill="rgba(255,255,255,.15)"/>
+            <!-- Flow pulse ring -->
+            <circle cx="120" cy="90" r="5" fill="rgba(232,92,26,.85)">
+              <animate attributeName="r"       values="4;9;4"   dur="2.4s" begin="0s"  repeatCount="indefinite"/>
+              <animate attributeName="opacity" values=".75;0;.75" dur="2.4s" begin="0s"  repeatCount="indefinite"/>
+            </circle>
+
+            <!-- Branch 2 top T -->
+            <rect x="226" y="70" width="28" height="36" rx="3" fill="url(#gradFit)" stroke="#2e0c02" stroke-width="1.3"/>
+            <rect x="228" y="72" width="4.5" height="32" fill="rgba(255,255,255,.15)"/>
+            <!-- Branch 2 bottom T -->
+            <rect x="226" y="240" width="28" height="28" rx="3" fill="url(#gradFit)" stroke="#2e0c02" stroke-width="1.3"/>
+            <rect x="228" y="242" width="4.5" height="24" fill="rgba(255,255,255,.15)"/>
+            <!-- Flow pulse ring -->
+            <circle cx="240" cy="90" r="5" fill="rgba(232,92,26,.85)">
+              <animate attributeName="r"       values="4;9;4"   dur="2.8s" begin=".8s" repeatCount="indefinite"/>
+              <animate attributeName="opacity" values=".75;0;.75" dur="2.8s" begin=".8s" repeatCount="indefinite"/>
+            </circle>
+
+            <!-- Branch 3 top T -->
+            <rect x="346" y="70" width="28" height="36" rx="3" fill="url(#gradFit)" stroke="#2e0c02" stroke-width="1.3"/>
+            <rect x="348" y="72" width="4.5" height="32" fill="rgba(255,255,255,.15)"/>
+            <!-- Branch 3 bottom T -->
+            <rect x="346" y="240" width="28" height="28" rx="3" fill="url(#gradFit)" stroke="#2e0c02" stroke-width="1.3"/>
+            <rect x="348" y="242" width="4.5" height="24" fill="rgba(255,255,255,.15)"/>
+            <!-- Flow pulse ring -->
+            <circle cx="360" cy="90" r="5" fill="rgba(232,92,26,.85)">
+              <animate attributeName="r"       values="4;9;4"   dur="2.6s" begin="1.5s" repeatCount="indefinite"/>
+              <animate attributeName="opacity" values=".75;0;.75" dur="2.6s" begin="1.5s" repeatCount="indefinite"/>
+            </circle>
+
+            <!-- ── FLOW PARTICLES (on top of everything) ── -->
+            <!-- Header → right -->
+            <circle r="4" fill="#ffb880">
+              <animateMotion dur="3.5s" repeatCount="indefinite" calcMode="linear"><mpath href="#fh"/></animateMotion>
+              <animate attributeName="opacity" values=".9;.45;.9" dur="3.5s" repeatCount="indefinite"/>
+            </circle>
+            <circle r="3" fill="#ff9050">
+              <animateMotion dur="3.5s" begin="-1.17s" repeatCount="indefinite" calcMode="linear"><mpath href="#fh"/></animateMotion>
+              <animate attributeName="opacity" values=".65;.2;.65" dur="3.5s" begin="-1.17s" repeatCount="indefinite"/>
+            </circle>
+            <circle r="2" fill="#e85c1a">
+              <animateMotion dur="3.5s" begin="-2.33s" repeatCount="indefinite" calcMode="linear"><mpath href="#fh"/></animateMotion>
+              <animate attributeName="opacity" values=".45;.1;.45" dur="3.5s" begin="-2.33s" repeatCount="indefinite"/>
+            </circle>
+            <!-- Return ← left -->
+            <circle r="3" fill="#ff9050">
+              <animateMotion dur="4s" repeatCount="indefinite" calcMode="linear"><mpath href="#fhr"/></animateMotion>
+              <animate attributeName="opacity" values=".55;.18;.55" dur="4s" repeatCount="indefinite"/>
+            </circle>
+            <circle r="2" fill="#e85c1a">
+              <animateMotion dur="4s" begin="-2s" repeatCount="indefinite" calcMode="linear"><mpath href="#fhr"/></animateMotion>
+              <animate attributeName="opacity" values=".35;.08;.35" dur="4s" begin="-2s" repeatCount="indefinite"/>
+            </circle>
+            <!-- Branch flows ↓ -->
+            <circle r="2.5" fill="#ff9050">
+              <animateMotion dur="2.5s" begin="-0.5s" repeatCount="indefinite"><mpath href="#fv1"/></animateMotion>
+              <animate attributeName="opacity" values=".7;.2;.7" dur="2.5s" begin="-0.5s" repeatCount="indefinite"/>
+            </circle>
+            <circle r="2.5" fill="#ff9050">
+              <animateMotion dur="2.5s" begin="-1.2s" repeatCount="indefinite"><mpath href="#fv2"/></animateMotion>
+              <animate attributeName="opacity" values=".7;.2;.7" dur="2.5s" begin="-1.2s" repeatCount="indefinite"/>
+            </circle>
+            <circle r="2.5" fill="#ff9050">
+              <animateMotion dur="2.5s" begin="-1.9s" repeatCount="indefinite"><mpath href="#fv3"/></animateMotion>
+              <animate attributeName="opacity" values=".7;.2;.7" dur="2.5s" begin="-1.9s" repeatCount="indefinite"/>
+            </circle>
+
+            <!-- ── ANNOTATIONS ── -->
+            <!-- 1. Acople / Unión — T-fitting rama 1 (arriba-izq) -->
+            <g>
+              <line x1="120" y1="72" x2="57" y2="31" stroke="rgba(255,255,255,.3)" stroke-width=".8" stroke-dasharray="3 2"/>
+              <circle cx="120" cy="72" r="3" fill="white" fill-opacity=".85" stroke="#e85c1a" stroke-width="1.2"/>
+              <rect x="1" y="5" width="112" height="26" rx="3" fill="rgba(8,18,44,.92)" stroke="rgba(232,92,26,.45)" stroke-width=".7"/>
+              <text x="8" y="17" fill="rgba(255,255,255,.92)" font-size="8.5" font-weight="700" font-family="'Sora',sans-serif">ACOPLE / UNIÓN</text>
+              <text x="8" y="27" fill="rgba(255,255,255,.45)" font-size="7.5" font-family="'Inter',sans-serif">Tolerancia · Cero Fugas</text>
+            </g>
+
+            <!-- 2. Pared / SDR — borde derecho rama 2, abajo-der -->
+            <g>
+              <line x1="249" y1="174" x2="378" y2="281" stroke="rgba(255,255,255,.3)" stroke-width=".8" stroke-dasharray="3 2"/>
+              <circle cx="249" cy="174" r="3" fill="white" fill-opacity=".85" stroke="#e85c1a" stroke-width="1.2"/>
+              <rect x="353" y="281" width="126" height="26" rx="3" fill="rgba(8,18,44,.92)" stroke="rgba(232,92,26,.45)" stroke-width=".7"/>
+              <text x="361" y="293" fill="rgba(255,255,255,.92)" font-size="8.5" font-weight="700" font-family="'Sora',sans-serif">PARED / SDR</text>
+              <text x="361" y="303" fill="rgba(255,255,255,.45)" font-size="7.5" font-family="'Inter',sans-serif">SDR Opt. · PN 16 bar</text>
+            </g>
+
+            <!-- 3. Superficie PVC-U — cuerpo tubería central, arriba-centro -->
+            <g>
+              <line x1="300" y1="84" x2="252" y2="31" stroke="rgba(255,255,255,.3)" stroke-width=".8" stroke-dasharray="3 2"/>
+              <circle cx="300" cy="84" r="3" fill="white" fill-opacity=".85" stroke="#e85c1a" stroke-width="1.2"/>
+              <rect x="182" y="5" width="118" height="26" rx="3" fill="rgba(8,18,44,.92)" stroke="rgba(232,92,26,.45)" stroke-width=".7"/>
+              <text x="190" y="17" fill="rgba(255,255,255,.92)" font-size="8.5" font-weight="700" font-family="'Sora',sans-serif">SUPERFICIE</text>
+              <text x="190" y="27" fill="rgba(255,255,255,.45)" font-size="7.5" font-family="'Inter',sans-serif">PVC-U · Sin corrosión</text>
+            </g>
+
+            <!-- 4. Certificación — T-fitting rama 3, arriba-der -->
+            <g>
+              <line x1="360" y1="72" x2="430" y2="31" stroke="rgba(255,255,255,.3)" stroke-width=".8" stroke-dasharray="3 2"/>
+              <circle cx="360" cy="72" r="3" fill="white" fill-opacity=".85" stroke="#e85c1a" stroke-width="1.2"/>
+              <rect x="356" y="5" width="122" height="26" rx="3" fill="rgba(8,18,44,.92)" stroke="rgba(232,92,26,.45)" stroke-width=".7"/>
+              <text x="363" y="17" fill="rgba(255,255,255,.92)" font-size="8.5" font-weight="700" font-family="'Sora',sans-serif">CERTIFICACIÓN</text>
+              <text x="363" y="27" fill="rgba(255,255,255,.45)" font-size="7.5" font-family="'Inter',sans-serif">Trazabilidad · NCh ISO</text>
+            </g>
+
+            <!-- 5. Lumen interno — extremo izq tubería retorno, abajo-izq -->
+            <g>
+              <line x1="30" y1="253" x2="52" y2="282" stroke="rgba(255,255,255,.3)" stroke-width=".8" stroke-dasharray="3 2"/>
+              <circle cx="30" cy="253" r="3" fill="white" fill-opacity=".85" stroke="#e85c1a" stroke-width="1.2"/>
+              <rect x="1" y="283" width="118" height="26" rx="3" fill="rgba(8,18,44,.92)" stroke="rgba(232,92,26,.45)" stroke-width=".7"/>
+              <text x="8" y="295" fill="rgba(255,255,255,.92)" font-size="8.5" font-weight="700" font-family="'Sora',sans-serif">LUMEN INTERNO</text>
+              <text x="8" y="305" fill="rgba(255,255,255,.45)" font-size="7.5" font-family="'Inter',sans-serif">Hazen-Williams C=150</text>
+            </g>
+
+            <!-- Marca de agua -->
+            <text x="240" y="335" text-anchor="middle" fill="rgba(255,255,255,.18)" font-size="8" font-family="'Sora',sans-serif" font-weight="700" letter-spacing=".18em">© CONFLEX</text>
+
+          </svg>
+
+
+        </div>
+      </div><!-- /hero-visual -->
+      </div><!-- /hero-inner -->
+    </section>
+
+    <!-- STATS -->
+    <div class="stats-bar">
+      <div class="container">
+        <div class="stats-row">
+          <div class="stat fade-up">
+            <strong class="count" data-to="500">0</strong><span class="count-sfx">+</span>
+            <p>Productos en catálogo</p>
+          </div>
+          <div class="stat-div"></div>
+          <div class="stat fade-up" style="--d:.1s">
+            <strong class="count" data-to="15">0</strong><span class="count-sfx">+</span>
+            <p>Años de experiencia</p>
+          </div>
+          <div class="stat-div"></div>
+          <div class="stat fade-up" style="--d:.2s">
+            <strong class="count" data-to="200">0</strong><span class="count-sfx">+</span>
+            <p>Clientes activos</p>
+          </div>
+          <div class="stat-div"></div>
+          <div class="stat fade-up" style="--d:.3s">
+            <strong>NCh / ISO</strong>
+            <p>Norma de calidad</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- NOSOTROS -->
+    <section class="section" id="nosotros">
+      <div class="container">
+        <div class="two-col">
+          <div class="fade-left">
+            <p class="eyebrow">Quiénes somos</p>
+            <h2>Especialistas en<br />sistemas PVC</h2>
+            <p class="body">Conflex es una empresa chilena con más de 15 años distribuyendo acoples, tuberías y accesorios PVC para proyectos industriales, agrícolas, sanitarios y de construcción en todo el país.</p>
+            <p class="body">Contamos con stock permanente, asesoría técnica sin costo y acceso directo a precios de fabricante gracias a nuestra alianza con Plastiservi.</p>
+            <ul class="check-list">
+              <li><span class="check">✓</span> Norma NCh e ISO en todos los productos</li>
+              <li><span class="check">✓</span> Despacho a regiones en 24–48 h</li>
+              <li><span class="check">✓</span> Asesoría técnica especializada incluida</li>
+              <li><span class="check">✓</span> Precios directos de distribuidor</li>
+            </ul>
+          </div>
+          <div class="nos-cards fade-right">
+            <div class="nos-card">
+              <div class="nos-num">01</div>
+              <h3>Calidad certificada</h3>
+              <p>Todos nuestros productos cumplen normativa NCh e ISO vigente.</p>
+            </div>
+            <div class="nos-card nos-card-alt">
+              <div class="nos-num">02</div>
+              <h3>Stock permanente</h3>
+              <p>Inventario disponible para entrega inmediata sin demoras de importación.</p>
+            </div>
+            <div class="nos-card">
+              <div class="nos-num">03</div>
+              <h3>Soporte técnico</h3>
+              <p>Ingenieros especializados que orientan la selección correcta para cada proyecto.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- EQUIPO / FOTOS -->
+    <section class="section bg-off" id="equipo">
+      <div class="container">
+        <div class="sec-head fade-up">
+          <p class="eyebrow center">Nuestro equipo</p>
+          <h2 class="center">Personas detrás de cada proyecto</h2>
+        </div>
+        <div class="team-photos fade-up" style="--d:.1s">
+          <div class="team-photo-wrap">
+            <img src="img/team-1.jpg" alt="Equipo Conflex en bodega" loading="lazy" />
+            <div class="photo-caption">Equipo y bodega — más de 500 productos disponibles</div>
+          </div>
+          <div class="team-photo-wrap">
+            <img src="img/team-2.jpg" alt="Equipo Conflex instalaciones" loading="lazy" />
+            <div class="photo-caption">Nuestras instalaciones en la Región Metropolitana</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- VIDEO -->
+    <section class="section video-section">
+      <div class="container">
+        <div class="video-wrap fade-up">
+          <div class="video-left">
+            <p class="eyebrow">Conócenos</p>
+            <h2>Mira cómo<br />trabajamos</h2>
+            <p class="body">Descubre de cerca nuestras instalaciones, el equipo humano y los procesos que nos permiten garantizar calidad y disponibilidad en cada entrega.</p>
+          </div>
+          <div class="video-embed fade-up" style="--d:.15s">
+            <div class="video-player" id="video-player">
+              <!-- thumbnail shown first; click loads iframe -->
+              <div class="vp-thumb" id="vp-thumb" onclick="loadVideo()">
+                <img src="https://img.youtube.com/vi/3n8QQg7Dyl0/maxresdefault.jpg" alt="Video Conflex" />
+                <div class="vp-play">
+                  <svg viewBox="0 0 80 80" fill="none"><circle cx="40" cy="40" r="40" fill="rgba(0,0,0,.55)"/><path d="M32 26l28 14-28 14V26z" fill="#fff"/></svg>
+                </div>
+                <div class="vp-label">Reproducir video</div>
+              </div>
+              <div class="vp-iframe" id="vp-iframe" style="display:none">
+                <iframe
+                  id="yt-iframe"
+                  src=""
+                  title="Conflex — Video corporativo"
+                  frameborder="0"
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                  allowfullscreen>
+                </iframe>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- PRODUCTOS -->
+    <section class="section bg-off" id="productos">
+      <div class="container">
+        <div class="sec-head fade-up">
+          <p class="eyebrow center">Catálogo</p>
+          <h2 class="center">Línea completa de productos PVC</h2>
+        </div>
+        <div class="prod-grid">
+
+          <article class="prod fade-3d" style="--d:0s">
+            <div class="prod-ico">
+              <svg viewBox="0 0 40 40" fill="none"><rect x="4" y="15" width="32" height="10" rx="5" stroke="currentColor" stroke-width="1.5"/><circle cx="20" cy="20" r="3" fill="currentColor" opacity=".25"/></svg>
+            </div>
+            <h3>Tuberías PVC</h3>
+            <p>Sanitarias, presión y eléctricas. Diámetros ½" a 12". Norma NCh 399 y NCh 2071.</p>
+            <ul>
+              <li>PVC-U presión hasta 16 bar</li>
+              <li>PVC sanitario DICT / DICL</li>
+              <li>Conduit eléctrico</li>
+            </ul>
+            <a href="#contacto">Consultar stock →</a>
+          </article>
+
+          <article class="prod prod-hl fade-3d" style="--d:.07s">
+            <div class="prod-tag">Más solicitado</div>
+            <div class="prod-ico">
+              <svg viewBox="0 0 40 40" fill="none"><path d="M6 20 C6 13 13 10 20 10 C27 10 34 13 34 20 C34 27 27 30 20 30 C13 30 6 27 6 20Z" stroke="currentColor" stroke-width="1.5"/><circle cx="6" cy="20" r="3" fill="currentColor" opacity=".35"/><circle cx="34" cy="20" r="3" fill="currentColor" opacity=".35"/></svg>
+            </div>
+            <h3>Acoples PVC</h3>
+            <p>Uniones, codos, tees y reducciones para conexiones herméticas de larga duración.</p>
+            <ul>
+              <li>Uniones rectas y de reparación</li>
+              <li>Codos 45° y 90°</li>
+              <li>Tees, cruces, reducciones</li>
+            </ul>
+            <a href="#contacto">Consultar stock →</a>
+          </article>
+
+          <article class="prod fade-3d" style="--d:.14s">
+            <div class="prod-ico">
+              <svg viewBox="0 0 40 40" fill="none"><circle cx="20" cy="20" r="12" stroke="currentColor" stroke-width="1.5"/><path d="M14 20h12M20 14v12" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+            </div>
+            <h3>Válvulas y Control</h3>
+            <p>Válvulas de bola, compuerta y mariposa PVC para agua potable, riego e industria.</p>
+            <ul>
+              <li>Válvulas de bola PVC</li>
+              <li>Válvulas compuerta</li>
+              <li>Retención y check</li>
+            </ul>
+            <a href="#contacto">Consultar stock →</a>
+          </article>
+
+          <article class="prod fade-3d" style="--d:.21s">
+            <div class="prod-ico">
+              <svg viewBox="0 0 40 40" fill="none"><rect x="10" y="10" width="20" height="20" rx="3" stroke="currentColor" stroke-width="1.5"/><path d="M10 20h20M20 10v20" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg>
+            </div>
+            <h3>Sistema de Riego</h3>
+            <p>Componentes PVC para riego agrícola y jardín: cabezales, distribuidores y filtros.</p>
+            <ul>
+              <li>Distribuidores de riego</li>
+              <li>Filtros y reguladores</li>
+              <li>Cintas y mangueras</li>
+            </ul>
+            <a href="#contacto">Consultar stock →</a>
+          </article>
+
+          <article class="prod fade-3d" style="--d:.28s">
+            <div class="prod-ico">
+              <svg viewBox="0 0 40 40" fill="none"><path d="M13 32V17Q13 10 20 10Q27 10 27 17V32" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><path d="M16 32h8" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><path d="M11 22h18" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-dasharray="2 2"/></svg>
+            </div>
+            <h3>Sanitario</h3>
+            <p>Sistema completo para instalaciones sanitarias y evacuación de aguas lluvia y residuales.</p>
+            <ul>
+              <li>Bajadas de aguas lluvias</li>
+              <li>Sifones y cámaras</li>
+              <li>Tuberías HDPE</li>
+            </ul>
+            <a href="#contacto">Consultar stock →</a>
+          </article>
+
+          <article class="prod fade-3d" style="--d:.35s">
+            <div class="prod-ico">
+              <svg viewBox="0 0 40 40" fill="none"><circle cx="20" cy="20" r="12" stroke="currentColor" stroke-width="1.5"/><path d="M15 20l3.5 3.5 6.5-7" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </div>
+            <h3>Proyectos a medida</h3>
+            <p>Diseño y abastecimiento completo para proyectos industriales de gran escala.</p>
+            <ul>
+              <li>Ingeniería de sistemas</li>
+              <li>Abastecimiento integral</li>
+              <li>Soporte post-venta</li>
+            </ul>
+            <a href="#contacto">Hablar con un asesor →</a>
+          </article>
+
+        </div>
+      </div>
+    </section>
+
+    <!-- INDUSTRIAS -->
+    <section class="section" id="industrias">
+      <div class="container">
+        <div class="sec-head fade-up">
+          <p class="eyebrow center">Sectores</p>
+          <h2 class="center">Industrias que confían en Conflex</h2>
+        </div>
+        <div class="ind-grid">
+          <div class="ind fade-3d" style="--d:0s"><span class="ind-n">01</span><h3>Construcción</h3><p>Instalaciones sanitarias, alcantarillado y electricidad en obras civiles y edificaciones.</p></div>
+          <div class="ind fade-3d" style="--d:.06s"><span class="ind-n">02</span><h3>Agricultura</h3><p>Riego por goteo, aspersión y gravedad para campos agrícolas y viñas.</p></div>
+          <div class="ind fade-3d" style="--d:.12s"><span class="ind-n">03</span><h3>Industria</h3><p>Transporte de fluidos y químicos con alta resistencia y hermeticidad total.</p></div>
+          <div class="ind fade-3d" style="--d:.18s"><span class="ind-n">04</span><h3>Sanitaria</h3><p>Agua potable rural y urbana, alcantarillado y plantas de tratamiento.</p></div>
+          <div class="ind fade-3d" style="--d:.24s"><span class="ind-n">05</span><h3>Minería</h3><p>Alta presión y resistencia química para extracción y transporte de pulpa.</p></div>
+          <div class="ind fade-3d" style="--d:.30s"><span class="ind-n">06</span><h3>Electricidad</h3><p>Conduit y ductos PVC para canalización de cables en obra gruesa.</p></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- PARTNER -->
+    <section class="section partner-section" id="partner">
+      <div class="container">
+        <div class="partner-wrap fade-up">
+          <div class="partner-left">
+            <p class="eyebrow">Alianza estratégica</p>
+            <h2>Partner oficial de<br /><strong>Plastiservi.cl</strong></h2>
+            <p class="body">Como partner oficial de Plastiservi, uno de los principales fabricantes de PVC en Chile, tenemos acceso directo a precios de fábrica, stock prioritario y soporte técnico especializado.</p>
+            <div class="partner-items">
+              <div class="pi"><div class="pi-dot"></div><span>Precios directos de fabricante</span></div>
+              <div class="pi"><div class="pi-dot"></div><span>Disponibilidad de stock garantizada</span></div>
+              <div class="pi"><div class="pi-dot"></div><span>Soporte técnico de primer nivel</span></div>
+              <div class="pi"><div class="pi-dot"></div><span>Catálogo completo de la línea</span></div>
+            </div>
+            <a href="#contacto" class="btn-primary">Solicitar cotización</a>
+          </div>
+          <div class="partner-right">
+            <div class="partner-badge">
+              <div class="pb-ring"></div>
+              <div class="pb-inner">
+                <p class="pb-small">Partner oficial</p>
+                <img src="img/logo-plastiservi.webp" alt="Plastiservi" class="partner-logo-img" />
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- CLIENTES -->
+    <section class="section bg-off clientes-section">
+      <div class="container">
+        <div class="sec-head fade-up">
+          <p class="eyebrow center">Clientes</p>
+          <h2 class="center">Empresas que confían en nosotros</h2>
+        </div>
+        <div class="logos-grid fade-up" style="--d:.1s">
+          <div class="logo-item"><img src="img/logo-gobantes.jpg"  alt="Gobantes"  loading="lazy" /></div>
+          <div class="logo-item"><img src="img/logo-aislapol.jpg"  alt="Aislapol"  loading="lazy" /></div>
+          <div class="logo-item"><img src="img/logo-unimarc.jpg"   alt="Unimarc"   loading="lazy" /></div>
+          <div class="logo-item"><img src="img/logo-famesa.jpg"    alt="FAMESA"    loading="lazy" /></div>
+          <div class="logo-item"><img src="img/logo-aragon.jpg"    alt="Aragón"    loading="lazy" /></div>
+          <div class="logo-item"><img src="img/logo-eecol.jpg"     alt="EECOL"     loading="lazy" /></div>
+          <div class="logo-item"><img src="img/logo-walmart.jpg"   alt="Walmart"   loading="lazy" /></div>
+          <div class="logo-item"><img src="img/logo-manuka.jpg"    alt="manuka"    loading="lazy" /></div>
+          <div class="logo-item"><img src="img/logo-cesmec.jpg"    alt="CESMEC"    loading="lazy" /></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- CERTIFICACIONES -->
+    <section class="section certs-section">
+      <div class="container">
+        <div class="certs-wrap fade-up">
+          <div class="certs-text">
+            <p class="eyebrow">Calidad certificada</p>
+            <h2>Respaldados por<br />normas internacionales</h2>
+            <p class="body">Todos nuestros productos y procesos cumplen con los más altos estándares de calidad, respaldados por certificaciones internacionales que garantizan seguridad y confiabilidad en cada proyecto.</p>
+          </div>
+          <div class="certs-logos">
+            <div class="cert-item fade-3d" style="--d:0s">
+              <div class="cert-ico">
+                <img src="img/cert-iso9001.jpg" alt="ISO 9001" loading="lazy" />
+              </div>
+              <strong>ISO 9001</strong>
+              <p>Gestión de calidad</p>
+            </div>
+            <div class="cert-item fade-3d" style="--d:.12s">
+              <div class="cert-ico">
+                <img src="img/cert-iso22000.jpg" alt="ISO 22000" loading="lazy" />
+              </div>
+              <strong>ISO 22000</strong>
+              <p>Inocuidad alimentaria</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- CONTACTO -->
+    <section class="section bg-off" id="contacto">
+      <div class="container">
+        <div class="contacto-wrap">
+          <div class="c-info fade-left">
+            <p class="eyebrow">Contacto</p>
+            <h2>Hablemos de<br />tu proyecto</h2>
+            <p class="body">Cotización detallada en menos de 48 horas hábiles.</p>
+            <div class="c-links">
+              <a href="mailto:contacto@conflex.cl" class="c-link">
+                <svg viewBox="0 0 20 20" fill="none"><path d="M3 6l7 5 7-5M3 6a1 1 0 011-1h12a1 1 0 011 1v8a1 1 0 01-1 1H4a1 1 0 01-1-1V6z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                contacto@conflex.cl
+              </a>
+              <a href="tel:+56222345678" class="c-link">
+                <svg viewBox="0 0 20 20" fill="none"><path d="M2.5 4.5A1 1 0 013.5 3.5h3l1.5 3.5L6.5 9a11 11 0 004.5 4.5l2-2 3.5 1.5v3a1 1 0 01-1 1C7.5 17 2.5 12 2.5 4.5z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                +56 2 2234 5678
+              </a>
+              <div class="c-link">
+                <svg viewBox="0 0 20 20" fill="none"><path d="M10 2C7.24 2 5 4.24 5 7c0 4 5 10 5 10s5-6 5-10c0-2.76-2.24-5-5-5zm0 6.5A1.5 1.5 0 1110 5a1.5 1.5 0 010 3.5z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                Región Metropolitana, Chile
+              </div>
+            </div>
+          </div>
+          <form class="c-form fade-right" id="cform" onsubmit="handleSubmit(event)">
+            <div class="cf-row">
+              <div class="cf-f"><label>Nombre</label><input type="text" placeholder="Tu nombre" required /></div>
+              <div class="cf-f"><label>Empresa</label><input type="text" placeholder="Tu empresa" /></div>
+            </div>
+            <div class="cf-f"><label>Email</label><input type="email" placeholder="tu@empresa.cl" required /></div>
+            <div class="cf-f"><label>Teléfono</label><input type="tel" placeholder="+56 9 ..." /></div>
+            <div class="cf-f"><label>Mensaje</label><textarea rows="4" placeholder="¿Qué producto o sistema necesitas?" required></textarea></div>
+            <button type="submit" class="btn-primary full" id="submit-btn">Enviar solicitud</button>
+            <div id="form-ok" class="form-ok" style="display:none">✓ Mensaje recibido. Te contactamos pronto.</div>
+          </form>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-top">
+        <div>
+          <div class="logo" style="pointer-events:none">
+            <div class="logo-sq">C</div>
+            <span>CONFLEX</span>
+          </div>
+          <p>Especialistas en sistemas PVC para la industria chilena.<br />Partner oficial de Plastiservi.cl.</p>
+        </div>
+        <div class="footer-cols">
+          <div>
+            <h4>Empresa</h4>
+            <a href="#nosotros">Nosotros</a>
+            <a href="#industrias">Industrias</a>
+            <a href="#partner">Partner Plastiservi</a>
+            <a href="#contacto">Contacto</a>
+          </div>
+          <div>
+            <h4>Productos</h4>
+            <a href="#productos">Tuberías PVC</a>
+            <a href="#productos">Acoples</a>
+            <a href="#productos">Válvulas</a>
+            <a href="#productos">Riego</a>
+            <a href="#productos">Sanitario</a>
+          </div>
+          <div>
+            <h4>Contacto</h4>
+            <a href="mailto:contacto@conflex.cl">contacto@conflex.cl</a>
+            <a href="tel:+56222345678">+56 2 2234 5678</a>
+            <span>Región Metropolitana</span>
+          </div>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <p>&copy; 2026 Conflex. Todos los derechos reservados.</p>
+        <p>Partner oficial <strong>Plastiservi.cl</strong></p>
+      </div>
+    </div>
+  </footer>
+
+  <script src="js/main.js"></script>
+</body>
+</html>
