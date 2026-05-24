@@ -114,7 +114,7 @@ h2.center { text-align: center; }
   width: 100%;
 }
 .logo { display: flex; align-items: center; flex-shrink: 0; }
-.logo-img { height: 60px; width: auto; object-fit: contain; }
+.logo-img { height: 80px; width: auto; object-fit: contain; }
 
 .nav-search {
   flex: 1;
