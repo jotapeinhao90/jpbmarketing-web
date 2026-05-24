@@ -111,12 +111,13 @@ h2.center { text-align: center; }
 .nav-top-inner {
   max-width: 1200px; margin: 0 auto; padding: 0 32px;
   display: flex; align-items: center; gap: 20px; height: 78px;
+  width: 100%;
 }
 .logo { display: flex; align-items: center; flex-shrink: 0; }
 .logo-img { height: 60px; width: auto; object-fit: contain; }
 
 .nav-search {
-  flex: 1; max-width: 520px;
+  flex: 1;
   display: flex; align-items: center;
   border: 1.5px solid var(--border); border-radius: 9px; overflow: hidden;
   transition: border-color .2s;
@@ -186,10 +187,9 @@ h2.center { text-align: center; }
    =========================== */
 .hero {
   background: var(--navy);
-  min-height: 100vh;
   display: flex;
   align-items: center;
-  padding: 130px 0 80px; /* top = nav height */
+  padding: 130px 0 72px;
 }
 .hero-inner {
   max-width: 1160px; margin: 0 auto; padding: 0 32px;
@@ -221,13 +221,13 @@ h2.center { text-align: center; }
 .hero-visual {
   position: relative;
   height: 100%;
-  min-height: 500px;
+  min-height: 420px;
   align-self: stretch;
 }
 .hero-img-wrap {
   position: relative;
   height: 100%;
-  min-height: 500px;
+  min-height: 420px;
   border-radius: 20px;
   overflow: hidden;
   background: rgba(255,255,255,.03);
