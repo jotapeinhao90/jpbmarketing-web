@@ -110,7 +110,7 @@ h2.center { text-align: center; }
 .nav-top { border-bottom: 1px solid var(--border); }
 .nav-top-inner {
   max-width: 1200px; margin: 0 auto; padding: 0 32px;
-  display: flex; align-items: center; gap: 20px; height: 78px;
+  display: flex; align-items: center; gap: 20px; height: 96px;
   width: 100%;
 }
 .logo { display: flex; align-items: center; flex-shrink: 0; }
@@ -160,7 +160,7 @@ h2.center { text-align: center; }
 .nav-links { display: flex; align-items: center; }
 .nav-link {
   font-size: 13.5px; font-weight: 600; color: var(--text-2);
-  padding: 14px 22px; display: block;
+  padding: 18px 24px; display: block;
   border-bottom: 2.5px solid transparent;
   text-transform: uppercase; letter-spacing: .07em;
   transition: color .15s, border-color .15s;
@@ -189,7 +189,7 @@ h2.center { text-align: center; }
   background: var(--navy);
   display: flex;
   align-items: center;
-  padding: 164px 0 80px;
+  padding: 180px 0 80px;
 }
 .hero-inner {
   max-width: 1160px; margin: 0 auto; padding: 0 32px;
@@ -635,7 +635,7 @@ h2.center { text-align: center; }
    =========================== */
 .page-header {
   background: var(--navy);
-  padding: 164px 0 60px;
+  padding: 180px 0 60px;
   text-align: center;
 }
 .page-header .eyebrow {
