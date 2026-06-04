@@ -3,25 +3,20 @@
 
 ---
 
-## PASO 0 — Crear Gmail del negocio (10 min)
-**Hacer esto PRIMERO, antes de cualquier otra plataforma.**
+## PASO 0 — Gmail del negocio ✅ YA EXISTE
 
-1. Ir a accounts.google.com/signup
-2. Nombre: RAS Construcciones
-3. Email a crear: `ras.construcciones@gmail.com`
-   - Si está tomado: `rasconstrucciones.stgo@gmail.com` o `contacto.ras.construcciones@gmail.com`
-4. Contraseña: guardarlo en un lugar seguro (compartir con padrastro)
-5. Número de recuperación: teléfono del padrastro
-6. NO agregar número de teléfono adicional por ahora
+- **Email:** rasconstrucciones26@gmail.com
+- **Teléfono/WhatsApp:** +569 9833 5632
+- **Contacto:** Ricardo Aguiar Silva
 
-**Este Gmail es la llave de todo: GMB, Habitissimo, Getservice. Nunca perderlo.**
+No hay que crear nada. Usar este Gmail directamente en todos los pasos siguientes.
 
 ---
 
 ## PASO 1 — Google My Business (2 horas, incluye espera de verificación)
 
 ### 1.1 Crear el perfil
-1. Ir a **business.google.com** con el Gmail nuevo
+1. Ir a **business.google.com** con rasconstrucciones26@gmail.com
 2. Clic "Administrar ahora" → "Agregar tu empresa a Google"
 3. **Nombre del negocio:** `RAS Construcciones`
    - Exactamente así, sin agregar "spa", "ltda", ni emojis
@@ -32,7 +27,7 @@
 6. **Área de servicio** — agregar estas comunas una por una:
    - Las Condes, Vitacura, Providencia, Ñuñoa, La Reina, Lo Barnechea
    - Maipú, Peñalolén, La Florida, Santiago, Independencia, Huechuraba
-7. **Teléfono:** número WhatsApp del padrastro
+7. **Teléfono:** +569 9833 5632
 8. **Sitio web:** por ahora dejar vacío (si tienen, agregar después)
 9. Clic "Continuar"
 
@@ -46,17 +41,20 @@ Google ofrece varias opciones. En orden de preferencia:
 
 ### 1.3 Completar perfil (mientras espera verificación o después)
 
-**Descripción del negocio** (copiar y adaptar):
+**Descripción del negocio** (copiar exacto):
 ```
-RAS Construcciones es una empresa especializada en instalación de cerámica, 
-porcelanato y terminaciones para viviendas y locales comerciales en Santiago. 
-Más de [X] años de experiencia en proyectos residenciales en Las Condes, 
-Vitacura, Providencia, Ñuñoa y sectores aledaños.
+RAS Construcciones SPA es una empresa especializada en remodelaciones, 
+instalación de cerámica, porcelanato y terminaciones para viviendas y 
+locales comerciales en Santiago. Dirigida por Ricardo Aguiar Silva, 
+Ingeniero Civil de la Universidad de Chile.
 
-Servicios: instalación de cerámica y porcelanato, revestimiento de paredes, 
-ampliaciones, remodelaciones de baños y cocinas, terminaciones generales.
+Hemos trabajado con Socovesa, EBCO, Moller & Pérez-Cotapos, Santolaya 
+y Boetsch, además de casas particulares, restaurantes y cafés.
 
-Entregamos presupuesto detallado sin costo previo a la obra.
+Servicios: instalación cerámica y porcelanato, remodelación baños y cocinas, 
+quinchos y techumbres, pintura, piso flotante y vinílico, ampliaciones.
+
+Presupuesto detallado sin costo. Atención directa con el profesional a cargo.
 ```
 
 **Horario:**
@@ -105,11 +103,11 @@ Entregamos presupuesto detallado sin costo previo a la obra.
 
 **Descripción:**
 ```
-RAS Construcciones: especialistas en instalación de cerámica, porcelanato y 
-terminaciones en Santiago. Trabajamos con nivelador de baldosas para resultados 
-de acabado premium. Presupuesto sin costo, materiales o solo mano de obra según 
-necesidad del cliente. Comunas: Las Condes, Vitacura, Providencia, Ñuñoa, 
-La Reina, Lo Barnechea y sectores cercanos.
+RAS Construcciones SPA: especialistas en instalación de cerámica, porcelanato 
+y terminaciones en Santiago. Dirigidos por Ingeniero Civil U. de Chile.
+Hemos trabajado con Socovesa, EBCO, Moller & Pérez-Cotapos y proyectos 
+residenciales en Las Condes, Vitacura y Providencia.
+Presupuesto sin costo. Mano de obra o llave en mano según preferencia.
 ```
 
 - Subir las mismas fotos del GMB
@@ -133,25 +131,26 @@ Al completar el perfil, Habitissimo suele dar 1 crédito gratis para responder a
 - Categoría: **Servicios > Remodelaciones y construcción**
 - Título (copiar exacto):
 ```
-Instalación Cerámica y Porcelanato · Las Condes, Vitacura, Providencia · RAS Construcciones
+Instalación Cerámica y Porcelanato · Las Condes, Vitacura, Providencia · RAS Construcciones SPA
 ```
 
 - Descripción (copiar y pegar):
 ```
-RAS Construcciones, empresa con experiencia en Santiago, realiza:
+RAS Construcciones SPA, empresa dirigida por Ingeniero Civil U. de Chile.
+Hemos trabajado con Socovesa, EBCO, Moller & Pérez-Cotapos y cientos de casas particulares.
 
-✔ Instalación de cerámica y porcelanato en baños, cocinas, livings y terrazas
-✔ Revestimiento de paredes
-✔ Remodelaciones de baños y cocinas
-✔ Terminaciones generales
+✔ Instalación de cerámica y porcelanato (baños, cocinas, livings, terrazas)
+✔ Remodelaciones de baños y cocinas completas
+✔ Quinchos, techumbres y ampliaciones
+✔ Pintura interior y exterior
+✔ Piso flotante y piso vinílico
 
-Trabajamos con nivelador de baldosas para resultados prolijos y de larga duración.
-Presupuesto sin costo · Solo mano de obra o con materiales según preferencia.
+Presupuesto sin costo · Solo mano de obra o llave en mano según preferencia.
 
-Comunas: Las Condes, Vitacura, Providencia, Ñuñoa, La Reina, Lo Barnechea, Maipú, 
-Peñalolén, La Florida y sectores aledaños.
+Comunas: Las Condes, Vitacura, Providencia, Ñuñoa, La Reina, Lo Barnechea, 
+Maipú, Peñalolén, La Florida y sectores aledaños.
 
-Llámanos o escríbenos por WhatsApp: +56 9 XXXX XXXX
+Llámanos o escríbenos por WhatsApp: +569 9833 5632
 ```
 
 - Precio: "A convenir"

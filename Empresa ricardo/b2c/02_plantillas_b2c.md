@@ -76,8 +76,8 @@ Puedo pasar a mirar el espacio sin costo esta semana.
 ¿Cuándo te acomoda?
 
 Saludos,
-RAS Construcciones
-[Nombre del padrastro] — +56 9 XXXX XXXX
+RAS Construcciones SPA
+Ricardo Aguiar Silva — +569 9833 5632
 ```
 
 ---
