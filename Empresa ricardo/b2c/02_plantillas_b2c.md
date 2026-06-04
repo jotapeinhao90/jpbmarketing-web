@@ -76,8 +76,8 @@ Puedo pasar a mirar el espacio sin costo esta semana.
 ¿Cuándo te acomoda?
 
 Saludos,
-[Nombre del padrastro]
-[Teléfono/WhatsApp]
+RAS Construcciones
+[Nombre del padrastro] — +56 9 XXXX XXXX
 ```
 
 ---
@@ -110,9 +110,10 @@ Solo toma 2 minutos. ¡Muchas gracias!
 
 ### Bio
 ```
-Instalación cerámica y porcelanato 📐
-Santiago — Las Condes · Vitacura · Providencia
-Presupuesto sin costo 📲 +56 9 XXXX XXXX
+RAS Construcciones
+Cerámica · Porcelanato · Terminaciones
+📍 Santiago — Las Condes · Vitacura · Providencia
+📲 Presupuesto sin costo → +56 9 XXXX XXXX
 ```
 
 ### Caption tipo para foto de trabajo terminado
