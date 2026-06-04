@@ -68,22 +68,13 @@ ul { list-style: none; }
   height: var(--nav-h);
   display: flex; align-items: center; gap: 32px;
 }
-.logo { display: flex; align-items: center; gap: 10px; color: var(--white); flex-shrink: 0; }
-.logo-mark {
-  background: var(--blue);
-  color: var(--white);
-  font-family: var(--font-head); font-weight: 800; font-size: 14px; letter-spacing: .05em;
-  padding: 7px 11px; border-radius: 7px;
-  box-shadow: 0 0 0 0 rgba(21,101,192,.5);
-  animation: pulse-logo 3s ease-in-out infinite;
+.logo { display: flex; align-items: center; flex-shrink: 0; }
+.logo-img {
+  height: 44px; width: auto;
+  transition: opacity .2s, transform .2s;
+  filter: brightness(1.05);
 }
-@keyframes pulse-logo {
-  0%,100% { box-shadow: 0 0 0 0 rgba(21,101,192,.4); }
-  50%      { box-shadow: 0 0 0 8px rgba(21,101,192,0); }
-}
-.logo-mark--sm { font-size: 12px; padding: 5px 9px; animation: none; }
-.logo-text { font-family: var(--font-head); font-weight: 700; font-size: 15px; color: var(--white); }
-.logo-text span { opacity: .5; font-weight: 400; }
+.logo:hover .logo-img { opacity: .85; transform: scale(.97); }
 .nav-links { display: flex; gap: 4px; margin-left: auto; }
 .nav-links a {
   color: rgba(255,255,255,.75); font-size: 13.5px; font-weight: 500;
@@ -486,7 +477,8 @@ ul { list-style: none; }
   max-width: var(--max-w); margin: 0 auto; padding: 0 24px;
   display: flex; align-items: center; justify-content: space-between; gap: 16px; flex-wrap: wrap;
 }
-.footer-brand { display: flex; align-items: center; gap: 10px; }
+.footer-brand { display: flex; align-items: center; gap: 12px; }
+.footer-logo { height: 32px; width: auto; opacity: .8; }
 .footer-brand span { font-size: 14px; font-weight: 500; color: rgba(255,255,255,.5); }
 .footer-copy { font-size: 12px; color: rgba(255,255,255,.25); }
 
