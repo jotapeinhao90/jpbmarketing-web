@@ -153,18 +153,11 @@ ul { list-style: none; }
 .hero-photo {
   border-radius: 16px; overflow: hidden;
   aspect-ratio: 4/5;
-  background: linear-gradient(180deg, rgba(21,101,192,.3) 0%, rgba(12,31,74,.8) 100%);
+  background: var(--blue-800);
   border: 1px solid rgba(255,255,255,.1);
+  box-shadow: 0 32px 80px rgba(0,0,0,.4);
 }
 .hero-photo img { width: 100%; height: 100%; object-fit: cover; }
-.hero-photo.no-img {
-  display: flex; align-items: center; justify-content: center;
-  min-height: 400px;
-}
-.hero-photo.no-img::after {
-  content: 'foto principal de obra';
-  font-size: 13px; color: rgba(255,255,255,.3); letter-spacing: .05em;
-}
 
 /* ── SECTION COMMON ── */
 .section-inner { max-width: var(--max-w); margin: 0 auto; padding: 0 24px; }
