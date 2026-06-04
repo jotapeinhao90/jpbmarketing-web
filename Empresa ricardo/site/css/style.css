@@ -90,17 +90,17 @@ ul { list-style: none; }
 .hero { background: var(--navy); padding-top: var(--nav-h); position: relative; overflow: hidden; }
 .hero-mesh { position: absolute; inset: 0; pointer-events: none; background: radial-gradient(ellipse 70% 80% at 75% 50%, rgba(21,101,192,.2) 0%, transparent 65%), radial-gradient(ellipse 40% 50% at 15% 80%, rgba(66,165,245,.07) 0%, transparent 55%); animation: mesh 10s ease-in-out infinite alternate; }
 @keyframes mesh { from { transform: scale(1); } to { transform: scale(1.04) translate(6px,-6px); } }
-.hero-inner { max-width: var(--w); margin: 0 auto; padding: 32px 24px 36px; display: grid; grid-template-columns: 1fr 1fr; gap: 48px; align-items: center; position: relative; z-index: 1; }
-.hero-eyebrow { font-size: 10.5px; font-weight: 600; letter-spacing: .12em; text-transform: uppercase; color: var(--bluelt); margin-bottom: 10px; display: flex; align-items: center; gap: 8px; opacity: 0; animation: fadeUp .6s .15s cubic-bezier(.16,1,.3,1) forwards; }
-.hero-eyebrow::before { content: ''; display: block; width: 16px; height: 1.5px; background: var(--bluelt); }
-.hero-content h1 { font-family: var(--fh); font-size: clamp(26px,3vw,36px); font-weight: 800; line-height: 1.1; color: var(--white); margin-bottom: 12px; opacity: 0; animation: fadeUp .65s .28s cubic-bezier(.16,1,.3,1) forwards; }
+.hero-inner { max-width: var(--w); margin: 0 auto; padding: 48px 24px 52px; display: grid; grid-template-columns: 1fr 1fr; gap: 52px; align-items: center; position: relative; z-index: 1; }
+.hero-eyebrow { font-size: 11px; font-weight: 600; letter-spacing: .12em; text-transform: uppercase; color: var(--bluelt); margin-bottom: 14px; display: flex; align-items: center; gap: 8px; opacity: 0; animation: fadeUp .6s .15s cubic-bezier(.16,1,.3,1) forwards; }
+.hero-eyebrow::before { content: ''; display: block; width: 18px; height: 1.5px; background: var(--bluelt); }
+.hero-content h1 { font-family: var(--fh); font-size: clamp(30px,3.6vw,46px); font-weight: 800; line-height: 1.08; color: var(--white); margin-bottom: 16px; opacity: 0; animation: fadeUp .65s .28s cubic-bezier(.16,1,.3,1) forwards; }
 .hero-content h1 em { font-style: normal; background: linear-gradient(135deg,var(--bluelt),#90CAF9); -webkit-background-clip: text; background-clip: text; color: transparent; }
-.hero-desc { font-size: 14px; line-height: 1.65; color: rgba(255,255,255,.6); margin-bottom: 20px; max-width: 420px; opacity: 0; animation: fadeUp .65s .4s cubic-bezier(.16,1,.3,1) forwards; }
-.hero-btns { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 20px; opacity: 0; animation: fadeUp .65s .52s cubic-bezier(.16,1,.3,1) forwards; }
-.hero-badges { display: flex; gap: 6px; flex-wrap: wrap; opacity: 0; animation: fadeUp .65s .64s cubic-bezier(.16,1,.3,1) forwards; }
-.hero-badges span { font-size: 10.5px; font-weight: 600; color: rgba(255,255,255,.4); padding: 3px 8px; border: 1px solid rgba(255,255,255,.1); border-radius: 4px; }
+.hero-desc { font-size: 15px; line-height: 1.7; color: rgba(255,255,255,.6); margin-bottom: 26px; max-width: 440px; opacity: 0; animation: fadeUp .65s .4s cubic-bezier(.16,1,.3,1) forwards; }
+.hero-btns { display: flex; gap: 11px; flex-wrap: wrap; margin-bottom: 28px; opacity: 0; animation: fadeUp .65s .52s cubic-bezier(.16,1,.3,1) forwards; }
+.hero-badges { display: flex; gap: 7px; flex-wrap: wrap; opacity: 0; animation: fadeUp .65s .64s cubic-bezier(.16,1,.3,1) forwards; }
+.hero-badges span { font-size: 11px; font-weight: 600; color: rgba(255,255,255,.4); padding: 3px 9px; border: 1px solid rgba(255,255,255,.1); border-radius: 4px; }
 .hero-photo-wrap { opacity: 0; animation: fadeRight .8s .3s cubic-bezier(.16,1,.3,1) forwards; }
-.hero-photo { width: 100%; aspect-ratio: 16/10; object-fit: cover; border-radius: 14px; border: 1px solid rgba(255,255,255,.08); box-shadow: 0 20px 50px rgba(0,0,0,.4); }
+.hero-photo { width: 100%; aspect-ratio: 4/3; object-fit: cover; border-radius: 14px; border: 1px solid rgba(255,255,255,.08); box-shadow: 0 24px 60px rgba(0,0,0,.42); }
 @keyframes fadeUp    { from { opacity:0; transform:translateY(24px); } to { opacity:1; transform:translateY(0); } }
 @keyframes fadeRight { from { opacity:0; transform:translateX(32px); } to { opacity:1; transform:translateX(0); } }
 
