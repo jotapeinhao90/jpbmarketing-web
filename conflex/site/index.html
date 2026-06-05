@@ -3,12 +3,55 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Conflex — Fabricantes de Sistemas PVC | Chile</title>
-  <meta name="description" content="Conflex y Plastiservi: fabricantes chilenos de acoples, tuberías y accesorios PVC. 3 plantas industriales, +100.000 m² de producción." />
+  <title>Tuberías y Acoples PVC Chile | Conflex — Fabricantes Directos</title>
+  <meta name="description" content="Fabricantes chilenos de tuberías PVC, acoples, válvulas y sistemas de riego. Conflex y Plastiservi: 3 plantas industriales, +100.000 m² de producción. Precios directos de fábrica." />
+  <link rel="canonical" href="https://conflex.cl/" />
+  <meta property="og:type" content="website" />
+  <meta property="og:site_name" content="Conflex" />
+  <meta property="og:title" content="Tuberías y Acoples PVC Chile | Conflex — Fabricantes Directos" />
+  <meta property="og:description" content="Fabricantes chilenos de tuberías PVC, acoples, válvulas y sistemas de riego. 3 plantas industriales, +100.000 m² de producción. Precios directos de fábrica." />
+  <meta property="og:url" content="https://conflex.cl/" />
+  <meta property="og:image" content="https://conflex.cl/img/team-1.jpg" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Organization",
+    "name": "Conflex",
+    "alternateName": "Plastiservi",
+    "url": "https://conflex.cl",
+    "logo": "https://conflex.cl/img/logo-conflex-transparent.png",
+    "description": "Fabricantes chilenos de sistemas PVC: tuberías hidráulicas, acoples, conduit eléctrico, válvulas, riego y sanitario. Marcas propias Conflex y Plastiservi.",
+    "telephone": "+56944843503",
+    "email": "jpbayas@jpbmarketing.cl",
+    "address": {
+      "@type": "PostalAddress",
+      "addressRegion": "Región Metropolitana",
+      "addressCountry": "CL"
+    },
+    "brand": [
+      { "@type": "Brand", "name": "Conflex" },
+      { "@type": "Brand", "name": "Plastiservi" }
+    ]
+  }
+  </script>
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebSite",
+    "name": "Conflex",
+    "url": "https://conflex.cl",
+    "potentialAction": {
+      "@type": "SearchAction",
+      "target": "https://conflex.cl/productos.html?q={search_term_string}",
+      "query-input": "required name=search_term_string"
+    }
+  }
+  </script>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Sora:wght@400;600;700;800&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="css/style.css" />
+  <link rel="stylesheet" href="css/style.css?v=6" />
 </head>
 <body>
 
@@ -74,8 +117,20 @@
 
       <div class="hero-visual">
         <div class="hero-img-wrap">
+          <div class="hero-slider" id="hero-slider">
 
-          <!-- Pipe-network animation — 3D cylindrical PVC pipes -->
+            <!-- Slide 1: Fábrica con equipo humano -->
+            <div class="hero-slide hs-active">
+              <img src="img/team-1.jpg" alt="Equipo Conflex en planta industrial" />
+              <div class="hs-overlay"></div>
+              <div class="hs-caption">
+                <span class="hs-eyebrow">Fabricación propia · Chile</span>
+                <p class="hs-title">Nuestro equipo, nuestra fábrica</p>
+              </div>
+            </div>
+
+            <!-- Slide 2: Animación SVG red de tuberías -->
+            <div class="hero-slide">
           <svg class="pv-svg" viewBox="0 0 480 340" fill="none" xmlns="http://www.w3.org/2000/svg">
             <defs>
               <pattern id="pvg" width="26" height="26" patternUnits="userSpaceOnUse">
@@ -285,8 +340,24 @@
             <text x="240" y="335" text-anchor="middle" fill="rgba(255,255,255,.18)" font-size="8" font-family="'Sora',sans-serif" font-weight="700" letter-spacing=".18em">© CONFLEX</text>
 
           </svg>
+            </div><!-- /slide SVG -->
 
+            <!-- Slide 3: Segunda foto de planta -->
+            <div class="hero-slide">
+              <img src="img/team-2.jpg" alt="Planta industrial Conflex Plastiservi" />
+              <div class="hs-overlay"></div>
+              <div class="hs-caption">
+                <span class="hs-eyebrow">3 plantas · +100.000 m²</span>
+                <p class="hs-title">Directo del fabricante a tu proyecto</p>
+              </div>
+            </div>
 
+          </div><!-- /hero-slider -->
+          <div class="hero-dots" id="hero-dots">
+            <button class="hd hs-active" data-idx="0"></button>
+            <button class="hd" data-idx="1"></button>
+            <button class="hd" data-idx="2"></button>
+          </div>
         </div>
       </div><!-- /hero-visual -->
       </div><!-- /hero-inner -->
@@ -401,6 +472,40 @@
       </div>
     </section>
 
+    <!-- VIDEO -->
+    <section class="section video-section">
+      <div class="container">
+        <div class="video-wrap fade-up">
+          <div class="video-left">
+            <p class="eyebrow">Conócenos</p>
+            <h2>Conoce nuestras<br />plantas industriales</h2>
+            <p class="body">Recorre nuestras instalaciones, conoce los procesos de fabricación y al equipo que garantiza calidad desde la materia prima hasta la entrega final.</p>
+          </div>
+          <div class="video-embed fade-up" style="--d:.15s">
+            <div class="video-player" id="video-player">
+              <div class="vp-thumb" id="vp-thumb" onclick="loadVideo()">
+                <img src="https://img.youtube.com/vi/3n8QQg7Dyl0/maxresdefault.jpg" alt="Video Conflex" />
+                <div class="vp-play">
+                  <svg viewBox="0 0 80 80" fill="none"><circle cx="40" cy="40" r="40" fill="rgba(0,0,0,.55)"/><path d="M32 26l28 14-28 14V26z" fill="#fff"/></svg>
+                </div>
+                <div class="vp-label">Reproducir video</div>
+              </div>
+              <div class="vp-iframe" id="vp-iframe" style="display:none">
+                <iframe
+                  id="yt-iframe"
+                  src=""
+                  title="Conflex — Video corporativo"
+                  frameborder="0"
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                  allowfullscreen>
+                </iframe>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
     <!-- INDUSTRIAS -->
     <section class="section">
       <div class="container">
@@ -432,22 +537,32 @@
     </section>
 
     <!-- CLIENTES -->
-    <section class="section bg-off clientes-section">
+    <section class="section clientes-section">
       <div class="container">
         <div class="sec-head fade-up">
           <p class="eyebrow center">Clientes</p>
           <h2 class="center">Empresas que confían en nosotros</h2>
         </div>
         <div class="logos-grid fade-up" style="--d:.1s">
-          <div class="logo-item"><img src="img/logo-gobantes.jpg"  alt="Gobantes"  loading="lazy" /></div>
-          <div class="logo-item"><img src="img/logo-aislapol.jpg"  alt="Aislapol"  loading="lazy" /></div>
-          <div class="logo-item"><img src="img/logo-unimarc.jpg"   alt="Unimarc"   loading="lazy" /></div>
-          <div class="logo-item"><img src="img/logo-famesa.jpg"    alt="FAMESA"    loading="lazy" /></div>
-          <div class="logo-item"><img src="img/logo-aragon.jpg"    alt="Aragón"    loading="lazy" /></div>
-          <div class="logo-item"><img src="img/logo-eecol.jpg"     alt="EECOL"     loading="lazy" /></div>
           <div class="logo-item"><img src="img/logo-walmart.jpg"   alt="Walmart"   loading="lazy" /></div>
-          <div class="logo-item"><img src="img/logo-manuka.jpg"    alt="manuka"    loading="lazy" /></div>
+          <div class="logo-item"><img src="img/logo-unimarc.jpg"   alt="Unimarc"   loading="lazy" /></div>
+          <div class="logo-item"><img src="img/logo-aislapol.jpg"  alt="Aislapol"  loading="lazy" /></div>
+          <div class="logo-item"><img src="img/logo-famesa.jpg"    alt="FAMESA"    loading="lazy" /></div>
+          <div class="logo-item"><img src="img/logo-eecol.jpg"     alt="EECOL"     loading="lazy" /></div>
+          <div class="logo-item"><img src="img/logo-aragon.jpg"    alt="Aragón"    loading="lazy" /></div>
+          <div class="logo-item"><img src="img/logo-manuka.jpg"    alt="Manuka"    loading="lazy" /></div>
           <div class="logo-item"><img src="img/logo-cesmec.jpg"    alt="CESMEC"    loading="lazy" /></div>
+          <div class="logo-item"><img src="img/logo-gobantes.jpg"  alt="Gobantes"  loading="lazy" /></div>
+          <div class="logo-item"><img src="img/123410_715127.webp"  alt="Cliente Conflex" loading="lazy" /></div>
+          <div class="logo-item"><img src="img/1644_529804.webp"    alt="Cliente Conflex" loading="lazy" /></div>
+          <div class="logo-item"><img src="img/423164_28411.webp"   alt="Cliente Conflex" loading="lazy" /></div>
+          <div class="logo-item"><img src="img/427085_332782.webp"  alt="Cliente Conflex" loading="lazy" /></div>
+          <div class="logo-item"><img src="img/515166_760900.webp"  alt="Cliente Conflex" loading="lazy" /></div>
+          <div class="logo-item"><img src="img/685327_390941.webp"  alt="Cliente Conflex" loading="lazy" /></div>
+          <div class="logo-item"><img src="img/723793_603663.webp"  alt="Cliente Conflex" loading="lazy" /></div>
+          <div class="logo-item"><img src="img/813614_856044.webp"  alt="Cliente Conflex" loading="lazy" /></div>
+          <div class="logo-item"><img src="img/831677_243866.webp"  alt="Cliente Conflex" loading="lazy" /></div>
+          <div class="logo-item"><img src="img/897382_99307.webp"   alt="Cliente Conflex" loading="lazy" /></div>
         </div>
       </div>
     </section>
@@ -493,8 +608,8 @@
           </div>
           <div>
             <h4>Contacto</h4>
-            <a href="mailto:contacto@conflex.cl">contacto@conflex.cl</a>
-            <a href="tel:+56222345678">+56 2 2234 5678</a>
+            <a href="mailto:jpbayas@jpbmarketing.cl">jpbayas@jpbmarketing.cl</a>
+            <a href="tel:+56944843503">+569 4484 3503</a>
             <span>Región Metropolitana</span>
           </div>
         </div>
@@ -507,5 +622,24 @@
   </footer>
 
   <script src="js/main.js"></script>
+  <script>
+    (function(){
+      var slides = document.querySelectorAll('#hero-slider .hero-slide');
+      var dots   = document.querySelectorAll('#hero-dots .hd');
+      var cur = 0;
+      function goTo(n){
+        slides[cur].classList.remove('hs-active');
+        dots[cur].classList.remove('hs-active');
+        cur = ((n % slides.length) + slides.length) % slides.length;
+        slides[cur].classList.add('hs-active');
+        dots[cur].classList.add('hs-active');
+      }
+      dots.forEach(function(d,i){
+        d.addEventListener('click', function(){ goTo(i); reset(); });
+      });
+      var timer = setInterval(function(){ goTo(cur + 1); }, 3000);
+      function reset(){ clearInterval(timer); timer = setInterval(function(){ goTo(cur + 1); }, 3000); }
+    })();
+  </script>
 </body>
 </html>
