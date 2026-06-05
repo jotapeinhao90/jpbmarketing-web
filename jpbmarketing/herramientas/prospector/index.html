@@ -174,9 +174,10 @@ body{font-family:'Inter',system-ui,sans-serif;background:var(--bg);color:var(--t
 .reviews-btn{min-width:44px;width:auto;padding:0 12px;height:34px;border:1px solid var(--border);border-radius:8px;background:transparent;color:var(--muted);font-size:12px;font-weight:600;cursor:pointer;transition:all .2s;font-family:inherit;display:inline-flex;align-items:center;justify-content:center;}
 .reviews-btn:hover{border-color:var(--accent2);color:var(--accent2);}
 .reviews-btn.active{border-color:var(--accent2);color:var(--accent2);background:rgba(0,212,255,.08);}
-.limit-pill{padding:7px 14px;border:1px solid var(--border);border-radius:100px;font-size:11px;font-weight:500;color:var(--muted);background:transparent;cursor:pointer;transition:all .2s;font-family:inherit;}
-.limit-pill:hover{border-color:var(--accent);color:var(--text);}
-.limit-pill.active{background:var(--glow);border-color:var(--accent);color:var(--accent);}
+.limit-input{width:120px;padding:8px 12px;background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-sm);color:var(--text);font-size:14px;font-family:inherit;outline:none;transition:border-color .2s;}
+.limit-input:focus{border-color:var(--accent);box-shadow:0 0 0 3px var(--glow);}
+.limit-input:invalid,.limit-input.error{border-color:var(--danger);}
+.limit-input::-webkit-inner-spin-button,.limit-input::-webkit-outer-spin-button{opacity:.5;}
 .filter-grid{display:grid;grid-template-columns:1fr 1fr;gap:0 24px;}
 .filter-divider{height:1px;background:var(--border);margin:12px 0 16px;}
 .filter-hint{font-size:9px;color:var(--dim);text-transform:none;letter-spacing:0;font-weight:400;margin-left:4px;}
@@ -540,14 +541,10 @@ tbody td a:hover{color:var(--accent);text-decoration:underline;}
         </div>
         <div class="filter-divider"></div>
         <div class="filter-section">
-          <div class="filter-label">Contactos a buscar</div>
-          <div class="sort-row" id="limitSelector">
-            <button class="limit-pill active" onclick="setContactLimit(0,this)">Automático</button>
-            <button class="limit-pill" onclick="setContactLimit(100,this)">100</button>
-            <button class="limit-pill" onclick="setContactLimit(200,this)">200</button>
-            <button class="limit-pill" onclick="setContactLimit(500,this)">500</button>
-            <button class="limit-pill" onclick="setContactLimit(1000,this)">1.000</button>
-            <button class="limit-pill" onclick="setContactLimit(-1,this)">Sin límite</button>
+          <div class="filter-label">Contactos a buscar <span class="filter-hint">(requerido · máx. 2.000)</span></div>
+          <div style="display:flex;align-items:center;gap:12px;">
+            <input type="number" class="limit-input" id="contactLimitInput" min="1" max="2000" value="500" required oninput="setContactLimitInput(this)" onfocus="this.style.borderColor='var(--accent)'" onblur="this.classList.remove('error');this.style.borderColor=''">
+            <span style="font-size:12px;color:var(--muted);">contactos por búsqueda</span>
           </div>
         </div>
         <div class="filter-divider"></div>
@@ -597,7 +594,7 @@ tbody td a:hover{color:var(--accent);text-decoration:underline;}
       </div>
       <div class="result-count" id="resultCount"></div>
       <div class="table-wrap">
-        <table><thead><tr><th>#</th><th onclick="colSort('nombre')">Empresa <span class="sort-arrow">↕</span></th><th>Teléfono</th><th>Sitio Web</th><th onclick="colSort('direccion')">Dirección <span class="sort-arrow">↕</span></th><th onclick="colSort('rating')">Rating <span class="sort-arrow">↕</span></th><th onclick="colSort('total_resenas')">Reseñas <span class="sort-arrow">↕</span></th><th>Estado</th><th>Datos</th><th>Horario</th></tr></thead><tbody id="tbody"></tbody></table>
+        <table><thead><tr><th>#</th><th onclick="colSort('nombre')">Empresa <span class="sort-arrow">↕</span></th><th>Teléfono</th><th>Email</th><th>Sitio Web</th><th onclick="colSort('direccion')">Dirección <span class="sort-arrow">↕</span></th><th onclick="colSort('rating')">Rating <span class="sort-arrow">↕</span></th><th onclick="colSort('total_resenas')">Reseñas <span class="sort-arrow">↕</span></th><th>Estado</th><th>Datos</th><th>Horario</th></tr></thead><tbody id="tbody"></tbody></table>
       </div>
     </div>
   </div>
@@ -654,7 +651,7 @@ const db=firebase.firestore();
 // =============================================
 let userEmail='',userData=null,isPremium=false,fbUser=null;
 let allResults=[],filtered=[],seen=new Set(),running=false,paused=false,stopped=false;
-let activeCats=new Set(),activeDQ=new Set(),minRating=0,minReviews=0,contactLimit=0,currentSort='default';
+let activeCats=new Set(),activeDQ=new Set(),minRating=0,minReviews=0,contactLimit=500,currentSort='default';
 
 const CAT_MAP={
   manufacturing:['manufacturer','factory','industrial_area','machine_shop','steel_distributor','warehouse'],
@@ -874,7 +871,7 @@ async function api(q,pt){const h={'Content-Type':'application/json','X-Goog-Api-
 function formatTypes(t){if(!t||!t.length)return'';const m={'restaurant':'Restaurante','store':'Tienda','establishment':'Empresa','general_contractor':'Contratista','industrial_area':'Zona industrial','moving_company':'Mudanzas','trucking_company':'Transporte','corporate_office':'Oficina corp.','consultant':'Consultora','accounting':'Contabilidad','software_company':'Software','construction_company':'Construcción','manufacturer':'Fabricante','pharmacy':'Farmacia','hospital':'Hospital'};return t.slice(0,3).map(x=>m[x]||x.replace(/_/g,' ')).join(', ');}
 function formatHours(h){if(!h||!h.weekdayDescriptions)return'';const d=new Date().getDay();return h.weekdayDescriptions[d===0?6:d-1]||'';}
 function formatStatus(s){return{'OPERATIONAL':'Operativa','CLOSED_TEMPORARILY':'Cerrada temp.','CLOSED_PERMANENTLY':'Cerrada'}[s]||s||'';}
-function proc(p){const id=p.id||'';if(!id||seen.has(id))return null;seen.add(id);return{id,nombre:(p.displayName||{}).text||'',direccion:p.formattedAddress||'',telefono:p.nationalPhoneNumber||p.internationalPhoneNumber||'',sitio_web:p.websiteUri||'',rating:p.rating||0,total_resenas:p.userRatingCount||0,tipos_raw:p.types||[],tipos:formatTypes(p.types),estado:p.businessStatus||'',estado_text:formatStatus(p.businessStatus),horario:formatHours(p.regularOpeningHours),tiene_horarios:!!(p.regularOpeningHours&&p.regularOpeningHours.weekdayDescriptions),google_maps:p.googleMapsUri||''};}
+function proc(p){const id=p.id||'';if(!id||seen.has(id))return null;seen.add(id);return{id,nombre:(p.displayName||{}).text||'',email:'',direccion:p.formattedAddress||'',telefono:p.nationalPhoneNumber||p.internationalPhoneNumber||'',sitio_web:p.websiteUri||'',rating:p.rating||0,total_resenas:p.userRatingCount||0,tipos_raw:p.types||[],tipos:formatTypes(p.types),estado:p.businessStatus||'',estado_text:formatStatus(p.businessStatus),horario:formatHours(p.regularOpeningHours),tiene_horarios:!!(p.regularOpeningHours&&p.regularOpeningHours.weekdayDescriptions),google_maps:p.googleMapsUri||''};}
 function dataQuality(r){let s=0;if(r.sitio_web)s++;if(r.telefono)s++;if(r.tiene_horarios)s++;if(r.rating>0)s++;if(r.total_resenas>0)s++;return s;}
 
 // Filters
@@ -906,10 +903,10 @@ function setMinReviews(v,el){
   if(el)el.classList.add('active');
   applyFilters();updateFilterTags();
 }
-function setContactLimit(v,el){
-  contactLimit=v;
-  document.getElementById('limitSelector').querySelectorAll('button').forEach(b=>b.classList.remove('active'));
-  if(el)el.classList.add('active');
+function setContactLimitInput(el){
+  const v=parseInt(el.value);
+  if(!isNaN(v)&&v>=1&&v<=2000){contactLimit=v;el.classList.remove('error');}
+  else{el.classList.add('error');}
 }
 function setSortPill(s,el){currentSort=s;document.querySelectorAll('.sort-pill').forEach(p=>p.classList.remove('active'));el.classList.add('active');applyFilters();}
 
@@ -948,7 +945,7 @@ function applyFilters(){
     if(activeDQ.has('complete')&&dataQuality(r)<4)return false;
     if(minRating>0&&(r.rating||0)<minRating)return false;
     if(minReviews>0&&(r.total_resenas||0)<minReviews)return false;
-    if(txt&&!(r.nombre+r.direccion+r.tipos+r.telefono).toLowerCase().includes(txt))return false;
+    if(txt&&!(r.nombre+r.direccion+r.tipos+r.telefono+r.email).toLowerCase().includes(txt))return false;
     return true;
   });
   if(currentSort==='name-asc')filtered.sort((a,b)=>a.nombre.localeCompare(b.nombre));
@@ -1002,7 +999,8 @@ function renderTable(){
     const dq=dataQuality(r);
     const dqH='<div class="dq-bar">'+[0,1,2,3,4].map(n=>'<div class="dq-seg'+(n<dq?' on':'')+'"></div>').join('')+'<span class="dq-bar-label">'+dq+'/5</span></div>';
     const mH=r.google_maps?'<a href="'+r.google_maps+'" target="_blank" class="maps-link">📍</a>':'';
-    return '<tr><td style="color:var(--dim)">'+(i+1)+'</td><td><div class="empresa-name">'+r.nombre+' '+mH+'</div><div class="empresa-types">'+r.tipos+'</div></td><td>'+(r.telefono||'<span style="color:var(--dim)">—</span>')+'</td><td>'+w+'</td><td style="color:var(--muted);font-size:11px;max-width:200px;">'+r.direccion+'</td><td>'+rH+'</td><td style="color:var(--muted)">'+(r.total_resenas||'—')+'</td><td><span style="font-size:11px;'+sC+'">'+r.estado_text+'</span></td><td>'+dqH+'</td><td><span class="hours-text" title="'+r.horario+'">'+(r.horario||'<span style="color:var(--dim)">—</span>')+'</span></td></tr>';
+    const eH=r.email?'<a href="mailto:'+r.email+'">'+r.email+'</a>':'<span style="color:var(--dim)">—</span>';
+    return '<tr><td style="color:var(--dim)">'+(i+1)+'</td><td><div class="empresa-name">'+r.nombre+' '+mH+'</div><div class="empresa-types">'+r.tipos+'</div></td><td>'+(r.telefono||'<span style="color:var(--dim)">—</span>')+'</td><td>'+eH+'</td><td>'+w+'</td><td style="color:var(--muted);font-size:11px;max-width:200px;">'+r.direccion+'</td><td>'+rH+'</td><td style="color:var(--muted)">'+(r.total_resenas||'—')+'</td><td><span style="font-size:11px;'+sC+'">'+r.estado_text+'</span></td><td>'+dqH+'</td><td><span class="hours-text" title="'+r.horario+'">'+(r.horario||'<span style="color:var(--dim)">—</span>')+'</span></td></tr>';
   });
   tb.innerHTML=rows.join('');
 }
@@ -1023,7 +1021,11 @@ async function startSearch(){
   document.getElementById('pauseStatus').style.display='none';
   document.getElementById('statsGrid').style.display='grid';
   document.getElementById('resultsCard').style.display='block';
-  const effectiveLimit=contactLimit===-1?Infinity:contactLimit>0?contactLimit:(isPremium?Infinity:FREE_LIMIT);
+  const inputEl=document.getElementById('contactLimitInput');
+  const inputVal=parseInt(inputEl.value);
+  if(!inputEl.value||isNaN(inputVal)||inputVal<1||inputVal>2000){inputEl.classList.add('error');inputEl.focus();running=false;document.getElementById('btnSearch').disabled=false;document.getElementById('btnSearch').innerHTML='<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg> Buscar';return;}
+  contactLimit=inputVal;
+  const effectiveLimit=isPremium?contactLimit:Math.min(contactLimit,FREE_LIMIT);
   // Build query list based on selected categories
   let rawQueries;
   if(activeCats.size===0){
@@ -1069,7 +1071,7 @@ async function startSearch(){
 }
 
 function exportJSON(){const o={metadata:{ciudad:document.getElementById('city').value,fecha:new Date().toISOString().slice(0,10),total:filtered.length},empresas:filtered};const b=new Blob([JSON.stringify(o,null,2)],{type:'application/json'});const a=document.createElement('a');a.href=URL.createObjectURL(b);a.download='prospectos_'+new Date().toISOString().slice(0,10)+'.json';a.click();}
-function exportCSV(){let c='Nombre,Teléfono,Sitio Web,Dirección,Rating,Reseñas,Estado,Horario,Tipos,Google Maps\n';filtered.forEach(r=>{c+=[r.nombre,r.telefono,r.sitio_web,r.direccion,r.rating,r.total_resenas,r.estado_text,r.horario,r.tipos,r.google_maps].map(v=>'"'+String(v).replace(/"/g,'""')+'"').join(',')+'\n';});const b=new Blob(['﻿'+c],{type:'text/csv;charset=utf-8'});const a=document.createElement('a');a.href=URL.createObjectURL(b);a.download='prospectos_'+new Date().toISOString().slice(0,10)+'.csv';a.click();}
+function exportCSV(){let c='Nombre,Teléfono,Email,Sitio Web,Dirección,Rating,Reseñas,Estado,Horario,Tipos,Google Maps\n';filtered.forEach(r=>{c+=[r.nombre,r.telefono,r.email,r.sitio_web,r.direccion,r.rating,r.total_resenas,r.estado_text,r.horario,r.tipos,r.google_maps].map(v=>'"'+String(v).replace(/"/g,'""')+'"').join(',')+'\n';});const b=new Blob(['﻿'+c],{type:'text/csv;charset=utf-8'});const a=document.createElement('a');a.href=URL.createObjectURL(b);a.download='prospectos_'+new Date().toISOString().slice(0,10)+'.csv';a.click();}
 </script>
 </body>
 </html>
