@@ -853,7 +853,7 @@ h2.center { text-align: center; }
    =========================== */
 .catalog-hero {
   background: linear-gradient(135deg, var(--navy) 0%, #162d52 100%);
-  padding: 64px 0 52px;
+  padding: 180px 0 56px;
 }
 .catalog-hero .eyebrow { color: var(--orange); }
 .catalog-hero h1 { color: #fff; margin-bottom: 10px; font-size: clamp(28px,4vw,44px); }
