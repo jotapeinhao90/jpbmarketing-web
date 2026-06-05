@@ -4,21 +4,40 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Fitting PVC Schedule Gris UV 40/80 — Para Exteriores | Conflex</title>
-  <meta name="description" content="Catálogo fitting PVC Schedule Gris UV: curvas 90°, 45°, radio 600, coplas y terminales con protección UV. Para instalaciones exteriores expuestas al sol. Cotiza directo." />
+  <meta name="description" content="Catálogo fitting Schedule Gris UV: protección UV para exteriores e intemperie. 1/2" a 8". Schedule 40 y 80. Cotiza con selector de medidas." />
   <link rel="canonical" href="https://conflex.cl/schedule-gris-uv.html" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Sora:wght@400;600;700;800&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="css/style.css?v=4" />
+  <style>
+    .pl-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px,1fr)); gap: 20px; margin-top: 40px; }
+    .pl-card { background: #fff; border: 1.5px solid var(--border); border-radius: var(--r-lg); overflow: hidden; text-decoration: none; display: flex; flex-direction: column; transition: border-color .2s, box-shadow .2s, transform .2s; }
+    .pl-card:hover { border-color: rgba(232,92,26,.35); box-shadow: 0 8px 28px rgba(0,0,0,.09); transform: translateY(-3px); }
+    .pl-photo { height: 175px; position: relative; background: linear-gradient(135deg,#f4f2ee 0%,#eceae3 100%); overflow: hidden; }
+    .pl-photo img { width: 100%; height: 100%; object-fit: cover; display: block; transition: transform .5s; }
+    .pl-card:hover .pl-photo img { transform: scale(1.05); }
+    .pl-photo-ph { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px; }
+    .pl-photo-ph svg { width: 40px; height: 40px; opacity: .18; }
+    .pl-photo-ph span { font-size: 11px; color: var(--text-3); }
+    .pl-photo img:not([src=""])[src]:not([src$=".jpg"]):not([src$=".png"]):not([src$=".webp"]) { display: none; }
+    .pl-body { padding: 18px 16px 20px; flex: 1; display: flex; flex-direction: column; gap: 8px; }
+    .pl-name { font-size: 15.5px; font-weight: 700; color: var(--navy); }
+    .pl-desc { font-size: 13px; color: var(--text-2); line-height: 1.65; flex: 1; }
+    .pl-tags { display: flex; flex-wrap: wrap; gap: 4px; }
+    .pl-tag { font-size: 10px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; background: var(--off); color: var(--text-3); padding: 2px 8px; border-radius: 100px; }
+    .pl-cta { display: flex; align-items: center; justify-content: space-between; padding-top: 12px; border-top: 1px solid var(--border); margin-top: 4px; }
+    .pl-cta span { font-size: 13px; font-weight: 600; color: var(--orange); }
+    .pl-cta svg { width: 16px; height: 16px; color: var(--orange); transition: transform .2s; }
+    .pl-card:hover .pl-cta svg { transform: translateX(4px); }
+  </style>
 </head>
 <body>
 
   <header class="nav" id="nav">
     <div class="nav-top">
       <div class="nav-top-inner">
-        <a href="index.html" class="logo">
-          <img src="img/logo-conflex-transparent.png" alt="Conflex" class="logo-img" />
-        </a>
+        <a href="index.html" class="logo"><img src="img/logo-conflex-transparent.png" alt="Conflex" class="logo-img" /></a>
         <form class="nav-search" onsubmit="handleSearch(event)">
           <input type="search" placeholder="Buscar acoples, tuberías, fittings PVC..." class="nav-search-input" />
           <button type="submit" class="nav-search-btn" aria-label="Buscar">
@@ -26,12 +45,9 @@
           </button>
         </form>
         <a href="contacto.html" class="nav-cta">
-          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
-          Cotizar
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>Cotizar
         </a>
-        <button class="burger" id="burger" aria-label="Menú">
-          <span></span><span></span><span></span>
-        </button>
+        <button class="burger" id="burger" aria-label="Menú"><span></span><span></span><span></span></button>
       </div>
     </div>
     <div class="nav-bottom">
@@ -46,340 +62,44 @@
       </div>
     </div>
     <div class="nav-drawer" id="drawer">
-      <a href="index.html">Inicio</a>
-      <a href="nosotros.html">Nosotros</a>
-      <a href="productos.html">Productos</a>
-      <a href="industrias.html">Industrias</a>
-      <a href="partner.html">Plastiservi</a>
-      <a href="contacto.html">Cotizar</a>
+      <a href="index.html">Inicio</a><a href="nosotros.html">Nosotros</a>
+      <a href="productos.html">Productos</a><a href="industrias.html">Industrias</a>
+      <a href="partner.html">Plastiservi</a><a href="contacto.html">Cotizar</a>
     </div>
   </header>
 
   <main>
-
-    <!-- HERO -->
-    <div class="catalog-hero" style="background: linear-gradient(135deg, #2a3d2e 0%, #1a2d1e 100%);">
+    <div class="catalog-hero">
       <div class="container">
         <p class="eyebrow">Catálogo de fitting</p>
         <h1>Schedule Gris UV 40/80</h1>
-        <p class="ch-desc">PVC gris con aditivo de protección UV para instalaciones expuestas al sol. Previene el deterioro y decoloración en exteriores, azoteas y zonas industriales descubiertas.</p>
+        <p class="ch-desc">PVC gris con aditivo de protección UV. Para instalaciones expuestas al sol, azoteas y zonas industriales descubiertas. Previene deterioro y decoloración.</p>
         <div class="ch-tags">
           <span class="ch-tag"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 12l2 2 4-4"/><circle cx="12" cy="12" r="10"/></svg>Protección UV</span>
           <span class="ch-tag"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 12l2 2 4-4"/><circle cx="12" cy="12" r="10"/></svg>PVC gris</span>
-          <span class="ch-tag"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 12l2 2 4-4"/><circle cx="12" cy="12" r="10"/></svg>1/2&quot; a 8&quot;</span>
+          <span class="ch-tag"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 12l2 2 4-4"/><circle cx="12" cy="12" r="10"/></svg>1/2&quot; – 8&quot;</span>
           <span class="ch-tag"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 12l2 2 4-4"/><circle cx="12" cy="12" r="10"/></svg>Exterior / intemperie</span>
         </div>
       </div>
     </div>
 
-    <!-- CATALOG LAYOUT -->
-    <div style="background:var(--off); padding:0 0 1px;">
-    <div class="catalog-wrap">
+    <section class="section">
+      <div class="container">
+        <div class="sec-head fade-up" style="margin-bottom:0">
+          <p class="eyebrow center">9 productos</p>
+          <h2 class="center">Selecciona el producto</h2>
+          <p style="text-align:center;color:var(--text-2);font-size:14.5px;max-width:480px;margin:10px auto 0">Haz clic en cualquier producto para ver las medidas disponibles y agregar a tu cotización.</p>
+        </div>
 
-      <!-- Sidebar -->
-      <aside class="catalog-sidebar">
-        <h4>Productos</h4>
-        <a href="#curvas-90-uv"    class="cat-nav-link cat-active">Curvas 90°</a>
-        <a href="#curvas-r600-uv"  class="cat-nav-link">Curvas 90° R-600</a>
-        <a href="#curvas-45-uv"    class="cat-nav-link">Curvas 45°</a>
-        <a href="#terminal-cam-uv" class="cat-nav-link">Terminal Cámara</a>
-        <a href="#terminal-he-uv"  class="cat-nav-link">Terminal HE</a>
-        <a href="#terminal-hect-uv" class="cat-nav-link">Terminal HE C/T</a>
-        <a href="#terminal-hi-uv"  class="cat-nav-link">Terminal HI</a>
-        <a href="#coplas-uv"       class="cat-nav-link">Coplas</a>
-      </aside>
+        <div class="pl-grid" id="product-grid"></div>
 
-      <!-- Main -->
-      <div class="catalog-main">
-
-        <!-- CURVAS 90° -->
-        <section class="cat-section" id="curvas-90-uv">
-          <div class="cat-section-head">
-            <h2>Curvas 90° Gris UV</h2>
-            <p>Cambio de dirección a 90° con protección UV. Formulación gris resistente a la radiación solar. Diseñada para instalaciones en exterior, azoteas y zonas descubiertas. Sch 40 y 80.</p>
-          </div>
-          <div class="cat-cards">
-            <div class="cp-card" data-pid="c90uv">
-              <div class="cp-card-name">Curvas 90° Gris UV <span class="cp-card-badge">UV</span></div>
-              <div class="cp-step">
-                <span class="cp-step-lbl">Schedule</span>
-                <div class="cp-type-tabs">
-                  <button class="cp-type-btn active" data-type="Sch 40">Schedule 40</button>
-                  <button class="cp-type-btn" data-type="Sch 80">Schedule 80</button>
-                </div>
-              </div>
-              <div class="cp-step">
-                <span class="cp-step-lbl">Medida</span>
-                <div class="cp-sizes"></div>
-              </div>
-              <div class="cp-action">
-                <div class="cp-summary"></div>
-                <button class="cp-add-btn" disabled>+ Agregar a cotización</button>
-              </div>
-            </div>
-          </div>
-        </section>
-
-        <!-- CURVAS 90° R-600 -->
-        <section class="cat-section" id="curvas-r600-uv">
-          <div class="cat-section-head">
-            <h2>Curvas 90° R-600 Gris UV</h2>
-            <p>Combina el radio amplio (R=600mm) con protección UV. Protege el aislamiento de los cables en instalaciones exteriores con tendidos largos. Sch 40 y 80.</p>
-          </div>
-          <div class="cat-cards">
-            <div class="cp-card" data-pid="c90r600uv">
-              <div class="cp-card-name">Curvas 90° R-600 Gris UV <span class="cp-card-badge">UV</span></div>
-              <div class="cp-step">
-                <span class="cp-step-lbl">Schedule</span>
-                <div class="cp-type-tabs">
-                  <button class="cp-type-btn active" data-type="Sch 40">Schedule 40</button>
-                  <button class="cp-type-btn" data-type="Sch 80">Schedule 80</button>
-                </div>
-              </div>
-              <div class="cp-step">
-                <span class="cp-step-lbl">Medida</span>
-                <div class="cp-sizes"></div>
-              </div>
-              <div class="cp-action">
-                <div class="cp-summary"></div>
-                <button class="cp-add-btn" disabled>+ Agregar a cotización</button>
-              </div>
-            </div>
-          </div>
-        </section>
-
-        <!-- CURVAS 45° -->
-        <section class="cat-section" id="curvas-45-uv">
-          <div class="cat-section-head">
-            <h2>Curvas 45° Gris UV</h2>
-            <p>Cambio de dirección suave para instalaciones exteriores con exposición solar. Mayor durabilidad frente a la degradación UV que los productos estándar. Sch 40 y 80.</p>
-          </div>
-          <div class="cat-cards">
-            <div class="cp-card" data-pid="c45uv">
-              <div class="cp-card-name">Curvas 45° Gris UV <span class="cp-card-badge">UV</span></div>
-              <div class="cp-step">
-                <span class="cp-step-lbl">Schedule</span>
-                <div class="cp-type-tabs">
-                  <button class="cp-type-btn active" data-type="Sch 40">Schedule 40</button>
-                  <button class="cp-type-btn" data-type="Sch 80">Schedule 80</button>
-                </div>
-              </div>
-              <div class="cp-step">
-                <span class="cp-step-lbl">Medida</span>
-                <div class="cp-sizes"></div>
-              </div>
-              <div class="cp-action">
-                <div class="cp-summary"></div>
-                <button class="cp-add-btn" disabled>+ Agregar a cotización</button>
-              </div>
-            </div>
-          </div>
-        </section>
-
-        <!-- TERMINAL CÁMARA -->
-        <section class="cat-section" id="terminal-cam-uv">
-          <div class="cat-section-head">
-            <h2>Terminal Cámara Gris UV</h2>
-            <p>Conexión a cámaras de registro en exterior. Resistencia UV previene el deterioro en instalaciones descubiertas permanentes. Sch 40 y 80.</p>
-          </div>
-          <div class="cat-cards">
-            <div class="cp-card" data-pid="tcamuv">
-              <div class="cp-card-name">Terminal Cámara UV <span class="cp-card-badge">UV</span></div>
-              <div class="cp-step">
-                <span class="cp-step-lbl">Schedule</span>
-                <div class="cp-type-tabs">
-                  <button class="cp-type-btn active" data-type="Sch 40">Schedule 40</button>
-                  <button class="cp-type-btn" data-type="Sch 80">Schedule 80</button>
-                </div>
-              </div>
-              <div class="cp-step">
-                <span class="cp-step-lbl">Medida</span>
-                <div class="cp-sizes"></div>
-              </div>
-              <div class="cp-action">
-                <div class="cp-summary"></div>
-                <button class="cp-add-btn" disabled>+ Agregar a cotización</button>
-              </div>
-            </div>
-          </div>
-        </section>
-
-        <!-- TERMINAL HE -->
-        <section class="cat-section" id="terminal-he-uv">
-          <div class="cat-section-head">
-            <h2>Terminal HE Gris UV</h2>
-            <p>Terminal Hembra Exterior con aditivo UV. Rosca exterior para conexión a tableros en instalaciones a la intemperie. Sch 40 y 80, de 1/2&quot; a 6&quot;.</p>
-          </div>
-          <div class="cat-cards">
-            <div class="cp-card" data-pid="theuv">
-              <div class="cp-card-name">Terminal HE Gris UV <span class="cp-card-badge">UV</span></div>
-              <div class="cp-step">
-                <span class="cp-step-lbl">Schedule</span>
-                <div class="cp-type-tabs">
-                  <button class="cp-type-btn active" data-type="Sch 40">Schedule 40</button>
-                  <button class="cp-type-btn" data-type="Sch 80">Schedule 80</button>
-                </div>
-              </div>
-              <div class="cp-step">
-                <span class="cp-step-lbl">Medida</span>
-                <div class="cp-sizes"></div>
-              </div>
-              <div class="cp-action">
-                <div class="cp-summary"></div>
-                <button class="cp-add-btn" disabled>+ Agregar a cotización</button>
-              </div>
-            </div>
-          </div>
-        </section>
-
-        <!-- TERMINAL HE C/T -->
-        <section class="cat-section" id="terminal-hect-uv">
-          <div class="cat-section-head">
-            <h2>Terminal HE C/T Gris UV</h2>
-            <p>Con tuerca de fijación incorporada y protección UV. Máxima seguridad mecánica en conexiones exteriores. Sch 40 y 80, de 1/2&quot; a 6&quot;.</p>
-          </div>
-          <div class="cat-cards">
-            <div class="cp-card" data-pid="thect-uv">
-              <div class="cp-card-name">Terminal HE C/T UV <span class="cp-card-badge">UV</span></div>
-              <div class="cp-step">
-                <span class="cp-step-lbl">Schedule</span>
-                <div class="cp-type-tabs">
-                  <button class="cp-type-btn active" data-type="Sch 40">Schedule 40</button>
-                  <button class="cp-type-btn" data-type="Sch 80">Schedule 80</button>
-                </div>
-              </div>
-              <div class="cp-step">
-                <span class="cp-step-lbl">Medida</span>
-                <div class="cp-sizes"></div>
-              </div>
-              <div class="cp-action">
-                <div class="cp-summary"></div>
-                <button class="cp-add-btn" disabled>+ Agregar a cotización</button>
-              </div>
-            </div>
-          </div>
-        </section>
-
-        <!-- TERMINAL HI -->
-        <section class="cat-section" id="terminal-hi-uv">
-          <div class="cat-section-head">
-            <h2>Terminal HI Gris UV</h2>
-            <p>Terminal Hembra Interior con protección UV para exteriores. Roscado interior con durabilidad aumentada para la intemperie. Sch 40 y 80, de 1/2&quot; a 6&quot;.</p>
-          </div>
-          <div class="cat-cards">
-            <div class="cp-card" data-pid="thiuv">
-              <div class="cp-card-name">Terminal HI Gris UV <span class="cp-card-badge">UV</span></div>
-              <div class="cp-step">
-                <span class="cp-step-lbl">Schedule</span>
-                <div class="cp-type-tabs">
-                  <button class="cp-type-btn active" data-type="Sch 40">Schedule 40</button>
-                  <button class="cp-type-btn" data-type="Sch 80">Schedule 80</button>
-                </div>
-              </div>
-              <div class="cp-step">
-                <span class="cp-step-lbl">Medida</span>
-                <div class="cp-sizes"></div>
-              </div>
-              <div class="cp-action">
-                <div class="cp-summary"></div>
-                <button class="cp-add-btn" disabled>+ Agregar a cotización</button>
-              </div>
-            </div>
-          </div>
-        </section>
-
-        <!-- COPLAS -->
-        <section class="cat-section" id="coplas-uv">
-          <div class="cat-section-head">
-            <h2>Coplas Gris UV</h2>
-            <p>Copla Cementar UV: unión por adhesivo resistente a UV. Copla HI-HI UV: unión roscada hembra-hembra para exteriores. Ambas protegen contra la degradación solar.</p>
-          </div>
-          <div class="cat-cards">
-            <div class="cp-card" data-pid="copla-cem-uv">
-              <div class="cp-card-name">Copla Cementar UV <span class="cp-card-badge">UV</span></div>
-              <div class="cp-step">
-                <span class="cp-step-lbl">Schedule</span>
-                <div class="cp-type-tabs">
-                  <button class="cp-type-btn active" data-type="Sch 40">Schedule 40</button>
-                  <button class="cp-type-btn" data-type="Sch 80">Schedule 80</button>
-                </div>
-              </div>
-              <div class="cp-step">
-                <span class="cp-step-lbl">Medida</span>
-                <div class="cp-sizes"></div>
-              </div>
-              <div class="cp-action">
-                <div class="cp-summary"></div>
-                <button class="cp-add-btn" disabled>+ Agregar a cotización</button>
-              </div>
-            </div>
-            <div class="cp-card" data-pid="copla-hihi-uv">
-              <div class="cp-card-name">Copla HI-HI UV <span class="cp-card-badge">UV</span></div>
-              <div class="cp-step">
-                <span class="cp-step-lbl">Schedule</span>
-                <div class="cp-type-tabs">
-                  <button class="cp-type-btn active" data-type="Sch 40">Schedule 40</button>
-                  <button class="cp-type-btn" data-type="Sch 80">Schedule 80</button>
-                </div>
-              </div>
-              <div class="cp-step">
-                <span class="cp-step-lbl">Medida</span>
-                <div class="cp-sizes"></div>
-              </div>
-              <div class="cp-action">
-                <div class="cp-summary"></div>
-                <button class="cp-add-btn" disabled>+ Agregar a cotización</button>
-              </div>
-            </div>
-          </div>
-        </section>
-
-        <div class="section-cta fade-up" style="margin-top:24px">
-          <p>¿Necesitas medidas especiales o grandes volúmenes?</p>
+        <div class="section-cta fade-up" style="margin-top:48px">
+          <p>¿Necesitas asesoría técnica o cotización especial?</p>
           <a href="contacto.html" class="btn-primary">Hablar con un asesor</a>
         </div>
-
       </div>
-    </div>
-    </div>
-
+    </section>
   </main>
-
-  <!-- QUOTE FLOAT -->
-  <div class="quote-float" id="quote-float">
-    <button class="quote-float-btn" id="quote-float-btn">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/></svg>
-      Mi cotización
-      <span class="qf-count" id="qf-count">0</span>
-    </button>
-  </div>
-
-  <!-- QUOTE PANEL -->
-  <div class="quote-overlay" id="quote-overlay">
-    <div class="quote-panel">
-      <div class="qp-head">
-        <div>
-          <h3>Mi cotización</h3>
-          <div class="qp-head-meta" id="qp-head-meta">0 productos</div>
-        </div>
-        <button class="qp-close" id="qp-close">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 6L6 18M6 6l12 12"/></svg>
-        </button>
-      </div>
-      <div class="qp-body" id="qp-body"></div>
-      <div class="qp-foot">
-        <div class="qp-total-row">
-          <span>Total de ítems</span>
-          <strong id="qp-total-label">—</strong>
-        </div>
-        <button class="qp-send-btn" id="qp-send">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
-          Solicitar cotización
-        </button>
-        <button class="qp-clear-btn" id="qp-clear">Vaciar cotización</button>
-      </div>
-    </div>
-  </div>
 
   <footer class="footer">
     <div class="container">
@@ -391,22 +111,17 @@
           <p>Fabricantes de sistemas PVC para la industria chilena.<br />Conflex · Plastiservi — marcas propias del mismo fabricante.</p>
         </div>
         <div class="footer-cols">
-          <div>
-            <h4>Empresa</h4>
-            <a href="nosotros.html">Nosotros</a>
-            <a href="industrias.html">Industrias</a>
-            <a href="partner.html">Plastiservi</a>
-            <a href="contacto.html">Contacto</a>
-          </div>
-          <div>
-            <h4>Catálogos</h4>
+          <div><h4>Catálogos</h4>
             <a href="conduit.html">Fitting Conduit</a>
             <a href="schedule-40-80.html">Schedule 40/80</a>
             <a href="schedule-gris-uv.html">Schedule Gris UV</a>
             <a href="productos.html">Todos los productos</a>
           </div>
-          <div>
-            <h4>Contacto</h4>
+          <div><h4>Empresa</h4>
+            <a href="nosotros.html">Nosotros</a><a href="industrias.html">Industrias</a>
+            <a href="partner.html">Plastiservi</a><a href="contacto.html">Contacto</a>
+          </div>
+          <div><h4>Contacto</h4>
             <a href="mailto:jpbayas@jpbmarketing.cl">jpbayas@jpbmarketing.cl</a>
             <a href="tel:+56944843503">+569 4484 3503</a>
             <span>Región Metropolitana</span>
@@ -421,29 +136,38 @@
   </footer>
 
   <script src="js/main.js"></script>
-  <script src="js/catalog.js"></script>
+  <script src="js/products.js"></script>
   <script>
-  const SIZES_FULL  = ['1/2"','3/4"','1"','1¼"','1½"','2"','2½"','3"','4"','5"','6"','8"'];
-  const SIZES_TO6   = ['1/2"','3/4"','1"','1¼"','1½"','2"','2½"','3"','4"','5"','6"'];
-
-  const UV_DATA = {
-    'c90uv':       { title:'Curvas 90° Gris UV',       hasType:true, hasClass:false, types:{ 'Sch 40':SIZES_FULL, 'Sch 80':SIZES_FULL } },
-    'c90r600uv':   { title:'Curvas 90° R-600 Gris UV', hasType:true, hasClass:false, types:{ 'Sch 40':SIZES_FULL, 'Sch 80':SIZES_FULL } },
-    'c45uv':       { title:'Curvas 45° Gris UV',       hasType:true, hasClass:false, types:{ 'Sch 40':SIZES_FULL, 'Sch 80':SIZES_FULL } },
-    'tcamuv':      { title:'Terminal Cámara UV',       hasType:true, hasClass:false, types:{ 'Sch 40':SIZES_FULL, 'Sch 80':SIZES_FULL } },
-    'theuv':       { title:'Terminal HE Gris UV',      hasType:true, hasClass:false, types:{ 'Sch 40':SIZES_TO6,  'Sch 80':SIZES_TO6  } },
-    'thect-uv':    { title:'Terminal HE C/T UV',       hasType:true, hasClass:false, types:{ 'Sch 40':SIZES_TO6,  'Sch 80':SIZES_TO6  } },
-    'thiuv':       { title:'Terminal HI Gris UV',      hasType:true, hasClass:false, types:{ 'Sch 40':SIZES_TO6,  'Sch 80':SIZES_TO6  } },
-    'copla-cem-uv':  { title:'Copla Cementar UV',      hasType:true, hasClass:false, types:{ 'Sch 40':SIZES_FULL, 'Sch 80':SIZES_FULL } },
-    'copla-hihi-uv': { title:'Copla HI-HI UV',         hasType:true, hasClass:false, types:{ 'Sch 40':SIZES_TO6,  'Sch 80':SIZES_TO6  } }
-  };
-
   document.addEventListener('DOMContentLoaded', () => {
-    initSelectors(UV_DATA, 'Schedule Gris UV');
-    setInterval(() => {
-      const lbl = document.getElementById('qp-total-label');
-      if (lbl) { const c = getCart(); lbl.textContent = c.reduce((s,i)=>s+(i.qty||1),0) + ' unid.'; }
-    }, 500);
+    const grid = document.getElementById('product-grid');
+    const ids  = LINES['schedule-gris-uv'].products;
+    grid.innerHTML = ids.map(id => {
+      const p = PRODUCTS[id];
+      return `
+        <a href="producto.html?id=${id}" class="pl-card fade-3d">
+          <div class="pl-photo">
+            <img src="img/products/${id}.jpg" alt="${p.name}" loading="lazy"
+              onerror="this.style.display='none'" />
+            <div class="pl-photo-ph">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
+              <span>Foto próximamente</span>
+            </div>
+          </div>
+          <div class="pl-body">
+            <div class="pl-name">${p.name}</div>
+            <div class="pl-desc">${p.desc.split('.')[0]}.</div>
+            <div class="pl-tags">${p.specs.map(s=>`<span class="pl-tag">${s}</span>`).join('')}</div>
+            <div class="pl-cta">
+              <span>Ver medidas y cotizar</span>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+            </div>
+          </div>
+        </a>`;
+    }).join('');
+    document.querySelectorAll('.fade-3d').forEach(el => {
+      const io = new IntersectionObserver(e => { if(e[0].isIntersecting){el.classList.add('in');io.unobserve(el);} },{threshold:.1});
+      io.observe(el);
+    });
   });
   </script>
 </body>
