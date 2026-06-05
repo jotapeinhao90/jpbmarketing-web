@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>Informe Estratégico — Packs And Labels DG</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Inter', -apple-system, sans-serif;
+    font-size: 12.5px;
+    line-height: 1.6;
+    color: #1a1a2e;
+    background: #fff;
+    padding: 44px 52px;
+    max-width: 800px;
+    margin: 0 auto;
+  }
+
+  .header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    border-bottom: 3px solid #1a56db;
+    padding-bottom: 18px;
+    margin-bottom: 28px;
+  }
+  .badge {
+    display: inline-block;
+    background: #1a56db;
+    color: white;
+    font-size: 9.5px;
+    font-weight: 600;
+    padding: 3px 10px;
+    border-radius: 20px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 6px;
+  }
+  .header h1 { font-size: 20px; font-weight: 700; color: #1a56db; line-height: 1.2; }
+  .header p { font-size: 11px; color: #6b7280; margin-top: 3px; }
+  .header-right { text-align: right; font-size: 11px; color: #6b7280; line-height: 1.8; }
+
+  h2 {
+    font-size: 14px; font-weight: 700; color: #1a56db;
+    margin-top: 28px; margin-bottom: 8px;
+    padding-bottom: 5px; border-bottom: 1px solid #dbeafe;
+  }
+  h3 { font-size: 12.5px; font-weight: 600; color: #1e3a8a; margin-top: 14px; margin-bottom: 5px; }
+  p { margin-bottom: 8px; }
+  ul { padding-left: 16px; margin-bottom: 8px; }
+  li { margin-bottom: 3px; }
+
+  .highlight {
+    background: #eff6ff; border-left: 4px solid #1a56db;
+    padding: 10px 14px; border-radius: 0 6px 6px 0;
+    margin: 12px 0; font-size: 12px;
+  }
+  .highlight strong { color: #1a56db; }
+
+  .warning {
+    background: #fffbeb; border-left: 4px solid #f59e0b;
+    padding: 10px 14px; border-radius: 0 6px 6px 0;
+    margin: 12px 0; font-size: 12px;
+  }
+
+  .green {
+    background: #f0fdf4; border-left: 4px solid #16a34a;
+    padding: 10px 14px; border-radius: 0 6px 6px 0;
+    margin: 12px 0; font-size: 12px;
+  }
+  .green strong { color: #15803d; }
+
+  table { width: 100%; border-collapse: collapse; margin: 12px 0; font-size: 11.5px; }
+  th { background: #1a56db; color: white; padding: 7px 11px; text-align: left; font-size: 10.5px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.3px; }
+  td { padding: 7px 11px; border-bottom: 1px solid #e5e7eb; vertical-align: top; }
+  tr:nth-child(even) td { background: #f9fafb; }
+
+  .strategies {
+    display: grid; grid-template-columns: 1fr 1fr;
+    gap: 10px; margin: 12px 0;
+  }
+  .strategy-card { border: 1px solid #dbeafe; border-radius: 7px; padding: 12px; }
+  .strategy-card.primary { border-color: #1a56db; background: #eff6ff; }
+  .strategy-card h4 { font-size: 12px; font-weight: 700; color: #1a56db; margin-bottom: 5px; }
+  .strategy-card p { font-size: 11px; color: #374151; margin-bottom: 0; }
+  .tag { font-size: 9px; background: #1a56db; color: white; padding: 2px 7px; border-radius: 10px; font-weight: 600; text-transform: uppercase; margin-left: 4px; }
+  .tag.orange { background: #f59e0b; }
+
+  .keyword-grid { display: flex; flex-wrap: wrap; gap: 5px; margin: 8px 0; }
+  .kw { background: #dbeafe; color: #1e3a8a; font-size: 11px; padding: 3px 9px; border-radius: 20px; font-weight: 500; }
+  .kw.neg { background: #fee2e2; color: #991b1b; }
+  .kw.seo { background: #d1fae5; color: #065f46; }
+
+  .pipeline { display: flex; flex-direction: column; gap: 0; margin: 12px 0; }
+  .step { display: flex; align-items: flex-start; gap: 12px; padding: 10px 0; border-bottom: 1px solid #e5e7eb; }
+  .step:last-child { border-bottom: none; }
+  .step-num { background: #1a56db; color: white; font-weight: 700; font-size: 11px; width: 24px; height: 24px; border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0; margin-top: 1px; }
+  .step-content strong { display: block; font-size: 12.5px; color: #1e3a8a; margin-bottom: 2px; }
+  .step-content span { font-size: 11.5px; color: #4b5563; }
+
+  .metrics { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin: 12px 0; }
+  .metric-card { background: #eff6ff; border-radius: 7px; padding: 12px 10px; text-align: center; }
+  .metric-card .num { font-size: 20px; font-weight: 700; color: #1a56db; line-height: 1; }
+  .metric-card .label { font-size: 9.5px; color: #6b7280; margin-top: 3px; line-height: 1.3; }
+
+  .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin: 12px 0; }
+  .col-box { background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 7px; padding: 12px; }
+  .col-box h4 { font-size: 12px; font-weight: 600; color: #1a56db; margin-bottom: 6px; }
+
+  .page-break { page-break-before: always; }
+
+  .footer { margin-top: 36px; padding-top: 14px; border-top: 1px solid #e5e7eb; display: flex; justify-content: space-between; font-size: 10px; color: #9ca3af; }
+
+  @media print {
+    body { padding: 32px 40px; }
+    .page-break { page-break-before: always; }
+  }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div>
+    <div class="badge">Propuesta Estratégica</div>
+    <h1>Plan de Marketing Digital<br>Packs And Labels DG</h1>
+    <p>Elaborado por JPB Marketing · jpbmarketing.cl</p>
+  </div>
+  <div class="header-right">
+    Mayo 2026<br>Confidencial<br>
+    <strong style="color:#1a56db">jpbmarketing.cl</strong>
+  </div>
+</div>
+
+<p>Este informe describe las estrategias de marketing digital que JPB Marketing recomienda para Packs And Labels DG — especialistas en carga aérea especial con operación en Chile desde 2007. El objetivo es convertir 19 años de reputación construida por referidos en un sistema que genere clientes nuevos de forma consistente y predecible.</p>
+
+<h2>1. ¿Qué es Google Ads?</h2>
+
+<p>Cuando alguien tiene un problema urgente — un envío rechazado en aerolínea, un proyecto nuevo de exportación de muestras, una duda sobre normativa — lo primero que hace es ir a Google. <strong>Google Ads permite que Packs And Labels aparezca en los primeros resultados de esa búsqueda, en el momento exacto en que esa persona ya decidió que necesita ayuda.</strong></p>
+
+<div class="highlight">
+  <strong>La analogía:</strong> es como tener un letrero que aparece solo frente a la persona correcta, en el instante en que está buscando exactamente lo que tú ofreces — no se muestra publicidad a todo el mundo, sino solo a quien ya está buscando un especialista en mercancías peligrosas en este momento.
+</div>
+
+<h3>Por qué puede funcionar especialmente bien aquí</h3>
+
+<p><strong>Google cobra solo cuando alguien hace clic en el anuncio.</strong> No se paga por mostrarlo — se paga únicamente por la visita. Y en este nicho, quien busca "envío mercancías peligrosas aéreo chile" ya tiene el problema activo y está listo para contratar.</p>
+
+<div class="green">
+  <strong>El argumento financiero:</strong> como las personas que hacen clic están calificadas desde el primer momento — conocen el término técnico, tienen el problema y están buscando solución — la proporción entre inversión publicitaria y clientes obtenidos es mucho más favorable que en canales masivos. Cada peso va directamente a alguien con alta probabilidad de convertirse en cliente real.
+</div>
+
+<div class="warning">
+  <strong>Expectativa realista:</strong> el volumen mensual de búsquedas en este nicho es bajo (decenas, no miles). Pero eso también significa competencia casi inexistente y costos por clic muy bajos. Con un presupuesto modesto se puede capturar prácticamente toda la demanda de búsqueda existente en Chile.
+</div>
+
+<h2>2. Las estrategias disponibles</h2>
+
+<p>Un negocio high ticket como Packs And Labels tiene más de una forma de crecer. Lo correcto es entender cuál encaja según el objetivo y el horizonte de tiempo disponible.</p>
+
+<div class="strategies">
+  <div class="strategy-card primary">
+    <h4>Google Ads + SEO <span class="tag">Principal</span></h4>
+    <p>Captura a quienes ya buscan en Google. Resultados desde la primera semana con Ads. El SEO construye credibilidad y autoridad técnica en paralelo. Ambos se potencian mutuamente.</p>
+  </div>
+  <div class="strategy-card">
+    <h4>Prospección B2B Outbound <span class="tag orange">Probar 2-3 meses</span></h4>
+    <p>Contacto directo a gerentes de laboratorios, mineras y exportadoras. Requiere validar si el perfil responde bien al contacto en frío en este nicho específico.</p>
+  </div>
+  <div class="strategy-card">
+    <h4>WhatsApp con IA</h4>
+    <p>Asegura que ningún lead se pierda por demora en responder. No genera clientes por sí solo, pero convierte mejor el tráfico que ya llega por cualquier canal.</p>
+  </div>
+  <div class="strategy-card">
+    <h4>SEO orgánico</h4>
+    <p>Posiciona a Packs And Labels como la referencia técnica del nicho en Chile. Más lento (6-12 meses), pero genera tráfico gratuito y permanente a largo plazo.</p>
+  </div>
+</div>
+
+<h2>3. Google Ads + SEO: por qué van juntos</h2>
+
+<p><strong>Google Ads sin SEO no rinde al máximo.</strong> Cuando alguien hace clic en el anuncio, llega al sitio web y tiene entre 8 y 15 segundos para decidir si esta empresa genera suficiente confianza. En un servicio donde el cliente entrega muestras de alto valor reguladas internacionalmente, la credibilidad percibida lo es todo.</p>
+
+<p>El SEO — artículos técnicos, certificaciones visibles, páginas de servicio bien estructuradas — es el activo que hace que ese tráfico de Ads se convierta en contactos reales. Sin ese respaldo, se paga por atención que no cierra.</p>
+
+<div class="two-col">
+  <div class="col-box">
+    <h4>Keywords para Google Ads (ejemplos)</h4>
+    <div class="keyword-grid">
+      <span class="kw">envío mercancías peligrosas aéreas chile</span>
+      <span class="kw">exportación muestras biológicas chile</span>
+      <span class="kw">asesoría IATA DGR chile</span>
+      <span class="kw">envío hielo seco avión</span>
+      <span class="kw">envío UN3373 chile</span>
+      <span class="kw">dangerous goods chile</span>
+      <span class="kw">embalaje mercancías peligrosas aéreo</span>
+    </div>
+  </div>
+  <div class="col-box">
+    <h4>Palabras a excluir (negative keywords)</h4>
+    <div class="keyword-grid">
+      <span class="kw neg">gratis / barato / económico</span>
+      <span class="kw neg">trabajo / empleo / vacante</span>
+      <span class="kw neg">curso / certificación personal</span>
+      <span class="kw neg">terrestre / marítimo / camión</span>
+      <span class="kw neg">software / plantilla / descargar</span>
+      <span class="kw neg">explosivos / armas</span>
+    </div>
+  </div>
+</div>
+
+<h3>Contenido SEO que debe existir en el sitio</h3>
+<div class="keyword-grid">
+  <span class="kw seo">hielo seco en avión regulación IATA 2026</span>
+  <span class="kw seo">cómo embalar sustancias biológicas para exportar</span>
+  <span class="kw seo">exportar muestras de laboratorio desde chile</span>
+  <span class="kw seo">UN1845 transporte aéreo chile</span>
+  <span class="kw seo">shipper declaration dangerous goods paso a paso</span>
+</div>
+
+<div class="page-break"></div>
+
+<h2>4. Sistema de Prospección B2B</h2>
+
+<p>Para un negocio high ticket, la prospección outbound es una alternativa seria: en lugar de esperar que el cliente llegue, se contacta directamente al decisor correcto — Director de Laboratorio, Coordinador de I+D, Jefe de Exportaciones — en laboratorios, universidades, mineras y exportadoras.</p>
+
+<div class="highlight">
+  La prospección en un nicho técnico requiere <strong>2 a 3 meses de operación</strong> para validar si funciona bien. Se recomienda probarla en paralelo con Google Ads, no como canal único.
+</div>
+
+<div class="pipeline">
+  <div class="step">
+    <div class="step-num">1</div>
+    <div class="step-content">
+      <strong>Infraestructura técnica de entrega</strong>
+      <span>Dominios de correo secundarios con protocolos especiales (SPF, DKIM, DMARC) que garantizan que los emails lleguen a la bandeja de entrada, no al spam.</span>
+    </div>
+  </div>
+  <div class="step">
+    <div class="step-num">2</div>
+    <div class="step-content">
+      <strong>Identidades digitales con nombre real</strong>
+      <span>10 casillas de correo con nombre, foto y firma profesional. El prospecto recibe un email de una persona real, no de un logo corporativo — eso aumenta drásticamente la tasa de apertura.</span>
+    </div>
+  </div>
+  <div class="step">
+    <div class="step-num">3</div>
+    <div class="step-content">
+      <strong>Calentamiento de 14 días</strong>
+      <span>Período de calentamiento automático para que los servidores de correo confíen en las casillas antes de enviar en volumen. Sin este paso, los emails caen masivamente en spam.</span>
+    </div>
+  </div>
+  <div class="step">
+    <div class="step-num">4</div>
+    <div class="step-content">
+      <strong>Base de prospectos verificados</strong>
+      <span>Decisores reales con email verificado, cargo confirmado y datos de empresa — no listas genéricas. Para Packs And Labels: laboratorios, mineras, exportadoras y universidades con I+D activa en Chile.</span>
+    </div>
+  </div>
+  <div class="step">
+    <div class="step-num">5</div>
+    <div class="step-content">
+      <strong>Secuencia de 3 emails estratégicos</strong>
+      <span>Cada prospecto recibe 3 mensajes con ángulos distintos: presentación del problema, resultado concreto y cierre amable. Notificación en tiempo real ante cada respuesta. Hasta 1.600 prospectos contactados por día.</span>
+    </div>
+  </div>
+</div>
+
+<div class="metrics">
+  <div class="metric-card"><div class="num">14</div><div class="label">días para sistema operativo</div></div>
+  <div class="metric-card"><div class="num">1.600+</div><div class="label">prospectos por día</div></div>
+  <div class="metric-card"><div class="num">3×</div><div class="label">tasa de respuesta vs. mercado</div></div>
+  <div class="metric-card"><div class="num">180k+</div><div class="label">contactos B2B disponibles</div></div>
+</div>
+
+<h2>5. WhatsApp con Inteligencia Artificial</h2>
+
+<p>Packs And Labels ya opera por WhatsApp, pero de forma manual — dependiente de la disponibilidad de la gerencia. Un cliente que llega desde Google Ads tiene urgencia: si no recibe respuesta en menos de 10 minutos, busca otra opción.</p>
+
+<p>La propuesta es un <strong>agente de inteligencia artificial</strong> que actúa como primer punto de contacto disponible 24/7: entiende el contexto de lo que escribe el cliente, hace las preguntas de calificación correctas según el tipo de envío, envía automáticamente la presentación y certificaciones de la empresa, y agenda una reunión con Francisco — sin que él intervenga hasta que el lead esté listo para conversar.</p>
+
+<table>
+  <thead><tr><th>Situación</th><th>Sin automatización</th><th>Con agente IA</th></tr></thead>
+  <tbody>
+    <tr><td>Tiempo de primera respuesta</td><td>30 min a varias horas</td><td>Menos de 10 segundos</td></tr>
+    <tr><td>Disponibilidad</td><td>Horario laboral</td><td>24 horas / 7 días</td></tr>
+    <tr><td>Calificación del lead</td><td>Conversación manual completa</td><td>Automática en 3-4 mensajes</td></tr>
+    <tr><td>Material enviado pre-reunión</td><td>A veces, si se recuerda</td><td>Siempre y automático</td></tr>
+    <tr><td>Tiempo de gerencia en no calificados</td><td>Igual que leads buenos</td><td>Cero</td></tr>
+  </tbody>
+</table>
+
+<h2>6. Resumen: cómo encajan las piezas</h2>
+
+<table>
+  <thead><tr><th>Componente</th><th>Qué hace</th><th>Resultado esperado</th></tr></thead>
+  <tbody>
+    <tr><td><strong>Google Ads</strong></td><td>Captura clientes en búsqueda activa. Se paga solo por clics de personas ya calificadas.</td><td>Leads calificados desde la semana 1</td></tr>
+    <tr><td><strong>SEO + Contenido técnico</strong></td><td>Construye la credibilidad que convierte ese tráfico en clientes reales</td><td>Mayor conversión + tráfico gratuito a 6-12 meses</td></tr>
+    <tr><td><strong>WhatsApp IA</strong></td><td>Respuesta inmediata, calificación automática, ningún lead perdido</td><td>Cero leads perdidos por demora</td></tr>
+    <tr><td><strong>Prospección B2B</strong></td><td>Contacto directo a decisores en industrias objetivo</td><td>Pipeline activo en 14 días — validar en 2-3 meses</td></tr>
+  </tbody>
+</table>
+
+<div class="highlight">
+  <strong>Recomendación JPB Marketing:</strong> comenzar con Google Ads + SEO + WhatsApp IA como base del sistema. Incorporar la prospección B2B como canal adicional durante 2-3 meses para validar con datos reales si el perfil de Packs And Labels responde bien al contacto en frío.
+</div>
+
+<div class="footer">
+  <span>JPB Marketing · jpbmarketing.cl · +56 9 4484 3503</span>
+  <span>Mayo 2026 · Documento confidencial</span>
+</div>
+
+</body>
+</html>
