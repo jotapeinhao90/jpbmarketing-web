@@ -1459,9 +1459,8 @@ function renderLists(){
 // =============================================
 // EMAIL SCRAPER (CORS proxy)
 // =============================================
-const EMAIL_PROXY='https://api.allorigins.win/get?url=';
 const EMAIL_REGEX=/[a-zA-Z0-9._%+\-]+@[a-zA-Z0-9.\-]+\.[a-zA-Z]{2,6}/g;
-const EMAIL_BLACKLIST=['sentry.io','wixpress','example','wordpress','schema','jquery','png','jpg','gif','svg','woff','otf','ttf'];
+const EMAIL_BLACKLIST=['sentry.io','wixpress','example','wordpress','schema','jquery','png','jpg','gif','svg','woff','otf','ttf','facebook','instagram','twitter','linkedin','youtube','tiktok','google','microsoft','apple'];
 
 function extractEmails(html,domain){
   const raw=[...new Set((html.match(EMAIL_REGEX)||[]))];
@@ -1471,11 +1470,36 @@ function extractEmails(html,domain){
     !e.startsWith('@')&&
     e.includes('.')
   ).sort((a,b)=>{
-    // Prefer emails matching the domain
     const aMatch=a.includes(domain)?0:1;
     const bMatch=b.includes(domain)?0:1;
     return aMatch-bMatch;
   });
+}
+
+function fetchWithTimeout(url,ms){
+  return Promise.race([
+    fetch(url),
+    new Promise((_,rej)=>setTimeout(()=>rej(new Error('timeout')),ms))
+  ]);
+}
+
+async function fetchHtml(url){
+  // Try corsproxy.io first (returns raw HTML)
+  try{
+    const r=await fetchWithTimeout('https://corsproxy.io/?url='+encodeURIComponent(url),8000);
+    if(r.ok)return await r.text();
+  }catch(e){}
+  // Fallback: allorigins.win (returns JSON with .contents)
+  try{
+    const r=await fetchWithTimeout('https://api.allorigins.win/get?url='+encodeURIComponent(url),8000);
+    if(r.ok){const d=await r.json();return d.contents||'';}
+  }catch(e){}
+  // Fallback 2: htmldriven cors proxy
+  try{
+    const r=await fetchWithTimeout('https://api.codetabs.com/v1/proxy?quest='+encodeURIComponent(url),8000);
+    if(r.ok)return await r.text();
+  }catch(e){}
+  return null;
 }
 
 async function findEmail(id,btn){
@@ -1484,9 +1508,19 @@ async function findEmail(id,btn){
   btn.textContent='⏳';btn.classList.add('loading');btn.disabled=true;
   try{
     const domain=new URL(r.sitio_web).hostname.replace('www.','');
-    const res=await fetch(EMAIL_PROXY+encodeURIComponent(r.sitio_web),{signal:AbortSignal.timeout(8000)});
-    const data=await res.json();
-    const emails=extractEmails(data.contents||'',domain);
+    let html=await fetchHtml(r.sitio_web);
+    let emails=html?extractEmails(html,domain):[];
+    // If no emails on main page, try /contacto
+    if(emails.length===0){
+      const base=r.sitio_web.replace(/\/$/,'');
+      html=await fetchHtml(base+'/contacto');
+      if(html)emails=extractEmails(html,domain);
+    }
+    if(emails.length===0){
+      const base=r.sitio_web.replace(/\/$/,'');
+      html=await fetchHtml(base+'/contacto.html');
+      if(html)emails=extractEmails(html,domain);
+    }
     if(emails.length>0){
       r.email=emails[0];
       const td=btn.closest('td');
