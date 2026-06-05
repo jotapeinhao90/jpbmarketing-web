@@ -234,6 +234,74 @@ body{font-family:'Inter',system-ui,sans-serif;background:var(--bg);color:var(--t
 .btn-batch-email{padding:7px 14px;border:1px solid rgba(108,99,255,.3);background:var(--glow);border-radius:8px;color:var(--accent);font-size:11px;font-weight:600;cursor:pointer;font-family:inherit;transition:all .2s;white-space:nowrap;}
 .btn-batch-email:hover{border-color:var(--accent);background:rgba(108,99,255,.2);}
 .btn-batch-email:disabled{opacity:.4;cursor:not-allowed;}
+
+/* Checkboxes */
+.row-check{width:15px;height:15px;cursor:pointer;accent-color:var(--accent);flex-shrink:0;}
+
+/* Selection bar (floating) */
+.selection-bar{position:fixed;bottom:28px;left:50%;transform:translateX(-50%);background:var(--card-solid);border:1px solid var(--accent);border-radius:14px;padding:12px 20px;display:none;align-items:center;gap:14px;z-index:500;box-shadow:0 8px 40px rgba(108,99,255,.35);backdrop-filter:blur(16px);white-space:nowrap;}
+.selection-bar.show{display:flex;}
+.sel-count{font-size:13px;font-weight:700;color:var(--text);}
+.sel-count span{color:var(--accent);}
+.btn-save-list{padding:9px 18px;background:var(--gradient);border:none;border-radius:9px;color:#fff;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;transition:all .2s;}
+.btn-save-list:hover{opacity:.85;transform:translateY(-1px);}
+.btn-clear-sel{padding:9px 14px;background:transparent;border:1px solid var(--border);border-radius:9px;color:var(--muted);font-size:12px;font-weight:600;cursor:pointer;font-family:inherit;transition:all .2s;}
+.btn-clear-sel:hover{border-color:var(--danger);color:var(--danger);}
+
+/* Save modal */
+.modal-overlay{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(6,6,11,.88);z-index:1000;display:none;align-items:center;justify-content:center;backdrop-filter:blur(8px);}
+.modal-overlay.show{display:flex;}
+.modal-box{background:var(--card-solid);border:1px solid var(--border);border-radius:18px;padding:32px;width:480px;max-width:92vw;position:relative;}
+.modal-box h3{font-size:19px;font-weight:800;margin-bottom:4px;}
+.modal-sub{font-size:13px;color:var(--muted);margin-bottom:20px;}
+.modal-close{position:absolute;top:16px;right:20px;background:none;border:none;color:var(--dim);font-size:20px;cursor:pointer;line-height:1;}
+.modal-close:hover{color:var(--text);}
+.modal-section-label{font-size:10px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:1.2px;margin-bottom:8px;}
+.modal-list-btn{display:flex;justify-content:space-between;align-items:center;width:100%;padding:10px 14px;background:transparent;border:1px solid var(--border);border-radius:9px;color:var(--text);font-size:13px;cursor:pointer;font-family:inherit;transition:all .2s;margin-bottom:7px;}
+.modal-list-btn:hover{border-color:var(--accent);background:var(--glow);}
+.modal-list-btn .ml-count{font-size:11px;color:var(--muted);}
+.modal-divider{display:flex;align-items:center;gap:10px;margin:16px 0;color:var(--dim);font-size:11px;}
+.modal-divider::before,.modal-divider::after{content:'';flex:1;height:1px;background:var(--border);}
+.modal-input{width:100%;padding:13px 16px;background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-sm);color:var(--text);font-size:14px;font-family:inherit;outline:none;transition:border-color .2s;margin-bottom:12px;}
+.modal-input:focus{border-color:var(--accent);box-shadow:0 0 0 3px var(--glow);}
+.modal-input::placeholder{color:var(--dim);}
+.btn-modal-save{width:100%;padding:14px;background:var(--gradient);border:none;border-radius:var(--radius-sm);color:#fff;font-size:14px;font-weight:700;cursor:pointer;font-family:inherit;transition:all .2s;}
+.btn-modal-save:hover{opacity:.9;}
+
+/* Lists section */
+.lists-section{padding-bottom:48px;}
+.lists-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:18px;}
+.lists-title{font-size:22px;font-weight:900;letter-spacing:-0.5px;}
+.lists-title span{background:var(--gradient);-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
+.list-card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);margin-bottom:12px;overflow:hidden;transition:border-color .3s;}
+.list-card:hover{border-color:var(--border-hover);}
+.list-card-header{display:flex;align-items:center;gap:14px;padding:16px 20px;cursor:pointer;user-select:none;}
+.list-card-icon{width:38px;height:38px;background:var(--gradient);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:17px;flex-shrink:0;}
+.list-card-info{flex:1;min-width:0;}
+.list-card-name{font-size:14px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.list-card-meta{font-size:11px;color:var(--muted);margin-top:2px;}
+.list-card-actions{display:flex;gap:6px;flex-shrink:0;}
+.btn-list-action{padding:6px 12px;border:1px solid var(--border);background:transparent;border-radius:7px;color:var(--muted);font-size:10px;font-weight:700;cursor:pointer;font-family:inherit;transition:all .2s;white-space:nowrap;}
+.btn-list-action:hover{border-color:var(--accent);color:var(--accent);background:var(--glow);}
+.btn-list-action.csv{border-color:rgba(16,185,129,.3);color:var(--success);}
+.btn-list-action.csv:hover{background:rgba(16,185,129,.08);}
+.btn-list-action.json{border-color:rgba(245,158,11,.3);color:var(--warning);}
+.btn-list-action.json:hover{background:rgba(245,158,11,.08);}
+.btn-list-action.danger:hover{border-color:var(--danger);color:var(--danger);background:rgba(244,63,94,.08);}
+.list-body{display:none;border-top:1px solid var(--border);}
+.list-body.open{display:block;}
+.list-table-wrap{max-height:360px;overflow-y:auto;}
+.list-table{width:100%;border-collapse:collapse;font-size:11px;}
+.list-table thead th{background:var(--bg2);color:var(--muted);font-size:9px;text-transform:uppercase;letter-spacing:.8px;padding:8px 14px;font-weight:600;position:sticky;top:0;}
+.list-table tbody td{padding:9px 14px;border-bottom:1px solid var(--border);vertical-align:middle;color:var(--muted);}
+.list-table tbody tr:last-child td{border-bottom:none;}
+.list-table tbody tr:hover td{background:rgba(108,99,255,.04);}
+.list-row-del{background:none;border:none;color:var(--dim);cursor:pointer;font-size:12px;padding:2px 6px;border-radius:4px;transition:all .15s;}
+.list-row-del:hover{color:var(--danger);background:rgba(244,63,94,.1);}
+.empty-lists{text-align:center;padding:48px 20px;color:var(--dim);font-size:13px;}
+.empty-lists .el-icon{font-size:36px;margin-bottom:12px;}
+.empty-lists p{max-width:300px;margin:0 auto;line-height:1.5;}
+
 .table-wrap{overflow-x:auto;max-height:620px;overflow-y:auto;border-radius:var(--radius-sm);border:1px solid var(--border);}
 table{width:100%;border-collapse:collapse;font-size:12px;}
 thead th{background:var(--bg2);color:var(--accent2);font-weight:600;text-align:left;padding:12px 14px;font-size:10px;text-transform:uppercase;letter-spacing:.8px;position:sticky;top:0;z-index:2;border-bottom:1px solid var(--border);white-space:nowrap;cursor:pointer;user-select:none;}
@@ -460,6 +528,7 @@ tbody td a:hover{color:var(--accent);text-decoration:underline;}
       <div class="nav-right">
         <span class="nav-plan free" id="planBadge">GRATIS</span>
         <span class="nav-user" id="navEmail"></span>
+        <button class="btn-logout" onclick="document.getElementById('listsSection').scrollIntoView({behavior:'smooth'})" style="border-color:rgba(108,99,255,.3);color:var(--accent);">📋 Mis listas</button>
         <button class="btn-logout" onclick="doLogout()">Salir</button>
       </div>
     </div>
@@ -626,9 +695,54 @@ tbody td a:hover{color:var(--accent);text-decoration:underline;}
       </div>
       <div class="result-count" id="resultCount"></div>
       <div class="table-wrap">
-        <table><thead><tr><th>#</th><th onclick="colSort('nombre')">Empresa <span class="sort-arrow">↕</span></th><th>Teléfono</th><th>Email</th><th>Sitio Web</th><th onclick="colSort('direccion')">Dirección <span class="sort-arrow">↕</span></th><th onclick="colSort('rating')">Rating <span class="sort-arrow">↕</span></th><th onclick="colSort('total_resenas')">Reseñas <span class="sort-arrow">↕</span></th><th>Estado</th><th>Datos</th><th>Horario</th></tr></thead><tbody id="tbody"></tbody></table>
+        <table><thead><tr>
+          <th style="width:36px;padding:8px 10px;"><input type="checkbox" class="row-check" id="selectAll" onchange="toggleSelectAll(this)" title="Seleccionar todos"></th>
+          <th style="width:32px;">#</th>
+          <th onclick="colSort('nombre')">Empresa <span class="sort-arrow">↕</span></th>
+          <th>Teléfono</th><th>Email</th><th>Sitio Web</th>
+          <th onclick="colSort('direccion')">Dirección <span class="sort-arrow">↕</span></th>
+          <th onclick="colSort('rating')">Rating <span class="sort-arrow">↕</span></th>
+          <th onclick="colSort('total_resenas')">Reseñas <span class="sort-arrow">↕</span></th>
+          <th>Estado</th><th>Datos</th><th>Horario</th>
+        </tr></thead><tbody id="tbody"></tbody></table>
       </div>
     </div>
+
+    <!-- Lists section -->
+    <div class="lists-section" id="listsSection">
+      <div class="lists-header">
+        <div class="lists-title">Mis <span>Listas</span></div>
+        <span style="font-size:12px;color:var(--muted);" id="listsTotalCount"></span>
+      </div>
+      <div id="listsContainer">
+        <div class="empty-lists"><div class="el-icon">📋</div><p>Selecciona contactos marcando los checkboxes y guárdalos en una lista</p></div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- Floating selection bar -->
+<div class="selection-bar" id="selectionBar">
+  <span class="sel-count"><span id="selCount">0</span> seleccionados</span>
+  <button class="btn-save-list" onclick="openSaveModal()">+ Guardar en lista</button>
+  <button class="btn-clear-sel" onclick="clearSelection()">✕ Quitar selección</button>
+</div>
+
+<!-- Save to list modal -->
+<div class="modal-overlay" id="saveModal" onclick="if(event.target===this)closeSaveModal()">
+  <div class="modal-box">
+    <button class="modal-close" onclick="closeSaveModal()">✕</button>
+    <h3>💾 Guardar contactos</h3>
+    <p class="modal-sub" id="saveModalSub">0 contactos seleccionados</p>
+    <div id="existingListsWrap" style="display:none;">
+      <div class="modal-section-label">Agregar a lista existente</div>
+      <div id="existingListsBtns"></div>
+      <div class="modal-divider">o crear nueva</div>
+    </div>
+    <div class="modal-section-label" id="newListLabel">Nombre de la nueva lista</div>
+    <input type="text" class="modal-input" id="newListName" placeholder="Ej: Manufactura Santiago, Clientes potenciales..." onkeypress="if(event.key==='Enter')saveToNewList()">
+    <button class="btn-modal-save" onclick="saveToNewList()">Crear lista y guardar</button>
   </div>
 </div>
 
@@ -769,6 +883,7 @@ function showApp(){
   document.getElementById('mainApp').style.display='block';
   document.getElementById('navEmail').textContent=userEmail;
   updateUsageUI();
+  renderLists();
 }
 
 function doLogout(){
@@ -1126,7 +1241,8 @@ function renderTable(){
     const dqH='<div class="dq-bar">'+[0,1,2,3,4].map(n=>'<div class="dq-seg'+(n<dq?' on':'')+'"></div>').join('')+'<span class="dq-bar-label">'+dq+'/5</span></div>';
     const mH=r.google_maps?'<a href="'+r.google_maps+'" target="_blank" class="maps-link">📍</a>':'';
     const eH=r.email?'<a href="mailto:'+r.email+'" style="font-size:11px;">'+r.email+'</a>':r.sitio_web?'<button class="btn-find-email" data-id="'+r.id+'" onclick="findEmail(\''+r.id+'\',this)">🔍 buscar</button>':'<span style="color:var(--dim)">—</span>';
-    return '<tr><td style="color:var(--dim)">'+(i+1)+'</td><td><div class="empresa-name">'+r.nombre+' '+mH+'</div><div class="empresa-types">'+r.tipos+'</div></td><td>'+(r.telefono||'<span style="color:var(--dim)">—</span>')+'</td><td>'+eH+'</td><td>'+w+'</td><td style="color:var(--muted);font-size:11px;max-width:200px;">'+r.direccion+'</td><td>'+rH+'</td><td style="color:var(--muted)">'+(r.total_resenas||'—')+'</td><td><span style="font-size:11px;'+sC+'">'+r.estado_text+'</span></td><td>'+dqH+'</td><td><span class="hours-text" title="'+r.horario+'">'+(r.horario||'<span style="color:var(--dim)">—</span>')+'</span></td></tr>';
+    const chk=selectedIds.has(r.id)?'checked':'';
+    return '<tr><td style="padding:8px 10px;"><input type="checkbox" class="row-check" data-id="'+r.id+'" '+chk+' onchange="toggleSelect(\''+r.id+'\',this)"></td><td style="color:var(--dim)">'+(i+1)+'</td><td><div class="empresa-name">'+r.nombre+' '+mH+'</div><div class="empresa-types">'+r.tipos+'</div></td><td>'+(r.telefono||'<span style="color:var(--dim)">—</span>')+'</td><td>'+eH+'</td><td>'+w+'</td><td style="color:var(--muted);font-size:11px;max-width:200px;">'+r.direccion+'</td><td>'+rH+'</td><td style="color:var(--muted)">'+(r.total_resenas||'—')+'</td><td><span style="font-size:11px;'+sC+'">'+r.estado_text+'</span></td><td>'+dqH+'</td><td><span class="hours-text" title="'+r.horario+'">'+(r.horario||'<span style="color:var(--dim)">—</span>')+'</span></td></tr>';
   });
   tb.innerHTML=rows.join('');
 }
@@ -1194,6 +1310,150 @@ async function startSearch(){
   running=false;stopped=false;paused=false;
   updateUsageUI();
   if(hitLimit)openPaywall();
+}
+
+// =============================================
+// LISTS MANAGER
+// =============================================
+let selectedIds=new Set();
+
+function toggleSelect(id,el){
+  if(el.checked)selectedIds.add(id);else selectedIds.delete(id);
+  updateSelectionBar();
+}
+function toggleSelectAll(el){
+  document.querySelectorAll('.row-check[data-id]').forEach(c=>{
+    c.checked=el.checked;
+    if(el.checked)selectedIds.add(c.dataset.id);else selectedIds.delete(c.dataset.id);
+  });
+  updateSelectionBar();
+}
+function updateSelectionBar(){
+  const bar=document.getElementById('selectionBar');
+  document.getElementById('selCount').textContent=selectedIds.size;
+  selectedIds.size>0?bar.classList.add('show'):bar.classList.remove('show');
+  const all=document.getElementById('selectAll');
+  if(all){const vis=document.querySelectorAll('.row-check[data-id]').length,chk=document.querySelectorAll('.row-check[data-id]:checked').length;all.indeterminate=chk>0&&chk<vis;all.checked=chk===vis&&vis>0;}
+}
+function clearSelection(){
+  selectedIds.clear();
+  document.querySelectorAll('.row-check').forEach(c=>c.checked=false);
+  updateSelectionBar();
+}
+
+// Storage
+function getLists(){try{return JSON.parse(localStorage.getItem('jpb_cl_'+(userEmail||'')))||[];}catch(e){return[];}}
+function persistLists(lists){localStorage.setItem('jpb_cl_'+(userEmail||''),JSON.stringify(lists));}
+
+// Modal
+function openSaveModal(){
+  if(selectedIds.size===0)return;
+  const n=selectedIds.size;
+  document.getElementById('saveModalSub').textContent=n+' contacto'+(n!==1?'s':'')+' seleccionado'+(n!==1?'s':'');
+  document.getElementById('newListName').value='';
+  const lists=getLists();
+  const wrap=document.getElementById('existingListsWrap');
+  if(lists.length>0){
+    wrap.style.display='block';
+    document.getElementById('existingListsBtns').innerHTML=lists.map(l=>'<button class="modal-list-btn" onclick="saveToExistingList(\''+l.id+'\')">'+l.name+'<span class="ml-count">'+l.contacts.length+' contactos</span></button>').join('');
+  }else{wrap.style.display='none';}
+  document.getElementById('saveModal').classList.add('show');
+  setTimeout(()=>document.getElementById('newListName').focus(),100);
+}
+function closeSaveModal(){document.getElementById('saveModal').classList.remove('show');}
+
+function saveToNewList(){
+  const name=document.getElementById('newListName').value.trim();
+  if(!name){document.getElementById('newListName').style.borderColor='var(--danger)';document.getElementById('newListName').focus();return;}
+  const selected=allResults.filter(r=>selectedIds.has(r.id));
+  const lists=getLists();
+  lists.unshift({id:Date.now().toString(),name,createdAt:new Date().toISOString(),contacts:selected});
+  persistLists(lists);closeSaveModal();clearSelection();renderLists();
+  document.getElementById('listsSection').scrollIntoView({behavior:'smooth',block:'start'});
+}
+function saveToExistingList(listId){
+  const selected=allResults.filter(r=>selectedIds.has(r.id));
+  const lists=getLists();
+  const list=lists.find(l=>l.id===listId);
+  if(!list)return;
+  const existing=new Set(list.contacts.map(c=>c.id));
+  list.contacts.push(...selected.filter(c=>!existing.has(c.id)));
+  list.updatedAt=new Date().toISOString();
+  persistLists(lists);closeSaveModal();clearSelection();renderLists();
+  document.getElementById('listsSection').scrollIntoView({behavior:'smooth',block:'start'});
+}
+
+function deleteList(listId){
+  if(!confirm('¿Eliminar esta lista permanentemente?'))return;
+  persistLists(getLists().filter(l=>l.id!==listId));renderLists();
+}
+function deleteFromList(listId,contactId){
+  const lists=getLists();const list=lists.find(l=>l.id===listId);
+  if(!list)return;
+  list.contacts=list.contacts.filter(c=>c.id!==contactId);
+  persistLists(lists);renderLists();
+}
+function toggleListBody(listId){document.getElementById('lb_'+listId).classList.toggle('open');}
+
+function exportListCSV(listId){
+  const list=getLists().find(l=>l.id===listId);if(!list)return;
+  let c='Nombre,Teléfono,Email,Sitio Web,Dirección,Rating,Reseñas,Estado,Tipos,Google Maps\n';
+  list.contacts.forEach(r=>{c+=[r.nombre,r.telefono,r.email,r.sitio_web,r.direccion,r.rating,r.total_resenas,r.estado_text,r.tipos,r.google_maps].map(v=>'"'+String(v||'').replace(/"/g,'""')+'"').join(',')+'\n';});
+  const a=document.createElement('a');a.href=URL.createObjectURL(new Blob(['﻿'+c],{type:'text/csv;charset=utf-8'}));
+  a.download=list.name.replace(/[^a-z0-9áéíóúñ]/gi,'_')+'_'+new Date().toISOString().slice(0,10)+'.csv';a.click();
+}
+function exportListJSON(listId){
+  const list=getLists().find(l=>l.id===listId);if(!list)return;
+  const o={nombre:list.name,creado:list.createdAt,total:list.contacts.length,contactos:list.contacts};
+  const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([JSON.stringify(o,null,2)],{type:'application/json'}));
+  a.download=list.name.replace(/[^a-z0-9áéíóúñ]/gi,'_')+'_'+new Date().toISOString().slice(0,10)+'.json';a.click();
+}
+
+function renderLists(){
+  const lists=getLists();
+  const container=document.getElementById('listsContainer');
+  const totalEl=document.getElementById('listsTotalCount');
+  if(!container)return;
+  if(lists.length===0){
+    container.innerHTML='<div class="empty-lists"><div class="el-icon">📋</div><p>Selecciona contactos marcando los checkboxes y guárdalos en una lista</p></div>';
+    if(totalEl)totalEl.textContent='';return;
+  }
+  if(totalEl)totalEl.textContent=lists.length+' lista'+(lists.length!==1?'s':'');
+  container.innerHTML=lists.map(l=>{
+    const date=new Date(l.createdAt).toLocaleDateString('es-CL',{day:'2-digit',month:'short',year:'numeric'});
+    const rows=l.contacts.slice(0,100).map((c,i)=>`
+      <tr>
+        <td style="color:var(--dim);width:32px">${i+1}</td>
+        <td><div style="font-weight:600;color:var(--text);font-size:12px">${c.nombre}</div><div style="font-size:10px;color:var(--dim)">${c.tipos||''}</div></td>
+        <td>${c.telefono||'—'}</td>
+        <td>${c.email?'<a href="mailto:'+c.email+'" style="font-size:11px">'+c.email+'</a>':'—'}</td>
+        <td>${c.sitio_web?'<a href="'+c.sitio_web+'" target="_blank" style="font-size:10px;color:var(--accent2)">'+c.sitio_web.replace(/^https?:\/\//,'').slice(0,24)+'</a>':'—'}</td>
+        <td style="width:32px"><button class="list-row-del" onclick="deleteFromList('${l.id}','${c.id}')" title="Quitar de la lista">✕</button></td>
+      </tr>`).join('');
+    const more=l.contacts.length>100?`<tr><td colspan="6" style="text-align:center;padding:10px;color:var(--muted);font-size:11px">... y ${l.contacts.length-100} más — exporta CSV para verlos todos</td></tr>`:'';
+    return `<div class="list-card">
+      <div class="list-card-header" onclick="toggleListBody('${l.id}')">
+        <div class="list-card-icon">📋</div>
+        <div class="list-card-info">
+          <div class="list-card-name">${l.name}</div>
+          <div class="list-card-meta">${l.contacts.length} contacto${l.contacts.length!==1?'s':''} · ${date}</div>
+        </div>
+        <div class="list-card-actions" onclick="event.stopPropagation()">
+          <button class="btn-list-action csv" onclick="exportListCSV('${l.id}')">CSV</button>
+          <button class="btn-list-action json" onclick="exportListJSON('${l.id}')">JSON</button>
+          <button class="btn-list-action danger" onclick="deleteList('${l.id}')">Eliminar</button>
+        </div>
+      </div>
+      <div class="list-body" id="lb_${l.id}">
+        <div class="list-table-wrap">
+          <table class="list-table">
+            <thead><tr><th>#</th><th>Empresa</th><th>Teléfono</th><th>Email</th><th>Sitio Web</th><th></th></tr></thead>
+            <tbody>${rows}${more}</tbody>
+          </table>
+        </div>
+      </div>
+    </div>`;
+  }).join('');
 }
 
 // =============================================
