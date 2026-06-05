@@ -226,6 +226,14 @@ body{font-family:'Inter',system-ui,sans-serif;background:var(--bg);color:var(--t
 .btn-export:hover{border-color:var(--accent);background:var(--glow);}
 .btn-export.csv{border-color:rgba(16,185,129,.3);color:var(--success);}
 .btn-export.json{border-color:rgba(245,158,11,.3);color:var(--warning);}
+.btn-find-email{padding:3px 8px;border:1px solid rgba(108,99,255,.3);background:var(--glow);border-radius:6px;color:var(--accent);font-size:10px;font-weight:600;cursor:pointer;font-family:inherit;transition:all .2s;white-space:nowrap;}
+.btn-find-email:hover{border-color:var(--accent);background:rgba(108,99,255,.2);}
+.btn-find-email:disabled{opacity:.4;cursor:not-allowed;}
+.btn-find-email.loading{color:var(--muted);border-color:var(--border);}
+.btn-find-email.not-found{color:var(--dim);border-color:var(--border);background:transparent;cursor:default;}
+.btn-batch-email{padding:7px 14px;border:1px solid rgba(108,99,255,.3);background:var(--glow);border-radius:8px;color:var(--accent);font-size:11px;font-weight:600;cursor:pointer;font-family:inherit;transition:all .2s;white-space:nowrap;}
+.btn-batch-email:hover{border-color:var(--accent);background:rgba(108,99,255,.2);}
+.btn-batch-email:disabled{opacity:.4;cursor:not-allowed;}
 .table-wrap{overflow-x:auto;max-height:620px;overflow-y:auto;border-radius:var(--radius-sm);border:1px solid var(--border);}
 table{width:100%;border-collapse:collapse;font-size:12px;}
 thead th{background:var(--bg2);color:var(--accent2);font-weight:600;text-align:left;padding:12px 14px;font-size:10px;text-transform:uppercase;letter-spacing:.8px;position:sticky;top:0;z-index:2;border-bottom:1px solid var(--border);white-space:nowrap;cursor:pointer;user-select:none;}
@@ -610,7 +618,11 @@ tbody td a:hover{color:var(--accent);text-decoration:underline;}
     <div class="card" id="resultsCard" style="display:none;">
       <div class="table-toolbar">
         <div class="filter-wrap"><svg class="fw-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg><input type="text" class="filter-input" id="textFilter" placeholder="Buscar por nombre, dirección..." oninput="applyFilters()"></div>
-        <div class="export-btns"><button class="btn-export csv" onclick="exportCSV()">CSV</button><button class="btn-export json" onclick="exportJSON()">JSON</button></div>
+        <div class="export-btns">
+          <button class="btn-batch-email" id="btnBatchEmail" onclick="findAllEmails()">🔍 Buscar emails</button>
+          <button class="btn-export csv" onclick="exportCSV()">CSV</button>
+          <button class="btn-export json" onclick="exportJSON()">JSON</button>
+        </div>
       </div>
       <div class="result-count" id="resultCount"></div>
       <div class="table-wrap">
@@ -1021,7 +1033,7 @@ function renderTable(){
     const dq=dataQuality(r);
     const dqH='<div class="dq-bar">'+[0,1,2,3,4].map(n=>'<div class="dq-seg'+(n<dq?' on':'')+'"></div>').join('')+'<span class="dq-bar-label">'+dq+'/5</span></div>';
     const mH=r.google_maps?'<a href="'+r.google_maps+'" target="_blank" class="maps-link">📍</a>':'';
-    const eH=r.email?'<a href="mailto:'+r.email+'">'+r.email+'</a>':'<span style="color:var(--dim)">—</span>';
+    const eH=r.email?'<a href="mailto:'+r.email+'" style="font-size:11px;">'+r.email+'</a>':r.sitio_web?'<button class="btn-find-email" data-id="'+r.id+'" onclick="findEmail(\''+r.id+'\',this)">🔍 buscar</button>':'<span style="color:var(--dim)">—</span>';
     return '<tr><td style="color:var(--dim)">'+(i+1)+'</td><td><div class="empresa-name">'+r.nombre+' '+mH+'</div><div class="empresa-types">'+r.tipos+'</div></td><td>'+(r.telefono||'<span style="color:var(--dim)">—</span>')+'</td><td>'+eH+'</td><td>'+w+'</td><td style="color:var(--muted);font-size:11px;max-width:200px;">'+r.direccion+'</td><td>'+rH+'</td><td style="color:var(--muted)">'+(r.total_resenas||'—')+'</td><td><span style="font-size:11px;'+sC+'">'+r.estado_text+'</span></td><td>'+dqH+'</td><td><span class="hours-text" title="'+r.horario+'">'+(r.horario||'<span style="color:var(--dim)">—</span>')+'</span></td></tr>';
   });
   tb.innerHTML=rows.join('');
@@ -1090,6 +1102,73 @@ async function startSearch(){
   running=false;stopped=false;paused=false;
   updateUsageUI();
   if(hitLimit)openPaywall();
+}
+
+// =============================================
+// EMAIL SCRAPER (CORS proxy)
+// =============================================
+const EMAIL_PROXY='https://api.allorigins.win/get?url=';
+const EMAIL_REGEX=/[a-zA-Z0-9._%+\-]+@[a-zA-Z0-9.\-]+\.[a-zA-Z]{2,6}/g;
+const EMAIL_BLACKLIST=['sentry.io','wixpress','example','wordpress','schema','jquery','png','jpg','gif','svg','woff','otf','ttf'];
+
+function extractEmails(html,domain){
+  const raw=[...new Set((html.match(EMAIL_REGEX)||[]))];
+  return raw.filter(e=>
+    e.length<80&&
+    !EMAIL_BLACKLIST.some(b=>e.includes(b))&&
+    !e.startsWith('@')&&
+    e.includes('.')
+  ).sort((a,b)=>{
+    // Prefer emails matching the domain
+    const aMatch=a.includes(domain)?0:1;
+    const bMatch=b.includes(domain)?0:1;
+    return aMatch-bMatch;
+  });
+}
+
+async function findEmail(id,btn){
+  const r=allResults.find(x=>x.id===id);
+  if(!r||!r.sitio_web)return;
+  btn.textContent='⏳';btn.classList.add('loading');btn.disabled=true;
+  try{
+    const domain=new URL(r.sitio_web).hostname.replace('www.','');
+    const res=await fetch(EMAIL_PROXY+encodeURIComponent(r.sitio_web),{signal:AbortSignal.timeout(8000)});
+    const data=await res.json();
+    const emails=extractEmails(data.contents||'',domain);
+    if(emails.length>0){
+      r.email=emails[0];
+      const td=btn.closest('td');
+      td.innerHTML='<a href="mailto:'+r.email+'" style="font-size:11px;">'+r.email+'</a>';
+      if(emails.length>1)td.title='También: '+emails.slice(1,4).join(', ');
+    }else{
+      btn.textContent='No encontrado';btn.classList.remove('loading');btn.classList.add('not-found');
+    }
+  }catch(e){
+    btn.textContent='Error';btn.classList.remove('loading');btn.classList.add('not-found');btn.disabled=false;
+  }
+}
+
+let batchRunning=false;
+async function findAllEmails(){
+  if(batchRunning)return;
+  const withWeb=filtered.filter(r=>r.sitio_web&&!r.email);
+  if(withWeb.length===0)return;
+  batchRunning=true;
+  const batchBtn=document.getElementById('btnBatchEmail');
+  batchBtn.disabled=true;
+  let done=0;
+  for(const r of withWeb){
+    if(!batchRunning)break;
+    batchBtn.textContent='⏳ '+done+'/'+withWeb.length;
+    // Find the button for this row
+    const rowBtn=document.querySelector('.btn-find-email[data-id="'+r.id+'"]');
+    if(rowBtn&&!rowBtn.disabled)await findEmail(r.id,rowBtn);
+    done++;
+    await new Promise(ok=>setTimeout(ok,600));// throttle: 1 request per 600ms
+  }
+  batchRunning=false;
+  batchBtn.disabled=false;
+  batchBtn.textContent='🔍 Buscar emails';
 }
 
 function exportJSON(){const o={metadata:{ciudad:document.getElementById('city').value,fecha:new Date().toISOString().slice(0,10),total:filtered.length},empresas:filtered};const b=new Blob([JSON.stringify(o,null,2)],{type:'application/json'});const a=document.createElement('a');a.href=URL.createObjectURL(b);a.download='prospectos_'+new Date().toISOString().slice(0,10)+'.json';a.click();}
