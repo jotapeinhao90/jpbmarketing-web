@@ -272,6 +272,22 @@ body{font-family:'Inter',system-ui,sans-serif;background:var(--bg);color:var(--t
 .btn-modal-save{width:100%;padding:14px;background:var(--gradient);border:none;border-radius:var(--radius-sm);color:#fff;font-size:14px;font-weight:700;cursor:pointer;font-family:inherit;transition:all .2s;}
 .btn-modal-save:hover{opacity:.9;}
 
+/* Rubros manager */
+.cat-pill-settings{background:transparent!important;border-color:rgba(108,99,255,.3)!important;color:var(--accent)!important;font-size:12px!important;}
+.cat-pill-settings:hover{background:rgba(108,99,255,.12)!important;}
+.cat-custom{border-style:dashed!important;}
+.rm-section-label{font-size:10px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:1.2px;margin-bottom:8px;}
+.rm-item{display:flex;align-items:center;gap:10px;padding:10px 12px;border:1px solid var(--border);border-radius:9px;margin-bottom:6px;transition:border-color .2s;}
+.rm-item:hover{border-color:var(--border-hover);}
+.rm-item.rm-hidden{opacity:.45;}
+.rm-emoji{font-size:18px;width:24px;text-align:center;flex-shrink:0;}
+.rm-name{flex:1;font-size:13px;font-weight:600;color:var(--text);}
+.rm-count{font-size:11px;color:var(--dim);flex-shrink:0;}
+.rm-actions{display:flex;gap:6px;flex-shrink:0;}
+.rm-btn{font-size:11px;padding:4px 9px;border-radius:6px;border:1px solid var(--border);background:transparent;color:var(--muted);cursor:pointer;font-family:inherit;white-space:nowrap;transition:all .2s;}
+.rm-btn:hover{border-color:var(--accent);color:var(--text);}
+.rm-btn-del:hover{border-color:var(--danger)!important;color:var(--danger)!important;}
+
 /* Exclude toggle */
 .exclude-lists-toggle{display:flex;align-items:center;gap:10px;cursor:pointer;padding:2px 0;}
 .exclude-lists-toggle input{display:none;}
@@ -627,18 +643,7 @@ tbody td a:hover{color:var(--accent);text-decoration:underline;}
         <div class="filter-grid">
           <div class="filter-section">
             <div class="filter-label">Industria <span class="filter-hint">(selección múltiple)</span></div>
-            <div class="cat-grid" id="catGrid">
-              <button class="cat-pill active" data-cat="all" onclick="clearCats(this)">Todas</button>
-              <button class="cat-pill" data-cat="manufacturing" onclick="toggleCat('manufacturing',this)">🏭 Manufactura</button>
-              <button class="cat-pill" data-cat="logistics" onclick="toggleCat('logistics',this)">🚛 Logística</button>
-              <button class="cat-pill" data-cat="construction" onclick="toggleCat('construction',this)">🏗️ Construcción</button>
-              <button class="cat-pill" data-cat="technology" onclick="toggleCat('technology',this)">💻 Tecnología</button>
-              <button class="cat-pill" data-cat="mining" onclick="toggleCat('mining',this)">⛏️ Minería</button>
-              <button class="cat-pill" data-cat="energy" onclick="toggleCat('energy',this)">⚡ Energía</button>
-              <button class="cat-pill" data-cat="agro" onclick="toggleCat('agro',this)">🌾 Agroindustria</button>
-              <button class="cat-pill" data-cat="services" onclick="toggleCat('services',this)">📊 Servicios</button>
-              <button class="cat-pill" data-cat="pharma" onclick="toggleCat('pharma',this)">💊 Salud</button>
-            </div>
+            <div class="cat-grid" id="catGrid"></div>
           </div>
           <div class="filter-section">
             <div class="filter-label">Datos disponibles</div>
@@ -826,6 +831,48 @@ tbody td a:hover{color:var(--accent);text-decoration:underline;}
   </div>
 </div>
 
+<!-- Rubros manager modal -->
+<div class="modal-overlay" id="rubrosModal" onclick="if(event.target===this)closeRubrosManager()">
+  <div class="modal-box" style="width:560px;max-height:85vh;display:flex;flex-direction:column;">
+    <button class="modal-close" onclick="closeRubrosManager()">✕</button>
+
+    <!-- LIST VIEW -->
+    <div id="rubrosListView">
+      <h3>⚙️ Personalizar rubros</h3>
+      <p class="modal-sub">Edita las búsquedas de cada rubro, crea nuevos o oculta los que no usas.</p>
+      <div id="rubrosListContent" style="overflow-y:auto;max-height:420px;"></div>
+      <div style="margin-top:16px;padding-top:14px;border-top:1px solid var(--border);">
+        <button class="btn-modal-save" style="background:transparent;border:1px solid var(--accent);color:var(--accent);" onclick="openNewRubro()">+ Agregar rubro personalizado</button>
+      </div>
+    </div>
+
+    <!-- EDIT VIEW -->
+    <div id="rubrosEditView" style="display:none;flex:1;display:none;flex-direction:column;">
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:4px;">
+        <button onclick="showRubrosView('list')" style="background:none;border:none;color:var(--accent);cursor:pointer;font-size:20px;padding:0;line-height:1;">←</button>
+        <h3 style="margin:0;">Editar rubro</h3>
+      </div>
+      <p class="modal-sub" id="reId" style="margin-left:30px;"></p>
+      <div style="display:flex;gap:10px;margin-bottom:12px;">
+        <div style="flex:0 0 70px;">
+          <div style="font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:1px;margin-bottom:6px;">Emoji</div>
+          <input class="modal-input" id="reEmoji" placeholder="🏭" maxlength="4" style="margin:0;text-align:center;font-size:20px;padding:8px;">
+        </div>
+        <div style="flex:1;">
+          <div style="font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:1px;margin-bottom:6px;">Nombre del rubro</div>
+          <input class="modal-input" id="reName" placeholder="Ej: Clínicas y Salud Ocupacional" style="margin:0;">
+        </div>
+      </div>
+      <div style="font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:1px;margin-bottom:6px;">
+        Consultas de búsqueda <span style="font-weight:400;text-transform:none;letter-spacing:0;color:var(--dim);">— una por línea, usa {c} como ciudad</span>
+      </div>
+      <textarea id="reQueries" placeholder="empresas de ejemplo en {c}&#10;fabrica de ejemplo en {c}&#10;proveedor de ejemplo en {c}" style="width:100%;min-height:180px;background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-sm);color:var(--text);font-size:13px;font-family:'Inter',monospace;padding:12px;outline:none;resize:vertical;line-height:1.7;margin-bottom:10px;" onfocus="this.style.borderColor='var(--accent)'" onblur="this.style.borderColor='var(--border)'"></textarea>
+      <div id="reError" style="font-size:12px;color:var(--danger);margin-bottom:8px;display:none;"></div>
+      <button class="btn-modal-save" onclick="saveRubroEdit()">Guardar cambios</button>
+    </div>
+  </div>
+</div>
+
 <!-- ==================== PAYWALL OVERLAY ==================== -->
 <div class="paywall-overlay" id="paywallOverlay">
   <div class="paywall-box">
@@ -964,6 +1011,7 @@ function showApp(){
   document.getElementById('navEmail').textContent=userEmail;
   updateUsageUI();
   renderLists();
+  renderCatGrid();
 }
 
 function doLogout(){
@@ -1185,6 +1233,149 @@ const QUERIES={
 };
 const FM="places.id,places.displayName,places.formattedAddress,places.nationalPhoneNumber,places.internationalPhoneNumber,places.websiteUri,places.types,places.rating,places.userRatingCount,places.businessStatus,places.regularOpeningHours,places.googleMapsUri,nextPageToken";
 
+// =============================================
+// RUBROS MANAGER
+// =============================================
+const BUILTIN_RUBROS=[
+  {id:'manufacturing',name:'Manufactura',emoji:'🏭'},
+  {id:'logistics',name:'Logística',emoji:'🚛'},
+  {id:'construction',name:'Construcción',emoji:'🏗️'},
+  {id:'technology',name:'Tecnología',emoji:'💻'},
+  {id:'mining',name:'Minería',emoji:'⛏️'},
+  {id:'energy',name:'Energía',emoji:'⚡'},
+  {id:'agro',name:'Agroindustria',emoji:'🌾'},
+  {id:'services',name:'Servicios',emoji:'📊'},
+  {id:'pharma',name:'Salud',emoji:'💊'},
+];
+
+function getRubroConfig(){try{return JSON.parse(localStorage.getItem('jpb_rubros_'+(userEmail||'')))||{hidden:[],custom:[],customQueries:{}};}catch(e){return{hidden:[],custom:[],customQueries:{}};}}
+function saveRubroConfig(cfg){localStorage.setItem('jpb_rubros_'+(userEmail||''),JSON.stringify(cfg));}
+
+function getEffectiveQueries(id,cfg){return (cfg.customQueries||{})[id]||QUERIES[id]||[];}
+
+function renderCatGrid(){
+  const cfg=getRubroConfig();
+  const hiddenSet=new Set(cfg.hidden||[]);
+  const grid=document.getElementById('catGrid');if(!grid)return;
+  let html='<button class="cat-pill active" data-cat="all" onclick="clearCats(this)">Todas</button>';
+  BUILTIN_RUBROS.filter(r=>!hiddenSet.has(r.id)).forEach(r=>{
+    html+='<button class="cat-pill" data-cat="'+r.id+'" onclick="toggleCat(\''+r.id+'\',this)">'+r.emoji+' '+r.name+'</button>';
+  });
+  (cfg.custom||[]).forEach(r=>{
+    html+='<button class="cat-pill cat-custom" data-cat="'+r.id+'" onclick="toggleCat(\''+r.id+'\',this)">'+r.emoji+' '+r.name+'</button>';
+  });
+  html+='<button class="cat-pill cat-pill-settings" onclick="openRubrosManager()">⚙️ Personalizar</button>';
+  grid.innerHTML=html;
+  activeCats.forEach(c=>{const b=grid.querySelector('[data-cat="'+c+'"]');if(b)b.classList.add('active');});
+  if(activeCats.size===0){const b=grid.querySelector('[data-cat="all"]');if(b)b.classList.add('active');}
+}
+
+function openRubrosManager(){
+  renderRubrosManagerList();showRubrosView('list');
+  document.getElementById('rubrosModal').classList.add('show');
+}
+function closeRubrosManager(){document.getElementById('rubrosModal').classList.remove('show');}
+function showRubrosView(v){
+  document.getElementById('rubrosListView').style.display=v==='list'?'block':'none';
+  const ev=document.getElementById('rubrosEditView');ev.style.display=v==='edit'?'flex':'none';
+}
+
+function renderRubrosManagerList(){
+  const cfg=getRubroConfig();
+  const hidden=new Set(cfg.hidden||[]);
+  const custom=cfg.custom||[];
+  let html='<div class="rm-section-label">Rubros predeterminados</div>';
+  BUILTIN_RUBROS.forEach(r=>{
+    const isHidden=hidden.has(r.id);
+    const qCount=getEffectiveQueries(r.id,cfg).length;
+    const modified=(cfg.customQueries||{})[r.id]?'<span style="font-size:10px;color:var(--accent);margin-left:4px;">editado</span>':'';
+    html+=`<div class="rm-item${isHidden?' rm-hidden':''}">
+      <span class="rm-emoji">${r.emoji}</span>
+      <span class="rm-name">${r.name}${modified}</span>
+      <span class="rm-count">${qCount} búsquedas</span>
+      <div class="rm-actions">
+        <button class="rm-btn" onclick="openRubroEdit('builtin','${r.id}')">✏️ Editar</button>
+        <button class="rm-btn" onclick="toggleRubroHidden('${r.id}')">${isHidden?'👁 Mostrar':'🙈 Ocultar'}</button>
+      </div></div>`;
+  });
+  if(custom.length>0){
+    html+='<div class="rm-section-label" style="margin-top:16px;">Mis rubros personalizados</div>';
+    custom.forEach(r=>{
+      html+=`<div class="rm-item">
+        <span class="rm-emoji">${r.emoji||'📌'}</span>
+        <span class="rm-name">${r.name}</span>
+        <span class="rm-count">${(r.queries||[]).length} búsquedas</span>
+        <div class="rm-actions">
+          <button class="rm-btn" onclick="openRubroEdit('custom','${r.id}')">✏️ Editar</button>
+          <button class="rm-btn rm-btn-del" onclick="deleteCustomRubro('${r.id}')">🗑 Eliminar</button>
+        </div></div>`;
+    });
+  }
+  document.getElementById('rubrosListContent').innerHTML=html;
+}
+
+function toggleRubroHidden(id){
+  const cfg=getRubroConfig();const h=new Set(cfg.hidden||[]);
+  h.has(id)?h.delete(id):h.add(id);cfg.hidden=[...h];
+  saveRubroConfig(cfg);renderRubrosManagerList();renderCatGrid();
+}
+
+let _editCtx=null;
+function openRubroEdit(type,id){
+  _editCtx={type,id};
+  const cfg=getRubroConfig();
+  let name,emoji,queries;
+  if(type==='builtin'){
+    const r=BUILTIN_RUBROS.find(r=>r.id===id);
+    name=r.name;emoji=r.emoji;queries=getEffectiveQueries(id,cfg);
+    document.getElementById('reId').textContent='Rubro predeterminado · puedes cambiar las consultas de búsqueda';
+  }else if(id==='new'){
+    name='';emoji='';queries=[];
+    document.getElementById('reId').textContent='Nuevo rubro personalizado';
+  }else{
+    const r=(cfg.custom||[]).find(r=>r.id===id);
+    name=r.name;emoji=r.emoji;queries=r.queries||[];
+    document.getElementById('reId').textContent='Rubro personalizado';
+  }
+  document.getElementById('reEmoji').value=emoji;
+  document.getElementById('reName').value=name;
+  document.getElementById('reQueries').value=queries.join('\n');
+  document.getElementById('reError').style.display='none';
+  showRubrosView('edit');
+}
+function openNewRubro(){openRubroEdit('custom','new');}
+
+function saveRubroEdit(){
+  if(!_editCtx)return;
+  const name=document.getElementById('reName').value.trim();
+  const emoji=document.getElementById('reEmoji').value.trim();
+  const queries=document.getElementById('reQueries').value.split('\n').map(q=>q.trim()).filter(Boolean);
+  const err=document.getElementById('reError');
+  if(!name){err.textContent='Escribe un nombre para el rubro';err.style.display='block';return;}
+  if(queries.length===0){err.textContent='Agrega al menos una consulta de búsqueda';err.style.display='block';return;}
+  err.style.display='none';
+  const cfg=getRubroConfig();
+  const {type,id}=_editCtx;
+  if(type==='builtin'){
+    if(!cfg.customQueries)cfg.customQueries={};
+    cfg.customQueries[id]=queries;
+  }else if(id==='new'){
+    if(!cfg.custom)cfg.custom=[];
+    cfg.custom.push({id:'c_'+Date.now(),name,emoji,queries});
+  }else{
+    const r=(cfg.custom||[]).find(r=>r.id===id);
+    if(r){r.name=name;r.emoji=emoji;r.queries=queries;}
+  }
+  saveRubroConfig(cfg);renderCatGrid();renderRubrosManagerList();showRubrosView('list');
+}
+
+function deleteCustomRubro(id){
+  if(!confirm('¿Eliminar este rubro personalizado?'))return;
+  const cfg=getRubroConfig();
+  cfg.custom=(cfg.custom||[]).filter(r=>r.id!==id);
+  saveRubroConfig(cfg);activeCats.delete(id);renderRubrosManagerList();renderCatGrid();
+}
+
 async function api(q,pt){const h={'Content-Type':'application/json','X-Goog-Api-Key':K,'X-Goog-FieldMask':FM};const b={textQuery:q,languageCode:'es',maxResultCount:20};if(pt)b.pageToken=pt;try{const r=await fetch('https://places.googleapis.com/v1/places:searchText',{method:'POST',headers:h,body:JSON.stringify(b)});if(!r.ok)return{};return await r.json();}catch(e){return{};}}
 
 function formatTypes(t){if(!t||!t.length)return'';const m={'restaurant':'Restaurante','store':'Tienda','establishment':'Empresa','general_contractor':'Contratista','industrial_area':'Zona industrial','moving_company':'Mudanzas','trucking_company':'Transporte','corporate_office':'Oficina corp.','consultant':'Consultora','accounting':'Contabilidad','software_company':'Software','construction_company':'Construcción','manufacturer':'Fabricante','pharmacy':'Farmacia','hospital':'Hospital'};return t.slice(0,3).map(x=>m[x]||x.replace(/_/g,' ')).join(', ');}
@@ -1280,7 +1471,8 @@ let colSortState={};function colSort(f){const d=colSortState[f]==='asc'?'desc':'
 
 function updateFilterTags(){
   const el=document.getElementById('activeFilters');let tags=[];
-  const catNames={manufacturing:'Manufactura',logistics:'Logística',construction:'Construcción',technology:'Tecnología',mining:'Minería',energy:'Energía',agro:'Agroindustria',services:'Servicios',pharma:'Salud'};
+  const _cfg=getRubroConfig();
+  const catNames=Object.fromEntries([...BUILTIN_RUBROS,...(_cfg.custom||[])].map(r=>[r.id,r.emoji+' '+r.name]));
   activeCats.forEach(c=>tags.push({label:catNames[c]||c,action:()=>toggleCat(c,document.querySelector('.cat-pill[data-cat="'+c+'"]'))}));
   activeDQ.forEach(dq=>{const n={'has-web':'Con web','has-phone':'Con teléfono','has-hours':'Con horarios','is-open':'Solo operativas','has-reviews':'Con reseñas','complete':'Datos completos'};tags.push({label:n[dq],action:()=>toggleDQ(dq,document.querySelector('.dq-pill[data-dq="'+dq+'"]'))});});
   if(minRating>0)tags.push({label:'Rating ≥ '+minRating+'★',action:()=>setMinRating(0,document.getElementById('ratingSelector').querySelector('button'))});
@@ -1351,12 +1543,18 @@ async function startSearch(){
   contactLimit=parseInt(document.getElementById('contactLimitInput').value)||500;
   const effectiveLimit=isPremium?contactLimit:Math.min(contactLimit,FREE_LIMIT);
   // Build query list based on selected categories
+  const _rcfg=getRubroConfig();
   let rawQueries;
   if(activeCats.size===0){
-    rawQueries=Object.values(QUERIES).flat();
+    rawQueries=[];
+    Object.keys(QUERIES).forEach(key=>rawQueries=rawQueries.concat(getEffectiveQueries(key,_rcfg)));
+    (_rcfg.custom||[]).forEach(r=>rawQueries=rawQueries.concat(r.queries||[]));
   }else{
-    rawQueries=[...QUERIES.general];
-    activeCats.forEach(cat=>{if(QUERIES[cat])rawQueries=rawQueries.concat(QUERIES[cat]);});
+    rawQueries=[...getEffectiveQueries('general',_rcfg)];
+    activeCats.forEach(cat=>{
+      if(QUERIES[cat]||(_rcfg.customQueries||{})[cat])rawQueries=rawQueries.concat(getEffectiveQueries(cat,_rcfg));
+      else{const cr=(_rcfg.custom||[]).find(r=>r.id===cat);if(cr)rawQueries=rawQueries.concat(cr.queries||[]);}
+    });
     rawQueries=[...new Set(rawQueries)];
   }
   const qs=rawQueries.map(q=>q.replace('{c}',city));
