@@ -272,11 +272,27 @@ body{font-family:'Inter',system-ui,sans-serif;background:var(--bg);color:var(--t
 .btn-modal-save{width:100%;padding:14px;background:var(--gradient);border:none;border-radius:var(--radius-sm);color:#fff;font-size:14px;font-weight:700;cursor:pointer;font-family:inherit;transition:all .2s;}
 .btn-modal-save:hover{opacity:.9;}
 
+/* Exclude toggle */
+.exclude-lists-toggle{display:flex;align-items:center;gap:10px;cursor:pointer;padding:2px 0;}
+.exclude-lists-toggle input{display:none;}
+.elt-box{width:18px;height:18px;border:2px solid var(--border);border-radius:5px;flex-shrink:0;display:flex;align-items:center;justify-content:center;transition:all .2s;background:transparent;}
+.exclude-lists-toggle input:checked~.elt-box{background:var(--accent);border-color:var(--accent);}
+.exclude-lists-toggle input:checked~.elt-box::after{content:'✓';font-size:11px;color:#fff;font-weight:800;}
+.elt-label{font-size:13px;color:var(--text);}
+
 /* Lists section */
 .lists-section{padding-bottom:48px;}
 .lists-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:18px;}
 .lists-title{font-size:22px;font-weight:900;letter-spacing:-0.5px;}
 .lists-title span{background:var(--gradient);-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
+.btn-merge-lists{font-size:12px;font-weight:600;padding:7px 14px;background:rgba(108,99,255,.12);border:1px solid rgba(108,99,255,.3);border-radius:8px;color:var(--accent);cursor:pointer;font-family:inherit;transition:all .2s;}
+.btn-merge-lists:hover{background:rgba(108,99,255,.22);border-color:var(--accent);}
+.merge-check-list{max-height:220px;overflow-y:auto;margin-bottom:16px;display:flex;flex-direction:column;gap:6px;}
+.merge-check-item{display:flex;align-items:center;gap:10px;padding:10px 14px;border:1px solid var(--border);border-radius:9px;cursor:pointer;transition:all .2s;}
+.merge-check-item:hover{border-color:var(--accent);background:var(--glow);}
+.merge-check-item input[type=checkbox]{width:15px;height:15px;accent-color:var(--accent);cursor:pointer;flex-shrink:0;}
+.merge-check-item .mci-name{font-size:13px;font-weight:600;color:var(--text);}
+.merge-check-item .mci-count{font-size:11px;color:var(--muted);margin-left:auto;}
 .list-card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);margin-bottom:12px;overflow:hidden;transition:border-color .3s;}
 .list-card:hover{border-color:var(--border-hover);}
 .list-card-header{display:flex;align-items:center;gap:14px;padding:16px 20px;cursor:pointer;user-select:none;}
@@ -691,6 +707,12 @@ tbody td a:hover{color:var(--accent);text-decoration:underline;}
             <button class="sort-pill" data-sort="quality-desc" onclick="setSortPill('quality-desc',this)">Mejor datos</button>
           </div>
         </div>
+        <div class="filter-divider"></div>
+        <label class="exclude-lists-toggle">
+          <input type="checkbox" id="excludeInLists">
+          <span class="elt-box"></span>
+          <span class="elt-label">Excluir contactos ya guardados en mis listas</span>
+        </label>
       </div>
       <div class="active-filters" id="activeFilters"></div>
     </div>
@@ -752,7 +774,10 @@ tbody td a:hover{color:var(--accent);text-decoration:underline;}
     <div class="lists-section" id="listsSection">
       <div class="lists-header">
         <div class="lists-title">Mis <span>Listas</span></div>
-        <span style="font-size:12px;color:var(--muted);" id="listsTotalCount"></span>
+        <div style="display:flex;align-items:center;gap:12px;">
+          <button class="btn-merge-lists" id="btnMergeLists" onclick="openMergeModal()" style="display:none;">🔗 Combinar listas</button>
+          <span style="font-size:12px;color:var(--muted);" id="listsTotalCount"></span>
+        </div>
       </div>
       <div id="listsContainer">
         <div class="empty-lists"><div class="el-icon">📋</div><p>Selecciona contactos marcando los checkboxes y guárdalos en una lista</p></div>
@@ -783,6 +808,21 @@ tbody td a:hover{color:var(--accent);text-decoration:underline;}
     <div class="modal-section-label" id="newListLabel">Nombre de la nueva lista</div>
     <input type="text" class="modal-input" id="newListName" placeholder="Ej: Manufactura Santiago, Clientes potenciales..." onkeypress="if(event.key==='Enter')saveToNewList()">
     <button class="btn-modal-save" onclick="saveToNewList()">Crear lista y guardar</button>
+  </div>
+</div>
+
+<!-- Merge lists modal -->
+<div class="modal-overlay" id="mergeModal" onclick="if(event.target===this)closeMergeModal()">
+  <div class="modal-box">
+    <button class="modal-close" onclick="closeMergeModal()">✕</button>
+    <h3>🔗 Combinar listas</h3>
+    <p class="modal-sub">Selecciona las listas que quieres unir en una nueva lista</p>
+    <div class="modal-section-label">Selecciona listas a combinar</div>
+    <div class="merge-check-list" id="mergeCheckList"></div>
+    <div class="modal-section-label">Nombre de la lista combinada</div>
+    <input type="text" class="modal-input" id="mergeListName" placeholder="Ej: Prospectos combinados Santiago..." onkeypress="if(event.key==='Enter')doMergeLists()">
+    <div id="mergeError" style="font-size:12px;color:var(--danger);margin-bottom:10px;display:none;"></div>
+    <button class="btn-modal-save" onclick="doMergeLists()">Combinar y crear lista nueva</button>
   </div>
 </div>
 
@@ -1294,6 +1334,7 @@ async function startSearch(){
   if(!city)return;
   running=true;paused=false;stopped=false;
   allResults=[];filtered=[];seen=new Set();
+  if(document.getElementById('excludeInLists').checked){getLists().forEach(l=>l.contacts.forEach(c=>seen.add(c.id)));}
   document.querySelectorAll('.stat').forEach(s=>s.classList.remove('stat-active'));
   const btn=document.getElementById('btnSearch');
   btn.disabled=true;btn.innerHTML='Buscando...';
@@ -1459,6 +1500,7 @@ function renderLists(){
     if(totalEl)totalEl.textContent='';return;
   }
   if(totalEl)totalEl.textContent=lists.length+' lista'+(lists.length!==1?'s':'');
+  const mergeBtn=document.getElementById('btnMergeLists');if(mergeBtn)mergeBtn.style.display=lists.length>=2?'inline-block':'none';
   container.innerHTML=lists.map(l=>{
     const date=new Date(l.createdAt).toLocaleDateString('es-CL',{day:'2-digit',month:'short',year:'numeric'});
     const rows=l.contacts.slice(0,100).map((c,i)=>`
@@ -1494,6 +1536,41 @@ function renderLists(){
       </div>
     </div>`;
   }).join('');
+}
+
+// =============================================
+// MERGE LISTS
+// =============================================
+function openMergeModal(){
+  const lists=getLists();
+  if(lists.length<2)return;
+  document.getElementById('mergeListName').value='';
+  document.getElementById('mergeError').style.display='none';
+  document.getElementById('mergeCheckList').innerHTML=lists.map(l=>`
+    <label class="merge-check-item">
+      <input type="checkbox" value="${l.id}">
+      <span class="mci-name">${l.name}</span>
+      <span class="mci-count">${l.contacts.length} contacto${l.contacts.length!==1?'s':''}</span>
+    </label>`).join('');
+  document.getElementById('mergeModal').classList.add('show');
+  setTimeout(()=>document.getElementById('mergeListName').focus(),100);
+}
+function closeMergeModal(){document.getElementById('mergeModal').classList.remove('show');}
+
+function doMergeLists(){
+  const checked=[...document.querySelectorAll('#mergeCheckList input:checked')].map(i=>i.value);
+  const name=document.getElementById('mergeListName').value.trim();
+  const errEl=document.getElementById('mergeError');
+  if(checked.length<2){errEl.textContent='Selecciona al menos 2 listas para combinar';errEl.style.display='block';return;}
+  if(!name){errEl.textContent='Escribe un nombre para la lista combinada';errEl.style.display='block';document.getElementById('mergeListName').focus();return;}
+  const lists=getLists();
+  const merged=new Map();
+  lists.filter(l=>checked.includes(l.id)).forEach(l=>l.contacts.forEach(c=>{if(!merged.has(c.id))merged.set(c.id,c);}));
+  lists.unshift({id:Date.now().toString(),name,createdAt:new Date().toISOString(),contacts:[...merged.values()]});
+  persistLists(lists);
+  closeMergeModal();
+  renderLists();
+  document.getElementById('listsSection').scrollIntoView({behavior:'smooth',block:'start'});
 }
 
 // =============================================
