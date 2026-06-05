@@ -37,10 +37,8 @@ body{font-family:'Inter',system-ui,sans-serif;background:var(--bg);color:var(--t
 .nav{padding:16px 0;border-bottom:1px solid var(--border);backdrop-filter:blur(20px);position:sticky;top:0;z-index:100;background:rgba(6,6,11,.85);}
 .nav .container{display:flex;justify-content:space-between;align-items:center;}
 .nav-brand{display:flex;align-items:center;gap:12px;text-decoration:none;color:var(--text);}
-.nav-logo{width:40px;height:40px;background:transparent;border-radius:10px;display:flex;align-items:center;justify-content:center;overflow:hidden;position:relative;}
-.nav-logo::before{content:'';position:absolute;inset:-1px;border-radius:11px;background:var(--gradient);opacity:.7;z-index:0;}
-.nav-logo::after{content:'';position:absolute;inset:1px;border-radius:9px;background:var(--bg);z-index:1;}
-.nav-logo img{width:30px;height:30px;object-fit:contain;display:block;position:relative;z-index:2;filter:drop-shadow(0 0 6px rgba(108,99,255,.5));}
+.nav-logo{width:40px;height:40px;background:var(--gradient);border-radius:10px;display:flex;align-items:center;justify-content:center;overflow:hidden;box-shadow:0 4px 18px rgba(108,99,255,.45);}
+.nav-logo img{width:28px;height:28px;object-fit:contain;display:block;filter:brightness(0) invert(1);}
 .nav-name{font-weight:700;font-size:15px;}
 .nav-name span{background:var(--gradient);-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
 .nav-right{display:flex;align-items:center;gap:14px;}
@@ -129,6 +127,9 @@ body{font-family:'Inter',system-ui,sans-serif;background:var(--bg);color:var(--t
 .hero-app h1{font-size:32px;font-weight:900;letter-spacing:-1px;margin-bottom:8px;}
 .hero-app h1 .grad{background:var(--gradient2);-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
 .hero-app p{color:var(--muted);font-size:14px;}
+.app-quote-bar{display:inline-flex;align-items:center;gap:8px;margin-top:16px;padding:8px 18px;background:rgba(108,99,255,.08);border:1px solid rgba(108,99,255,.18);border-radius:100px;max-width:640px;}
+.aq-icon{font-size:14px;flex-shrink:0;}
+.aq-text{font-size:13px;color:var(--muted);font-style:italic;transition:opacity .5s;}
 
 /* Usage */
 .usage-bar{margin-bottom:18px;}
@@ -573,6 +574,10 @@ tbody td a:hover{color:var(--accent);text-decoration:underline;}
     <div class="container">
       <h1>Encuentra tu próximo <span class="grad">cliente</span></h1>
       <p>Busca, filtra y exporta empresas de cualquier ciudad.</p>
+      <div class="app-quote-bar">
+        <span class="aq-icon">💡</span>
+        <span class="aq-text" id="appQuoteText"></span>
+      </div>
     </div>
   </section>
 
@@ -1596,8 +1601,22 @@ function exportJSON(){const o={metadata:{ciudad:document.getElementById('city').
 function exportCSV(){let c='Nombre,Teléfono,Email,Sitio Web,Dirección,Rating,Reseñas,Estado,Horario,Tipos,Google Maps\n';filtered.forEach(r=>{c+=[r.nombre,r.telefono,r.email,r.sitio_web,r.direccion,r.rating,r.total_resenas,r.estado_text,r.horario,r.tipos,r.google_maps].map(v=>'"'+String(v).replace(/"/g,'""')+'"').join(',')+'\n';});const b=new Blob(['﻿'+c],{type:'text/csv;charset=utf-8'});const a=document.createElement('a');a.href=URL.createObjectURL(b);a.download='prospectos_'+new Date().toISOString().slice(0,10)+'.csv';a.click();}
 
 // =============================================
-// QUOTE CAROUSEL
+// QUOTE CAROUSEL (landing + app)
 // =============================================
+const QUOTES=[
+  'El prospecto de hoy es el cliente de mañana.',
+  'No esperes que los clientes lleguen — sal a buscarlos.',
+  'Tu pipeline es tan fuerte como tu lista de prospectos.',
+  'Las empresas que prospectan sistemáticamente crecen 3× más rápido.',
+  'El éxito comercial comienza con datos correctos.',
+  'Construye tu cartera de clientes antes de necesitarla.',
+  'Cada empresa que encuentras es una puerta — toca suficientes.',
+  'Un CRM vacío no vende. Llénalo con prospectos reales.',
+  'La consistencia en la prospección supera al talento sin disciplina.',
+  'Más contactos = más oportunidades = más cierres.',
+];
+
+// Landing page carousel
 (function(){
   const slides=document.querySelectorAll('.quote-slide');
   const nav=document.getElementById('quoteNav');
@@ -1605,16 +1624,25 @@ function exportCSV(){let c='Nombre,Teléfono,Email,Sitio Web,Dirección,Rating,R
   let cur=0,timer;
   slides.forEach((_,i)=>{const d=document.createElement('button');d.className='q-dot'+(i===0?' on':'');d.onclick=()=>go(i);nav.appendChild(d);});
   function go(n){
-    slides[cur].classList.remove('active');
-    nav.children[cur].classList.remove('on');
-    cur=n;
-    slides[cur].classList.add('active');
-    nav.children[cur].classList.add('on');
+    slides[cur].classList.remove('active');nav.children[cur].classList.remove('on');
+    cur=n;slides[cur].classList.add('active');nav.children[cur].classList.add('on');
   }
   function next(){go((cur+1)%slides.length);}
   timer=setInterval(next,5000);
-  document.getElementById('quoteStage').addEventListener('mouseenter',()=>clearInterval(timer));
-  document.getElementById('quoteStage').addEventListener('mouseleave',()=>{timer=setInterval(next,5000);});
+  const stage=document.getElementById('quoteStage');
+  if(stage){stage.addEventListener('mouseenter',()=>clearInterval(timer));stage.addEventListener('mouseleave',()=>{timer=setInterval(next,5000);});}
+})();
+
+// App inline ticker
+(function(){
+  const el=document.getElementById('appQuoteText');
+  if(!el)return;
+  let i=0;
+  el.textContent=QUOTES[0];
+  setInterval(()=>{
+    el.style.opacity='0';
+    setTimeout(()=>{i=(i+1)%QUOTES.length;el.textContent=QUOTES[i];el.style.opacity='1';},500);
+  },6000);
 })();
 </script>
 </body>
