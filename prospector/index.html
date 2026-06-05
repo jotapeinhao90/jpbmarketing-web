@@ -272,6 +272,30 @@ body{font-family:'Inter',system-ui,sans-serif;background:var(--bg);color:var(--t
 .btn-modal-save{width:100%;padding:14px;background:var(--gradient);border:none;border-radius:var(--radius-sm);color:#fff;font-size:14px;font-weight:700;cursor:pointer;font-family:inherit;transition:all .2s;}
 .btn-modal-save:hover{opacity:.9;}
 
+/* View toggle (Tabla / Mapa) */
+.view-toggle{display:flex;gap:4px;background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:3px;}
+.view-btn{padding:5px 14px;border:none;border-radius:6px;background:transparent;color:var(--muted);font-size:12px;font-weight:600;cursor:pointer;font-family:inherit;transition:all .2s;}
+.view-btn.active{background:var(--gradient);color:#fff;}
+
+/* Map */
+.map-legend{display:flex;flex-wrap:wrap;gap:10px;padding:12px 0 4px;font-size:11px;color:var(--muted);}
+.map-leg-item{display:flex;align-items:center;gap:5px;}
+.map-leg-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0;}
+.leaflet-popup-content-wrapper{background:var(--card-solid)!important;border:1px solid var(--border)!important;border-radius:10px!important;box-shadow:0 8px 30px rgba(0,0,0,.4)!important;color:var(--text)!important;}
+.leaflet-popup-tip{background:var(--card-solid)!important;}
+.leaflet-popup-content{margin:14px 16px!important;min-width:200px!important;}
+.map-popup-name{font-weight:700;font-size:13px;margin-bottom:4px;}
+.map-popup-meta{font-size:11px;color:var(--muted);margin-bottom:6px;}
+.map-popup-row{font-size:12px;margin-bottom:3px;}
+.map-popup-btn{margin-top:10px;padding:6px 12px;background:var(--gradient);border:none;border-radius:6px;color:#fff;font-size:12px;font-weight:600;cursor:pointer;font-family:inherit;width:100%;}
+
+/* Message generator */
+.msg-tabs{display:flex;gap:6px;margin-bottom:14px;}
+.msg-tab{padding:8px 18px;border:1px solid var(--border);border-radius:8px;background:transparent;color:var(--muted);font-size:13px;font-weight:600;cursor:pointer;font-family:inherit;transition:all .2s;}
+.msg-tab.active{background:var(--gradient);color:#fff;border-color:transparent;}
+.btn-msg{width:26px;height:26px;border:none;background:rgba(108,99,255,.15);border-radius:6px;color:var(--accent);cursor:pointer;font-size:13px;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:background .2s;}
+.btn-msg:hover{background:rgba(108,99,255,.3);}
+
 /* Rubros manager */
 .cat-pill-settings{background:transparent!important;border-color:rgba(108,99,255,.3)!important;color:var(--accent)!important;font-size:12px!important;}
 .cat-pill-settings:hover{background:rgba(108,99,255,.12)!important;}
@@ -754,6 +778,10 @@ tbody td a:hover{color:var(--accent);text-decoration:underline;}
     <div class="card" id="resultsCard" style="display:none;">
       <div class="table-toolbar">
         <div class="filter-wrap"><svg class="fw-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg><input type="text" class="filter-input" id="textFilter" placeholder="Buscar por nombre, dirección..." oninput="applyFilters()"></div>
+        <div class="view-toggle">
+          <button class="view-btn active" id="btnViewTable" onclick="showTableView()">📋 Tabla</button>
+          <button class="view-btn" id="btnViewMap" onclick="showMapView()">🗺️ Mapa</button>
+        </div>
         <div class="export-btns">
           <button class="btn-batch-email" id="btnBatchEmail" onclick="findAllEmails()">🔍 Buscar emails</button>
           <button class="btn-export csv" onclick="exportCSV()">CSV</button>
@@ -761,17 +789,23 @@ tbody td a:hover{color:var(--accent);text-decoration:underline;}
         </div>
       </div>
       <div class="result-count" id="resultCount"></div>
-      <div class="table-wrap">
-        <table><thead><tr>
-          <th style="width:36px;padding:8px 10px;"><input type="checkbox" class="row-check" id="selectAll" onchange="toggleSelectAll(this)" title="Seleccionar todos"></th>
-          <th style="width:32px;">#</th>
-          <th onclick="colSort('nombre')">Empresa <span class="sort-arrow">↕</span></th>
-          <th>Teléfono</th><th>Email</th><th>Sitio Web</th>
-          <th onclick="colSort('direccion')">Dirección <span class="sort-arrow">↕</span></th>
-          <th onclick="colSort('rating')">Rating <span class="sort-arrow">↕</span></th>
-          <th onclick="colSort('total_resenas')">Reseñas <span class="sort-arrow">↕</span></th>
-          <th>Estado</th><th>Datos</th><th>Horario</th>
-        </tr></thead><tbody id="tbody"></tbody></table>
+      <div id="tableView">
+        <div class="table-wrap">
+          <table><thead><tr>
+            <th style="width:36px;padding:8px 10px;"><input type="checkbox" class="row-check" id="selectAll" onchange="toggleSelectAll(this)" title="Seleccionar todos"></th>
+            <th style="width:32px;">#</th>
+            <th onclick="colSort('nombre')">Empresa <span class="sort-arrow">↕</span></th>
+            <th>Teléfono</th><th>Email</th><th>Sitio Web</th>
+            <th onclick="colSort('direccion')">Dirección <span class="sort-arrow">↕</span></th>
+            <th onclick="colSort('rating')">Rating <span class="sort-arrow">↕</span></th>
+            <th onclick="colSort('total_resenas')">Reseñas <span class="sort-arrow">↕</span></th>
+            <th>Estado</th><th>Datos</th><th>Horario</th><th></th>
+          </tr></thead><tbody id="tbody"></tbody></table>
+        </div>
+      </div>
+      <div id="mapView" style="display:none;">
+        <div id="mapContainer" style="height:520px;border-radius:var(--radius-sm);overflow:hidden;border:1px solid var(--border);"></div>
+        <div class="map-legend" id="mapLegend"></div>
       </div>
     </div>
 
@@ -870,6 +904,31 @@ tbody td a:hover{color:var(--accent);text-decoration:underline;}
       <div id="reError" style="font-size:12px;color:var(--danger);margin-bottom:8px;display:none;"></div>
       <button class="btn-modal-save" onclick="saveRubroEdit()">Guardar cambios</button>
     </div>
+  </div>
+</div>
+
+<!-- Message generator modal -->
+<div class="modal-overlay" id="msgModal" onclick="if(event.target===this)closeMsgModal()">
+  <div class="modal-box" style="width:600px;">
+    <button class="modal-close" onclick="closeMsgModal()">✕</button>
+    <div id="msgHeader" style="display:flex;align-items:center;gap:12px;margin-bottom:18px;padding-bottom:14px;border-bottom:1px solid var(--border);">
+      <div id="msgCompanyIcon" style="width:40px;height:40px;border-radius:10px;background:var(--gradient);display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;">🏢</div>
+      <div><div id="msgCompanyName" style="font-size:15px;font-weight:700;"></div><div id="msgCompanyMeta" style="font-size:12px;color:var(--muted);margin-top:2px;"></div></div>
+    </div>
+    <div class="msg-tabs">
+      <button class="msg-tab active" id="tabWA" onclick="switchMsgTab('wa')">📱 WhatsApp</button>
+      <button class="msg-tab" id="tabEmail" onclick="switchMsgTab('email')">📧 Email frío</button>
+    </div>
+    <div id="emailSubjectWrap" style="display:none;margin-bottom:8px;">
+      <div style="font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:1px;margin-bottom:4px;">Asunto</div>
+      <input class="modal-input" id="emailSubject" style="margin:0;" readonly>
+    </div>
+    <textarea id="msgText" style="width:100%;min-height:200px;background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-sm);color:var(--text);font-size:13px;font-family:'Inter',sans-serif;padding:14px;outline:none;resize:vertical;line-height:1.7;margin-bottom:12px;" onfocus="this.style.borderColor='var(--accent)'" onblur="this.style.borderColor='var(--border)'"></textarea>
+    <div style="display:flex;gap:10px;">
+      <button class="btn-modal-save" style="flex:1;" onclick="copyMsg()">📋 Copiar mensaje</button>
+      <button class="btn-modal-save" id="btnOpenWA" style="flex:1;background:linear-gradient(135deg,#25D366,#128C7E);" onclick="openWA()">📲 Abrir WhatsApp</button>
+    </div>
+    <div id="msgCopied" style="text-align:center;font-size:12px;color:var(--success);margin-top:8px;display:none;">✓ Copiado al portapapeles</div>
   </div>
 </div>
 
@@ -1231,7 +1290,7 @@ const QUERIES={
     "farmacia industrial en {c}","laboratorio clinico en {c}","empresa de biotecnologia en {c}"
   ]
 };
-const FM="places.id,places.displayName,places.formattedAddress,places.nationalPhoneNumber,places.internationalPhoneNumber,places.websiteUri,places.types,places.rating,places.userRatingCount,places.businessStatus,places.regularOpeningHours,places.googleMapsUri,nextPageToken";
+const FM="places.id,places.displayName,places.formattedAddress,places.nationalPhoneNumber,places.internationalPhoneNumber,places.websiteUri,places.types,places.rating,places.userRatingCount,places.businessStatus,places.regularOpeningHours,places.googleMapsUri,places.location,nextPageToken";
 
 // =============================================
 // RUBROS MANAGER
@@ -1381,7 +1440,7 @@ async function api(q,pt){const h={'Content-Type':'application/json','X-Goog-Api-
 function formatTypes(t){if(!t||!t.length)return'';const m={'restaurant':'Restaurante','store':'Tienda','establishment':'Empresa','general_contractor':'Contratista','industrial_area':'Zona industrial','moving_company':'Mudanzas','trucking_company':'Transporte','corporate_office':'Oficina corp.','consultant':'Consultora','accounting':'Contabilidad','software_company':'Software','construction_company':'Construcción','manufacturer':'Fabricante','pharmacy':'Farmacia','hospital':'Hospital'};return t.slice(0,3).map(x=>m[x]||x.replace(/_/g,' ')).join(', ');}
 function formatHours(h){if(!h||!h.weekdayDescriptions)return'';const d=new Date().getDay();return h.weekdayDescriptions[d===0?6:d-1]||'';}
 function formatStatus(s){return{'OPERATIONAL':'Operativa','CLOSED_TEMPORARILY':'Cerrada temp.','CLOSED_PERMANENTLY':'Cerrada'}[s]||s||'';}
-function proc(p){const id=p.id||'';if(!id||seen.has(id))return null;seen.add(id);return{id,nombre:(p.displayName||{}).text||'',email:'',direccion:p.formattedAddress||'',telefono:p.nationalPhoneNumber||p.internationalPhoneNumber||'',sitio_web:p.websiteUri||'',rating:p.rating||0,total_resenas:p.userRatingCount||0,tipos_raw:p.types||[],tipos:formatTypes(p.types),estado:p.businessStatus||'',estado_text:formatStatus(p.businessStatus),horario:formatHours(p.regularOpeningHours),tiene_horarios:!!(p.regularOpeningHours&&p.regularOpeningHours.weekdayDescriptions),google_maps:p.googleMapsUri||''};}
+function proc(p){const id=p.id||'';if(!id||seen.has(id))return null;seen.add(id);return{id,nombre:(p.displayName||{}).text||'',email:'',direccion:p.formattedAddress||'',telefono:p.nationalPhoneNumber||p.internationalPhoneNumber||'',sitio_web:p.websiteUri||'',rating:p.rating||0,total_resenas:p.userRatingCount||0,tipos_raw:p.types||[],tipos:formatTypes(p.types),estado:p.businessStatus||'',estado_text:formatStatus(p.businessStatus),horario:formatHours(p.regularOpeningHours),tiene_horarios:!!(p.regularOpeningHours&&p.regularOpeningHours.weekdayDescriptions),google_maps:p.googleMapsUri||'',lat:p.location?.latitude||null,lng:p.location?.longitude||null};}
 function dataQuality(r){let s=0;if(r.sitio_web)s++;if(r.telefono)s++;if(r.tiene_horarios)s++;if(r.rating>0)s++;if(r.total_resenas>0)s++;return s;}
 
 // Filters
@@ -1514,7 +1573,7 @@ function renderTable(){
     const mH=r.google_maps?'<a href="'+r.google_maps+'" target="_blank" class="maps-link">📍</a>':'';
     const eH=r.email?'<a href="mailto:'+r.email+'" style="font-size:11px;">'+r.email+'</a>':r.sitio_web?'<button class="btn-find-email" data-id="'+r.id+'" onclick="findEmail(\''+r.id+'\',this)">🔍 buscar</button>':'<span style="color:var(--dim)">—</span>';
     const chk=selectedIds.has(r.id)?'checked':'';
-    return '<tr><td style="padding:8px 10px;"><input type="checkbox" class="row-check" data-id="'+r.id+'" '+chk+' onchange="toggleSelect(\''+r.id+'\',this)"></td><td style="color:var(--dim)">'+(i+1)+'</td><td><div class="empresa-name">'+r.nombre+' '+mH+'</div><div class="empresa-types">'+r.tipos+'</div></td><td>'+(r.telefono||'<span style="color:var(--dim)">—</span>')+'</td><td>'+eH+'</td><td>'+w+'</td><td style="color:var(--muted);font-size:11px;max-width:200px;">'+r.direccion+'</td><td>'+rH+'</td><td style="color:var(--muted)">'+(r.total_resenas||'—')+'</td><td><span style="font-size:11px;'+sC+'">'+r.estado_text+'</span></td><td>'+dqH+'</td><td><span class="hours-text" title="'+r.horario+'">'+(r.horario||'<span style="color:var(--dim)">—</span>')+'</span></td></tr>';
+    return '<tr><td style="padding:8px 10px;"><input type="checkbox" class="row-check" data-id="'+r.id+'" '+chk+' onchange="toggleSelect(\''+r.id+'\',this)"></td><td style="color:var(--dim)">'+(i+1)+'</td><td><div class="empresa-name">'+r.nombre+' '+mH+'</div><div class="empresa-types">'+r.tipos+'</div></td><td>'+(r.telefono||'<span style="color:var(--dim)">—</span>')+'</td><td>'+eH+'</td><td>'+w+'</td><td style="color:var(--muted);font-size:11px;max-width:200px;">'+r.direccion+'</td><td>'+rH+'</td><td style="color:var(--muted)">'+(r.total_resenas||'—')+'</td><td><span style="font-size:11px;'+sC+'">'+r.estado_text+'</span></td><td>'+dqH+'</td><td><span class="hours-text" title="'+r.horario+'">'+(r.horario||'<span style="color:var(--dim)">—</span>')+'</span></td><td><button class="btn-msg" onclick="openMessageGen(\''+r.id+'\')" title="Generar mensaje de contacto">💬</button></td></tr>';
   });
   tb.innerHTML=rows.join('');
 }
@@ -1874,6 +1933,157 @@ async function findAllEmails(){
 
 function exportJSON(){const o={metadata:{ciudad:document.getElementById('city').value,fecha:new Date().toISOString().slice(0,10),total:filtered.length},empresas:filtered};const b=new Blob([JSON.stringify(o,null,2)],{type:'application/json'});const a=document.createElement('a');a.href=URL.createObjectURL(b);a.download='prospectos_'+new Date().toISOString().slice(0,10)+'.json';a.click();}
 function exportCSV(){let c='Nombre,Teléfono,Email,Sitio Web,Dirección,Rating,Reseñas,Estado,Horario,Tipos,Google Maps\n';filtered.forEach(r=>{c+=[r.nombre,r.telefono,r.email,r.sitio_web,r.direccion,r.rating,r.total_resenas,r.estado_text,r.horario,r.tipos,r.google_maps].map(v=>'"'+String(v).replace(/"/g,'""')+'"').join(',')+'\n';});const b=new Blob(['﻿'+c],{type:'text/csv;charset=utf-8'});const a=document.createElement('a');a.href=URL.createObjectURL(b);a.download='prospectos_'+new Date().toISOString().slice(0,10)+'.csv';a.click();}
+
+// =============================================
+// MAP VIEW
+// =============================================
+const INDUSTRY_COLORS={manufacturing:'#7c6cff',logistics:'#f59e0b',construction:'#f43f5e',technology:'#00d4ff',mining:'#10b981',energy:'#facc15',agro:'#84cc16',services:'#a78bfa',pharma:'#ec4899'};
+const INDUSTRY_NAMES={manufacturing:'Manufactura',logistics:'Logística',construction:'Construcción',technology:'Tecnología',mining:'Minería',energy:'Energía',agro:'Agroindustria',services:'Servicios',pharma:'Salud'};
+let _map=null;
+
+function getMarkerColor(r){
+  const cfg=getRubroConfig();
+  for(const [cat,colors] of Object.entries(INDUSTRY_COLORS)){
+    const catList=CAT_MAP[cat]||[];
+    if(r.tipos_raw.some(t=>catList.some(c=>t.toLowerCase().includes(c))))return colors;
+  }
+  const custom=(cfg.custom||[]).find(cr=>activeCats.has(cr.id));
+  return custom?'#6a6a8a':'#6a6a8a';
+}
+
+function showTableView(){
+  document.getElementById('mapView').style.display='none';
+  document.getElementById('tableView').style.display='block';
+  document.getElementById('btnViewTable').classList.add('active');
+  document.getElementById('btnViewMap').classList.remove('active');
+}
+
+function showMapView(){
+  document.getElementById('tableView').style.display='none';
+  document.getElementById('mapView').style.display='block';
+  document.getElementById('btnViewMap').classList.add('active');
+  document.getElementById('btnViewTable').classList.remove('active');
+  loadLeaflet(renderMap);
+}
+
+function loadLeaflet(cb){
+  if(window.L){cb();return;}
+  const link=document.createElement('link');link.rel='stylesheet';link.href='https://unpkg.com/leaflet@1.9.4/dist/leaflet.css';document.head.appendChild(link);
+  const s=document.createElement('script');s.src='https://unpkg.com/leaflet@1.9.4/dist/leaflet.js';s.onload=cb;document.head.appendChild(s);
+}
+
+function renderMap(){
+  const el=document.getElementById('mapContainer');if(!el)return;
+  if(_map){_map.remove();_map=null;}
+  const pts=filtered.filter(r=>r.lat&&r.lng);
+  if(pts.length===0){el.innerHTML='<div style="display:flex;align-items:center;justify-content:center;height:100%;color:var(--muted);font-size:14px;flex-direction:column;gap:8px;"><span style="font-size:32px;">📍</span><span>Sin coordenadas en los resultados actuales</span></div>';return;}
+  _map=L.map('mapContainer',{zoomControl:true});
+  L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png',{attribution:'© OpenStreetMap © CARTO',maxZoom:19}).addTo(_map);
+  const bounds=[];const usedCats=new Set();
+  pts.forEach(r=>{
+    const color=getMarkerColor(r);
+    const icon=L.divIcon({html:'<div style="width:14px;height:14px;border-radius:50%;background:'+color+';border:2px solid rgba(255,255,255,.9);box-shadow:0 2px 8px rgba(0,0,0,.6);"></div>',className:'',iconSize:[14,14],iconAnchor:[7,7],popupAnchor:[0,-10]});
+    const m=L.marker([r.lat,r.lng],{icon});
+    m.bindPopup(buildMapPopup(r),{maxWidth:270});
+    m.addTo(_map);bounds.push([r.lat,r.lng]);
+    Object.entries(INDUSTRY_COLORS).forEach(([cat,col])=>{const cl=CAT_MAP[cat]||[];if(r.tipos_raw.some(t=>cl.some(c=>t.toLowerCase().includes(c))))usedCats.add(cat);});
+  });
+  _map.fitBounds(bounds,{padding:[40,40],maxZoom:14});
+  // Legend
+  const legEl=document.getElementById('mapLegend');
+  let legHtml='<span style="font-size:11px;font-weight:600;color:var(--muted);margin-right:4px;">'+pts.length+' empresas en mapa</span>';
+  usedCats.forEach(cat=>{legHtml+='<span class="map-leg-item"><span class="map-leg-dot" style="background:'+INDUSTRY_COLORS[cat]+'"></span>'+INDUSTRY_NAMES[cat]+'</span>';});
+  legEl.innerHTML=legHtml;
+}
+
+function buildMapPopup(r){
+  const star=r.rating?'⭐ '+r.rating+(r.total_resenas?' ('+r.total_resenas+')':''):'';
+  const tel=r.telefono?'<div class="map-popup-row">📞 '+r.telefono+'</div>':'';
+  const web=r.sitio_web?'<div class="map-popup-row">🌐 <a href="'+r.sitio_web+'" target="_blank" style="color:#00d4ff;">'+r.sitio_web.replace(/^https?:\/\//,'').slice(0,28)+'</a></div>':'';
+  return '<div><div class="map-popup-name">'+r.nombre+'</div><div class="map-popup-meta">'+r.tipos+(star?' · '+star:'')+'</div>'+tel+web+'<button class="map-popup-btn" onclick="openMessageGen(\''+r.id+'\')">💬 Generar mensaje</button></div>';
+}
+
+// =============================================
+// MESSAGE GENERATOR
+// =============================================
+let _msgId=null,_msgTab='wa';
+
+function openMessageGen(id){
+  const r=allResults.find(x=>x.id===id);if(!r)return;
+  _msgId=id;_msgTab='wa';
+  document.getElementById('msgCompanyName').textContent=r.nombre;
+  document.getElementById('msgCompanyMeta').textContent=(r.tipos||'Empresa')+(r.rating?' · ⭐ '+r.rating:'')+(r.direccion?' · '+r.direccion.split(',')[0]:'');
+  switchMsgTab('wa');
+  document.getElementById('msgModal').classList.add('show');
+}
+function closeMsgModal(){document.getElementById('msgModal').classList.remove('show');}
+
+function switchMsgTab(tab){
+  _msgTab=tab;
+  document.getElementById('tabWA').classList.toggle('active',tab==='wa');
+  document.getElementById('tabEmail').classList.toggle('active',tab==='email');
+  document.getElementById('btnOpenWA').style.display=tab==='wa'?'block':'none';
+  document.getElementById('emailSubjectWrap').style.display=tab==='email'?'block':'none';
+  const r=allResults.find(x=>x.id===_msgId);if(!r)return;
+  if(tab==='wa'){
+    document.getElementById('msgText').value=getWATemplate(r);
+  }else{
+    document.getElementById('emailSubject').value='Propuesta de marketing B2B para '+r.nombre;
+    document.getElementById('msgText').value=getEmailTemplate(r);
+  }
+  document.getElementById('msgCopied').style.display='none';
+}
+
+function getCity(){return(document.getElementById('city')?.value||'').split(',')[0].trim();}
+
+function getWATemplate(r){
+  const city=getCity();
+  return `Hola! 👋
+
+Me comunico de parte de JPB Marketing.
+
+Investigando empresas de ${r.tipos||'tu rubro'} en ${city||'su ciudad'}, encontré a *${r.nombre}* y me gustaría presentarles nuestros servicios de marketing B2B industrial.
+
+Ayudamos a empresas como la suya a conseguir nuevos clientes de forma sistemática con prospección digital. 🎯
+
+¿Tienen 5 minutos esta semana para una llamada rápida? 🤝
+
+Saludos,
+JPB Marketing
+jpbmarketing.cl`;}
+
+function getEmailTemplate(r){
+  const city=getCity();
+  const ratingPhrase=r.rating>0?' con una valoración de '+r.rating+'⭐ en Google':'';
+  return `Estimado equipo de ${r.nombre},
+
+Me dirijo a ustedes porque son una empresa de ${r.tipos||'su rubro'} en ${city||'su ciudad'}${ratingPhrase}.
+
+En JPB Marketing nos especializamos en prospección digital y marketing B2B para empresas industriales en Chile. Ayudamos a empresas como la suya a encontrar nuevos clientes de forma sistemática, usando datos reales y estrategia.
+
+¿Estarían disponibles para una llamada de 15 minutos esta semana para contarles cómo podemos trabajar juntos?
+
+Quedo atento a su respuesta.
+
+Saludos cordiales,
+Juan Pablo Bayas
+JPB Marketing
+bayas.juanpablo1@gmail.com | jpbmarketing.cl`;}
+
+function copyMsg(){
+  const txt=document.getElementById('msgText').value;
+  navigator.clipboard.writeText(txt).then(()=>{
+    const el=document.getElementById('msgCopied');el.style.display='block';
+    setTimeout(()=>el.style.display='none',2500);
+  }).catch(()=>{document.getElementById('msgText').select();document.execCommand('copy');});
+}
+function openWA(){
+  const r=allResults.find(x=>x.id===_msgId);if(!r)return;
+  const txt=encodeURIComponent(document.getElementById('msgText').value);
+  const phone=(r.telefono||'').replace(/[\s+\-().]/g,'');
+  const url=phone?'https://wa.me/'+phone+'?text='+txt:'https://wa.me/?text='+txt;
+  window.open(url,'_blank');
+}
 
 // =============================================
 // QUOTE CAROUSEL (landing + app)
