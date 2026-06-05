@@ -54,6 +54,11 @@
     .pd-rel-name { font-size: 12.5px; font-weight: 700; color: var(--navy); margin-bottom: 3px; }
     .pd-rel-line { font-size: 11px; color: var(--text-3); }
 
+    .cp-qty-row { display: flex; align-items: center; gap: 10px; }
+    .cp-qty-btn { width: 32px; height: 32px; border: 1.5px solid var(--border); border-radius: var(--r); background: #fff; font-size: 18px; line-height: 1; display: flex; align-items: center; justify-content: center; cursor: pointer; font-family: 'Inter',sans-serif; transition: border-color .15s; user-select: none; }
+    .cp-qty-btn:hover { border-color: var(--navy); }
+    .cp-qty-input { width: 54px; height: 32px; border: 1.5px solid var(--border); border-radius: var(--r); text-align: center; font-size: 14px; font-weight: 700; font-family: 'Inter',sans-serif; color: var(--navy); outline: none; }
+    .cp-qty-input:focus { border-color: var(--orange); }
     @media (max-width: 860px) {
       .pd-wrap { grid-template-columns: 1fr; gap: 32px; padding: 28px 16px 60px; }
       .pd-right { position: static; }
@@ -242,6 +247,15 @@
         <div class="cp-card" data-pid="${id}" style="border:none;padding:0;background:transparent">
           <div class="pd-selector-title">Selecciona tu medida</div>
           ${typeRow}${classRow}${sizesPlaceholder}
+          <div class="cp-step">
+            <span class="cp-step-lbl">Cantidad</span>
+            <div class="cp-qty-row">
+              <button class="cp-qty-btn" onclick="const i=this.nextElementSibling;i.value=Math.max(1,+i.value-1)">−</button>
+              <input class="cp-qty-input" type="number" value="1" min="1" max="999" />
+              <button class="cp-qty-btn" onclick="const i=this.previousElementSibling;i.value=+i.value+1">+</button>
+              <span style="font-size:12px;color:var(--text-3);margin-left:4px">unidades</span>
+            </div>
+          </div>
           <div class="cp-action">
             <div class="cp-summary"></div>
             <button class="cp-add-btn" disabled>+ Agregar a cotización</button>

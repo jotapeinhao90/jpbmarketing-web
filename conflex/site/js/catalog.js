@@ -8,11 +8,12 @@ const CART_KEY = 'conflex_cart';
 function getCart()   { try { return JSON.parse(localStorage.getItem(CART_KEY)) || []; } catch { return []; } }
 function saveCart(c) { localStorage.setItem(CART_KEY, JSON.stringify(c)); }
 
-function addCartItem(item) {
+function addCartItem(item, qty) {
+  qty = Math.max(1, parseInt(qty) || 1);
   const c = getCart();
   const ex = c.find(i => i.id === item.id);
-  if (ex) ex.qty = (ex.qty || 1) + 1;
-  else     c.push({ ...item, qty: 1 });
+  if (ex) ex.qty = (ex.qty || 1) + qty;
+  else     c.push({ ...item, qty });
   saveCart(c);
   refreshFloat();
   renderCartPanel();
@@ -81,13 +82,7 @@ function openCartPanel()  { document.getElementById('quote-overlay')?.classList.
 function closeCartPanel() { document.getElementById('quote-overlay')?.classList.remove('open'); }
 
 function sendQuote() {
-  const c = getCart();
-  if (!c.length) return;
-  const lines = c.map(i =>
-    `• ${i.product}${i.variant ? ' ' + i.variant : ''}${i.clase ? ' Clase ' + i.clase : ''} — ${i.size} × ${i.qty} unid.`
-  );
-  const msg = 'Cotización solicitada:\n' + lines.join('\n');
-  window.location.href = 'contacto.html?msg=' + encodeURIComponent(msg);
+  window.location.href = 'cotizacion.html';
 }
 
 /* ---- Selector logic ---- */
@@ -192,8 +187,10 @@ function initSelectors(products, lineName) {
     if (addBtn) {
       addBtn.addEventListener('click', () => {
         if (!selSize || addBtn.disabled) return;
-        const id = [pid, selType, selClass, selSize].filter(Boolean).join('_').replace(/[^a-zA-Z0-9_]/g, '-');
-        addCartItem({ id, line: lineName, product: prod.title, variant: selType || '', clase: selClass || '', size: selSize });
+        const id  = [pid, selType, selClass, selSize].filter(Boolean).join('_').replace(/[^a-zA-Z0-9_]/g, '-');
+        const qtyEl = card.querySelector('.cp-qty-input');
+        const qty = qtyEl ? parseInt(qtyEl.value) || 1 : 1;
+        addCartItem({ id, line: lineName, product: prod.title, variant: selType || '', clase: selClass || '', size: selSize }, qty);
         addBtn.textContent = '✓ Agregado';
         addBtn.disabled = true;
         if (addedMsg) addedMsg.classList.add('show');
