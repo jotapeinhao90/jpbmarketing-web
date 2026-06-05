@@ -3,12 +3,20 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Contacto — Conflex</title>
-  <meta name="description" content="Solicita tu cotización de sistemas PVC. Conflex responde en menos de 48 horas hábiles con precios directos de distribuidor." />
+  <title>Cotización Tuberías PVC Chile | Contacto Conflex</title>
+  <meta name="description" content="Solicita cotización de tuberías PVC, acoples, conduit y accesorios. Conflex responde en 24–48 horas hábiles. Precio directo de fabricante. +569 4484 3503." />
+  <link rel="canonical" href="https://conflex.cl/contacto.html" />
+  <meta property="og:type" content="website" />
+  <meta property="og:site_name" content="Conflex" />
+  <meta property="og:title" content="Cotización Tuberías PVC Chile | Contacto Conflex" />
+  <meta property="og:description" content="Solicita cotización de tuberías PVC, acoples y accesorios. Conflex responde en 24–48 horas. +569 4484 3503." />
+  <meta property="og:url" content="https://conflex.cl/contacto.html" />
+  <meta property="og:image" content="https://conflex.cl/img/team-1.jpg" />
+  <meta name="twitter:card" content="summary_large_image" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Sora:wght@400;600;700;800&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="css/style.css" />
+  <link rel="stylesheet" href="css/style.css?v=3" />
 </head>
 <body>
 
@@ -72,13 +80,13 @@
             <h2>Hablemos de<br />tu proyecto</h2>
             <p class="body">Cotización detallada en menos de 48 horas hábiles.</p>
             <div class="c-links">
-              <a href="mailto:contacto@conflex.cl" class="c-link">
+              <a href="mailto:jpbayas@jpbmarketing.cl" class="c-link">
                 <svg viewBox="0 0 20 20" fill="none"><path d="M3 6l7 5 7-5M3 6a1 1 0 011-1h12a1 1 0 011 1v8a1 1 0 01-1 1H4a1 1 0 01-1-1V6z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
-                contacto@conflex.cl
+                jpbayas@jpbmarketing.cl
               </a>
-              <a href="tel:+56222345678" class="c-link">
+              <a href="tel:+56944843503" class="c-link">
                 <svg viewBox="0 0 20 20" fill="none"><path d="M2.5 4.5A1 1 0 013.5 3.5h3l1.5 3.5L6.5 9a11 11 0 004.5 4.5l2-2 3.5 1.5v3a1 1 0 01-1 1C7.5 17 2.5 12 2.5 4.5z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
-                +56 2 2234 5678
+                +569 4484 3503
               </a>
               <div class="c-link">
                 <svg viewBox="0 0 20 20" fill="none"><path d="M10 2C7.24 2 5 4.24 5 7c0 4 5 10 5 10s5-6 5-10c0-2.76-2.24-5-5-5zm0 6.5A1.5 1.5 0 1110 5a1.5 1.5 0 010 3.5z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
@@ -86,16 +94,19 @@
               </div>
             </div>
           </div>
-          <form class="c-form fade-right" id="cform" onsubmit="handleSubmit(event)">
+          <iframe name="cf_target" id="cf_target" style="display:none;" onload="cfIframeLoaded()"></iframe>
+          <form class="c-form fade-right" id="cform"
+            action="https://script.google.com/macros/s/AKfycbweW-i8lmp_ZwYUdlsIFqEWGWDYCZ4d4Qh3uVNp127Gt5GeYVjYvf8zzyKdvR6IOvqG/exec"
+            method="POST" target="cf_target" onsubmit="cfSubmit()">
             <div class="cf-row">
-              <div class="cf-f"><label>Nombre</label><input type="text" placeholder="Tu nombre" required /></div>
-              <div class="cf-f"><label>Empresa</label><input type="text" placeholder="Tu empresa" /></div>
+              <div class="cf-f"><label>Nombre</label><input type="text" name="nombre" placeholder="Tu nombre" required /></div>
+              <div class="cf-f"><label>Empresa</label><input type="text" name="empresa" placeholder="Tu empresa" /></div>
             </div>
-            <div class="cf-f"><label>Email</label><input type="email" placeholder="tu@empresa.cl" required /></div>
-            <div class="cf-f"><label>Teléfono</label><input type="tel" placeholder="+56 9 ..." /></div>
-            <div class="cf-f"><label>Mensaje</label><textarea rows="4" placeholder="¿Qué producto o sistema necesitas?" required></textarea></div>
+            <div class="cf-f"><label>Email</label><input type="email" name="email" placeholder="tu@empresa.cl" required /></div>
+            <div class="cf-f"><label>Teléfono</label><input type="tel" name="telefono" placeholder="+56 9 ..." /></div>
+            <div class="cf-f"><label>Mensaje</label><textarea name="mensaje" rows="4" placeholder="¿Qué producto o sistema necesitas?" required></textarea></div>
             <button type="submit" class="btn-primary full" id="submit-btn">Enviar solicitud</button>
-            <div id="form-ok" class="form-ok" style="display:none">✓ Mensaje recibido. Te contactamos pronto.</div>
+            <div id="form-ok" class="form-ok" style="display:none">✓ Mensaje recibido. Te contactamos en menos de 48 horas.</div>
           </form>
         </div>
       </div>
@@ -130,8 +141,8 @@
           </div>
           <div>
             <h4>Contacto</h4>
-            <a href="mailto:contacto@conflex.cl">contacto@conflex.cl</a>
-            <a href="tel:+56222345678">+56 2 2234 5678</a>
+            <a href="mailto:jpbayas@jpbmarketing.cl">jpbayas@jpbmarketing.cl</a>
+            <a href="tel:+56944843503">+569 4484 3503</a>
             <span>Región Metropolitana</span>
           </div>
         </div>
@@ -144,5 +155,24 @@
   </footer>
 
   <script src="js/main.js"></script>
+  <script>
+    (function() {
+      const p = new URLSearchParams(window.location.search).get('msg');
+      if (p) { const t = document.querySelector('textarea[name="mensaje"]'); if (t) t.value = decodeURIComponent(p); }
+    })();
+    var cfSent = false;
+    function cfSubmit() {
+      cfSent = true;
+      var btn = document.getElementById('submit-btn');
+      btn.textContent = 'Enviando...';
+      btn.disabled = true;
+    }
+    function cfIframeLoaded() {
+      if (!cfSent) return;
+      document.getElementById('cform').reset();
+      document.getElementById('submit-btn').style.display = 'none';
+      document.getElementById('form-ok').style.display = 'block';
+    }
+  </script>
 </body>
 </html>
