@@ -885,16 +885,108 @@ auth.onAuthStateChanged(async(user)=>{
 // SEARCH
 // =============================================
 const QUERIES={
-  general:["empresas industriales en {c}","plantas industriales en {c}","proveedores industriales en {c}"],
-  manufacturing:["empresas manufactureras en {c}","fabricas en {c}","industria metalurgica en {c}","industria alimentaria en {c}","industria textil en {c}","industria del plastico en {c}","industria quimica en {c}","industria de envases en {c}","ferreteria industrial en {c}","insumos industriales en {c}","maquinaria industrial en {c}","talleres industriales en {c}","empresas automotrices en {c}","repuestos industriales en {c}","empresas de packaging en {c}","empresas de embalaje en {c}"],
-  logistics:["distribuidoras en {c}","empresas de logistica en {c}","bodegas industriales en {c}","empresas de transporte de carga en {c}","importadoras en {c}","exportadoras en {c}","trading company en {c}"],
-  construction:["constructoras en {c}","empresas de ingenieria en {c}","empresas de construccion industrial en {c}","empresas de obras civiles en {c}"],
-  technology:["empresas de tecnologia en {c}","empresas de software en {c}","empresas de automatizacion industrial en {c}","empresas de telecomunicaciones en {c}"],
-  mining:["empresas mineras en {c}","proveedores mineros en {c}"],
-  energy:["empresas de energia en {c}","empresas de energia solar en {c}"],
-  agro:["agroindustria en {c}","empresas agricolas en {c}","procesadoras de alimentos en {c}"],
-  services:["consultoras en {c}","empresas de contabilidad en {c}","empresas de recursos humanos en {c}","empresas de seguridad industrial en {c}","empresas de limpieza industrial en {c}","imprentas en {c}"],
-  pharma:["laboratorios en {c}","empresas farmaceuticas en {c}","equipamiento medico en {c}"]
+  general:[
+    "empresas industriales en {c}","plantas industriales en {c}","proveedores industriales en {c}",
+    "industria en {c}","empresa industrial en {c}","fabrica en {c}",
+    "planta de produccion en {c}","proveedor industrial en {c}","industrias en {c}"
+  ],
+  manufacturing:[
+    // Metal y maquinaria
+    "empresas manufactureras en {c}","fabricas en {c}","industria metalurgica en {c}",
+    "metalmecanica en {c}","maestranza en {c}","matriceria en {c}",
+    "torneria en {c}","fundicion en {c}","torno cnc en {c}",
+    "soldadura industrial en {c}","corte laser en {c}","corte plasma en {c}",
+    "estructura metalica en {c}","aceros en {c}","acero inoxidable en {c}",
+    "aluminio industrial en {c}","fierros en {c}","tubos industriales en {c}",
+    // Equipos e insumos
+    "maquinaria industrial en {c}","equipos industriales en {c}","insumos industriales en {c}",
+    "compresores industriales en {c}","bombas industriales en {c}","valvulas industriales en {c}",
+    "filtros industriales en {c}","instrumentacion industrial en {c}","automatizacion industrial en {c}",
+    "motores industriales en {c}","reductores industriales en {c}","fajas transportadoras en {c}",
+    // Plasticos y caucho
+    "industria del plastico en {c}","plasticos industriales en {c}","inyeccion de plastico en {c}",
+    "caucho industrial en {c}","vulcanizado en {c}","mangueras industriales en {c}",
+    // Quimica y pintura
+    "industria quimica en {c}","pinturas industriales en {c}","recubrimientos industriales en {c}",
+    "lubricantes industriales en {c}","adhesivos industriales en {c}","solventes industriales en {c}",
+    // Envases y embalaje
+    "industria de envases en {c}","empresas de packaging en {c}","empresas de embalaje en {c}",
+    "cajas de carton en {c}","sacos industriales en {c}","bolsas industriales en {c}",
+    // Textil y madera
+    "industria textil en {c}","confeccion industrial en {c}","industria del mueble en {c}",
+    "carpinteria industrial en {c}","madera industrial en {c}","tapiceria industrial en {c}",
+    // Alimentaria
+    "industria alimentaria en {c}","planta de alimentos en {c}","procesadora de alimentos en {c}",
+    "conservas en {c}","planta envasadora en {c}","molinera en {c}",
+    // Automotriz y repuestos
+    "talleres industriales en {c}","repuestos industriales en {c}","empresas automotrices en {c}",
+    "taller mecanico industrial en {c}","repuestos mecanicos en {c}",
+    // Grafica
+    "imprentas en {c}","industria grafica en {c}","litografia en {c}",
+    // Ferreteria
+    "ferreteria industrial en {c}","distribuidor industrial en {c}","suministros industriales en {c}"
+  ],
+  logistics:[
+    "distribuidoras en {c}","empresas de logistica en {c}","bodegas industriales en {c}",
+    "empresas de transporte de carga en {c}","importadoras en {c}","exportadoras en {c}",
+    "trading company en {c}","operador logistico en {c}","almacenaje industrial en {c}",
+    "courier empresarial en {c}","agencia de aduana en {c}","freight en {c}",
+    "carga internacional en {c}","transporte de mercancias en {c}","distribucion industrial en {c}",
+    "flota de camiones en {c}","empresas de despacho en {c}","frigorifico en {c}",
+    "camara de frio en {c}","bodega frigorifica en {c}"
+  ],
+  construction:[
+    "constructoras en {c}","empresas de ingenieria en {c}","empresas de construccion industrial en {c}",
+    "empresas de obras civiles en {c}","empresa constructora en {c}","arquitectura en {c}",
+    "albanileria industrial en {c}","hormigon industrial en {c}","instalaciones industriales en {c}",
+    "proyecto de ingenieria en {c}","obras industriales en {c}","montaje industrial en {c}",
+    "estructuras industriales en {c}","pavimentacion industrial en {c}","techumbres industriales en {c}",
+    "aislamiento industrial en {c}","empresa de climatizacion en {c}","instalacion electrica industrial en {c}",
+    "gasfiteria industrial en {c}","empresa de demolicion en {c}"
+  ],
+  technology:[
+    "empresas de tecnologia en {c}","empresas de software en {c}","empresas de automatizacion industrial en {c}",
+    "empresas de telecomunicaciones en {c}","desarrollo de software en {c}","empresa informatica en {c}",
+    "integracion de sistemas en {c}","seguridad electronica en {c}","soluciones tecnologicas en {c}",
+    "hardware industrial en {c}","sistemas scada en {c}","plc industrial en {c}",
+    "redes industriales en {c}","empresa de ciberseguridad en {c}","consultora tecnologica en {c}",
+    "empresa de iot en {c}","inteligencia artificial empresas en {c}","erp empresas en {c}"
+  ],
+  mining:[
+    "empresas mineras en {c}","proveedores mineros en {c}","servicios mineros en {c}",
+    "equipos mineros en {c}","geologia en {c}","perforacion minera en {c}",
+    "ventilacion minera en {c}","explosivos industriales en {c}","transporte minero en {c}",
+    "procesamiento de minerales en {c}","laboratorio minero en {c}","consultora minera en {c}"
+  ],
+  energy:[
+    "empresas de energia en {c}","empresas de energia solar en {c}","panel solar en {c}",
+    "generador electrico en {c}","eficiencia energetica en {c}","iluminacion industrial en {c}",
+    "empresa electrica en {c}","energia renovable en {c}","instalacion electrica industrial en {c}",
+    "subestacion electrica en {c}","transformadores electricos en {c}","ups industrial en {c}"
+  ],
+  agro:[
+    "agroindustria en {c}","empresas agricolas en {c}","procesadoras de alimentos en {c}",
+    "semillas en {c}","viveros industriales en {c}","equipos agricolas en {c}",
+    "bodega vitivinicola en {c}","industria lactea en {c}","planta lechera en {c}",
+    "frigorifico de carnes en {c}","planta pesquera en {c}","exportadora agricola en {c}",
+    "empresa forestal en {c}","industria maderera en {c}","empresa acuicola en {c}",
+    "fertilizantes en {c}","pesticidas industriales en {c}","riego tecnificado en {c}"
+  ],
+  services:[
+    "consultoras en {c}","empresas de contabilidad en {c}","empresas de recursos humanos en {c}",
+    "empresas de seguridad industrial en {c}","empresas de limpieza industrial en {c}",
+    "asesoria de empresas en {c}","empresa de marketing en {c}","empresa de mantenimiento industrial en {c}",
+    "empresa de capacitacion en {c}","empresa de auditoria en {c}","abogados empresariales en {c}",
+    "notaria en {c}","empresa de seguros en {c}","empresa de factoring en {c}",
+    "empresa de leasing en {c}","corredora de seguros en {c}","servicios empresariales en {c}",
+    "oficina comercial en {c}","empresa de publicidad en {c}","agencia de comunicaciones en {c}"
+  ],
+  pharma:[
+    "laboratorios en {c}","empresas farmaceuticas en {c}","equipamiento medico en {c}",
+    "clinica en {c}","centro medico en {c}","distribuidor farmaceutico en {c}",
+    "productos veterinarios en {c}","equipos medicos en {c}","insumos medicos en {c}",
+    "farmacia industrial en {c}","laboratorio clinico en {c}","empresa de biotecnologia en {c}"
+  ]
 };
 const FM="places.id,places.displayName,places.formattedAddress,places.nationalPhoneNumber,places.internationalPhoneNumber,places.websiteUri,places.types,places.rating,places.userRatingCount,places.businessStatus,places.regularOpeningHours,places.googleMapsUri,nextPageToken";
 
