@@ -174,10 +174,13 @@ body{font-family:'Inter',system-ui,sans-serif;background:var(--bg);color:var(--t
 .reviews-btn{min-width:44px;width:auto;padding:0 12px;height:34px;border:1px solid var(--border);border-radius:8px;background:transparent;color:var(--muted);font-size:12px;font-weight:600;cursor:pointer;transition:all .2s;font-family:inherit;display:inline-flex;align-items:center;justify-content:center;}
 .reviews-btn:hover{border-color:var(--accent2);color:var(--accent2);}
 .reviews-btn.active{border-color:var(--accent2);color:var(--accent2);background:rgba(0,212,255,.08);}
-.limit-input{width:120px;padding:8px 12px;background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-sm);color:var(--text);font-size:14px;font-family:inherit;outline:none;transition:border-color .2s;}
-.limit-input:focus{border-color:var(--accent);box-shadow:0 0 0 3px var(--glow);}
-.limit-input:invalid,.limit-input.error{border-color:var(--danger);}
-.limit-input::-webkit-inner-spin-button,.limit-input::-webkit-outer-spin-button{opacity:.5;}
+.limit-slider-wrap{display:flex;flex-direction:column;gap:8px;max-width:500px;}
+.limit-slider{-webkit-appearance:none;appearance:none;width:100%;height:6px;border-radius:3px;background:var(--bg2);border:1px solid var(--border);outline:none;cursor:pointer;}
+.limit-slider::-webkit-slider-thumb{-webkit-appearance:none;appearance:none;width:20px;height:20px;border-radius:50%;background:var(--gradient);cursor:pointer;box-shadow:0 2px 8px rgba(108,99,255,.4);}
+.limit-slider::-moz-range-thumb{width:20px;height:20px;border-radius:50%;background:var(--gradient);cursor:pointer;border:none;box-shadow:0 2px 8px rgba(108,99,255,.4);}
+.limit-slider-info{display:flex;justify-content:space-between;align-items:center;}
+.limit-value-badge{background:var(--glow);border:1px solid rgba(108,99,255,.3);border-radius:20px;padding:4px 14px;font-size:13px;font-weight:700;color:var(--accent);}
+.limit-max-label{font-size:11px;font-weight:700;color:var(--accent);background:rgba(108,99,255,.12);padding:3px 10px;border-radius:12px;border:1px solid rgba(108,99,255,.25);}
 .filter-grid{display:grid;grid-template-columns:1fr 1fr;gap:0 24px;}
 .filter-divider{height:1px;background:var(--border);margin:12px 0 16px;}
 .filter-hint{font-size:9px;color:var(--dim);text-transform:none;letter-spacing:0;font-weight:400;margin-left:4px;}
@@ -187,14 +190,19 @@ body{font-family:'Inter',system-ui,sans-serif;background:var(--bg);color:var(--t
 @media(max-width:768px){.filter-grid{grid-template-columns:1fr;}}
 
 /* Progress */
-.progress-info{display:flex;justify-content:space-between;align-items:center;font-size:12px;color:var(--muted);margin-bottom:8px;}
-.progress-track{width:100%;height:4px;background:var(--bg);border-radius:2px;overflow:hidden;}
-.progress-fill{height:100%;background:var(--gradient);border-radius:2px;transition:width .4s ease-out;box-shadow:0 0 12px rgba(108,99,255,.4);}
+.progress-info{display:flex;justify-content:space-between;align-items:center;font-size:12px;color:var(--muted);}
 .search-controls{display:flex;gap:8px;align-items:center;}
 .btn-ctrl{padding:6px 16px;border-radius:8px;font-size:11px;font-weight:600;cursor:pointer;font-family:inherit;transition:all .2s;display:flex;align-items:center;gap:6px;border:1px solid;}
 .btn-pause{border-color:var(--warning);color:var(--warning);background:rgba(245,158,11,.08);}
 .btn-resume{border-color:var(--success);color:var(--success);background:rgba(16,185,129,.08);}
 .btn-stop{border-color:var(--danger);color:var(--danger);background:rgba(244,63,94,.08);}
+.searching-label{display:flex;align-items:center;gap:8px;font-size:13px;font-weight:600;color:var(--accent);}
+.search-dots span{display:inline-block;width:6px;height:6px;border-radius:50%;background:var(--accent);margin:0 2px;animation:dotBounce 1.2s infinite ease-in-out;}
+.search-dots span:nth-child(2){animation-delay:.2s;}
+.search-dots span:nth-child(3){animation-delay:.4s;}
+@keyframes dotBounce{0%,80%,100%{transform:scale(0);opacity:.3;}40%{transform:scale(1);opacity:1;}}
+.progress-count{font-size:22px;font-weight:900;color:var(--text);letter-spacing:-1px;background:var(--gradient);-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
+.progress-status{font-size:11px;color:var(--muted);margin-top:2px;}
 .blink{animation:blink 1s steps(1) infinite;}
 @keyframes blink{0%,100%{opacity:1;}50%{opacity:0;}}
 
@@ -541,10 +549,17 @@ tbody td a:hover{color:var(--accent);text-decoration:underline;}
         </div>
         <div class="filter-divider"></div>
         <div class="filter-section">
-          <div class="filter-label">Contactos a buscar <span class="filter-hint">(requerido · máx. 2.000)</span></div>
-          <div style="display:flex;align-items:center;gap:12px;">
-            <input type="number" class="limit-input" id="contactLimitInput" min="1" max="2000" value="500" required oninput="setContactLimitInput(this)" onfocus="this.style.borderColor='var(--accent)'" onblur="this.classList.remove('error');this.style.borderColor=''">
-            <span style="font-size:12px;color:var(--muted);">contactos por búsqueda</span>
+          <div class="filter-label" style="display:flex;justify-content:space-between;align-items:center;">
+            <span>Contactos a buscar</span>
+            <span class="limit-max-label">MÁX. 2.000</span>
+          </div>
+          <div class="limit-slider-wrap">
+            <input type="range" class="limit-slider" id="contactLimitInput" min="100" max="2000" step="100" value="500" oninput="setContactLimitInput(this)">
+            <div class="limit-slider-info">
+              <span style="font-size:11px;color:var(--dim);">100</span>
+              <div class="limit-value-badge"><span id="limitValueDisplay">500</span> contactos</div>
+              <span style="font-size:11px;color:var(--dim);">2.000</span>
+            </div>
           </div>
         </div>
         <div class="filter-divider"></div>
@@ -566,14 +581,19 @@ tbody td a:hover{color:var(--accent);text-decoration:underline;}
     <!-- Progress -->
     <div class="card" id="progressCard" style="display:none;">
       <div class="progress-info">
-        <span id="progressLabel">Iniciando...</span>
+        <div class="searching-label">
+          <div class="search-dots" id="searchDots"><span></span><span></span><span></span></div>
+          <span id="progressLabel">Buscando...</span>
+        </div>
         <div class="search-controls">
-          <span id="progressCount">0%</span>
+          <div style="text-align:right;">
+            <div class="progress-count" id="progressCount">0</div>
+            <div class="progress-status">empresas encontradas</div>
+          </div>
           <button class="btn-ctrl btn-pause" id="btnPause" onclick="pauseSearch()">⏸ Pausar</button>
           <button class="btn-ctrl btn-stop" id="btnStop" onclick="stopSearch()">⏹ Detener</button>
         </div>
       </div>
-      <div class="progress-track"><div class="progress-fill" id="progressBar" style="width:0%"></div></div>
       <div id="pauseStatus" style="margin-top:8px;display:none;"></div>
     </div>
 
@@ -905,8 +925,10 @@ function setMinReviews(v,el){
 }
 function setContactLimitInput(el){
   const v=parseInt(el.value);
-  if(!isNaN(v)&&v>=1&&v<=2000){contactLimit=v;el.classList.remove('error');}
-  else{el.classList.add('error');}
+  if(!isNaN(v)&&v>=100&&v<=2000){
+    contactLimit=v;
+    document.getElementById('limitValueDisplay').textContent=v.toLocaleString('es-CL');
+  }
 }
 function setSortPill(s,el){currentSort=s;document.querySelectorAll('.sort-pill').forEach(p=>p.classList.remove('active'));el.classList.add('active');applyFilters();}
 
@@ -973,7 +995,7 @@ function pauseSearch(){paused=true;document.getElementById('btnPause').style.dis
 function resumeSearch(){paused=false;document.getElementById('btnPause').style.display='flex';document.getElementById('pauseStatus').style.display='none';}
 function stopSearch(){stopped=true;paused=false;}
 
-const DISPLAY_LIMIT=500;
+const DISPLAY_LIMIT=2000;
 
 function updateStats(){
   const r=allResults;
@@ -1016,15 +1038,16 @@ async function startSearch(){
   const btn=document.getElementById('btnSearch');
   btn.disabled=true;btn.innerHTML='Buscando...';
   document.getElementById('progressCard').style.display='block';
+  document.getElementById('searchDots').style.display='flex';
+  document.getElementById('progressLabel').textContent='Buscando...';
+  document.getElementById('progressLabel').style.color='var(--accent)';
+  document.getElementById('progressCount').textContent='0';
   document.getElementById('btnPause').style.display='flex';
   document.getElementById('btnStop').style.display='inline-flex';
   document.getElementById('pauseStatus').style.display='none';
   document.getElementById('statsGrid').style.display='grid';
   document.getElementById('resultsCard').style.display='block';
-  const inputEl=document.getElementById('contactLimitInput');
-  const inputVal=parseInt(inputEl.value);
-  if(!inputEl.value||isNaN(inputVal)||inputVal<1||inputVal>2000){inputEl.classList.add('error');inputEl.focus();running=false;document.getElementById('btnSearch').disabled=false;document.getElementById('btnSearch').innerHTML='<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg> Buscar';return;}
-  contactLimit=inputVal;
+  contactLimit=parseInt(document.getElementById('contactLimitInput').value)||500;
   const effectiveLimit=isPremium?contactLimit:Math.min(contactLimit,FREE_LIMIT);
   // Build query list based on selected categories
   let rawQueries;
@@ -1039,10 +1062,7 @@ async function startSearch(){
   for(let i=0;i<qs.length;i++){
     if(stopped)break;while(paused&&!stopped){await new Promise(ok=>setTimeout(ok,200));}if(stopped)break;
     if(allResults.length>=effectiveLimit){stopped=true;break;}
-    const pct=Math.round(((i+1)/qs.length)*100);
-    document.getElementById('progressBar').style.width=pct+'%';
-    document.getElementById('progressLabel').textContent=qs[i].replace(' en '+city,'');
-    document.getElementById('progressCount').textContent=pct+'% — '+allResults.length+' empresas';
+    document.getElementById('progressCount').textContent=allResults.length;
     let d=await api(qs[i]);(d.places||[]).forEach(p=>{const r=proc(p);if(r)allResults.push(r);});
     let pg=1;while(d.nextPageToken&&pg<3&&!stopped){while(paused&&!stopped){await new Promise(ok=>setTimeout(ok,200));}if(stopped)break;if(allResults.length>=effectiveLimit){stopped=true;break;}pg++;await new Promise(ok=>setTimeout(ok,300));d=await api(qs[i],d.nextPageToken);(d.places||[]).forEach(p=>{const r=proc(p);if(r)allResults.push(r);});}
     updateStats();
@@ -1059,8 +1079,10 @@ async function startSearch(){
   filtered=[...allResults];
   renderTable();
   const hitLimit=!isPremium&&allResults.length>=FREE_LIMIT;
+  document.getElementById('searchDots').style.display='none';
   document.getElementById('progressLabel').textContent=hitLimit?'Límite gratuito alcanzado':stopped?'Búsqueda detenida':'Búsqueda completada';
-  document.getElementById('progressCount').textContent=allResults.length+' empresas';
+  document.getElementById('progressLabel').style.color=stopped?'var(--warning)':'var(--success)';
+  document.getElementById('progressCount').textContent=allResults.length;
   document.getElementById('btnPause').style.display='none';
   document.getElementById('btnStop').style.display='none';
   document.getElementById('pauseStatus').style.display='none';
