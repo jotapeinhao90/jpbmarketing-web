@@ -985,6 +985,18 @@ let userEmail='',userData=null,isPremium=false,fbUser=null;
 let allResults=[],filtered=[],seen=new Set(),running=false,paused=false,stopped=false;
 let activeCats=new Set(),activeDQ=new Set(),minRating=0,minReviews=0,contactLimit=500,currentSort='default';
 
+const BUILTIN_RUBROS=[
+  {id:'manufacturing',name:'Manufactura',emoji:'🏭'},
+  {id:'logistics',name:'Logística',emoji:'🚛'},
+  {id:'construction',name:'Construcción',emoji:'🏗️'},
+  {id:'technology',name:'Tecnología',emoji:'💻'},
+  {id:'mining',name:'Minería',emoji:'⛏️'},
+  {id:'energy',name:'Energía',emoji:'⚡'},
+  {id:'agro',name:'Agroindustria',emoji:'🌾'},
+  {id:'services',name:'Servicios',emoji:'📊'},
+  {id:'pharma',name:'Salud',emoji:'💊'},
+];
+
 const CAT_MAP={
   manufacturing:['manufacturer','factory','industrial_area','machine_shop','steel_distributor','warehouse'],
   logistics:['moving_company','storage','trucking_company','freight_forwarding_agency','shipping_company'],
@@ -1295,18 +1307,6 @@ const FM="places.id,places.displayName,places.formattedAddress,places.nationalPh
 // =============================================
 // RUBROS MANAGER
 // =============================================
-const BUILTIN_RUBROS=[
-  {id:'manufacturing',name:'Manufactura',emoji:'🏭'},
-  {id:'logistics',name:'Logística',emoji:'🚛'},
-  {id:'construction',name:'Construcción',emoji:'🏗️'},
-  {id:'technology',name:'Tecnología',emoji:'💻'},
-  {id:'mining',name:'Minería',emoji:'⛏️'},
-  {id:'energy',name:'Energía',emoji:'⚡'},
-  {id:'agro',name:'Agroindustria',emoji:'🌾'},
-  {id:'services',name:'Servicios',emoji:'📊'},
-  {id:'pharma',name:'Salud',emoji:'💊'},
-];
-
 function getRubroConfig(){try{return JSON.parse(localStorage.getItem('jpb_rubros_'+(userEmail||'')))||{hidden:[],custom:[],customQueries:{}};}catch(e){return{hidden:[],custom:[],customQueries:{}};}}
 function saveRubroConfig(cfg){localStorage.setItem('jpb_rubros_'+(userEmail||''),JSON.stringify(cfg));}
 
