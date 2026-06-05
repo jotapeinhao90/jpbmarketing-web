@@ -3,6 +3,14 @@ cine-hoyts/
 polimer-etp/
 polimer-etp-cl/
 polymer-cl/
-*.docx
+Empresa\ ricardo/
+Fierros\ Idini/
+The\ kem\ barbershop/
+Video\ de\ prueba*/
+conflex/
+plastiservi/
+jpbmarketing/documentos/
+*.pdf
+*.pptx
 *.py
 node_modules/
