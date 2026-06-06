@@ -503,19 +503,8 @@ tbody td a:hover{color:var(--accent);text-decoration:underline;}
 .map-sec-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;}
 .map-sec-title{font-size:16px;font-weight:700;}
 
-/* Pipeline CRM */
-.pipeline-board{display:grid;grid-template-columns:repeat(6,1fr);gap:12px;margin-bottom:48px;}
-.pipeline-col{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-sm);overflow:hidden;}
-.pipeline-col-header{padding:10px 12px;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;border-bottom:1px solid var(--border);}
-.pipeline-col-body{padding:8px;display:flex;flex-direction:column;gap:6px;min-height:120px;}
-.pipeline-card{background:var(--card);border:1px solid var(--border);border-radius:8px;padding:10px;cursor:pointer;transition:border-color .2s;font-size:11px;}
-.pipeline-card:hover{border-color:var(--accent);}
-.pipeline-card-name{font-weight:600;color:var(--text);margin-bottom:3px;font-size:12px;}
-.pipeline-card-meta{color:var(--dim);font-size:10px;}
-.crm-status-btn{font-size:10px;padding:2px 8px;border-radius:10px;border:1px solid var(--border);background:transparent;cursor:pointer;font-family:inherit;color:var(--muted);transition:all .2s;white-space:nowrap;}
-.crm-status-btn:hover{border-color:var(--accent);color:var(--accent);}
-@media(max-width:900px){.pipeline-board{grid-template-columns:repeat(3,1fr);}intel-grid{grid-template-columns:repeat(2,1fr);}}
-@media(max-width:600px){.pipeline-board{grid-template-columns:repeat(2,1fr);}.intel-grid{grid-template-columns:1fr;}}
+@media(max-width:900px){.intel-grid{grid-template-columns:repeat(2,1fr);}}
+@media(max-width:600px){.intel-grid{grid-template-columns:1fr;}}
 </style>
 </head>
 <body>
@@ -920,15 +909,6 @@ tbody td a:hover{color:var(--accent);text-decoration:underline;}
       </div>
     </div>
 
-    <!-- Pipeline CRM -->
-    <div id="pipelineSection" style="display:none;">
-      <div class="lists-header" style="margin-top:32px;">
-        <div class="lists-title">📈 <span>Pipeline</span> de ventas</div>
-        <span style="font-size:12px;color:var(--muted);" id="pipelineCount"></span>
-      </div>
-      <div class="pipeline-board" id="pipelineBoard"></div>
-    </div>
-
     <!-- Lists section -->
     <div class="lists-section" id="listsSection">
       <div class="lists-header">
@@ -1271,7 +1251,6 @@ function showApp(){
   updateUsageUI();
   renderLists();
   renderCatGrid();
-  renderPipeline();
   renderProfilePreview();
 }
 
@@ -1938,7 +1917,7 @@ function saveToNewList(){
   const selected=allResults.filter(r=>selectedIds.has(r.id));
   const lists=getLists();
   lists.unshift({id:Date.now().toString(),name,createdAt:new Date().toISOString(),contacts:selected});
-  persistLists(lists);closeSaveModal();clearSelection();renderLists();renderPipeline();
+  persistLists(lists);closeSaveModal();clearSelection();renderLists();
   document.getElementById('listsSection').scrollIntoView({behavior:'smooth',block:'start'});
 }
 function saveToExistingList(listId){
@@ -1949,19 +1928,19 @@ function saveToExistingList(listId){
   const existing=new Set(list.contacts.map(c=>c.id));
   list.contacts.push(...selected.filter(c=>!existing.has(c.id)));
   list.updatedAt=new Date().toISOString();
-  persistLists(lists);closeSaveModal();clearSelection();renderLists();renderPipeline();
+  persistLists(lists);closeSaveModal();clearSelection();renderLists();
   document.getElementById('listsSection').scrollIntoView({behavior:'smooth',block:'start'});
 }
 
 function deleteList(listId){
   if(!confirm('¿Eliminar esta lista permanentemente?'))return;
-  persistLists(getLists().filter(l=>l.id!==listId));renderLists();renderPipeline();
+  persistLists(getLists().filter(l=>l.id!==listId));renderLists();
 }
 function deleteFromList(listId,contactId){
   const lists=getLists();const list=lists.find(l=>l.id===listId);
   if(!list)return;
   list.contacts=list.contacts.filter(c=>c.id!==contactId);
-  persistLists(lists);renderLists();renderPipeline();
+  persistLists(lists);renderLists();
 }
 function toggleListBody(listId){document.getElementById('lb_'+listId).classList.toggle('open');}
 
@@ -2058,7 +2037,7 @@ function doMergeLists(){
   lists.unshift({id:Date.now().toString(),name,createdAt:new Date().toISOString(),contacts:[...merged.values()]});
   persistLists(lists);
   closeMergeModal();
-  renderLists();renderPipeline();
+  renderLists();
   document.getElementById('listsSection').scrollIntoView({behavior:'smooth',block:'start'});
 }
 
@@ -2066,7 +2045,7 @@ function doMergeLists(){
 // EMAIL ENGINE
 // =============================================
 const EMAIL_REGEX=/[a-zA-Z0-9._%+\-]+@[a-zA-Z0-9.\-]+\.[a-zA-Z]{2,6}/g;
-const EMAIL_BLACKLIST=['sentry.io','wixpress','example','wordpress','schema','jquery','png','jpg','gif','svg','woff','otf','ttf','facebook','instagram','twitter','linkedin','youtube','tiktok','google','microsoft','apple','noreply','no-reply','support','abuse','spam','hostmaster','postmaster','mailer','bounce','donotreply','do-not-reply','unsubscribe','privacy','legal','gdpr'];
+const EMAIL_BLACKLIST=['sentry.io','wixpress','example','wordpress','schema','jquery','png','jpg','gif','svg','woff','otf','ttf','facebook','instagram','twitter','linkedin','youtube','tiktok','google','microsoft','apple','noreply','no-reply','support','abuse','spam','hostmaster','postmaster','mailer','bounce','donotreply','do-not-reply','unsubscribe','privacy','legal','gdpr','duckduckgo','duck.com','anonaddy','simplelogin','guerrillamail','tempmail','sharklasers','guerrillamailblock','grr.la','spam4','trashmail','mailnull','spamgourmet'];
 
 // Deobfuscate common anti-scraping patterns used on Chilean business sites
 function deobfuscate(html){
@@ -2097,48 +2076,37 @@ function extractEmails(html,domain){
 }
 
 // Race all 3 proxies — fastest one wins
-async function fetchHtml(url,ms=6000){
+// Race 4 CORS proxies simultaneously — fastest wins
+async function fetchHtml(url,ms=5000){
   const t=new Promise(r=>setTimeout(()=>r(null),ms));
-  const p1=fetch('https://corsproxy.io/?url='+encodeURIComponent(url)).then(r=>r.ok?r.text():Promise.reject()).catch(()=>null);
-  const p2=fetch('https://api.allorigins.win/get?url='+encodeURIComponent(url)).then(r=>r.ok?r.json().then(d=>d.contents||Promise.reject()):Promise.reject()).catch(()=>null);
-  const p3=fetch('https://api.codetabs.com/v1/proxy?quest='+encodeURIComponent(url)).then(r=>r.ok?r.text():Promise.reject()).catch(()=>null);
-  return(await Promise.race([Promise.any([p1,p2,p3]).catch(()=>null),t]))||null;
+  const enc=encodeURIComponent(url);
+  const p1=fetch('https://corsproxy.io/?url='+enc).then(r=>r.ok?r.text():Promise.reject()).catch(()=>null);
+  const p2=fetch('https://api.allorigins.win/get?url='+enc).then(r=>r.ok?r.json().then(d=>d.contents||Promise.reject()):Promise.reject()).catch(()=>null);
+  const p3=fetch('https://api.codetabs.com/v1/proxy?quest='+enc).then(r=>r.ok?r.text():Promise.reject()).catch(()=>null);
+  const p4=fetch('https://thingproxy.freeboard.io/fetch/'+url).then(r=>r.ok?r.text():Promise.reject()).catch(()=>null);
+  return(await Promise.race([Promise.any([p1,p2,p3,p4]).catch(()=>null),t]))||null;
 }
 
-// Search DuckDuckGo for emails associated with a domain
-// DDG has indexed these sites and often has emails in snippets even when the site is Cloudflare-protected
-async function duckduckgoSearch(domain){
-  try{
-    const q=encodeURIComponent('"@'+domain+'"');
-    const html=await fetchHtml('https://html.duckduckgo.com/html/?q='+q,7000);
+// Fetch all contact page candidates in parallel, return first with email
+async function findEmailForDomain(domain,base,homeUrl){
+  const slugs=['/contacto','/contactenos','/contact','/contacto.html'];
+  const urls=[...slugs.map(s=>base+s),homeUrl];
+  // Fire all page fetches simultaneously
+  const fetches=urls.map(async url=>{
+    const html=await fetchHtml(url,5000);
     if(!html)return null;
     const emails=extractEmails(html,domain);
     return emails.length?emails[0]:null;
-  }catch(e){return null;}
-}
-
-async function findEmailForDomain(domain,base,homeUrl){
-  // Run DDG search + direct scraping in parallel — first non-null wins
-  const directScrape=(async()=>{
-    for(const url of [base+'/contacto',homeUrl]){
-      const html=await fetchHtml(url,6000);
-      if(!html)continue;
-      const emails=extractEmails(html,domain);
-      if(emails.length)return emails[0];
-    }
-    return null;
-  })();
-  const ddg=duckduckgoSearch(domain);
-  // Take whichever gives a result first
-  const result=await Promise.race([
-    directScrape.then(r=>r?r:new Promise(()=>{})),
-    ddg.then(r=>r?r:new Promise(()=>{})),
-    new Promise(r=>setTimeout(()=>r(null),12000))
-  ]);
-  if(result)return result;
-  // Last resort: wait for both
-  const [a,b]=await Promise.all([directScrape,ddg]);
-  return a||b||null;
+  });
+  // Return first non-null result
+  return new Promise(resolve=>{
+    let done=0;
+    fetches.forEach(p=>p.then(result=>{
+      if(result)resolve(result);
+      if(++done===fetches.length)resolve(null);
+    }).catch(()=>{if(++done===fetches.length)resolve(null);}));
+    setTimeout(()=>resolve(null),8000);
+  });
 }
 
 async function findEmail(id,btn){
@@ -2340,75 +2308,6 @@ function renderMarketIntel(){
     </div>`;
 }
 
-// =============================================
-// PIPELINE CRM
-// =============================================
-const CRM_STAGES=[
-  {id:'nuevo',label:'Nuevo',color:'#6a6a8a'},
-  {id:'contactado',label:'Contactado',color:'#7c6cff'},
-  {id:'interesado',label:'Interesado',color:'#00d4ff'},
-  {id:'propuesta',label:'Propuesta',color:'#f59e0b'},
-  {id:'ganado',label:'🏆 Ganado',color:'#10b981'},
-  {id:'perdido',label:'Perdido',color:'#f43f5e'}
-];
-
-function getCRMData(){try{return JSON.parse(localStorage.getItem('jpb_crm_'+userEmail)||'{}');}catch(e){return {};}}
-function saveCRMData(d){localStorage.setItem('jpb_crm_'+userEmail,JSON.stringify(d));}
-
-function setCRMStatus(contactId,status){
-  const d=getCRMData();
-  d[contactId]=status;
-  saveCRMData(d);
-  renderPipeline();
-}
-
-function renderPipeline(){
-  if(!userEmail)return;
-  const lists=getLists();
-  if(lists.length===0)return;
-  const allContacts=[];
-  const seen=new Set();
-  lists.forEach(l=>l.contacts.forEach(c=>{if(!seen.has(c.id)){seen.add(c.id);allContacts.push(c);}}));
-  if(allContacts.length===0)return;
-
-  const crm=getCRMData();
-  const pipelineSec=document.getElementById('pipelineSection');
-  const board=document.getElementById('pipelineBoard');
-  const countEl=document.getElementById('pipelineCount');
-  if(!pipelineSec||!board)return;
-  pipelineSec.style.display='block';
-  if(countEl)countEl.textContent=allContacts.length+' contacto'+(allContacts.length!==1?'s':'');
-
-  const byStage={};
-  CRM_STAGES.forEach(s=>{byStage[s.id]=[];});
-  allContacts.forEach(c=>{
-    const st=crm[c.id]||'nuevo';
-    if(!byStage[st])byStage['nuevo']=byStage['nuevo']||[];
-    (byStage[st]||byStage['nuevo']).push(c);
-  });
-
-  board.innerHTML=CRM_STAGES.map(stage=>`
-    <div class="pipeline-col">
-      <div class="pipeline-col-header" style="color:${stage.color};">${stage.label} <span style="color:var(--dim);font-weight:400;">(${(byStage[stage.id]||[]).length})</span></div>
-      <div class="pipeline-col-body">
-        ${(byStage[stage.id]||[]).map(c=>`
-          <div class="pipeline-card" onclick="cycleStage('${c.id}')">
-            <div class="pipeline-card-name">${c.nombre}</div>
-            <div class="pipeline-card-meta">${c.tipos||''}</div>
-            ${c.telefono?'<div class="pipeline-card-meta">📞 '+c.telefono+'</div>':''}
-          </div>`).join('')}
-        ${(byStage[stage.id]||[]).length===0?'<div style="color:var(--dim);font-size:10px;padding:4px;">Vacío</div>':''}
-      </div>
-    </div>`).join('');
-}
-
-function cycleStage(contactId){
-  const crm=getCRMData();
-  const cur=crm[contactId]||'nuevo';
-  const idx=CRM_STAGES.findIndex(s=>s.id===cur);
-  const next=CRM_STAGES[(idx+1)%CRM_STAGES.length].id;
-  setCRMStatus(contactId,next);
-}
 
 // =============================================
 // SENDER PROFILE
