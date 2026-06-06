@@ -978,6 +978,8 @@ table { border-collapse: collapse; width: 100%; }
   align-items: center;
   justify-content: center;
   padding: 20px;
+  background: rgba(15, 23, 42, 0.55);
+  backdrop-filter: blur(2px);
 }
 .modal-overlay.open { display: flex; }
 .modal {
@@ -1487,4 +1489,323 @@ table { border-collapse: collapse; width: 100%; }
 
 @media (max-width: 768px) {
   .video-grid { grid-template-columns: 1fr; }
+}
+
+/* ── Pipeline CRM ──────────────────────────────────── */
+.pipeline-board {
+  display: flex;
+  gap: 14px;
+  overflow-x: auto;
+  padding-bottom: 16px;
+  align-items: flex-start;
+}
+.pipeline-col {
+  flex: 0 0 220px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  display: flex;
+  flex-direction: column;
+  max-height: calc(100vh - 220px);
+}
+.pipeline-col-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 14px 10px;
+  border-bottom: 1px solid var(--border);
+  position: sticky;
+  top: 0;
+  background: var(--surface);
+  border-radius: var(--radius) var(--radius) 0 0;
+}
+.pipeline-col-title {
+  font-size: .8rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: .04em;
+  color: var(--heading);
+  border-radius: 3px;
+  padding: 1px 3px;
+  cursor: text;
+  outline: none;
+  min-width: 20px;
+}
+.pipeline-col-title:hover {
+  background: var(--hover-bg, rgba(0,0,0,.06));
+}
+.pipeline-col-title:focus {
+  background: var(--card-bg);
+  box-shadow: 0 0 0 2px var(--primary);
+  text-transform: none;
+}
+.pipeline-col-badge {
+  background: var(--primary);
+  color: #fff;
+  border-radius: 20px;
+  font-size: .7rem;
+  font-weight: 700;
+  padding: 2px 8px;
+  min-width: 22px;
+  text-align: center;
+}
+.pipeline-col-body {
+  padding: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  overflow-y: auto;
+  flex: 1;
+}
+.pl-card {
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 10px 12px;
+  font-size: .82rem;
+}
+.pl-card-price {
+  font-size: .92rem;
+  font-weight: 800;
+  color: #16a34a;
+  letter-spacing: -.3px;
+  margin-bottom: 4px;
+}
+.pl-card-price-label {
+  font-size: .68rem;
+  font-weight: 500;
+  color: var(--light);
+  margin-left: 2px;
+}
+.pl-card-name {
+  font-weight: 700;
+  color: var(--heading);
+  margin-bottom: 2px;
+}
+.pl-card-company {
+  font-size: .78rem;
+  color: var(--primary);
+  margin-bottom: 4px;
+}
+.pl-card-product {
+  font-size: .78rem;
+  color: var(--body);
+  margin-bottom: 6px;
+  line-height: 1.4;
+}
+.pl-card-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 10px;
+  font-size: .75rem;
+  color: var(--light);
+  margin-bottom: 6px;
+}
+.pl-card-notes {
+  font-size: .75rem;
+  color: var(--light);
+  font-style: italic;
+  border-top: 1px solid var(--border);
+  padding-top: 6px;
+  margin-top: 4px;
+  line-height: 1.4;
+}
+.pl-card-actions {
+  display: flex;
+  gap: 4px;
+  margin-top: 8px;
+  flex-wrap: wrap;
+}
+
+@media (max-width: 900px) {
+  .pipeline-col { flex: 0 0 180px; }
+}
+
+/* ── Modal Cotización ── */
+.cotiz-modal-box {
+  position: relative;
+  width: min(720px, 96vw);
+  max-width: min(720px, 96vw) !important;
+  max-height: 88vh;
+  overflow-y: auto;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  animation: modalIn .2s ease;
+}
+.cotiz-doc {
+  padding: 36px 40px 24px;
+  flex: 1;
+}
+.cotiz-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  padding-bottom: 20px;
+  border-bottom: 2px solid var(--heading);
+  margin-bottom: 28px;
+}
+.cotiz-brand-name {
+  font-size: 1.35rem;
+  font-weight: 800;
+  letter-spacing: -.5px;
+  color: var(--heading);
+}
+.cotiz-brand-sub {
+  font-size: .72rem;
+  color: var(--muted);
+  margin-top: 3px;
+  text-transform: uppercase;
+  letter-spacing: .06em;
+}
+.cotiz-meta { text-align: right; }
+.cotiz-num {
+  font-size: .8rem;
+  font-weight: 700;
+  color: var(--heading);
+  font-family: monospace;
+}
+.cotiz-date {
+  font-size: .75rem;
+  color: var(--muted);
+  margin-top: 2px;
+}
+.cotiz-stage-badge {
+  display: inline-block;
+  margin-top: 8px;
+  background: var(--primary);
+  color: #fff;
+  border-radius: 4px;
+  padding: 3px 10px;
+  font-size: .68rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: .06em;
+}
+.cotiz-section { margin-bottom: 24px; }
+.cotiz-section-title {
+  font-size: .68rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: .08em;
+  color: var(--muted);
+  border-bottom: 1px solid var(--border);
+  padding-bottom: 5px;
+  margin-bottom: 14px;
+}
+.cotiz-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px 20px;
+}
+.cotiz-field { display: flex; flex-direction: column; }
+.cotiz-label {
+  font-size: .68rem;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: .05em;
+}
+.cotiz-val {
+  font-size: .9rem;
+  font-weight: 500;
+  color: var(--heading);
+  margin-top: 2px;
+}
+.cotiz-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: .88rem;
+}
+.cotiz-table th {
+  background: var(--hover-bg, rgba(0,0,0,.04));
+  padding: 8px 14px;
+  text-align: left;
+  font-size: .68rem;
+  text-transform: uppercase;
+  letter-spacing: .05em;
+  color: var(--muted);
+  border: 1px solid var(--border);
+}
+.cotiz-table td {
+  padding: 11px 14px;
+  border: 1px solid var(--border);
+  vertical-align: top;
+  color: var(--text);
+}
+.cotiz-notes-body {
+  background: var(--hover-bg, rgba(0,0,0,.03));
+  border-radius: 6px;
+  padding: 14px;
+  font-size: .85rem;
+  color: var(--text);
+  line-height: 1.65;
+  border: 1px solid var(--border);
+}
+.cotiz-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px 40px;
+  border-top: 1px solid var(--border);
+  font-size: .78rem;
+  color: var(--muted);
+  background: var(--hover-bg, rgba(0,0,0,.02));
+}
+.cotiz-footer-brand { font-weight: 700; color: var(--heading); }
+.cotiz-actions {
+  display: flex;
+  gap: 10px;
+  padding: 14px 40px;
+  border-top: 1px solid var(--border);
+}
+.cotiz-btn { color: var(--primary) !important; }
+.cotiz-btn:hover { background: color-mix(in srgb, var(--primary) 10%, transparent) !important; }
+@media print {
+  .cotiz-actions, #cotizModalClose { display: none; }
+}
+
+/* ── Columna Compra Oficial ── */
+.pipeline-col--oficial .pipeline-col-header {
+  background: linear-gradient(135deg, #1e3a5f 0%, #2563eb 100%);
+}
+.pipeline-col--oficial .pipeline-col-title {
+  color: #fff;
+}
+.pipeline-col--oficial .pipeline-col-title:hover {
+  background: rgba(255,255,255,.12);
+}
+.pipeline-col--oficial .pipeline-col-title:focus {
+  background: rgba(255,255,255,.18);
+  box-shadow: 0 0 0 2px rgba(255,255,255,.5);
+  color: #fff;
+}
+.pipeline-col--oficial .pipeline-col-badge {
+  background: rgba(255,255,255,.25);
+  color: #fff;
+}
+
+/* ── Column total strip ── */
+.pipeline-col-total {
+  font-size: .73rem;
+  font-weight: 700;
+  color: #16a34a;
+  background: color-mix(in srgb, #16a34a 8%, transparent);
+  border-bottom: 1px solid color-mix(in srgb, #16a34a 20%, transparent);
+  padding: 3px 12px;
+  letter-spacing: .01em;
+  display: none;
+}
+.pipeline-col--oficial .pipeline-col-total {
+  color: #86efac;
+  background: rgba(255,255,255,.08);
+  border-bottom-color: rgba(255,255,255,.15);
+}
+
+/* ── Column drag-and-drop ── */
+.pipeline-col.col-dragging {
+  opacity: .45;
+}
+.pipeline-col.col-drag-over {
+  box-shadow: inset 0 0 0 2px var(--primary);
+  border-radius: var(--radius);
 }
