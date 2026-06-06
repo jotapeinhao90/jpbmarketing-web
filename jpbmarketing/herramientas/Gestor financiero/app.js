@@ -1380,20 +1380,27 @@ function savePLColors(c) { save('gestipyme_pl_colors', c); }
 function applyColColors() {
   const colors = getPLColors();
   PL_STAGES.forEach(stage => {
-    const header = document.querySelector(`.pipeline-col[data-stage="${stage}"] .pipeline-col-header`);
+    const col = document.querySelector(`.pipeline-col[data-stage="${stage}"]`);
+    const header = col?.querySelector('.pipeline-col-header');
     const totalEl = document.getElementById(`plTotal-${stage}`);
     if (!header) return;
     const c = colors[stage];
+    const dark = c?.text === '#fff';
     if (c) {
-      header.style.background = c.bg;
-      header.style.color = c.text;
-      if (totalEl) { totalEl.style.color = c.text === '#fff' ? 'rgba(255,255,255,.85)' : '#16a34a'; totalEl.style.background = c.text === '#fff' ? 'rgba(255,255,255,.1)' : ''; totalEl.style.borderBottomColor = c.text === '#fff' ? 'rgba(255,255,255,.15)' : ''; }
-      header.querySelectorAll('.pipeline-col-title, .pipeline-col-badge').forEach(el => el.style.color = c.text);
+      // setAttribute style to beat any CSS specificity
+      header.setAttribute('style', `background:${c.bg}!important;color:${c.text}!important;cursor:grab;`);
+      header.querySelectorAll('.pipeline-col-title,.pipeline-col-badge,.col-color-btn').forEach(el => {
+        el.style.setProperty('color', c.text, 'important');
+      });
+      if (totalEl) {
+        totalEl.style.setProperty('color', dark ? 'rgba(255,255,255,.9)' : '#16a34a', 'important');
+        totalEl.style.setProperty('background', dark ? 'rgba(255,255,255,.1)' : 'color-mix(in srgb,#16a34a 8%,transparent)', 'important');
+        totalEl.style.setProperty('border-bottom-color', dark ? 'rgba(255,255,255,.18)' : 'color-mix(in srgb,#16a34a 20%,transparent)', 'important');
+      }
     } else {
-      header.style.background = '';
-      header.style.color = '';
-      if (totalEl) { totalEl.style.color = ''; totalEl.style.background = ''; totalEl.style.borderBottomColor = ''; }
-      header.querySelectorAll('.pipeline-col-title, .pipeline-col-badge').forEach(el => el.style.color = '');
+      header.removeAttribute('style');
+      header.querySelectorAll('.pipeline-col-title,.pipeline-col-badge,.col-color-btn').forEach(el => el.removeAttribute('style'));
+      if (totalEl) { totalEl.style.removeProperty('color'); totalEl.style.removeProperty('background'); totalEl.style.removeProperty('border-bottom-color'); }
     }
   });
 }
@@ -1673,6 +1680,7 @@ function renderPipeline() {
   seedPipelineLeads();
   seedCotizacionesOficiales();
   if (!plTitlesInited) { initPLTitles(); plTitlesInited = true; }
+  else { applyColColors(); }
   const leads = getPipeline();
   const filtered = plFilter === 'all' ? leads : leads.filter(l => l.biz === plFilter);
 
@@ -1688,7 +1696,7 @@ function renderPipeline() {
       const sum = items.reduce((s, l) => s + (Number(l.price) || 0), 0);
       if (sum > 0) {
         totalEl.textContent = fmtPesos(sum) + ' neto';
-        totalEl.style.display = '';
+        totalEl.style.display = 'block';
       } else {
         totalEl.textContent = '';
         totalEl.style.display = 'none';
