@@ -1834,6 +1834,40 @@ table { border-collapse: collapse; width: 100%; }
   border-radius: var(--radius);
 }
 
+/* ── Add / Delete column ── */
+.pipeline-add-col {
+  flex: 0 0 160px;
+  height: 60px;
+  background: none;
+  border: 2px dashed var(--border);
+  border-radius: var(--radius);
+  color: var(--light);
+  font-size: .82rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: border-color .15s, color .15s, background .15s;
+  white-space: nowrap;
+  align-self: flex-start;
+}
+.pipeline-add-col:hover {
+  border-color: var(--primary);
+  color: var(--primary);
+  background: var(--primary-light);
+}
+.col-del-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 1rem;
+  line-height: 1;
+  padding: 0 2px;
+  color: inherit;
+  opacity: .4;
+  transition: opacity .15s;
+  margin-left: 2px;
+}
+.col-del-btn:hover { opacity: 1; color: #ef4444; }
+
 /* ── Column color picker ── */
 .col-color-btn {
   background: none;

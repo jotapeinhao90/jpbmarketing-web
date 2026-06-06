@@ -1377,23 +1377,97 @@ const PL_COL_PRESETS = [
 function getPLColors() { return load('gestipyme_pl_colors') || {}; }
 function savePLColors(c) { save('gestipyme_pl_colors', c); }
 
+// ── Dynamic stages ──────────────────────────────────────────────
+function getActiveStages() {
+  const saved = load('gestipyme_pl_stages');
+  let stages = (saved && Array.isArray(saved) && saved.length)
+    ? saved
+    : PL_STAGES.map(id => ({ id, title: PL_DEFAULT_TITLES[id] }));
+  // Apply drag order if saved
+  const order = load('gestipyme_pl_order');
+  if (order && Array.isArray(order) && order.length === stages.length) {
+    const map = Object.fromEntries(stages.map(s => [s.id, s]));
+    const reordered = order.map(id => map[id]).filter(Boolean);
+    if (reordered.length === stages.length) stages = reordered;
+  }
+  return stages;
+}
+function saveActiveStages(s) { save('gestipyme_pl_stages', s); }
+
+function renderPipelineBoard() {
+  const board = document.getElementById('pipelineBoard');
+  if (!board) return;
+  const stages = getActiveStages();
+  const PAINT = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="13" height="13"><circle cx="13.5" cy="6.5" r=".5" fill="currentColor"/><circle cx="17.5" cy="10.5" r=".5" fill="currentColor"/><circle cx="8.5" cy="7.5" r=".5" fill="currentColor"/><circle cx="6.5" cy="12.5" r=".5" fill="currentColor"/><path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10c.926 0 1.648-.746 1.648-1.688 0-.437-.18-.835-.437-1.125-.29-.289-.438-.652-.438-1.125a1.64 1.64 0 011.668-1.668h1.996c3.051 0 5.555-2.503 5.555-5.554C21.965 6.012 17.461 2 12 2z"/></svg>`;
+  board.innerHTML = stages.map(s => `
+    <div class="pipeline-col${s.id==='oficial'?' pipeline-col--oficial':''}" data-stage="${escHtml(s.id)}">
+      <div class="pipeline-col-header" draggable="true">
+        <span class="pipeline-col-title" id="plTitle-${escHtml(s.id)}" contenteditable="true" spellcheck="false">${escHtml(s.title)}</span>
+        <button class="col-color-btn" data-colstage="${escHtml(s.id)}" title="Color">${PAINT}</button>
+        <span class="pipeline-col-badge" id="plCount-${escHtml(s.id)}">0</span>
+        <button class="col-del-btn" data-colstage="${escHtml(s.id)}" title="Eliminar columna">×</button>
+      </div>
+      <div class="pipeline-col-total" id="plTotal-${escHtml(s.id)}" style="display:none"></div>
+      <div class="pipeline-col-body" id="plCol-${escHtml(s.id)}"></div>
+    </div>
+  `).join('') + `<button class="pipeline-add-col" id="pipelineAddCol">＋ Nueva columna</button>`;
+
+  // Wire contenteditable titles
+  stages.forEach(s => {
+    const el = document.getElementById(`plTitle-${s.id}`);
+    if (!el) return;
+    el.addEventListener('blur', () => {
+      const text = el.textContent.trim();
+      if (!text) { el.textContent = s.title; return; }
+      const st = getActiveStages();
+      const idx = st.findIndex(x => x.id === s.id);
+      if (idx !== -1) { st[idx].title = text; saveActiveStages(st); }
+    });
+    el.addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); el.blur(); } });
+  });
+
+  // Color buttons (event delegation on board)
+  board.addEventListener('mousedown', boardMousedownHandler, { once: false });
+
+  // Add-col button
+  document.getElementById('pipelineAddCol')?.addEventListener('click', addPipelineCol);
+
+  // Apply saved colors
+  applyColColors();
+
+  // Init drag
+  initColDrag();
+}
+
+function boardMousedownHandler(e) {
+  const colorBtn = e.target.closest('.col-color-btn');
+  const delBtn   = e.target.closest('.col-del-btn');
+  if (colorBtn) {
+    e.preventDefault();
+    e.stopPropagation();
+    openColColorPicker(colorBtn.dataset.colstage, colorBtn);
+  }
+  if (delBtn) {
+    e.preventDefault();
+    e.stopPropagation();
+    deletePipelineCol(delBtn.dataset.colstage);
+  }
+}
+
 function applyColColors() {
   const colors = getPLColors();
+  const stages = getActiveStages();
   let css = '';
-  PL_STAGES.forEach(stage => {
-    const c = colors[stage];
+  stages.forEach(s => {
+    const c = colors[s.id];
     if (!c) return;
     const dark = c.text === '#fff';
-    const s = `.pipeline-col[data-stage="${stage}"]`;
-    const tBg  = dark ? 'rgba(0,0,0,.25)'         : 'rgba(22,163,74,.12)';
-    const tTxt = dark ? 'rgba(255,255,255,.95)'    : '#15803d';
-    const tBd  = dark ? 'rgba(255,255,255,.2)'     : 'rgba(22,163,74,.25)';
+    const sel = `.pipeline-col[data-stage="${s.id}"]`;
     css += `
-      ${s} .pipeline-col-header { background: ${c.bg} !important; color: ${c.text} !important; }
-      ${s} .pipeline-col-title  { color: ${c.text} !important; }
-      ${s} .col-color-btn       { color: ${c.text} !important; }
-      ${s} .pipeline-col-badge  { background: rgba(128,128,128,.35) !important; color: ${c.text} !important; }
-      ${s} .pipeline-col-total  { color: ${tTxt} !important; background: ${tBg} !important; border-bottom-color: ${tBd} !important; }
+      ${sel} .pipeline-col-header{background:${c.bg}!important;color:${c.text}!important}
+      ${sel} .pipeline-col-title,${sel} .col-color-btn,${sel} .col-del-btn{color:${c.text}!important}
+      ${sel} .pipeline-col-badge{background:rgba(128,128,128,.35)!important;color:${c.text}!important}
+      ${sel} .pipeline-col-total{color:${dark?'rgba(255,255,255,.95)':'#15803d'}!important;background:${dark?'rgba(0,0,0,.25)':'rgba(22,163,74,.12)'}!important}
     `;
   });
   let el = document.getElementById('pl-col-colors');
@@ -1406,71 +1480,57 @@ function openColColorPicker(stage, anchorEl) {
   const colors = getPLColors();
   const popup = document.createElement('div');
   popup.className = 'col-color-popup';
-  popup.innerHTML = `
-    <div class="col-color-grid">
-      ${PL_COL_PRESETS.map((p, i) => `
-        <button class="col-color-swatch${colors[stage]?.bg === p.bg ? ' active' : ''}" data-idx="${i}"
-          style="background:${p.bg}" title="${p.label}"></button>
-      `).join('')}
-      <button class="col-color-reset" title="Restablecer color por defecto">↩</button>
-    </div>`;
+  popup.innerHTML = `<div class="col-color-grid">
+    ${PL_COL_PRESETS.map((p, i) => `<button class="col-color-swatch${colors[stage]?.bg===p.bg?' active':''}" data-idx="${i}" style="background:${p.bg}" title="${p.label}"></button>`).join('')}
+    <button class="col-color-reset" title="Restablecer">↩</button>
+  </div>`;
   document.body.appendChild(popup);
   const r = anchorEl.getBoundingClientRect();
-  popup.style.top  = (r.bottom + 4) + 'px';
-  popup.style.left = Math.max(4, r.left - 60) + 'px';
-  popup.querySelectorAll('.col-color-swatch').forEach(btn => {
-    btn.addEventListener('click', () => {
-      const preset = PL_COL_PRESETS[Number(btn.dataset.idx)];
-      const c = getPLColors();
-      c[stage] = preset;
-      savePLColors(c);
-      applyColColors();
-      popup.remove();
-    });
-  });
-  popup.querySelector('.col-color-reset').addEventListener('click', () => {
-    const c = getPLColors();
-    delete c[stage];
-    savePLColors(c);
-    applyColColors();
-    popup.remove();
-  });
-  const close = e => { if (!popup.contains(e.target)) { popup.remove(); document.removeEventListener('mousedown', close); } };
-  setTimeout(() => document.addEventListener('mousedown', close), 0);
-}
+  popup.style.top  = (r.bottom + 6) + 'px';
+  popup.style.left = Math.max(4, r.left - 50) + 'px';
 
-function initPLTitles() {
-  const saved = getPLTitles();
-  applyColColors();
-  PL_STAGES.forEach(stage => {
-    const el = document.getElementById(`plTitle-${stage}`);
-    if (!el) return;
-    if (saved[stage]) el.textContent = saved[stage];
-    el.addEventListener('blur', () => {
-      const text = el.textContent.trim();
-      if (!text) { el.textContent = saved[stage] || PL_DEFAULT_TITLES[stage]; return; }
-      const titles = getPLTitles();
-      titles[stage] = text;
-      savePLTitles(titles);
-    });
-    el.addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); el.blur(); } });
-    // Color picker button
-    const header = el.closest('.pipeline-col-header');
-    if (header && !header.querySelector('.col-color-btn')) {
-      const btn = document.createElement('button');
-      btn.className = 'col-color-btn';
-      btn.title = 'Cambiar color';
-      btn.innerHTML = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="13" height="13"><circle cx="13.5" cy="6.5" r=".5" fill="currentColor"/><circle cx="17.5" cy="10.5" r=".5" fill="currentColor"/><circle cx="8.5" cy="7.5" r=".5" fill="currentColor"/><circle cx="6.5" cy="12.5" r=".5" fill="currentColor"/><path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10c.926 0 1.648-.746 1.648-1.688 0-.437-.18-.835-.437-1.125-.29-.289-.438-.652-.438-1.125a1.64 1.64 0 011.668-1.668h1.996c3.051 0 5.555-2.503 5.555-5.554C21.965 6.012 17.461 2 12 2z"/></svg>`;
-      btn.addEventListener('click', e => { e.stopPropagation(); openColColorPicker(stage, btn); });
-      header.insertBefore(btn, header.querySelector('.pipeline-col-badge'));
+  // Use mousedown on popup to beat any close handler
+  popup.addEventListener('mousedown', e => {
+    e.preventDefault();
+    e.stopPropagation();
+    const sw = e.target.closest('.col-color-swatch');
+    const rs = e.target.closest('.col-color-reset');
+    if (sw) {
+      const preset = PL_COL_PRESETS[Number(sw.dataset.idx)];
+      const c = getPLColors(); c[stage] = preset; savePLColors(c);
+      applyColColors(); popup.remove();
+    } else if (rs) {
+      const c = getPLColors(); delete c[stage]; savePLColors(c);
+      applyColColors(); popup.remove();
     }
   });
+  // Close on click outside
+  const close = ev => { if (!popup.contains(ev.target)) { popup.remove(); document.removeEventListener('click', close); } };
+  setTimeout(() => document.addEventListener('click', close), 0);
 }
 
-let colDragInited = false;
+function addPipelineCol() {
+  const stages = getActiveStages();
+  const newId = 'col_' + Date.now();
+  stages.push({ id: newId, title: 'Nueva Etapa' });
+  saveActiveStages(stages);
+  boardInited = false;
+  renderPipeline();
+}
+
+function deletePipelineCol(stageId) {
+  const count = getPipeline().filter(l => l.stage === stageId).length;
+  const msg = count > 0
+    ? `Esta columna tiene ${count} lead(s). Al eliminarla los leads quedarán sin etapa. ¿Continuar?`
+    : '¿Eliminar esta columna?';
+  if (!confirm(msg)) return;
+  const stages = getActiveStages().filter(s => s.id !== stageId);
+  saveActiveStages(stages);
+  boardInited = false;
+  renderPipeline();
+}
+
 function initColDrag() {
-  if (colDragInited) return;
-  colDragInited = true;
   const board = document.getElementById('pipelineBoard');
   if (!board) return;
   let dragSrc = null;
@@ -1490,6 +1550,10 @@ function initColDrag() {
     board.querySelectorAll('.pipeline-col').forEach(c => c.classList.remove('col-drag-over'));
     const order = [...board.querySelectorAll('.pipeline-col')].map(c => c.dataset.stage);
     save('gestipyme_pl_order', order);
+    // Also persist order into stages array
+    const stagesMap = Object.fromEntries(getActiveStages().map(s => [s.id, s]));
+    const reordered = order.map(id => stagesMap[id]).filter(Boolean);
+    if (reordered.length) saveActiveStages(reordered);
     dragSrc = null;
     applyColColors();
   });
@@ -1671,16 +1735,16 @@ function seedPipelineLeads() {
   savePipeline(leads);
 }
 
-let plTitlesInited = false;
+let boardInited = false;
 function renderPipeline() {
   seedPipelineLeads();
   seedCotizacionesOficiales();
-  if (!plTitlesInited) { initPLTitles(); plTitlesInited = true; }
+  if (!boardInited) { renderPipelineBoard(); boardInited = true; }
   else { applyColColors(); }
   const leads = getPipeline();
   const filtered = plFilter === 'all' ? leads : leads.filter(l => l.biz === plFilter);
 
-  PL_STAGES.forEach(stage => {
+  getActiveStages().forEach(({ id: stage }) => {
     const col = document.getElementById(`plCol-${stage}`);
     const badge = document.getElementById(`plCount-${stage}`);
     const totalEl = document.getElementById(`plTotal-${stage}`);
@@ -1702,7 +1766,8 @@ function renderPipeline() {
       col.innerHTML = '<div class="kanban-empty">Sin leads</div>';
       return;
     }
-    const cur = PL_STAGES.indexOf(stage);
+    const stageIds = getActiveStages().map(s => s.id);
+    const cur = stageIds.indexOf(stage);
     col.innerHTML = items.map(l => `
       <div class="pl-card" data-id="${l.id}">
         ${l.cotizRef ? `<div class="pl-card-cotiz-ref">N°${escHtml(l.cotizRef)}</div>` : ''}
@@ -1718,7 +1783,7 @@ function renderPipeline() {
         ${l.notes ? `<div class="pl-card-notes">${escHtml(l.notes)}</div>` : ''}
         <div class="pl-card-actions">
           ${cur > 0 ? `<button class="move-btn" onclick="moveLead('${l.id}',-1)">← Atrás</button>` : ''}
-          ${cur < PL_STAGES.length-1 ? `<button class="move-btn" onclick="moveLead('${l.id}',1)">Adelante →</button>` : ''}
+          ${cur < stageIds.length-1 ? `<button class="move-btn" onclick="moveLead('${l.id}',1)">Adelante →</button>` : ''}
           <button class="btn-icon cotiz-btn" onclick="openCotizModal('${l.id}')" title="Ver cotización">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="12" height="12"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
           </button>
@@ -1746,7 +1811,12 @@ function openLeadModal(id) {
   document.getElementById('leadEmail').value = lead ? (lead.email || '') : '';
   document.getElementById('leadProduct').value = lead ? (lead.product || '') : '';
   document.getElementById('leadQty').value = lead ? (lead.qty || '') : '';
-  document.getElementById('leadStage').value = lead ? (lead.stage || 'lead') : 'lead';
+  const stageSelect = document.getElementById('leadStage');
+  const currentStage = lead ? (lead.stage || 'lead') : (getActiveStages()[0]?.id || 'lead');
+  stageSelect.innerHTML = getActiveStages().map(s =>
+    `<option value="${escHtml(s.id)}"${s.id===currentStage?' selected':''}>${escHtml(s.title)}</option>`
+  ).join('');
+  stageSelect.value = currentStage;
   document.getElementById('leadNotes').value = lead ? (lead.notes || '') : '';
   document.getElementById('leadDate').value = lead ? (lead.date || today()) : today();
   document.getElementById('leadPrice').value = lead ? (lead.price || '') : '';
@@ -1915,13 +1985,14 @@ function deleteLead(id) {
 }
 
 function moveLead(id, dir) {
+  const stageIds = getActiveStages().map(s => s.id);
   const leads = getPipeline();
   const lead = leads.find(l => l.id === id);
   if (!lead) return;
-  const cur = PL_STAGES.indexOf(lead.stage);
+  const cur = stageIds.indexOf(lead.stage);
   const next = cur + dir;
-  if (next < 0 || next >= PL_STAGES.length) return;
-  lead.stage = PL_STAGES[next];
+  if (next < 0 || next >= stageIds.length) return;
+  lead.stage = stageIds[next];
   savePipeline(leads);
   renderPipeline();
 }
