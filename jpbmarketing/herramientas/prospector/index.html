@@ -317,6 +317,16 @@ body{font-family:'Inter',system-ui,sans-serif;background:var(--bg);color:var(--t
 .btn-msg-wa:hover{opacity:.9;transform:translateY(-1px);}
 .btn-msg-sendmail{flex:1;padding:13px;background:var(--gradient);border:none;border-radius:var(--radius-sm);color:#fff;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;transition:all .2s;display:flex;align-items:center;justify-content:center;gap:8px;}
 .btn-msg-sendmail:hover{opacity:.9;transform:translateY(-1px);}
+/* Profile card */
+.btn-profile-edit{padding:9px 16px;background:var(--glow);border:1px solid rgba(108,99,255,.3);border-radius:9px;color:var(--accent);font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;white-space:nowrap;transition:all .2s;flex-shrink:0;}
+.btn-profile-edit:hover{background:rgba(108,99,255,.2);border-color:var(--accent);}
+.profile-chip{display:inline-flex;align-items:center;gap:5px;padding:4px 12px;border-radius:20px;font-size:11px;font-weight:600;background:var(--bg2);border:1px solid var(--border);color:var(--muted);}
+.profile-chip.set{background:rgba(16,185,129,.08);border-color:rgba(16,185,129,.25);color:var(--success);}
+.profile-incomplete{font-size:12px;color:var(--warning);display:flex;align-items:center;gap:6px;}
+/* Objective pills */
+.obj-pill{padding:7px 14px;border:1px solid var(--border);border-radius:100px;font-size:11px;font-weight:600;color:var(--muted);background:transparent;cursor:pointer;transition:all .2s;font-family:inherit;}
+.obj-pill:hover{border-color:var(--accent);color:var(--text);}
+.obj-pill.active{background:var(--glow);border-color:var(--accent);color:var(--accent);}
 
 /* Rubros manager */
 .cat-pill-settings{background:transparent!important;border-color:rgba(108,99,255,.3)!important;color:var(--accent)!important;font-size:12px!important;}
@@ -816,6 +826,25 @@ tbody td a:hover{color:var(--accent);text-decoration:underline;}
       <div class="active-filters" id="activeFilters"></div>
     </div>
 
+    <!-- Message generator explainer card -->
+    <div class="card" id="msgFeatureCard" style="margin-bottom:18px;">
+      <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:16px;flex-wrap:wrap;">
+        <div style="flex:1;min-width:220px;">
+          <div style="font-size:15px;font-weight:800;margin-bottom:4px;">💬 Generador de mensajes de prospección</div>
+          <div style="font-size:12px;color:var(--muted);line-height:1.6;max-width:560px;">
+            Haz clic en <strong style="color:var(--accent);">💬 Mensaje</strong> en cualquier empresa para generar un mensaje personalizado de WhatsApp o email frío con los datos de esa empresa y los tuyos. Edítalo antes de enviar.
+          </div>
+          <div style="display:flex;align-items:center;gap:8px;margin-top:10px;flex-wrap:wrap;">
+            <span style="font-size:11px;padding:4px 10px;background:rgba(37,211,102,.1);border:1px solid rgba(37,211,102,.25);border-radius:20px;color:#25D366;font-weight:600;">📱 WhatsApp directo al número</span>
+            <span style="font-size:11px;padding:4px 10px;background:var(--glow);border:1px solid rgba(108,99,255,.25);border-radius:20px;color:var(--accent);font-weight:600;">📧 Email con asunto pre-armado</span>
+            <span style="font-size:11px;padding:4px 10px;background:rgba(0,212,255,.07);border:1px solid rgba(0,212,255,.2);border-radius:20px;color:var(--accent2);font-weight:600;">✏️ Editable antes de enviar</span>
+          </div>
+        </div>
+        <button class="btn-profile-edit" onclick="openProfileModal()">⚙️ Mis datos de vendedor</button>
+      </div>
+      <div id="profilePreviewBar" style="margin-top:14px;padding-top:12px;border-top:1px solid var(--border);display:flex;align-items:center;gap:12px;flex-wrap:wrap;"></div>
+    </div>
+
     <!-- Progress -->
     <div class="card" id="progressCard" style="display:none;">
       <div class="progress-info">
@@ -999,21 +1028,76 @@ tbody td a:hover{color:var(--accent);text-decoration:underline;}
 </div>
 
 <!-- Message generator modal -->
+<!-- Profile modal -->
+<div class="modal-overlay" id="profileModal" onclick="if(event.target===this)closeProfileModal()">
+  <div class="modal-box" style="width:500px;">
+    <button class="modal-close" onclick="closeProfileModal()">✕</button>
+    <h3 style="margin-bottom:4px;">⚙️ Mis datos de vendedor</h3>
+    <p class="modal-sub">Estos datos aparecerán en todos los mensajes que generes. Rellena con tu información real.</p>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px;">
+      <div>
+        <div class="modal-section-label">Tu nombre</div>
+        <input class="modal-input" id="pNombre" placeholder="ej: Juan Pablo Bayas" style="margin:0;">
+      </div>
+      <div>
+        <div class="modal-section-label">Tu cargo</div>
+        <input class="modal-input" id="pCargo" placeholder="ej: Director Comercial" style="margin:0;">
+      </div>
+      <div>
+        <div class="modal-section-label">Tu empresa</div>
+        <input class="modal-input" id="pEmpresa" placeholder="ej: JPB Marketing" style="margin:0;">
+      </div>
+      <div>
+        <div class="modal-section-label">Tu teléfono</div>
+        <input class="modal-input" id="pTelefono" placeholder="ej: +56 9 1234 5678" style="margin:0;">
+      </div>
+      <div>
+        <div class="modal-section-label">Tu email</div>
+        <input class="modal-input" id="pEmail" placeholder="ej: contacto@miempresa.cl" style="margin:0;">
+      </div>
+      <div>
+        <div class="modal-section-label">Tu sitio web</div>
+        <input class="modal-input" id="pWeb" placeholder="ej: miempresa.cl" style="margin:0;">
+      </div>
+    </div>
+    <div style="margin-bottom:16px;">
+      <div class="modal-section-label">¿Qué ofreces? (1 línea)</div>
+      <input class="modal-input" id="pServicio" placeholder="ej: marketing digital y prospección B2B para empresas industriales" style="margin:0;">
+    </div>
+    <button class="btn-modal-save" onclick="saveProfileModal()">Guardar mis datos</button>
+    <div id="profileSaved" style="text-align:center;font-size:12px;color:var(--success);margin-top:8px;display:none;font-weight:600;">✓ Datos guardados</div>
+  </div>
+</div>
+
+<!-- Message generator modal -->
 <div class="modal-overlay" id="msgModal" onclick="if(event.target===this)closeMsgModal()">
   <div class="modal-box" style="width:620px;max-height:90vh;overflow-y:auto;">
     <button class="modal-close" onclick="closeMsgModal()">✕</button>
 
-    <!-- Company header -->
-    <div style="display:flex;align-items:center;gap:12px;margin-bottom:16px;padding-bottom:14px;border-bottom:1px solid var(--border);">
-      <div style="width:44px;height:44px;border-radius:12px;background:var(--gradient);display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0;">🏢</div>
-      <div style="flex:1;min-width:0;">
-        <div id="msgCompanyName" style="font-size:16px;font-weight:800;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;"></div>
-        <div id="msgCompanyMeta" style="font-size:12px;color:var(--muted);margin-top:2px;"></div>
+    <!-- Two-column header: prospect left, sender right -->
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px;padding-bottom:14px;border-bottom:1px solid var(--border);">
+      <div>
+        <div style="font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:1.2px;color:var(--muted);margin-bottom:6px;">🏢 Empresa prospecto</div>
+        <div id="msgCompanyName" style="font-size:14px;font-weight:800;"></div>
+        <div id="msgCompanyMeta" style="font-size:11px;color:var(--muted);margin-top:2px;"></div>
+      </div>
+      <div style="border-left:1px solid var(--border);padding-left:12px;">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;">
+          <div style="font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:1.2px;color:var(--muted);">👤 Tú (vendedor)</div>
+          <button onclick="openProfileModal()" style="font-size:10px;color:var(--accent);background:none;border:none;cursor:pointer;font-weight:600;padding:0;">✏️ Editar</button>
+        </div>
+        <div id="msgSenderPreview" style="font-size:12px;color:var(--text);line-height:1.6;"></div>
       </div>
     </div>
 
-    <!-- Quick contact chips -->
+    <!-- Contact chips -->
     <div class="msg-contact-bar" id="msgContactBar"></div>
+
+    <!-- Objective selector -->
+    <div style="margin-bottom:14px;">
+      <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1.2px;color:var(--muted);margin-bottom:6px;">🎯 Objetivo del mensaje</div>
+      <div style="display:flex;gap:6px;flex-wrap:wrap;" id="msgObjectiveRow"></div>
+    </div>
 
     <!-- Channel tabs -->
     <div class="msg-tabs">
@@ -1024,7 +1108,7 @@ tbody td a:hover{color:var(--accent);text-decoration:underline;}
     <!-- Subject (email only) -->
     <div id="emailSubjectWrap" style="display:none;margin-bottom:10px;">
       <div style="font-size:10px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:1.2px;margin-bottom:5px;">Asunto del email</div>
-      <input class="modal-input" id="emailSubject" style="margin:0;font-size:13px;" readonly>
+      <input class="modal-input" id="emailSubject" style="margin:0;font-size:13px;">
     </div>
 
     <!-- Message textarea -->
@@ -1188,6 +1272,7 @@ function showApp(){
   renderLists();
   renderCatGrid();
   renderPipeline();
+  renderProfilePreview();
 }
 
 function doLogout(){
@@ -2326,31 +2411,136 @@ function cycleStage(contactId){
 }
 
 // =============================================
+// SENDER PROFILE
+// =============================================
+const DEFAULT_PROFILE={
+  nombre:'Juan Pablo Bayas',
+  cargo:'Director Comercial',
+  empresa:'JPB Marketing',
+  telefono:'',
+  email:'bayas.juanpablo1@gmail.com',
+  web:'jpbmarketing.cl',
+  servicio:'marketing digital y prospección B2B para empresas industriales'
+};
+
+function getProfile(){
+  try{return Object.assign({},DEFAULT_PROFILE,JSON.parse(localStorage.getItem('jpb_profile')||'{}'));}
+  catch(e){return{...DEFAULT_PROFILE};}
+}
+function saveProfile(p){localStorage.setItem('jpb_profile',JSON.stringify(p));}
+
+function openProfileModal(){
+  const p=getProfile();
+  document.getElementById('pNombre').value=p.nombre||'';
+  document.getElementById('pCargo').value=p.cargo||'';
+  document.getElementById('pEmpresa').value=p.empresa||'';
+  document.getElementById('pTelefono').value=p.telefono||'';
+  document.getElementById('pEmail').value=p.email||'';
+  document.getElementById('pWeb').value=p.web||'';
+  document.getElementById('pServicio').value=p.servicio||'';
+  document.getElementById('profileSaved').style.display='none';
+  document.getElementById('profileModal').classList.add('show');
+}
+function closeProfileModal(){document.getElementById('profileModal').classList.remove('show');}
+function saveProfileModal(){
+  const p={
+    nombre:document.getElementById('pNombre').value.trim(),
+    cargo:document.getElementById('pCargo').value.trim(),
+    empresa:document.getElementById('pEmpresa').value.trim(),
+    telefono:document.getElementById('pTelefono').value.trim(),
+    email:document.getElementById('pEmail').value.trim(),
+    web:document.getElementById('pWeb').value.trim(),
+    servicio:document.getElementById('pServicio').value.trim()
+  };
+  saveProfile(p);
+  document.getElementById('profileSaved').style.display='block';
+  renderProfilePreview();
+  // If message modal open, refresh it
+  if(document.getElementById('msgModal').classList.contains('show')&&_msgId){
+    renderMsgSenderPreview();
+    switchMsgTab(_msgTab);
+  }
+  setTimeout(closeProfileModal,900);
+}
+
+function renderProfilePreview(){
+  const el=document.getElementById('profilePreviewBar');if(!el)return;
+  const p=getProfile();
+  const isDefault=!localStorage.getItem('jpb_profile');
+  if(isDefault){
+    el.innerHTML='<span class="profile-incomplete">⚠️ Usando datos de ejemplo (JPB Marketing). Haz clic en <strong style="margin:0 3px;">⚙️ Mis datos de vendedor</strong> para personalizar los mensajes con tu información.</span>';
+    return;
+  }
+  const chips=[
+    p.nombre?`<span class="profile-chip set">👤 ${p.nombre}</span>`:'',
+    p.empresa?`<span class="profile-chip set">🏢 ${p.empresa}</span>`:'',
+    p.cargo?`<span class="profile-chip set">${p.cargo}</span>`:'',
+    p.telefono?`<span class="profile-chip set">📞 ${p.telefono}</span>`:'',
+    p.email?`<span class="profile-chip set">✉️ ${p.email}</span>`:'',
+    p.web?`<span class="profile-chip set">🌐 ${p.web}</span>`:'',
+  ].filter(Boolean).join('');
+  el.innerHTML=chips||'<span class="profile-incomplete">⚠️ Perfil incompleto — <button onclick="openProfileModal()" style="background:none;border:none;color:var(--warning);cursor:pointer;font-size:12px;font-weight:700;padding:0;">completa tus datos</button></span>';
+}
+
+function renderMsgSenderPreview(){
+  const el=document.getElementById('msgSenderPreview');if(!el)return;
+  const p=getProfile();
+  el.innerHTML=[
+    p.nombre?`<strong>${p.nombre}</strong>`:'',
+    p.cargo||'',
+    p.empresa?`<span style="color:var(--accent)">${p.empresa}</span>`:'',
+    p.telefono||'',
+    p.email||'',
+    p.web||''
+  ].filter(Boolean).join('<br>');
+}
+
+// =============================================
 // MESSAGE GENERATOR
 // =============================================
-let _msgId=null,_msgTab='wa';
+let _msgId=null,_msgTab='wa',_msgObjective='reunion';
+
+const MSG_OBJECTIVES=[
+  {id:'reunion',label:'🤝 Agendar reunión'},
+  {id:'presentar',label:'📊 Presentar servicios'},
+  {id:'cotizacion',label:'💰 Pedir cotización'},
+  {id:'seguimiento',label:'🔄 Seguimiento'},
+  {id:'alianza',label:'🤝 Proponer alianza'},
+];
+
+function setObjective(id){
+  _msgObjective=id;
+  document.querySelectorAll('.obj-pill').forEach(p=>p.classList.toggle('active',p.dataset.obj===id));
+  const r=allResults.find(x=>x.id===_msgId);if(r)refreshMsgText(r);
+}
 
 function openMessageGen(id){
   const r=allResults.find(x=>x.id===id);if(!r)return;
   _msgId=id;_msgTab='wa';
   document.getElementById('msgCompanyName').textContent=r.nombre;
   document.getElementById('msgCompanyMeta').textContent=(r.tipos||'Empresa')+(r.rating?' · ⭐ '+r.rating:'')+(r.direccion?' · '+r.direccion.split(',')[0]:'');
-  // Build contact chips
+  // Sender preview
+  renderMsgSenderPreview();
+  // Contact chips
   const bar=document.getElementById('msgContactBar');
   let chips='';
-  if(r.telefono){
-    const phone=(r.telefono||'').replace(/[\s+\-().]/g,'');
-    chips+=`<a class="msg-contact-chip msg-chip-wa" href="https://wa.me/${phone}" target="_blank">📱 ${r.telefono}</a>`;
-    chips+=`<a class="msg-contact-chip msg-chip-phone" href="tel:${r.telefono}">📞 Llamar</a>`;
-  }
+  if(r.telefono){const ph=(r.telefono||'').replace(/[\s+\-().]/g,'');chips+=`<a class="msg-contact-chip msg-chip-wa" href="https://wa.me/${ph}" target="_blank">📱 ${r.telefono}</a><a class="msg-contact-chip msg-chip-phone" href="tel:${r.telefono}">📞 Llamar</a>`;}
   if(r.email)chips+=`<a class="msg-contact-chip msg-chip-email" href="mailto:${r.email}">✉️ ${r.email}</a>`;
-  if(r.google_maps)chips+=`<a class="msg-contact-chip msg-chip-maps" href="${r.google_maps}" target="_blank">📍 Ver en Maps</a>`;
-  if(r.sitio_web)chips+=`<a class="msg-contact-chip msg-chip-email" href="${r.sitio_web}" target="_blank" style="color:var(--accent2);border-color:rgba(0,212,255,.3);background:rgba(0,212,255,.06);">🌐 Sitio web</a>`;
-  bar.innerHTML=chips||'<span style="font-size:12px;color:var(--dim);">Sin datos de contacto directo</span>';
+  if(r.google_maps)chips+=`<a class="msg-contact-chip msg-chip-maps" href="${r.google_maps}" target="_blank">📍 Maps</a>`;
+  if(r.sitio_web)chips+=`<a class="msg-contact-chip msg-chip-email" href="${r.sitio_web}" target="_blank" style="color:var(--accent2);border-color:rgba(0,212,255,.3);background:rgba(0,212,255,.06);">🌐 Web</a>`;
+  bar.innerHTML=chips||'<span style="font-size:12px;color:var(--dim);">Sin datos de contacto — busca el email primero</span>';
+  // Objective pills
+  const objRow=document.getElementById('msgObjectiveRow');
+  objRow.innerHTML=MSG_OBJECTIVES.map(o=>`<button class="obj-pill${o.id===_msgObjective?' active':''}" data-obj="${o.id}" onclick="setObjective('${o.id}')">${o.label}</button>`).join('');
   switchMsgTab('wa');
   document.getElementById('msgModal').classList.add('show');
 }
 function closeMsgModal(){document.getElementById('msgModal').classList.remove('show');}
+
+function refreshMsgText(r){
+  if(_msgTab==='wa'){document.getElementById('msgText').value=getWATemplate(r);}
+  else{document.getElementById('emailSubject').value=getEmailSubject(r);document.getElementById('msgText').value=getEmailTemplate(r);}
+}
 
 function switchMsgTab(tab){
   _msgTab=tab;
@@ -2358,59 +2548,74 @@ function switchMsgTab(tab){
   document.getElementById('tabEmail').classList.toggle('active',tab==='email');
   document.getElementById('emailSubjectWrap').style.display=tab==='email'?'block':'none';
   const r=allResults.find(x=>x.id===_msgId);if(!r)return;
-  if(tab==='wa'){
-    document.getElementById('msgText').value=getWATemplate(r);
-  }else{
-    document.getElementById('emailSubject').value='Propuesta de marketing B2B para '+r.nombre;
-    document.getElementById('msgText').value=getEmailTemplate(r);
-  }
+  refreshMsgText(r);
   document.getElementById('msgCopied').style.display='none';
-  // Build action buttons
   const ab=document.getElementById('msgActionBtns');
   if(tab==='wa'){
-    const phone=(r.telefono||'').replace(/[\s+\-().]/g,'');
     ab.innerHTML=`<button class="btn-msg-copy" onclick="copyMsg()">📋 Copiar texto</button><button class="btn-msg-wa" onclick="openWA()">📲 Enviar por WhatsApp${r.telefono?' a '+r.telefono:''}</button>`;
   }else{
-    const mailto=r.email?`<button class="btn-msg-sendmail" onclick="sendEmail()">📧 Abrir en correo</button>`:'';
-    ab.innerHTML=`<button class="btn-msg-copy" onclick="copyMsg()">📋 Copiar texto</button>${mailto}`;
+    const ml=r.email?`<button class="btn-msg-sendmail" onclick="sendEmail()">📧 Abrir en correo a ${r.email}</button>`:'<button class="btn-msg-copy" style="flex:2;opacity:.5;cursor:default;">📧 Sin email — búscalo primero</button>';
+    ab.innerHTML=`<button class="btn-msg-copy" onclick="copyMsg()">📋 Copiar texto</button>${ml}`;
   }
 }
 
 function getCity(){return(document.getElementById('city')?.value||'').split(',')[0].trim();}
 
+const OBJ_PHRASES={
+  reunion:{wa:'¿Tienen 15 minutos esta semana para una llamada rápida? 🤝',email:'¿Estarían disponibles para una llamada de 15 minutos esta semana?',accion:'agendar una reunión rápida'},
+  presentar:{wa:'Me gustaría contarles brevemente cómo podemos ayudarles. ¿Les parece bien coordinamos una llamada? 📞',email:'Me gustaría presentarles brevemente cómo podemos colaborar.',accion:'presentarles nuestros servicios'},
+  cotizacion:{wa:'¿Estarían interesados en recibir una propuesta o cotización? 📋',email:'¿Estarían interesados en recibir una propuesta personalizada?',accion:'enviarles una cotización'},
+  seguimiento:{wa:'Quería retomar el contacto y ver si podemos avanzar. ¿Qué les parece si coordinamos? 🔄',email:'Quería retomar la conversación y ver en qué etapa están.',accion:'dar seguimiento a nuestra conversación'},
+  alianza:{wa:'Creo que podemos complementarnos muy bien. ¿Tienen tiempo para explorar una posible alianza? 🤝',email:'Veo una oportunidad de colaboración que podría beneficiar a ambas empresas.',accion:'explorar una posible alianza comercial'},
+};
+
 function getWATemplate(r){
   const city=getCity();
+  const p=getProfile();
+  const obj=OBJ_PHRASES[_msgObjective]||OBJ_PHRASES.reunion;
   return `Hola! 👋
 
-Me comunico de parte de JPB Marketing.
+Me comunico de parte de *${p.empresa||'nuestra empresa'}*${p.nombre?', soy '+p.nombre:''}.
 
-Investigando empresas de ${r.tipos||'tu rubro'} en ${city||'su ciudad'}, encontré a *${r.nombre}* y me gustaría presentarles nuestros servicios de marketing B2B industrial.
+Investigando empresas de ${r.tipos||'tu rubro'} en ${city||'su ciudad'}, encontré a *${r.nombre}* y quería ${obj.accion}.
 
-Ayudamos a empresas como la suya a conseguir nuevos clientes de forma sistemática con prospección digital. 🎯
+${p.servicio?'Nos especializamos en '+p.servicio+'.':''}
 
-¿Tienen 5 minutos esta semana para una llamada rápida? 🤝
+${obj.wa}
 
 Saludos,
-JPB Marketing
-jpbmarketing.cl`;}
+${p.nombre||p.empresa||''}
+${p.empresa||''}${p.web?' · '+p.web:''}${p.telefono?' · '+p.telefono:''}`;}
+
+function getEmailSubject(r){
+  const p=getProfile();
+  const obj=_msgObjective;
+  if(obj==='cotizacion')return `Solicitud de cotización — ${p.empresa||''}`;
+  if(obj==='alianza')return `Propuesta de alianza — ${p.empresa||''} × ${r.nombre}`;
+  return `${p.empresa||'Propuesta'} para ${r.nombre}`;
+}
 
 function getEmailTemplate(r){
   const city=getCity();
+  const p=getProfile();
+  const obj=OBJ_PHRASES[_msgObjective]||OBJ_PHRASES.reunion;
   const ratingPhrase=r.rating>0?' con una valoración de '+r.rating+'⭐ en Google':'';
   return `Estimado equipo de ${r.nombre},
 
-Me dirijo a ustedes porque son una empresa de ${r.tipos||'su rubro'} en ${city||'su ciudad'}${ratingPhrase}.
+Mi nombre es ${p.nombre||'[tu nombre]'}, ${p.cargo?p.cargo+' en ':''}${p.empresa||'[tu empresa]'}.
 
-En JPB Marketing nos especializamos en prospección digital y marketing B2B para empresas industriales en Chile. Ayudamos a empresas como la suya a encontrar nuevos clientes de forma sistemática, usando datos reales y estrategia.
+Me dirijo a ustedes porque son una empresa de ${r.tipos||'su rubro'} en ${city||'su ciudad'}${ratingPhrase}, y creo que podemos ser de mucha utilidad para su crecimiento.
 
-¿Estarían disponibles para una llamada de 15 minutos esta semana para contarles cómo podemos trabajar juntos?
+${p.servicio?'Nos especializamos en '+p.servicio+'.':''}
+
+${obj.email}
 
 Quedo atento a su respuesta.
 
 Saludos cordiales,
-Juan Pablo Bayas
-JPB Marketing
-bayas.juanpablo1@gmail.com | jpbmarketing.cl`;}
+${p.nombre||''}
+${p.cargo?p.cargo+'\n':''}${p.empresa||''}
+${p.email||''}${p.telefono?' | '+p.telefono:''}${p.web?'\n'+p.web:''}`;}
 
 function copyMsg(){
   const txt=document.getElementById('msgText').value;
