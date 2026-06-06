@@ -1381,26 +1381,17 @@ function applyColColors() {
   const colors = getPLColors();
   PL_STAGES.forEach(stage => {
     const col = document.querySelector(`.pipeline-col[data-stage="${stage}"]`);
-    const header = col?.querySelector('.pipeline-col-header');
-    const totalEl = document.getElementById(`plTotal-${stage}`);
-    if (!header) return;
+    if (!col) return;
     const c = colors[stage];
-    const dark = c?.text === '#fff';
     if (c) {
-      // setAttribute style to beat any CSS specificity
-      header.setAttribute('style', `background:${c.bg}!important;color:${c.text}!important;cursor:grab;`);
-      header.querySelectorAll('.pipeline-col-title,.pipeline-col-badge,.col-color-btn').forEach(el => {
-        el.style.setProperty('color', c.text, 'important');
-      });
-      if (totalEl) {
-        totalEl.style.setProperty('color', dark ? 'rgba(255,255,255,.9)' : '#16a34a', 'important');
-        totalEl.style.setProperty('background', dark ? 'rgba(255,255,255,.1)' : 'color-mix(in srgb,#16a34a 8%,transparent)', 'important');
-        totalEl.style.setProperty('border-bottom-color', dark ? 'rgba(255,255,255,.18)' : 'color-mix(in srgb,#16a34a 20%,transparent)', 'important');
-      }
+      const dark = c.text === '#fff';
+      col.style.setProperty('--col-hbg',  c.bg);
+      col.style.setProperty('--col-htxt', c.text);
+      col.style.setProperty('--col-tbg',  dark ? 'rgba(255,255,255,.1)'  : 'color-mix(in srgb,#16a34a 8%,transparent)');
+      col.style.setProperty('--col-ttxt', dark ? 'rgba(255,255,255,.9)'  : '#16a34a');
+      col.style.setProperty('--col-tbd',  dark ? 'rgba(255,255,255,.18)' : 'color-mix(in srgb,#16a34a 20%,transparent)');
     } else {
-      header.removeAttribute('style');
-      header.querySelectorAll('.pipeline-col-title,.pipeline-col-badge,.col-color-btn').forEach(el => el.removeAttribute('style'));
-      if (totalEl) { totalEl.style.removeProperty('color'); totalEl.style.removeProperty('background'); totalEl.style.removeProperty('border-bottom-color'); }
+      ['--col-hbg','--col-htxt','--col-tbg','--col-ttxt','--col-tbd'].forEach(v => col.style.removeProperty(v));
     }
   });
 }

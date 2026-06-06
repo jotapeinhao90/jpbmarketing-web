@@ -1511,6 +1511,12 @@ table { border-collapse: collapse; width: 100%; }
   display: flex;
   flex-direction: column;
   max-height: calc(100vh - 220px);
+  /* color variables — JS overrides these per column */
+  --col-hbg:  var(--surface);
+  --col-htxt: var(--heading);
+  --col-tbg:  color-mix(in srgb,#16a34a 8%,transparent);
+  --col-ttxt: #16a34a;
+  --col-tbd:  color-mix(in srgb,#16a34a 20%,transparent);
 }
 .pipeline-col-header {
   display: flex;
@@ -1520,7 +1526,8 @@ table { border-collapse: collapse; width: 100%; }
   border-bottom: 1px solid var(--border);
   position: sticky;
   top: 0;
-  background: var(--surface);
+  background: var(--col-hbg);
+  color: var(--col-htxt);
   border-radius: var(--radius) var(--radius) 0 0;
 }
 .pipeline-col-title {
@@ -1528,7 +1535,7 @@ table { border-collapse: collapse; width: 100%; }
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: .04em;
-  color: var(--heading);
+  color: inherit;
   border-radius: 3px;
   padding: 1px 3px;
   cursor: text;
@@ -1536,10 +1543,10 @@ table { border-collapse: collapse; width: 100%; }
   min-width: 20px;
 }
 .pipeline-col-title:hover {
-  background: var(--hover-bg, rgba(0,0,0,.06));
+  background: rgba(128,128,128,.15);
 }
 .pipeline-col-title:focus {
-  background: var(--card-bg);
+  background: rgba(128,128,128,.2);
   box-shadow: 0 0 0 2px var(--primary);
   text-transform: none;
 }
@@ -1780,41 +1787,36 @@ table { border-collapse: collapse; width: 100%; }
   .cotiz-actions, #cotizModalClose { display: none; }
 }
 
-/* ── Columna Compra Oficial ── */
-.pipeline-col--oficial .pipeline-col-header {
-  background: linear-gradient(135deg, #1e3a5f 0%, #2563eb 100%);
-}
-.pipeline-col--oficial .pipeline-col-title {
-  color: #fff;
+/* ── Columna Compra Oficial — default color vía variables ── */
+.pipeline-col--oficial {
+  --col-hbg:  linear-gradient(135deg, #1e3a5f 0%, #2563eb 100%);
+  --col-htxt: #fff;
+  --col-tbg:  rgba(255,255,255,.1);
+  --col-ttxt: rgba(255,255,255,.9);
+  --col-tbd:  rgba(255,255,255,.18);
 }
 .pipeline-col--oficial .pipeline-col-title:hover {
-  background: rgba(255,255,255,.12);
+  background: rgba(255,255,255,.15);
 }
 .pipeline-col--oficial .pipeline-col-title:focus {
-  background: rgba(255,255,255,.18);
+  background: rgba(255,255,255,.2);
   box-shadow: 0 0 0 2px rgba(255,255,255,.5);
   color: #fff;
 }
 .pipeline-col--oficial .pipeline-col-badge {
   background: rgba(255,255,255,.25);
-  color: #fff;
 }
 
 /* ── Column total strip ── */
 .pipeline-col-total {
   font-size: .73rem;
   font-weight: 700;
-  color: #16a34a;
-  background: color-mix(in srgb, #16a34a 8%, transparent);
-  border-bottom: 1px solid color-mix(in srgb, #16a34a 20%, transparent);
+  color: var(--col-ttxt);
+  background: var(--col-tbg);
+  border-bottom: 1px solid var(--col-tbd);
   padding: 3px 12px;
   letter-spacing: .01em;
   display: none;
-}
-.pipeline-col--oficial .pipeline-col-total {
-  color: #86efac;
-  background: rgba(255,255,255,.08);
-  border-bottom-color: rgba(255,255,255,.15);
 }
 
 /* ── Column drag-and-drop ── */
