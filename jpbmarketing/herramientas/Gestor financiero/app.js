@@ -205,6 +205,11 @@ function renderDashboard() {
   document.getElementById('kpiPersonal').textContent = clp(personal);
   document.getElementById('kpiTotal').textContent    = clp(empresa + personal);
   document.getElementById('kpiTasks').textContent    = tasks.length;
+  const pipeline = getPipeline();
+  const ventasLeads = pipeline.filter(l => l.stage === 'facturado' || l.stage === 'recompra');
+  const ventasTotal = ventasLeads.reduce((s, l) => s + (Number(l.price) || 0), 0);
+  document.getElementById('kpiVentas').textContent = fmtPesos(ventasTotal);
+  document.getElementById('kpiVentasPeriod').textContent = `${ventasLeads.length} venta${ventasLeads.length !== 1 ? 's' : ''} · neto`;
 
   renderRecentExpenses();
   renderUpcomingTasks();
@@ -1351,8 +1356,89 @@ const PL_DEFAULT_TITLES = {
 function getPLTitles() { return load('gestipyme_pl_titles') || {}; }
 function savePLTitles(t) { save('gestipyme_pl_titles', t); }
 
+// ── Column colors ──────────────────────────────────────────────
+const PL_COL_PRESETS = [
+  { label:'Azul',       bg:'linear-gradient(135deg,#1e3a5f,#2563eb)', text:'#fff' },
+  { label:'Índigo',     bg:'linear-gradient(135deg,#312e81,#6366f1)', text:'#fff' },
+  { label:'Violeta',    bg:'linear-gradient(135deg,#4c1d95,#8b5cf6)', text:'#fff' },
+  { label:'Fucsia',     bg:'linear-gradient(135deg,#831843,#ec4899)', text:'#fff' },
+  { label:'Rojo',       bg:'linear-gradient(135deg,#7f1d1d,#ef4444)', text:'#fff' },
+  { label:'Naranja',    bg:'linear-gradient(135deg,#7c2d12,#f97316)', text:'#fff' },
+  { label:'Ámbar',      bg:'linear-gradient(135deg,#78350f,#f59e0b)', text:'#fff' },
+  { label:'Lima',       bg:'linear-gradient(135deg,#365314,#84cc16)', text:'#fff' },
+  { label:'Verde',      bg:'linear-gradient(135deg,#14532d,#22c55e)', text:'#fff' },
+  { label:'Teal',       bg:'linear-gradient(135deg,#134e4a,#14b8a6)', text:'#fff' },
+  { label:'Cyan',       bg:'linear-gradient(135deg,#164e63,#06b6d4)', text:'#fff' },
+  { label:'Pizarra',    bg:'linear-gradient(135deg,#1e293b,#475569)', text:'#fff' },
+  { label:'Gris',       bg:'linear-gradient(135deg,#374151,#9ca3af)', text:'#fff' },
+  { label:'Blanco',     bg:'#f8fafc', text:'#1e293b' },
+];
+
+function getPLColors() { return load('gestipyme_pl_colors') || {}; }
+function savePLColors(c) { save('gestipyme_pl_colors', c); }
+
+function applyColColors() {
+  const colors = getPLColors();
+  PL_STAGES.forEach(stage => {
+    const header = document.querySelector(`.pipeline-col[data-stage="${stage}"] .pipeline-col-header`);
+    const totalEl = document.getElementById(`plTotal-${stage}`);
+    if (!header) return;
+    const c = colors[stage];
+    if (c) {
+      header.style.background = c.bg;
+      header.style.color = c.text;
+      if (totalEl) { totalEl.style.color = c.text === '#fff' ? 'rgba(255,255,255,.85)' : '#16a34a'; totalEl.style.background = c.text === '#fff' ? 'rgba(255,255,255,.1)' : ''; totalEl.style.borderBottomColor = c.text === '#fff' ? 'rgba(255,255,255,.15)' : ''; }
+      header.querySelectorAll('.pipeline-col-title, .pipeline-col-badge').forEach(el => el.style.color = c.text);
+    } else {
+      header.style.background = '';
+      header.style.color = '';
+      if (totalEl) { totalEl.style.color = ''; totalEl.style.background = ''; totalEl.style.borderBottomColor = ''; }
+      header.querySelectorAll('.pipeline-col-title, .pipeline-col-badge').forEach(el => el.style.color = '');
+    }
+  });
+}
+
+function openColColorPicker(stage, anchorEl) {
+  document.querySelectorAll('.col-color-popup').forEach(p => p.remove());
+  const colors = getPLColors();
+  const popup = document.createElement('div');
+  popup.className = 'col-color-popup';
+  popup.innerHTML = `
+    <div class="col-color-grid">
+      ${PL_COL_PRESETS.map((p, i) => `
+        <button class="col-color-swatch${colors[stage]?.bg === p.bg ? ' active' : ''}" data-idx="${i}"
+          style="background:${p.bg}" title="${p.label}"></button>
+      `).join('')}
+      <button class="col-color-reset" title="Restablecer color por defecto">↩</button>
+    </div>`;
+  document.body.appendChild(popup);
+  const r = anchorEl.getBoundingClientRect();
+  popup.style.top  = (r.bottom + 4) + 'px';
+  popup.style.left = Math.max(4, r.left - 60) + 'px';
+  popup.querySelectorAll('.col-color-swatch').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const preset = PL_COL_PRESETS[Number(btn.dataset.idx)];
+      const c = getPLColors();
+      c[stage] = preset;
+      savePLColors(c);
+      applyColColors();
+      popup.remove();
+    });
+  });
+  popup.querySelector('.col-color-reset').addEventListener('click', () => {
+    const c = getPLColors();
+    delete c[stage];
+    savePLColors(c);
+    applyColColors();
+    popup.remove();
+  });
+  const close = e => { if (!popup.contains(e.target)) { popup.remove(); document.removeEventListener('mousedown', close); } };
+  setTimeout(() => document.addEventListener('mousedown', close), 0);
+}
+
 function initPLTitles() {
   const saved = getPLTitles();
+  applyColColors();
   PL_STAGES.forEach(stage => {
     const el = document.getElementById(`plTitle-${stage}`);
     if (!el) return;
@@ -1365,6 +1451,16 @@ function initPLTitles() {
       savePLTitles(titles);
     });
     el.addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); el.blur(); } });
+    // Color picker button
+    const header = el.closest('.pipeline-col-header');
+    if (header && !header.querySelector('.col-color-btn')) {
+      const btn = document.createElement('button');
+      btn.className = 'col-color-btn';
+      btn.title = 'Cambiar color';
+      btn.innerHTML = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="13" height="13"><circle cx="13.5" cy="6.5" r=".5" fill="currentColor"/><circle cx="17.5" cy="10.5" r=".5" fill="currentColor"/><circle cx="8.5" cy="7.5" r=".5" fill="currentColor"/><circle cx="6.5" cy="12.5" r=".5" fill="currentColor"/><path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10c.926 0 1.648-.746 1.648-1.688 0-.437-.18-.835-.437-1.125-.29-.289-.438-.652-.438-1.125a1.64 1.64 0 011.668-1.668h1.996c3.051 0 5.555-2.503 5.555-5.554C21.965 6.012 17.461 2 12 2z"/></svg>`;
+      btn.addEventListener('click', e => { e.stopPropagation(); openColColorPicker(stage, btn); });
+      header.insertBefore(btn, header.querySelector('.pipeline-col-badge'));
+    }
   });
 }
 
@@ -1392,6 +1488,7 @@ function initColDrag() {
     const order = [...board.querySelectorAll('.pipeline-col')].map(c => c.dataset.stage);
     save('gestipyme_pl_order', order);
     dragSrc = null;
+    applyColColors();
   });
   board.addEventListener('dragover', e => {
     e.preventDefault();
