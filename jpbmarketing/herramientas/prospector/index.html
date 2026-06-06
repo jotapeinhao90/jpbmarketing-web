@@ -1604,7 +1604,7 @@ function deleteCustomRubro(id){
   saveRubroConfig(cfg);activeCats.delete(id);renderRubrosManagerList();renderCatGrid();
 }
 
-async function api(q,pt){const h={'Content-Type':'application/json','X-Goog-Api-Key':K,'X-Goog-FieldMask':FM};const b={textQuery:q,languageCode:'es',maxResultCount:20};if(pt)b.pageToken=pt;try{const r=await fetch('https://places.googleapis.com/v1/places:searchText',{method:'POST',headers:h,body:JSON.stringify(b)});if(!r.ok)return{};return await r.json();}catch(e){return{};}}
+async function api(q,pt){const h={'Content-Type':'application/json','X-Goog-Api-Key':K,'X-Goog-FieldMask':FM};const b={textQuery:q,languageCode:'es',maxResultCount:20};if(pt)b.pageToken=pt;try{const r=await fetch('https://places.googleapis.com/v1/places:searchText',{method:'POST',headers:h,body:JSON.stringify(b)});if(!r.ok){const err=await r.text().catch(()=>'');console.error('[Prospector] API error',r.status,r.statusText,err);return{_err:r.status};}const d=await r.json();console.log('[Prospector] API ok',q.slice(0,40),'→',(d.places||[]).length,'results');return d;}catch(e){console.error('[Prospector] fetch failed',e);return{_err:'network'};}}
 
 function formatTypes(t){if(!t||!t.length)return'';const m={'restaurant':'Restaurante','store':'Tienda','establishment':'Empresa','general_contractor':'Contratista','industrial_area':'Zona industrial','moving_company':'Mudanzas','trucking_company':'Transporte','corporate_office':'Oficina corp.','consultant':'Consultora','accounting':'Contabilidad','software_company':'Software','construction_company':'Construcción','manufacturer':'Fabricante','pharmacy':'Farmacia','hospital':'Hospital'};return t.slice(0,3).map(x=>m[x]||x.replace(/_/g,' ')).join(', ');}
 function formatHours(h){if(!h||!h.weekdayDescriptions)return'';const d=new Date().getDay();return h.weekdayDescriptions[d===0?6:d-1]||'';}
@@ -1814,11 +1814,14 @@ async function startSearch(){
     rawQueries=[...new Set(rawQueries)];
   }
   const qs=rawQueries.map(q=>q.replace('{c}',city));
+  let _apiErrors=0;
   for(let i=0;i<qs.length;i++){
     if(stopped)break;while(paused&&!stopped){await new Promise(ok=>setTimeout(ok,200));}if(stopped)break;
     if(allResults.length>=effectiveLimit){stopped=true;break;}
     document.getElementById('progressCount').textContent=allResults.length;
-    let d=await api(qs[i]);(d.places||[]).forEach(p=>{const r=proc(p);if(r)allResults.push(r);});
+    let d=await api(qs[i]);
+    if(d._err){_apiErrors++;if(_apiErrors===1){document.getElementById('progressLabel').textContent='Error API '+d._err+' — revisa consola (F12)';document.getElementById('progressLabel').style.color='var(--danger)';}if(_apiErrors>=3){stopped=true;break;}}
+    (d.places||[]).forEach(p=>{const r=proc(p);if(r)allResults.push(r);});
     let pg=1;while(d.nextPageToken&&pg<3&&!stopped){while(paused&&!stopped){await new Promise(ok=>setTimeout(ok,200));}if(stopped)break;if(allResults.length>=effectiveLimit){stopped=true;break;}pg++;await new Promise(ok=>setTimeout(ok,300));d=await api(qs[i],d.nextPageToken);(d.places||[]).forEach(p=>{const r=proc(p);if(r)allResults.push(r);});}
     updateStats();
     if(i===0||i%5===4){filtered=[...allResults];renderTable();}
