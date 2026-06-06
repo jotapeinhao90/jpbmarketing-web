@@ -1402,6 +1402,33 @@ select { cursor: pointer; }
   background: var(--section-alt); border: 1px solid var(--card-border);
   border-radius: 20px; color: var(--heading);
 }
+.caso-link { display: inline-flex; align-items: center; gap: 6px; color: var(--primary); font-size: 0.85rem; font-weight: 600; text-decoration: none; margin-top: 16px; transition: gap .2s; }
+.caso-link:hover { gap: 10px; }
+.casos-cta-row { text-align: center; margin-top: 48px; }
+
+/* Casos de éxito — historias completas (nosotros.html) */
+.story-block { display: grid; grid-template-columns: 1fr 1fr; gap: 60px; align-items: center; padding: 64px 0; border-bottom: 1px solid var(--card-border); }
+.story-block:last-child { border-bottom: none; }
+.story-block-reverse .story-img { order: 2; }
+.story-block-reverse .story-content { order: 1; }
+.story-img { position: relative; }
+.story-img > img:first-child { width: 100%; height: 340px; object-fit: cover; border-radius: var(--radius-lg); }
+.story-img-bg { height: 340px; background: #0d1b35; border-radius: var(--radius-lg); display: flex; align-items: center; justify-content: center; }
+.story-logo-center { max-height: 90px; max-width: 240px; object-fit: contain; filter: brightness(0) invert(1); }
+.story-logo-overlay { position: absolute; bottom: 16px; left: 16px; background: rgba(255,255,255,0.96); border-radius: 10px; padding: 8px 14px; }
+.story-logo-overlay img { max-height: 36px; max-width: 160px; object-fit: contain; display: block; }
+.story-dual-logos { display: inline-flex; align-items: center; gap: 14px; background: rgba(255,255,255,0.96); border-radius: 10px; padding: 10px 16px; margin-top: 16px; }
+.story-dual-logos img { max-height: 32px; max-width: 110px; object-fit: contain; }
+.story-dual-logos span { color: #9ca3af; font-size: 1.1rem; }
+.story-content .caso-years { margin-bottom: 10px; display: block; }
+.story-content h3 { font-size: 1.3rem; font-weight: 800; color: var(--heading); margin: 10px 0 18px; line-height: 1.3; }
+.story-content p { font-size: 0.95rem; color: var(--body); line-height: 1.75; margin-bottom: 14px; }
+@media (max-width: 860px) {
+  .story-block { grid-template-columns: 1fr; gap: 28px; padding: 44px 0; }
+  .story-block-reverse .story-img { order: 0; }
+  .story-block-reverse .story-content { order: 0; }
+  .story-img > img:first-child, .story-img-bg { height: 240px; }
+}
 
 @media (max-width: 900px) {
   .caso-featured { grid-template-columns: 1fr; }
