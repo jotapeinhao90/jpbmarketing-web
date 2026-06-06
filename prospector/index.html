@@ -237,7 +237,9 @@ body{font-family:'Inter',system-ui,sans-serif;background:var(--bg);color:var(--t
 .btn-find-email.not-found{color:var(--dim);border-color:var(--border);background:transparent;cursor:default;}
 .btn-batch-email{padding:7px 14px;border:1px solid rgba(108,99,255,.3);background:var(--glow);border-radius:8px;color:var(--accent);font-size:11px;font-weight:600;cursor:pointer;font-family:inherit;transition:all .2s;white-space:nowrap;}
 .btn-batch-email:hover{border-color:var(--accent);background:rgba(108,99,255,.2);}
-.btn-batch-email:disabled{opacity:.4;cursor:not-allowed;}
+.btn-batch-email:disabled{opacity:.7;cursor:default;}
+.btn-stop-emails{padding:7px 12px;border:1px solid rgba(244,63,94,.35);background:rgba(244,63,94,.08);border-radius:8px;color:var(--danger);font-size:11px;font-weight:600;cursor:pointer;font-family:inherit;transition:all .2s;white-space:nowrap;}
+.btn-stop-emails:hover{background:rgba(244,63,94,.18);}
 
 /* Checkboxes */
 .row-check{width:15px;height:15px;cursor:pointer;accent-color:var(--accent);flex-shrink:0;}
@@ -785,6 +787,11 @@ tbody td a:hover{color:var(--accent);text-decoration:underline;}
           <span class="elt-box"></span>
           <span class="elt-label">Excluir contactos ya guardados en mis listas</span>
         </label>
+        <label class="exclude-lists-toggle" style="margin-top:10px;">
+          <input type="checkbox" id="autoFindEmails" checked>
+          <span class="elt-box"></span>
+          <span class="elt-label">Buscar emails automáticamente al terminar <span style="font-size:10px;color:var(--dim);">(paralelo, ~3× más rápido)</span></span>
+        </label>
       </div>
       <div class="active-filters" id="activeFilters"></div>
     </div>
@@ -832,7 +839,8 @@ tbody td a:hover{color:var(--accent);text-decoration:underline;}
       <div class="table-toolbar">
         <div class="filter-wrap"><svg class="fw-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg><input type="text" class="filter-input" id="textFilter" placeholder="Buscar por nombre, dirección..." oninput="applyFilters()"></div>
         <div class="export-btns">
-          <button class="btn-batch-email" id="btnBatchEmail" onclick="findAllEmails()">🔍 Buscar emails</button>
+          <button class="btn-batch-email" id="btnBatchEmail" onclick="findAllEmails()">✉️ Buscar emails</button>
+          <button class="btn-stop-emails" id="btnStopEmails" onclick="stopEmailSearch()" style="display:none;">⏹ Detener</button>
           <button class="btn-export csv" onclick="exportCSV()">CSV</button>
           <button class="btn-export json" onclick="exportJSON()">JSON</button>
         </div>
@@ -1747,6 +1755,11 @@ async function startSearch(){
     mapSec.style.display='block';
     document.getElementById('mapCount').textContent='('+filtered.filter(r=>r.lat&&r.lng).length+' con coordenadas)';
     loadLeaflet(renderMap);
+    // Auto email scraping
+    const autoChk=document.getElementById('autoFindEmails');
+    if(autoChk&&autoChk.checked){
+      setTimeout(()=>findAllEmails(true),800);
+    }
   }
   if(hitLimit)openPaywall();
 }
@@ -1935,19 +1948,23 @@ function doMergeLists(){
 // EMAIL SCRAPER (CORS proxy)
 // =============================================
 const EMAIL_REGEX=/[a-zA-Z0-9._%+\-]+@[a-zA-Z0-9.\-]+\.[a-zA-Z]{2,6}/g;
-const EMAIL_BLACKLIST=['sentry.io','wixpress','example','wordpress','schema','jquery','png','jpg','gif','svg','woff','otf','ttf','facebook','instagram','twitter','linkedin','youtube','tiktok','google','microsoft','apple'];
+const EMAIL_BLACKLIST=['sentry.io','wixpress','example','wordpress','schema','jquery','png','jpg','gif','svg','woff','otf','ttf','facebook','instagram','twitter','linkedin','youtube','tiktok','google','microsoft','apple','noreply','no-reply','support','abuse','spam','hostmaster','postmaster'];
 
 function extractEmails(html,domain){
-  const raw=[...new Set((html.match(EMAIL_REGEX)||[]))];
+  // First try mailto: links (most reliable)
+  const mailtoRx=/mailto:([a-zA-Z0-9._%+\-]+@[a-zA-Z0-9.\-]+\.[a-zA-Z]{2,6})/gi;
+  const mailtoMatches=[...html.matchAll(mailtoRx)].map(m=>m[1]);
+  // Then full regex scan
+  const raw=[...new Set([...mailtoMatches,...(html.match(EMAIL_REGEX)||[])])];
   return raw.filter(e=>
     e.length<80&&
-    !EMAIL_BLACKLIST.some(b=>e.includes(b))&&
+    !EMAIL_BLACKLIST.some(b=>e.toLowerCase().includes(b))&&
     !e.startsWith('@')&&
     e.includes('.')
   ).sort((a,b)=>{
-    const aMatch=a.includes(domain)?0:1;
-    const bMatch=b.includes(domain)?0:1;
-    return aMatch-bMatch;
+    const pa=a.toLowerCase().includes(domain)?0:1;
+    const pb=b.toLowerCase().includes(domain)?0:1;
+    return pa-pb;
   });
 }
 
@@ -1958,21 +1975,29 @@ function fetchWithTimeout(url,ms){
   ]);
 }
 
-async function fetchHtml(url){
-  // Try corsproxy.io first (returns raw HTML)
+async function fetchHtml(url,ms=6000){
+  try{const r=await fetchWithTimeout('https://corsproxy.io/?url='+encodeURIComponent(url),ms);if(r.ok)return await r.text();}catch(e){}
+  try{const r=await fetchWithTimeout('https://api.allorigins.win/get?url='+encodeURIComponent(url),ms);if(r.ok){const d=await r.json();return d.contents||'';}}catch(e){}
+  try{const r=await fetchWithTimeout('https://api.codetabs.com/v1/proxy?quest='+encodeURIComponent(url),ms);if(r.ok)return await r.text();}catch(e){}
+  return null;
+}
+
+// Pages most likely to have contact emails for Chilean B2B companies
+const CONTACT_SLUGS=['/contacto','/contactenos','/contact','/contacto.html','/contactenos.html','/nosotros','/about','/quienes-somos'];
+
+async function scrapeEmailForResult(r){
+  if(!r.sitio_web)return null;
   try{
-    const r=await fetchWithTimeout('https://corsproxy.io/?url='+encodeURIComponent(url),8000);
-    if(r.ok)return await r.text();
-  }catch(e){}
-  // Fallback: allorigins.win (returns JSON with .contents)
-  try{
-    const r=await fetchWithTimeout('https://api.allorigins.win/get?url='+encodeURIComponent(url),8000);
-    if(r.ok){const d=await r.json();return d.contents||'';}
-  }catch(e){}
-  // Fallback 2: htmldriven cors proxy
-  try{
-    const r=await fetchWithTimeout('https://api.codetabs.com/v1/proxy?quest='+encodeURIComponent(url),8000);
-    if(r.ok)return await r.text();
+    const domain=new URL(r.sitio_web).hostname.replace('www.','');
+    const base=r.sitio_web.replace(/\/+$/,'');
+    // Try contact pages first, then homepage
+    const urls=[...CONTACT_SLUGS.map(s=>base+s), r.sitio_web];
+    for(const url of urls){
+      const html=await fetchHtml(url,5000);
+      if(!html)continue;
+      const emails=extractEmails(html,domain);
+      if(emails.length>0)return emails[0];
+    }
   }catch(e){}
   return null;
 }
@@ -1980,57 +2005,73 @@ async function fetchHtml(url){
 async function findEmail(id,btn){
   const r=allResults.find(x=>x.id===id);
   if(!r||!r.sitio_web)return;
-  btn.textContent='⏳';btn.classList.add('loading');btn.disabled=true;
-  try{
-    const domain=new URL(r.sitio_web).hostname.replace('www.','');
-    let html=await fetchHtml(r.sitio_web);
-    let emails=html?extractEmails(html,domain):[];
-    // If no emails on main page, try /contacto
-    if(emails.length===0){
-      const base=r.sitio_web.replace(/\/$/,'');
-      html=await fetchHtml(base+'/contacto');
-      if(html)emails=extractEmails(html,domain);
-    }
-    if(emails.length===0){
-      const base=r.sitio_web.replace(/\/$/,'');
-      html=await fetchHtml(base+'/contacto.html');
-      if(html)emails=extractEmails(html,domain);
-    }
-    if(emails.length>0){
-      r.email=emails[0];
+  if(btn){btn.textContent='⏳';btn.classList.add('loading');btn.disabled=true;}
+  const email=await scrapeEmailForResult(r);
+  if(email){
+    r.email=email;
+    if(btn){
       const td=btn.closest('td');
-      td.innerHTML='<a href="mailto:'+r.email+'" style="font-size:11px;">'+r.email+'</a>';
-      if(emails.length>1)td.title='También: '+emails.slice(1,4).join(', ');
-    }else{
-      btn.textContent='No encontrado';btn.classList.remove('loading');btn.classList.add('not-found');
+      if(td)td.innerHTML='<a href="mailto:'+email+'" style="font-size:11px;">'+email+'</a>';
     }
-  }catch(e){
-    btn.textContent='Error';btn.classList.remove('loading');btn.classList.add('not-found');btn.disabled=false;
+  }else{
+    if(btn){btn.textContent='—';btn.classList.remove('loading');btn.classList.add('not-found');}
   }
 }
 
+// Parallel email scraper — processes BATCH_SIZE companies simultaneously
+const EMAIL_BATCH_SIZE=6;
 let batchRunning=false;
-async function findAllEmails(){
+
+async function findAllEmails(auto=false){
   if(batchRunning)return;
-  const withWeb=filtered.filter(r=>r.sitio_web&&!r.email);
-  if(withWeb.length===0)return;
+  const targets=(auto?allResults:filtered).filter(r=>r.sitio_web&&!r.email);
+  if(targets.length===0){
+    if(!auto){const b=document.getElementById('btnBatchEmail');if(b)b.textContent='✅ Ya tienes todos los emails';}
+    return;
+  }
   batchRunning=true;
   const batchBtn=document.getElementById('btnBatchEmail');
-  batchBtn.disabled=true;
-  let done=0;
-  for(const r of withWeb){
+  const stopBtn=document.getElementById('btnStopEmails');
+  if(batchBtn){batchBtn.disabled=true;}
+  if(stopBtn)stopBtn.style.display='inline-flex';
+  let found=0,done=0;
+  const total=targets.length;
+
+  const updateBtn=()=>{
+    if(batchBtn)batchBtn.textContent='✉️ '+found+' emails | '+done+'/'+total;
+  };
+  updateBtn();
+
+  // Process in parallel batches
+  for(let i=0;i<targets.length;i+=EMAIL_BATCH_SIZE){
     if(!batchRunning)break;
-    batchBtn.textContent='⏳ '+done+'/'+withWeb.length;
-    // Find the button for this row
-    const rowBtn=document.querySelector('.btn-find-email[data-id="'+r.id+'"]');
-    if(rowBtn&&!rowBtn.disabled)await findEmail(r.id,rowBtn);
-    done++;
-    await new Promise(ok=>setTimeout(ok,600));// throttle: 1 request per 600ms
+    const batch=targets.slice(i,i+EMAIL_BATCH_SIZE);
+    await Promise.all(batch.map(async r=>{
+      if(!batchRunning)return;
+      const email=await scrapeEmailForResult(r);
+      if(email){r.email=email;found++;}
+      done++;
+      updateBtn();
+      // Update row in-place if visible
+      const btn=document.querySelector('.btn-find-email[data-id="'+r.id+'"]');
+      if(btn){
+        const td=btn.closest('td');
+        if(td){
+          if(email)td.innerHTML='<a href="mailto:'+email+'" style="font-size:11px;">'+email+'</a>';
+          else{btn.textContent='—';btn.classList.add('not-found');}
+        }
+      }
+    }));
+    if(i+EMAIL_BATCH_SIZE<targets.length)await new Promise(ok=>setTimeout(ok,200));
   }
   batchRunning=false;
-  batchBtn.disabled=false;
-  batchBtn.textContent='🔍 Buscar emails';
+  if(batchBtn){batchBtn.disabled=false;batchBtn.textContent='✉️ '+found+' emails encontrados';}
+  if(stopBtn)stopBtn.style.display='none';
+  // Refresh intel panel with new email data
+  if(allResults.length>0)renderMarketIntel();
 }
+
+function stopEmailSearch(){batchRunning=false;}
 
 function exportJSON(){const o={metadata:{ciudad:document.getElementById('city').value,fecha:new Date().toISOString().slice(0,10),total:filtered.length},empresas:filtered};const b=new Blob([JSON.stringify(o,null,2)],{type:'application/json'});const a=document.createElement('a');a.href=URL.createObjectURL(b);a.download='prospectos_'+new Date().toISOString().slice(0,10)+'.json';a.click();}
 function exportCSV(){let c='Nombre,Teléfono,Email,Sitio Web,Dirección,Rating,Reseñas,Estado,Horario,Tipos,Google Maps\n';filtered.forEach(r=>{c+=[r.nombre,r.telefono,r.email,r.sitio_web,r.direccion,r.rating,r.total_resenas,r.estado_text,r.horario,r.tipos,r.google_maps].map(v=>'"'+String(v).replace(/"/g,'""')+'"').join(',')+'\n';});const b=new Blob(['﻿'+c],{type:'text/csv;charset=utf-8'});const a=document.createElement('a');a.href=URL.createObjectURL(b);a.download='prospectos_'+new Date().toISOString().slice(0,10)+'.csv';a.click();}
