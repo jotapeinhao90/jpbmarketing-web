@@ -1295,14 +1295,7 @@ const PL_STAGES = ['lead','derivado','cotizado','minimo','oficial','facturado','
 let plFilter = 'all';
 
 function seedCotizacionesOficiales() {
-  // Migrar cotizaciones ya cargadas en etapa incorrecta
   let existing = getPipeline();
-  let migrated = false;
-  existing = existing.map(l => {
-    if (l.cotizRef && l.stage !== 'oficial') { migrated = true; return {...l, stage:'oficial'}; }
-    return l;
-  });
-  if (migrated) savePipeline(existing);
   const refs = new Set(existing.map(l => l.cotizRef).filter(Boolean));
   const oficiales = [
     {cotizRef:'17023',name:'Nicolas Yanine',company:'Molino Yanine',biz:'polimer',phone:'',email:'',product:'Fundas PE Transp. 240x140x40mic',qty:'1.750 un · $675 c/u',price:1181250,stage:'oficial',notes:'Cotización oficial N°17023',date:'2026-02-17'},
