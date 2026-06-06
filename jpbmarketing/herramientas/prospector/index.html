@@ -240,8 +240,6 @@ body{font-family:'Inter',system-ui,sans-serif;background:var(--bg);color:var(--t
 .btn-batch-email:disabled{opacity:.7;cursor:default;}
 .btn-stop-emails{padding:7px 12px;border:1px solid rgba(244,63,94,.35);background:rgba(244,63,94,.08);border-radius:8px;color:var(--danger);font-size:11px;font-weight:600;cursor:pointer;font-family:inherit;transition:all .2s;white-space:nowrap;}
 .btn-stop-emails:hover{background:rgba(244,63,94,.18);}
-.email-guessed{font-size:10px;color:var(--warning);cursor:pointer;opacity:.7;transition:opacity .2s;white-space:nowrap;}
-.email-guessed:hover{opacity:1;text-decoration:underline dotted;}
 
 /* Checkboxes */
 .row-check{width:15px;height:15px;cursor:pointer;accent-color:var(--accent);flex-shrink:0;}
@@ -1947,96 +1945,116 @@ function doMergeLists(){
 }
 
 // =============================================
-// EMAIL SCRAPER (CORS proxy)
+// EMAIL ENGINE
 // =============================================
 const EMAIL_REGEX=/[a-zA-Z0-9._%+\-]+@[a-zA-Z0-9.\-]+\.[a-zA-Z]{2,6}/g;
-const EMAIL_BLACKLIST=['sentry.io','wixpress','example','wordpress','schema','jquery','png','jpg','gif','svg','woff','otf','ttf','facebook','instagram','twitter','linkedin','youtube','tiktok','google','microsoft','apple','noreply','no-reply','support','abuse','spam','hostmaster','postmaster'];
+const EMAIL_BLACKLIST=['sentry.io','wixpress','example','wordpress','schema','jquery','png','jpg','gif','svg','woff','otf','ttf','facebook','instagram','twitter','linkedin','youtube','tiktok','google','microsoft','apple','noreply','no-reply','support','abuse','spam','hostmaster','postmaster','mailer','bounce','donotreply','do-not-reply','unsubscribe','privacy','legal','gdpr'];
+
+// Deobfuscate common anti-scraping patterns used on Chilean business sites
+function deobfuscate(html){
+  return html
+    .replace(/\[at\]/gi,'@').replace(/\(at\)/gi,'@').replace(/\s+at\s+/gi,'@')
+    .replace(/\[arroba\]/gi,'@').replace(/\(arroba\)/gi,'@').replace(/\barroba\b/gi,'@')
+    .replace(/\[dot\]/gi,'.').replace(/\(dot\)/gi,'.').replace(/\[punto\]/gi,'.')
+    .replace(/&#64;/g,'@').replace(/&#46;/g,'.').replace(/%40/g,'@')
+    .replace(/\\\//g,'/');
+}
 
 function extractEmails(html,domain){
-  // First try mailto: links (most reliable)
+  const src=deobfuscate(html);
+  // mailto: links first (most reliable signal)
   const mailtoRx=/mailto:([a-zA-Z0-9._%+\-]+@[a-zA-Z0-9.\-]+\.[a-zA-Z]{2,6})/gi;
-  const mailtoMatches=[...html.matchAll(mailtoRx)].map(m=>m[1]);
-  // Then full regex scan
-  const raw=[...new Set([...mailtoMatches,...(html.match(EMAIL_REGEX)||[])])];
+  const fromMailto=[...src.matchAll(mailtoRx)].map(m=>m[1]);
+  // JSON-LD / schema.org "email" field
+  const jsonldRx=/"email"\s*:\s*"([^"@\s]+@[^"@\s]+\.[^"]{2,6})"/gi;
+  const fromJsonld=[...src.matchAll(jsonldRx)].map(m=>m[1]);
+  // Full text regex
+  const fromText=src.match(EMAIL_REGEX)||[];
+  const raw=[...new Set([...fromMailto,...fromJsonld,...fromText])];
   return raw.filter(e=>
     e.length<80&&
     !EMAIL_BLACKLIST.some(b=>e.toLowerCase().includes(b))&&
-    !e.startsWith('@')&&
-    e.includes('.')
-  ).sort((a,b)=>{
-    const pa=a.toLowerCase().includes(domain)?0:1;
-    const pb=b.toLowerCase().includes(domain)?0:1;
-    return pa-pb;
-  });
+    !e.startsWith('@')&&e.includes('@')&&e.includes('.')
+  ).sort((a,b)=>(a.toLowerCase().includes(domain)?0:1)-(b.toLowerCase().includes(domain)?0:1));
 }
 
-// Race all 3 proxies simultaneously — uses whichever responds first
-async function fetchHtml(url,ms=5000){
-  const timeout=new Promise(r=>setTimeout(()=>r(null),ms));
-  const p1=fetch('https://corsproxy.io/?url='+encodeURIComponent(url)).then(r=>r.ok?r.text():null).catch(()=>null);
-  const p2=fetch('https://api.allorigins.win/get?url='+encodeURIComponent(url)).then(r=>r.ok?r.json().then(d=>d.contents||null):null).catch(()=>null);
-  const p3=fetch('https://api.codetabs.com/v1/proxy?quest='+encodeURIComponent(url)).then(r=>r.ok?r.text():null).catch(()=>null);
-  // Return first non-null result among the 3 proxies, or null on timeout
-  const result=await Promise.race([
-    Promise.any([p1,p2,p3]).catch(()=>null),
-    timeout
-  ]);
-  return result||null;
+// Race all 3 proxies — fastest one wins
+async function fetchHtml(url,ms=6000){
+  const t=new Promise(r=>setTimeout(()=>r(null),ms));
+  const p1=fetch('https://corsproxy.io/?url='+encodeURIComponent(url)).then(r=>r.ok?r.text():Promise.reject()).catch(()=>null);
+  const p2=fetch('https://api.allorigins.win/get?url='+encodeURIComponent(url)).then(r=>r.ok?r.json().then(d=>d.contents||Promise.reject()):Promise.reject()).catch(()=>null);
+  const p3=fetch('https://api.codetabs.com/v1/proxy?quest='+encodeURIComponent(url)).then(r=>r.ok?r.text():Promise.reject()).catch(()=>null);
+  return(await Promise.race([Promise.any([p1,p2,p3]).catch(()=>null),t]))||null;
 }
 
-// Common email prefixes for Chilean B2B, most likely first
-const EMAIL_GUESSES=['contacto','info','ventas','contactos','hola','administracion','gerencia'];
-
-function guessEmail(domain){return EMAIL_GUESSES[0]+'@'+domain;}
-
-async function scrapeEmailForResult(r){
-  if(!r.sitio_web)return null;
+// Search DuckDuckGo for emails associated with a domain
+// DDG has indexed these sites and often has emails in snippets even when the site is Cloudflare-protected
+async function duckduckgoSearch(domain){
   try{
-    const domain=new URL(r.sitio_web).hostname.replace('www.','');
-    const base=r.sitio_web.replace(/\/+$/,'');
-    // Only try 2 pages: /contacto (highest hit rate) then homepage
-    for(const url of [base+'/contacto', r.sitio_web]){
-      const html=await fetchHtml(url,5000);
+    const q=encodeURIComponent('"@'+domain+'"');
+    const html=await fetchHtml('https://html.duckduckgo.com/html/?q='+q,7000);
+    if(!html)return null;
+    const emails=extractEmails(html,domain);
+    return emails.length?emails[0]:null;
+  }catch(e){return null;}
+}
+
+async function findEmailForDomain(domain,base,homeUrl){
+  // Run DDG search + direct scraping in parallel — first non-null wins
+  const directScrape=(async()=>{
+    for(const url of [base+'/contacto',homeUrl]){
+      const html=await fetchHtml(url,6000);
       if(!html)continue;
       const emails=extractEmails(html,domain);
-      if(emails.length>0)return {email:emails[0],guessed:false};
+      if(emails.length)return emails[0];
     }
-    // Fallback: suggest the most likely pattern
-    return {email:guessEmail(domain),guessed:true};
-  }catch(e){}
-  return null;
+    return null;
+  })();
+  const ddg=duckduckgoSearch(domain);
+  // Take whichever gives a result first
+  const result=await Promise.race([
+    directScrape.then(r=>r?r:new Promise(()=>{})),
+    ddg.then(r=>r?r:new Promise(()=>{})),
+    new Promise(r=>setTimeout(()=>r(null),12000))
+  ]);
+  if(result)return result;
+  // Last resort: wait for both
+  const [a,b]=await Promise.all([directScrape,ddg]);
+  return a||b||null;
 }
 
 async function findEmail(id,btn){
   const r=allResults.find(x=>x.id===id);
   if(!r||!r.sitio_web)return;
   if(btn){btn.textContent='⏳';btn.classList.add('loading');btn.disabled=true;}
-  const res=await scrapeEmailForResult(r);
-  if(res){
-    r.email=res.email;r.emailGuessed=res.guessed;
-    if(btn){
-      const td=btn.closest('td');
-      if(td)td.innerHTML=emailCell(r);
+  try{
+    const domain=new URL(r.sitio_web).hostname.replace('www.','');
+    const base=r.sitio_web.replace(/\/+$/,'');
+    const email=await findEmailForDomain(domain,base,r.sitio_web);
+    if(email){
+      r.email=email;
+      if(btn){const td=btn.closest('td');if(td)td.innerHTML=emailCell(r);}
+    }else{
+      if(btn){btn.textContent='—';btn.classList.remove('loading');btn.classList.add('not-found');}
     }
-  }else{
+  }catch(e){
     if(btn){btn.textContent='—';btn.classList.remove('loading');btn.classList.add('not-found');}
   }
 }
 
 function emailCell(r){
   if(!r.email)return r.sitio_web?'<button class="btn-find-email" data-id="'+r.id+'" onclick="findEmail(\''+r.id+'\',this)">🔍 buscar</button>':'<span style="color:var(--dim)">—</span>';
-  if(r.emailGuessed)return '<span class="email-guessed" title="Email sugerido — no verificado. Haz clic para copiar" onclick="navigator.clipboard.writeText(\''+r.email+'\')">💡 '+r.email+'</span>';
   return '<a href="mailto:'+r.email+'" style="font-size:11px;">'+r.email+'</a>';
 }
 
-const EMAIL_BATCH_SIZE=10;
+const EMAIL_BATCH_SIZE=8;
 let batchRunning=false;
 
 async function findAllEmails(auto=false){
   if(batchRunning)return;
   const targets=(auto?allResults:filtered).filter(r=>r.sitio_web&&!r.email);
   if(targets.length===0){
-    if(!auto){const b=document.getElementById('btnBatchEmail');if(b)b.textContent='✅ Emails completados';}
+    if(!auto){const b=document.getElementById('btnBatchEmail');if(b)b.textContent='✅ Emails completos';}
     return;
   }
   batchRunning=true;
@@ -2044,9 +2062,9 @@ async function findAllEmails(auto=false){
   const stopBtn=document.getElementById('btnStopEmails');
   if(batchBtn)batchBtn.disabled=true;
   if(stopBtn)stopBtn.style.display='inline-flex';
-  let found=0,guessed=0,done=0;
+  let found=0,done=0;
   const total=targets.length;
-  const updateBtn=()=>{if(batchBtn)batchBtn.textContent='✉️ '+found+(guessed?' + 💡'+guessed:'')+' | '+done+'/'+total;};
+  const updateBtn=()=>{if(batchBtn)batchBtn.textContent='✉️ '+found+' emails | '+done+'/'+total;};
   updateBtn();
 
   for(let i=0;i<targets.length;i+=EMAIL_BATCH_SIZE){
@@ -2054,19 +2072,23 @@ async function findAllEmails(auto=false){
     const batch=targets.slice(i,i+EMAIL_BATCH_SIZE);
     await Promise.all(batch.map(async r=>{
       if(!batchRunning)return;
-      const res=await scrapeEmailForResult(r);
-      if(res){r.email=res.email;r.emailGuessed=res.guessed;if(res.guessed)guessed++;else found++;}
-      done++;
-      updateBtn();
-      // Update cell in-place without full re-render
-      const td=document.querySelector('.btn-find-email[data-id="'+r.id+'"]')?.closest('td')||
-               document.querySelector('a[href="mailto:'+r.email+'"]')?.closest('td');
-      // Re-render the specific cell
-      if(res){const allTds=document.querySelectorAll('#tbody tr');allTds.forEach(tr=>{const chk=tr.querySelector('.row-check[data-id="'+r.id+'"]');if(chk){const cells=tr.querySelectorAll('td');if(cells[4])cells[4].innerHTML=emailCell(r);}});}
+      try{
+        const domain=new URL(r.sitio_web).hostname.replace('www.','');
+        const base=r.sitio_web.replace(/\/+$/,'');
+        const email=await findEmailForDomain(domain,base,r.sitio_web);
+        if(email){r.email=email;found++;}
+      }catch(e){}
+      done++;updateBtn();
+      // Update cell in-place
+      document.querySelectorAll('#tbody tr').forEach(tr=>{
+        if(tr.querySelector('.row-check[data-id="'+r.id+'"]')){
+          const cells=tr.querySelectorAll('td');if(cells[4])cells[4].innerHTML=emailCell(r);
+        }
+      });
     }));
   }
   batchRunning=false;
-  if(batchBtn){batchBtn.disabled=false;batchBtn.textContent='✉️ '+found+' reales + 💡'+guessed+' sugeridos';}
+  if(batchBtn){batchBtn.disabled=false;batchBtn.textContent='✉️ '+found+'/'+total+' emails encontrados';}
   if(stopBtn)stopBtn.style.display='none';
   if(allResults.length>0)renderMarketIntel();
 }
