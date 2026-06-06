@@ -1,0 +1,883 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>GestiónPyme — Finanzas para Emprendedores</title>
+  <meta name="description" content="Plataforma gratuita de gestión financiera para emprendedores. Controla gastos personales y de empresa, visualiza gráficos, organiza tareas y más.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap">
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>💼</text></svg>">
+  <link rel="stylesheet" href="styles.css">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js"></script>
+</head>
+<body>
+
+<!-- SIDEBAR -->
+<aside class="sidebar" id="sidebar">
+  <div class="sidebar-brand">
+    <div class="sidebar-brand-icon">💼</div>
+    <div>
+      <div class="sidebar-brand-name">GestiónPyme</div>
+      <div class="sidebar-brand-sub">by JPB Marketing</div>
+    </div>
+  </div>
+
+  <nav class="sidebar-nav">
+    <a class="nav-item active" data-page="dashboard">
+      <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+      <span>Dashboard</span>
+    </a>
+    <a class="nav-item" data-page="gastos">
+      <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-4H9l3-7 3 7h-2v4z"/></svg>
+      <span>Gastos</span>
+    </a>
+    <a class="nav-item" data-page="graficos">
+      <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+      <span>Gráficos</span>
+    </a>
+    <a class="nav-item" data-page="tareas">
+      <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/></svg>
+      <span>Tareas</span>
+    </a>
+    <a class="nav-item" data-page="calendario">
+      <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+      <span>Calendario</span>
+    </a>
+    <a class="nav-item" data-page="diario">
+      <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+      <span>Diario</span>
+    </a>
+    <a class="nav-item" data-page="videos">
+      <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2" ry="2"/></svg>
+      <span>Videos</span>
+    </a>
+    <div class="nav-divider"></div>
+    <a class="nav-item nav-item--support" data-page="donaciones">
+      <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/></svg>
+      <span>Apóyanos</span>
+    </a>
+  </nav>
+
+  <div class="sidebar-footer">
+    <a href="https://jpbmarketing.cl" target="_blank" class="sidebar-footer-link">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+      jpbmarketing.cl
+    </a>
+    <div class="sidebar-version">v1.0 · Gratis para siempre</div>
+  </div>
+</aside>
+
+<!-- MAIN -->
+<main class="main" id="main">
+
+  <!-- TOPBAR -->
+  <header class="topbar">
+    <button class="topbar-menu" id="menuToggle" aria-label="Menú">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="20" height="20"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+    </button>
+    <div class="topbar-breadcrumb">
+      <span class="topbar-page" id="topbarPage">Dashboard</span>
+    </div>
+    <div class="topbar-right">
+      <div class="topbar-date" id="topbarDate"></div>
+      <button class="btn btn-primary btn-sm" id="quickAddBtn">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="14" height="14"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+        Agregar
+      </button>
+    </div>
+  </header>
+
+  <!-- QUICK ADD DROPDOWN -->
+  <div class="quick-add-menu" id="quickAddMenu">
+    <button class="quick-add-opt" id="qaExpense">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg>
+      Nuevo Gasto
+    </button>
+    <button class="quick-add-opt" id="qaTask">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/></svg>
+      Nueva Tarea
+    </button>
+  </div>
+
+  <!-- CONTENT AREA -->
+  <div class="content">
+
+    <!-- ═══════════════════════════════════════════════
+         DASHBOARD
+    ═══════════════════════════════════════════════ -->
+    <section id="page-dashboard" class="page active">
+      <div class="page-header">
+        <div>
+          <h1 class="page-title" id="greeting">Bienvenido</h1>
+          <p class="page-sub">Aquí está el resumen de tus finanzas</p>
+        </div>
+      </div>
+
+      <!-- KPI Grid -->
+      <div class="kpi-grid">
+        <div class="kpi empresa">
+          <div class="kpi-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="20" height="20"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 00-2-2h-4a2 2 0 00-2 2v2"/></svg>
+          </div>
+          <div class="kpi-body">
+            <div class="kpi-label">Gastos Empresa</div>
+            <div class="kpi-val" id="kpiEmpresa">$0</div>
+            <div class="kpi-period">Este mes</div>
+          </div>
+        </div>
+        <div class="kpi personal">
+          <div class="kpi-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="20" height="20"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+          </div>
+          <div class="kpi-body">
+            <div class="kpi-label">Gastos Personales</div>
+            <div class="kpi-val" id="kpiPersonal">$0</div>
+            <div class="kpi-period">Este mes</div>
+          </div>
+        </div>
+        <div class="kpi total">
+          <div class="kpi-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="20" height="20"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg>
+          </div>
+          <div class="kpi-body">
+            <div class="kpi-label">Total Combinado</div>
+            <div class="kpi-val" id="kpiTotal">$0</div>
+            <div class="kpi-period">Este mes</div>
+          </div>
+        </div>
+        <div class="kpi tasks">
+          <div class="kpi-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="20" height="20"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/></svg>
+          </div>
+          <div class="kpi-body">
+            <div class="kpi-label">Tareas Pendientes</div>
+            <div class="kpi-val" id="kpiTasks">0</div>
+            <div class="kpi-period">Sin completar</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Quote -->
+      <div class="quote-card">
+        <div class="quote-bulb">💡</div>
+        <div class="quote-body">
+          <p class="quote-text" id="quoteText">Cargando...</p>
+          <span class="quote-author" id="quoteAuthor"></span>
+        </div>
+        <button class="quote-next" id="quoteNext" title="Siguiente frase">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="16" height="16"><polyline points="9 18 15 12 9 6"/></svg>
+        </button>
+      </div>
+
+      <!-- Bottom grid -->
+      <div class="dashboard-grid">
+        <div class="card">
+          <div class="card-head">
+            <h3>Últimas Transacciones</h3>
+            <button class="card-link" data-page="gastos">Ver todo →</button>
+          </div>
+          <div id="recentExpenses">
+            <div class="empty-state">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="32" height="32"><path d="M9 14l6-6"/><circle cx="9.5" cy="9.5" r=".5" fill="currentColor"/><circle cx="14.5" cy="14.5" r=".5" fill="currentColor"/><path d="M3 3h18v18H3z"/></svg>
+              <p>Sin transacciones aún</p>
+              <button class="btn btn-sm btn-primary" id="addFirstExpense">Agregar primer gasto</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-head">
+            <h3>Tareas Próximas</h3>
+            <button class="card-link" data-page="tareas">Ver todo →</button>
+          </div>
+          <div id="upcomingTasks">
+            <div class="empty-state">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="32" height="32"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+              <p>Sin tareas pendientes</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══════════════════════════════════════════════
+         GASTOS
+    ═══════════════════════════════════════════════ -->
+    <section id="page-gastos" class="page">
+      <div class="page-header">
+        <div>
+          <h1 class="page-title">Gestión de Gastos</h1>
+          <p class="page-sub">Controla gastos de empresa y personales</p>
+        </div>
+        <button class="btn btn-primary" id="newExpenseBtn">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="14" height="14"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+          Nuevo Gasto
+        </button>
+      </div>
+
+      <!-- Filters -->
+      <div class="filter-bar">
+        <div class="filter-tabs" id="expenseFilterTabs">
+          <button class="ftab active" data-filter="all">Todos</button>
+          <button class="ftab" data-filter="empresa">Empresa</button>
+          <button class="ftab" data-filter="personal">Personal</button>
+        </div>
+        <div class="filter-controls">
+          <input type="month" id="filterMonth" class="filter-input" title="Filtrar por mes">
+          <select id="filterCategory" class="filter-input">
+            <option value="">Todas las categorías</option>
+          </select>
+          <button class="btn btn-outline btn-sm" id="exportCsvBtn">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+            Exportar CSV
+          </button>
+        </div>
+      </div>
+
+      <!-- Summary -->
+      <div class="expense-summary">
+        <div class="sum-chip empresa">
+          <span>Empresa</span>
+          <strong id="sumEmpresa">$0</strong>
+        </div>
+        <div class="sum-chip personal">
+          <span>Personal</span>
+          <strong id="sumPersonal">$0</strong>
+        </div>
+        <div class="sum-chip total">
+          <span>Total</span>
+          <strong id="sumTotal">$0</strong>
+        </div>
+        <div class="sum-chip count">
+          <span>Transacciones</span>
+          <strong id="sumCount">0</strong>
+        </div>
+      </div>
+
+      <!-- View toggle -->
+      <div class="exp-view-toggle filter-tabs" id="expViewToggle" style="margin-bottom:16px">
+        <button class="ftab active" data-expview="calendario">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="13" height="13" style="margin-right:5px"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+          Calendario
+        </button>
+        <button class="ftab" data-expview="lista">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="13" height="13" style="margin-right:5px"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>
+          Lista
+        </button>
+      </div>
+
+      <!-- Calendar view -->
+      <div id="expenseCalContainer">
+        <div class="card exp-cal-card">
+          <div class="exp-cal-nav">
+            <button class="btn btn-outline btn-sm" id="expCalPrev">← Anterior</button>
+            <h3 class="exp-cal-title" id="expCalTitle"></h3>
+            <button class="btn btn-outline btn-sm" id="expCalNext">Siguiente →</button>
+          </div>
+          <div class="exp-cal-weekdays">
+            <div>Lun</div><div>Mar</div><div>Mié</div>
+            <div>Jue</div><div>Vie</div><div>Sáb</div><div>Dom</div>
+          </div>
+          <div class="exp-cal-grid" id="expCalGrid"></div>
+        </div>
+        <div class="card exp-day-panel" id="expDayPanel" style="display:none"></div>
+      </div>
+
+      <!-- List view -->
+      <div id="expenseListContainer" style="display:none">
+        <div id="expenseGroupedList"></div>
+      </div>
+    </section>
+
+    <!-- ═══════════════════════════════════════════════
+         GRÁFICOS
+    ═══════════════════════════════════════════════ -->
+    <section id="page-graficos" class="page">
+      <div class="page-header">
+        <div>
+          <h1 class="page-title">Análisis Financiero</h1>
+          <p class="page-sub">Visualiza la evolución de tus finanzas</p>
+        </div>
+        <div class="chart-period-selector">
+          <button class="ftab active" data-period="6">6 meses</button>
+          <button class="ftab" data-period="12">12 meses</button>
+        </div>
+      </div>
+
+      <div class="charts-grid">
+        <div class="card chart-card chart-wide">
+          <h3 class="chart-title">Evolución Mensual de Gastos</h3>
+          <div class="chart-wrap"><canvas id="chartMonthly"></canvas></div>
+        </div>
+        <div class="card chart-card">
+          <h3 class="chart-title">Por Categoría</h3>
+          <div class="chart-wrap chart-wrap-sm"><canvas id="chartCategory"></canvas></div>
+        </div>
+        <div class="card chart-card">
+          <h3 class="chart-title">Empresa vs Personal</h3>
+          <div class="chart-wrap chart-wrap-sm"><canvas id="chartComparison"></canvas></div>
+        </div>
+      </div>
+
+      <div id="chartsEmpty" class="card empty-charts" style="display:none">
+        <div class="empty-state">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="40" height="40"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+          <p>Agrega gastos para ver tus gráficos</p>
+          <button class="btn btn-primary btn-sm" data-page="gastos">Ir a Gastos</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══════════════════════════════════════════════
+         TAREAS
+    ═══════════════════════════════════════════════ -->
+    <section id="page-tareas" class="page">
+      <div class="page-header">
+        <div>
+          <h1 class="page-title">Gestión de Tareas</h1>
+          <p class="page-sub">Organiza tus pendientes personales y de empresa</p>
+        </div>
+        <button class="btn btn-primary" id="newTaskBtn">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="14" height="14"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+          Nueva Tarea
+        </button>
+      </div>
+
+      <div class="kanban">
+        <div class="kanban-col">
+          <div class="kanban-head pending">
+            <span>Por Hacer</span>
+            <span class="kanban-badge" id="countPending">0</span>
+          </div>
+          <div class="kanban-body" id="kanbanPending" data-status="pending">
+            <div class="kanban-empty">Sin tareas</div>
+          </div>
+        </div>
+        <div class="kanban-col">
+          <div class="kanban-head in-progress">
+            <span>En Progreso</span>
+            <span class="kanban-badge" id="countInProgress">0</span>
+          </div>
+          <div class="kanban-body" id="kanbanInProgress" data-status="in_progress">
+            <div class="kanban-empty">Sin tareas</div>
+          </div>
+        </div>
+        <div class="kanban-col">
+          <div class="kanban-head done">
+            <span>Completadas</span>
+            <span class="kanban-badge" id="countDone">0</span>
+          </div>
+          <div class="kanban-body" id="kanbanDone" data-status="done">
+            <div class="kanban-empty">Sin tareas</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══════════════════════════════════════════════
+         CALENDARIO
+    ═══════════════════════════════════════════════ -->
+    <section id="page-calendario" class="page">
+      <div class="page-header">
+        <div>
+          <h1 class="page-title">Calendario</h1>
+          <p class="page-sub">Visualiza gastos y vencimientos de tareas</p>
+        </div>
+      </div>
+
+      <div class="cal-nav">
+        <button class="btn btn-outline btn-sm" id="calPrev">← Anterior</button>
+        <h2 class="cal-title" id="calTitle"></h2>
+        <button class="btn btn-outline btn-sm" id="calNext">Siguiente →</button>
+      </div>
+
+      <div class="cal-legend">
+        <span class="cal-dot expense"></span><span>Gasto</span>
+        <span class="cal-dot task"></span><span>Tarea vence</span>
+      </div>
+
+      <div class="card cal-card">
+        <div class="cal-weekdays">
+          <div>Lun</div><div>Mar</div><div>Mié</div>
+          <div>Jue</div><div>Vie</div><div>Sáb</div><div>Dom</div>
+        </div>
+        <div class="cal-grid" id="calGrid"></div>
+      </div>
+
+      <div class="cal-events card" id="calEvents">
+        <h3 class="cal-events-title" id="calEventsTitle">Selecciona un día</h3>
+        <div id="calEventsList"><p class="cal-events-empty">Haz clic en un día para ver sus eventos.</p></div>
+      </div>
+    </section>
+
+    <!-- ═══════════════════════════════════════════════
+         DIARIO PERSONAL
+    ═══════════════════════════════════════════════ -->
+    <section id="page-diario" class="page">
+      <div class="page-header">
+        <div>
+          <h1 class="page-title">Diario Personal</h1>
+          <p class="page-sub">Registra tu día y gestiona tus reglas personales</p>
+        </div>
+        <button class="btn btn-primary" id="newDiaryBtn">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="14" height="14"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+          Nueva Entrada
+        </button>
+      </div>
+
+      <div class="filter-tabs" style="margin-bottom:20px" id="diaryTabNav">
+        <button class="ftab active" data-diary-tab="entradas">📓 Entradas</button>
+        <button class="ftab" data-diary-tab="reglas">📌 Reglas Personales</button>
+      </div>
+
+      <!-- Entradas: vista calendario -->
+      <div id="diaryTabEntradas">
+        <div class="cal-nav">
+          <button class="btn btn-outline btn-sm" id="diaryCalPrev">← Anterior</button>
+          <h2 class="cal-title" id="diaryCalTitle"></h2>
+          <button class="btn btn-outline btn-sm" id="diaryCalNext">Siguiente →</button>
+        </div>
+        <div class="card cal-card" style="margin-bottom:16px">
+          <div class="cal-weekdays">
+            <div>Lun</div><div>Mar</div><div>Mié</div>
+            <div>Jue</div><div>Vie</div><div>Sáb</div><div>Dom</div>
+          </div>
+          <div class="cal-grid" id="diaryCalGrid"></div>
+        </div>
+        <div id="diaryDayPanel"></div>
+      </div>
+
+      <!-- Reglas Personales -->
+      <div id="diaryTabReglas" style="display:none">
+        <div style="display:flex;justify-content:flex-end;margin-bottom:16px">
+          <button class="btn btn-primary" id="newRuleBtn">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="14" height="14"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+            Nueva Regla
+          </button>
+        </div>
+        <div id="rulesList"></div>
+      </div>
+    </section>
+
+    <!-- ═══════════════════════════════════════════════
+         BIBLIOTECA DE VIDEOS
+    ═══════════════════════════════════════════════ -->
+    <section id="page-videos" class="page">
+      <div class="page-header">
+        <div>
+          <h1 class="page-title">Biblioteca de Videos</h1>
+          <p class="page-sub">Resúmenes y aprendizajes de videos importantes</p>
+        </div>
+        <button class="btn btn-primary" id="newVideoBtn">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="14" height="14"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+          Nuevo Video
+        </button>
+      </div>
+      <div class="video-grid" id="videoList"></div>
+    </section>
+
+    <!-- ═══════════════════════════════════════════════
+         DONACIONES
+    ═══════════════════════════════════════════════ -->
+    <section id="page-donaciones" class="page">
+      <div class="page-header">
+        <div>
+          <h1 class="page-title">Apóyanos ❤️</h1>
+          <p class="page-sub">Esta plataforma es 100% gratuita para emprendedores</p>
+        </div>
+      </div>
+
+      <div class="donations-hero card">
+        <div class="donations-badge">GRATIS PARA SIEMPRE</div>
+        <h2>Construida por emprendedores,<br>para emprendedores</h2>
+        <p>GestiónPyme nació de la necesidad real de ordenar las finanzas sin gastar en software caro. Creemos que todo emprendedor merece herramientas de calidad, sin barreras económicas.</p>
+        <p>Si esta plataforma te ha ayudado a ordenar tus cuentas, considera apoyarnos para seguir mejorándola y mantenerla gratuita para todos.</p>
+        <div class="donations-actions">
+          <a href="https://www.paypal.com/paypalme/jpbmarketing" target="_blank" class="btn btn-primary btn-lg">
+            💛 Donar por PayPal
+          </a>
+          <a href="https://jpbmarketing.cl/contacto" target="_blank" class="btn btn-outline btn-lg">
+            🤝 Trabajar con JPB Marketing
+          </a>
+        </div>
+      </div>
+
+      <div class="section-label">Conocimiento Financiero para Emprendedores</div>
+      <div class="knowledge-grid">
+        <div class="knowledge-card">
+          <div class="knowledge-icon">📌</div>
+          <h4>Regla 50/30/20</h4>
+          <p>Destina el 50% de tus ingresos a necesidades, 30% a deseos y 20% a ahorro o inversión. Una guía simple para estructurar tu presupuesto.</p>
+        </div>
+        <div class="knowledge-card">
+          <div class="knowledge-icon">🛡️</div>
+          <h4>Fondo de Emergencia</h4>
+          <p>Todo emprendedor debe tener entre 3 y 6 meses de gastos fijos guardados. Tu colchón financiero ante imprevistos del negocio.</p>
+        </div>
+        <div class="knowledge-card">
+          <div class="knowledge-icon">🏦</div>
+          <h4>Separa tus Cuentas</h4>
+          <p>Nunca mezcles finanzas personales con las de tu empresa. Usar cuentas separadas facilita el control y la declaración de impuestos.</p>
+        </div>
+        <div class="knowledge-card">
+          <div class="knowledge-icon">💰</div>
+          <h4>Págate un Sueldo</h4>
+          <p>Define un sueldo fijo mensual que tu empresa te pague. Así sabrás el costo real de tu negocio y evitarás descapitalizarlo.</p>
+        </div>
+        <div class="knowledge-card">
+          <div class="knowledge-icon">📊</div>
+          <h4>Flujo de Caja</h4>
+          <p>El flujo de caja es más importante que las ganancias. Una empresa rentable puede quiebrar si no tiene liquidez en el momento correcto.</p>
+        </div>
+        <div class="knowledge-card">
+          <div class="knowledge-icon">🎯</div>
+          <h4>Presupuesto Mensual</h4>
+          <p>Antes de que empiece cada mes, define cuánto puedes gastar en cada categoría. El presupuesto es el mapa, los gastos son el territorio.</p>
+        </div>
+      </div>
+
+      <div class="about-jpb card">
+        <img src="https://jpbmarketing.cl/assets/logo.webp" alt="JPB Marketing" class="about-logo" onerror="this.style.display='none'">
+        <div class="about-body">
+          <h3>JPB Marketing — Agencia B2B Industrial</h3>
+          <p>GestiónPyme es un producto creado por JPB Marketing, agencia especializada en prospección B2B, automatización con IA y presencia digital para empresas e industriales en Chile.</p>
+          <a href="https://jpbmarketing.cl" target="_blank" class="btn btn-outline">Visitar jpbmarketing.cl →</a>
+        </div>
+      </div>
+    </section>
+
+  </div><!-- /content -->
+</main>
+
+<!-- ═══════════════════════════════════════════════
+     MODAL: GASTO
+═══════════════════════════════════════════════ -->
+<div class="modal-overlay" id="expenseModal">
+  <div class="modal">
+    <div class="modal-head">
+      <h3 id="expenseModalTitle">Nuevo Gasto</h3>
+      <button class="modal-close" data-close="expenseModal">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="18" height="18"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+    </div>
+    <form id="expenseForm" class="modal-form" novalidate>
+      <input type="hidden" id="expenseId">
+      <div class="form-row">
+        <div class="form-group">
+          <label for="expenseDesc">Descripción *</label>
+          <input type="text" id="expenseDesc" placeholder="Ej: Suscripción Adobe" required maxlength="120">
+        </div>
+        <div class="form-group form-group--sm">
+          <label for="expenseAmount">Monto (CLP) *</label>
+          <input type="number" id="expenseAmount" placeholder="0" min="0" step="1" required>
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label for="expenseType">Tipo *</label>
+          <select id="expenseType" required>
+            <option value="empresa">Empresa</option>
+            <option value="personal">Personal</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="expenseCategory">Categoría *</label>
+          <select id="expenseCategory" required></select>
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label for="expenseDate">Fecha *</label>
+          <input type="date" id="expenseDate" required>
+        </div>
+        <div class="form-group">
+          <label for="expenseNotes">Notas</label>
+          <input type="text" id="expenseNotes" placeholder="Opcional" maxlength="200">
+        </div>
+      </div>
+      <div class="modal-actions">
+        <button type="button" class="btn btn-outline" data-close="expenseModal">Cancelar</button>
+        <button type="submit" class="btn btn-primary">Guardar Gasto</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════
+     MODAL: TAREA
+═══════════════════════════════════════════════ -->
+<div class="modal-overlay" id="taskModal">
+  <div class="modal">
+    <div class="modal-head">
+      <h3 id="taskModalTitle">Nueva Tarea</h3>
+      <button class="modal-close" data-close="taskModal">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="18" height="18"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+    </div>
+    <form id="taskForm" class="modal-form" novalidate>
+      <input type="hidden" id="taskId">
+      <div class="form-group">
+        <label for="taskTitle">Título *</label>
+        <input type="text" id="taskTitle" placeholder="Ej: Revisar facturas del mes" required maxlength="120">
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label for="taskPriority">Prioridad</label>
+          <select id="taskPriority">
+            <option value="low">Baja</option>
+            <option value="medium" selected>Media</option>
+            <option value="high">Alta</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="taskCategory">Categoría</label>
+          <select id="taskCategory">
+            <option value="empresa">Empresa</option>
+            <option value="personal">Personal</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label for="taskDueDate">Fecha límite</label>
+          <input type="date" id="taskDueDate">
+        </div>
+        <div class="form-group">
+          <label for="taskStatus">Estado</label>
+          <select id="taskStatus">
+            <option value="pending">Por Hacer</option>
+            <option value="in_progress">En Progreso</option>
+            <option value="done">Completada</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-group">
+        <label for="taskDesc">Descripción</label>
+        <textarea id="taskDesc" rows="3" placeholder="Describe la tarea..." maxlength="500"></textarea>
+      </div>
+      <div class="modal-actions">
+        <button type="button" class="btn btn-outline" data-close="taskModal">Cancelar</button>
+        <button type="submit" class="btn btn-primary">Guardar Tarea</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════
+     MODAL: DIARIO
+═══════════════════════════════════════════════ -->
+<div class="modal-overlay" id="diaryModal">
+  <div class="modal modal--wide">
+    <div class="modal-head">
+      <h3 id="diaryModalTitle">Nueva Entrada</h3>
+      <button class="modal-close" data-close="diaryModal">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="18" height="18"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+    </div>
+    <form id="diaryForm" class="modal-form" novalidate>
+      <input type="hidden" id="diaryId">
+      <div class="form-row">
+        <div class="form-group">
+          <label for="diaryDate">Fecha *</label>
+          <input type="date" id="diaryDate" required>
+        </div>
+        <div class="form-group">
+          <label for="diaryMood">Estado de ánimo</label>
+          <select id="diaryMood">
+            <option value="🔥">🔥 Productivo</option>
+            <option value="💡">💡 Inspirado</option>
+            <option value="😊">😊 Bien</option>
+            <option value="😐">😐 Normal</option>
+            <option value="😤">😤 Difícil</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-group">
+        <label for="diaryTitle">Título del día</label>
+        <input type="text" id="diaryTitle" placeholder="Ej: Jornada intensa y productiva" maxlength="120">
+      </div>
+      <div class="form-group">
+        <label for="diaryContent">Contenido *</label>
+        <textarea id="diaryContent" rows="7" placeholder="Escribe tu registro del día, reflexiones, logros, pendientes..." required></textarea>
+      </div>
+      <div class="modal-actions">
+        <button type="button" class="btn btn-outline" data-close="diaryModal">Cancelar</button>
+        <button type="submit" class="btn btn-primary">Guardar Entrada</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════
+     MODAL: REGLA PERSONAL
+═══════════════════════════════════════════════ -->
+<div class="modal-overlay" id="ruleModal">
+  <div class="modal modal--wide">
+    <div class="modal-head">
+      <h3 id="ruleModalTitle">Nueva Regla</h3>
+      <button class="modal-close" data-close="ruleModal">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="18" height="18"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+    </div>
+    <form id="ruleForm" class="modal-form" novalidate>
+      <input type="hidden" id="ruleId">
+      <div class="form-group">
+        <label for="ruleTitle">Título / Nombre de la regla *</label>
+        <input type="text" id="ruleTitle" placeholder="Ej: Regla Maquiavelo" required maxlength="120">
+      </div>
+      <div class="form-group">
+        <label for="ruleContent">Contenido *</label>
+        <textarea id="ruleContent" rows="8" placeholder="Describe la regla, su fundamento y cómo aplicarla..." required></textarea>
+      </div>
+      <div class="modal-actions">
+        <button type="button" class="btn btn-outline" data-close="ruleModal">Cancelar</button>
+        <button type="submit" class="btn btn-primary">Guardar Regla</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════
+     MODAL: VIDEO
+═══════════════════════════════════════════════ -->
+<div class="modal-overlay" id="videoModal">
+  <div class="modal modal--wide">
+    <div class="modal-head">
+      <h3 id="videoModalTitle">Nuevo Video</h3>
+      <button class="modal-close" data-close="videoModal">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="18" height="18"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+    </div>
+    <form id="videoForm" class="modal-form" novalidate>
+      <input type="hidden" id="videoId">
+      <div class="form-group">
+        <label for="videoTitle">Título del video *</label>
+        <input type="text" id="videoTitle" placeholder='Ej: "El Cónclave" — Maquiavelo y la riqueza invisible' required maxlength="160">
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label for="videoAuthor">Autor / Canal</label>
+          <input type="text" id="videoAuthor" placeholder="Ej: YouTube / Canal X" maxlength="100">
+        </div>
+        <div class="form-group">
+          <label for="videoTags">Etiquetas (coma entre cada una)</label>
+          <input type="text" id="videoTags" placeholder="maquiavelo, riqueza, estrategia" maxlength="200">
+        </div>
+      </div>
+      <div class="form-group">
+        <label for="videoThesis">Tesis central / Idea principal</label>
+        <input type="text" id="videoThesis" placeholder="Resumen en una frase de la idea central" maxlength="250">
+      </div>
+      <div class="form-group">
+        <label for="videoContent">Notas y resumen completo *</label>
+        <textarea id="videoContent" rows="8" placeholder="Escribe tu resumen, puntos clave, citas importantes..." required></textarea>
+      </div>
+      <div class="modal-actions">
+        <button type="button" class="btn btn-outline" data-close="videoModal">Cancelar</button>
+        <button type="submit" class="btn btn-primary">Guardar Video</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════
+     MODAL: VIDEO DETALLE
+═══════════════════════════════════════════════ -->
+<div class="modal-overlay" id="videoDetailModal">
+  <div class="modal modal--wide">
+    <div class="modal-head">
+      <h3 id="videoDetailTitle">Resumen del Video</h3>
+      <button class="modal-close" data-close="videoDetailModal">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="18" height="18"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+    </div>
+    <div class="modal-form video-detail-scroll" id="videoDetailBody"></div>
+  </div>
+</div>
+
+<!-- Backdrop -->
+<div class="backdrop" id="backdrop"></div>
+
+<!-- ═══════════════════════════════════════════════
+     ASISTENTE IA
+═══════════════════════════════════════════════ -->
+<button class="ai-bubble" id="aiBubble" title="Asistente IA">
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="22" height="22"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>
+  <span class="ai-pulse"></span>
+</button>
+
+<div class="ai-panel" id="aiPanel">
+  <div class="ai-panel-head">
+    <div class="ai-panel-title">
+      <div class="ai-avatar">✨</div>
+      <div>
+        <div class="ai-panel-name">Asistente IA</div>
+        <div class="ai-panel-model">Claude Haiku · GestiónPyme</div>
+      </div>
+    </div>
+    <div class="ai-head-btns">
+      <button class="ai-head-btn" id="aiSettingsBtn" title="API Key">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="15" height="15"><circle cx="12" cy="12" r="3"/><path d="M19.07 4.93l-1.41 1.41M4.93 4.93l1.41 1.41M4.93 19.07l1.41-1.41M19.07 19.07l-1.41-1.41M20 12h2M2 12h2M12 20v2M12 2v2"/></svg>
+      </button>
+      <button class="ai-head-btn" id="aiCloseBtn">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="15" height="15"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+    </div>
+  </div>
+
+  <div class="ai-messages" id="aiMessages"></div>
+
+  <div class="ai-preview-area" id="aiPreviewArea" style="display:none">
+    <div class="ai-preview-card" id="aiPreviewCard"></div>
+    <div class="ai-preview-actions">
+      <button class="btn btn-outline btn-sm" id="aiPreviewEdit">Editar antes</button>
+      <button class="btn btn-primary btn-sm" id="aiPreviewConfirm">✓ Confirmar y guardar</button>
+    </div>
+  </div>
+
+  <div class="ai-footer">
+    <div class="ai-no-key" id="aiNoKey" style="display:none">
+      <p>Necesitas una <strong>API Key de Anthropic</strong> para usar el asistente.</p>
+      <button class="btn btn-primary btn-sm" id="aiGoSetKey">Configurar →</button>
+    </div>
+    <div class="ai-input-row" id="aiInputRow">
+      <input type="text" id="aiInput" placeholder='Ej: "gaste 50k en almuerzo empresa"' autocomplete="off" maxlength="300">
+      <button class="ai-send" id="aiSend">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="16" height="16"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- Modal API Key -->
+<div class="modal-overlay" id="aiKeyModal">
+  <div class="modal">
+    <div class="modal-head">
+      <h3>Configurar API Key</h3>
+      <button class="modal-close" data-close="aiKeyModal">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="18" height="18"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+    </div>
+    <div class="ai-key-modal-body">
+      <p>El asistente usa <strong>Claude Haiku</strong> de Anthropic. Ingresa tu API Key para activarlo. Se guarda solo en tu navegador.</p>
+      <div class="form-group" style="margin-top:16px">
+        <label>API Key de Anthropic</label>
+        <input type="password" id="apiKeyInput" placeholder="sk-ant-api03-...">
+      </div>
+      <p class="ai-key-hint">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="13" height="13"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+        Obtén tu clave gratis en <a href="https://console.anthropic.com" target="_blank">console.anthropic.com</a>
+      </p>
+      <div class="modal-actions">
+        <button class="btn btn-outline" data-close="aiKeyModal">Cancelar</button>
+        <button class="btn btn-primary" id="saveApiKey">Guardar y activar</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="app.js"></script>
+</body>
+</html>

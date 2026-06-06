@@ -32,6 +32,17 @@ const CATEGORIES = {
   ],
 };
 
+const CATEGORY_ICONS = {
+  'Alimentación': '🍽', 'Transporte': '🚗', 'Vivienda': '🏠',
+  'Salud': '💊', 'Educación': '📚', 'Entretenimiento': '🎬',
+  'Ropa y Calzado': '👟', 'Servicios Básicos': '⚡',
+  'Ahorro / Inversión': '💰', 'Otros Personal': '📌',
+  'Marketing': '📢', 'Tecnología': '💻', 'Oficina y Suministros': '🖊',
+  'Personal / RRHH': '👥', 'Ventas': '🤝', 'Logística': '📦',
+  'Impuestos y Contabilidad': '📋', 'Servicios Profesionales': '⚖',
+  'Arriendo': '🔑', 'Otros Empresa': '📌',
+};
+
 const QUOTES = [
   { text: 'No ahorres lo que te queda después de gastar; gasta lo que queda después de ahorrar.', author: 'Warren Buffett' },
   { text: 'El presupuesto es contar el dinero antes de gastarlo.', author: 'John Maxwell' },
@@ -63,6 +74,9 @@ const state = {
   charts:           {},
   diaryCalDate:     new Date(),
   diaryCalSelected: null,
+  expenseView:      'calendar',
+  expCalDate:       new Date(),
+  expCalSelected:   null,
 };
 
 // ── Storage helpers ──────────────────────────────────
@@ -94,6 +108,14 @@ function uid() {
 
 function clp(n) {
   return '$' + Math.round(n).toLocaleString('es-CL');
+}
+
+function shortClp(n) {
+  if (n >= 1000000) return '$' + (n / 1000000).toFixed(1) + 'M';
+  if (n >= 100000)  return '$' + Math.round(n / 1000) + 'k';
+  if (n >= 10000)   return '$' + (n / 1000).toFixed(0) + 'k';
+  if (n >= 1000)    return '$' + (n / 1000).toFixed(1) + 'k';
+  return clp(n);
 }
 
 function today() {
@@ -149,6 +171,7 @@ function navigateTo(page) {
   if (page === 'tareas')     renderKanban();
   if (page === 'diario')     renderDiary();
   if (page === 'videos')     renderVideos();
+  if (page === 'gastos')     renderExpenses();
   window.scrollTo(0, 0);
 }
 
@@ -251,12 +274,12 @@ function populateCategorySelect(typeVal) {
   sel.innerHTML = cats.map(c => `<option value="${c}">${c}</option>`).join('');
 }
 
-function openExpenseModal(id) {
+function openExpenseModal(id, preDate) {
   document.getElementById('expenseId').value    = '';
   document.getElementById('expenseDesc').value  = '';
   document.getElementById('expenseAmount').value = '';
   document.getElementById('expenseType').value   = 'empresa';
-  document.getElementById('expenseDate').value   = today();
+  document.getElementById('expenseDate').value   = preDate || today();
   document.getElementById('expenseNotes').value  = '';
   populateCategorySelect('empresa');
 
@@ -321,43 +344,205 @@ function renderExpenses() {
   const { type, month, category } = state.expenseFilter;
   let list = getExpenses();
 
-  if (type !== 'all')  list = list.filter(e => e.type === type);
-  if (month)           list = list.filter(e => e.date.startsWith(month));
-  if (category)        list = list.filter(e => e.category === category);
+  if (type !== 'all') list = list.filter(e => e.type === type);
+  if (month)          list = list.filter(e => e.date.startsWith(month));
+  if (category)       list = list.filter(e => e.category === category);
 
   list.sort((a, b) => b.date.localeCompare(a.date));
 
-  const empresa  = list.filter(e => e.type === 'empresa').reduce((a, e)  => a + e.amount, 0);
+  const empresa  = list.filter(e => e.type === 'empresa').reduce((a, e) => a + e.amount, 0);
   const personal = list.filter(e => e.type === 'personal').reduce((a, e) => a + e.amount, 0);
   document.getElementById('sumEmpresa').textContent  = clp(empresa);
   document.getElementById('sumPersonal').textContent = clp(personal);
   document.getElementById('sumTotal').textContent    = clp(empresa + personal);
   document.getElementById('sumCount').textContent    = list.length;
 
-  const tbody = document.getElementById('expensesBody');
+  if (state.expenseView === 'calendar') {
+    renderExpenseCalendar();
+  } else {
+    renderExpenseList(list);
+  }
+}
+
+function renderExpenseCalendar() {
+  document.getElementById('expenseCalContainer').style.display = '';
+  document.getElementById('expenseListContainer').style.display = 'none';
+
+  const d    = state.expCalDate;
+  const year = d.getFullYear();
+  const mon  = d.getMonth();
+  const mStr = `${year}-${String(mon + 1).padStart(2, '0')}`;
+
+  document.getElementById('filterMonth').value = mStr;
+  state.expenseFilter.month = mStr;
+
+  const MONTHS = ['Enero','Febrero','Marzo','Abril','Mayo','Junio',
+                  'Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
+  document.getElementById('expCalTitle').textContent = `${MONTHS[mon]} ${year}`;
+
+  const { type, category } = state.expenseFilter;
+  const allExp = getExpenses().filter(e =>
+    e.date.startsWith(mStr)
+    && (type === 'all' || e.type === type)
+    && (!category || e.category === category)
+  );
+
+  const byDay = {};
+  allExp.forEach(e => {
+    const day = parseInt(e.date.split('-')[2]);
+    if (!byDay[day]) byDay[day] = [];
+    byDay[day].push(e);
+  });
+
+  const firstDay    = new Date(year, mon, 1).getDay();
+  const startOffset = firstDay === 0 ? 6 : firstDay - 1;
+  const daysInMonth = new Date(year, mon + 1, 0).getDate();
+  const todayStr    = today();
+
+  const grid = document.getElementById('expCalGrid');
+  let html = '';
+
+  for (let i = 0; i < startOffset; i++) {
+    html += `<div class="exp-cal-day empty"></div>`;
+  }
+
+  for (let day = 1; day <= daysInMonth; day++) {
+    const dStr    = `${mStr}-${String(day).padStart(2, '0')}`;
+    const isToday = dStr === todayStr;
+    const dayExps = byDay[day] || [];
+    const total   = dayExps.reduce((a, e) => a + e.amount, 0);
+
+    const hasEmpresa  = dayExps.some(e => e.type === 'empresa');
+    const hasPersonal = dayExps.some(e => e.type === 'personal');
+    let typeClass = '';
+    if (hasEmpresa && hasPersonal)  typeClass = ' has-both';
+    else if (hasEmpresa)            typeClass = ' has-empresa';
+    else if (hasPersonal)           typeClass = ' has-personal';
+
+    html += `
+      <div class="exp-cal-day${typeClass}${isToday ? ' today' : ''}"
+           data-date="${dStr}" onclick="selectExpenseDay('${dStr}')">
+        <div class="exp-cal-num">${day}</div>
+        ${total > 0 ? `<div class="exp-cal-amount">${shortClp(total)}</div>` : ''}
+      </div>`;
+  }
+
+  grid.innerHTML = html;
+
+  if (state.expCalSelected && state.expCalSelected.startsWith(mStr)) {
+    const sel = grid.querySelector(`[data-date="${state.expCalSelected}"]`);
+    if (sel) sel.classList.add('selected');
+    renderExpDayPanel(state.expCalSelected);
+  } else {
+    state.expCalSelected = null;
+    document.getElementById('expDayPanel').style.display = 'none';
+  }
+}
+
+function selectExpenseDay(dateStr) {
+  state.expCalSelected = dateStr;
+  document.querySelectorAll('#expCalGrid .exp-cal-day').forEach(el => {
+    el.classList.toggle('selected', el.dataset.date === dateStr);
+  });
+  renderExpDayPanel(dateStr);
+}
+
+function renderExpDayPanel(dateStr) {
+  const { type, category } = state.expenseFilter;
+  const dayExps = getExpenses().filter(e =>
+    e.date === dateStr
+    && (type === 'all' || e.type === type)
+    && (!category || e.category === category)
+  ).sort((a, b) => a.description.localeCompare(b.description));
+
+  const panel = document.getElementById('expDayPanel');
+  panel.style.display = '';
+
+  const [y, m, d]  = dateStr.split('-');
+  const dayObj     = new Date(parseInt(y), parseInt(m) - 1, parseInt(d));
+  const WDAYS      = ['Domingo','Lunes','Martes','Miércoles','Jueves','Viernes','Sábado'];
+  const MNAMES     = ['enero','febrero','marzo','abril','mayo','junio','julio','agosto',
+                      'septiembre','octubre','noviembre','diciembre'];
+  const dateLabel  = `${WDAYS[dayObj.getDay()]}, ${parseInt(d)} de ${MNAMES[parseInt(m)-1]} de ${y}`;
+  const total      = dayExps.reduce((a, e) => a + e.amount, 0);
+  const expRows    = dayExps.map(e => expRowHtml(e)).join('');
+
+  panel.innerHTML = `
+    <div class="exp-day-panel-head">
+      <div>
+        <div class="exp-day-panel-title">${dateLabel}</div>
+        ${total > 0 ? `<div class="exp-day-panel-total">${clp(total)} · ${dayExps.length} gasto${dayExps.length !== 1 ? 's' : ''}</div>` : ''}
+      </div>
+      <button class="btn btn-primary btn-sm" onclick="openExpenseModal(null,'${dateStr}')">+ Agregar</button>
+    </div>
+    ${dayExps.length ? expRows : '<p class="exp-day-empty">Sin gastos. Agrega el primero.</p>'}`;
+}
+
+function expRowHtml(e) {
+  return `
+    <div class="exp-row">
+      <div class="exp-row-icon">${CATEGORY_ICONS[e.category] || '💼'}</div>
+      <div class="exp-row-body">
+        <div class="exp-row-desc">${escHtml(e.description)}</div>
+        <div class="exp-row-meta">
+          <span class="type-badge ${e.type}">${e.type === 'empresa' ? 'Empresa' : 'Personal'}</span>
+          <span class="cat-badge">${escHtml(e.category)}</span>
+          ${e.notes ? `<span class="exp-row-notes">${escHtml(e.notes)}</span>` : ''}
+        </div>
+      </div>
+      <div class="exp-row-amount">${clp(e.amount)}</div>
+      <div class="td-actions">
+        <button class="btn-icon" onclick="openExpenseModal('${e.id}')" title="Editar">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+        </button>
+        <button class="btn-icon danger" onclick="deleteExpense('${e.id}')" title="Eliminar">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a1 1 0 011-1h4a1 1 0 011 1v2"/></svg>
+        </button>
+      </div>
+    </div>`;
+}
+
+function renderExpenseList(list) {
+  document.getElementById('expenseCalContainer').style.display = 'none';
+  document.getElementById('expenseListContainer').style.display = '';
+
+  const container = document.getElementById('expenseGroupedList');
+
   if (!list.length) {
-    tbody.innerHTML = `<tr><td colspan="6" class="empty-row">Sin gastos para los filtros seleccionados.</td></tr>`;
+    container.innerHTML = `<div class="card" style="padding:24px;text-align:center;color:var(--light)">Sin gastos para los filtros seleccionados.</div>`;
     return;
   }
-  tbody.innerHTML = list.map(e => `
-    <tr>
-      <td>${formatDate(e.date)}</td>
-      <td class="td-desc">${escHtml(e.description)}${e.notes ? `<small>${escHtml(e.notes)}</small>` : ''}</td>
-      <td><span class="cat-badge">${escHtml(e.category)}</span></td>
-      <td><span class="type-badge ${e.type}">${e.type === 'empresa' ? 'Empresa' : 'Personal'}</span></td>
-      <td class="text-right td-amount">${clp(e.amount)}</td>
-      <td>
-        <div class="td-actions">
-          <button class="btn-icon" onclick="openExpenseModal('${e.id}')" title="Editar">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
-          </button>
-          <button class="btn-icon danger" onclick="deleteExpense('${e.id}')" title="Eliminar">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a1 1 0 011-1h4a1 1 0 011 1v2"/></svg>
-          </button>
+
+  const groups = {};
+  list.forEach(e => {
+    if (!groups[e.date]) groups[e.date] = [];
+    groups[e.date].push(e);
+  });
+
+  const sortedDates = Object.keys(groups).sort((a, b) => b.localeCompare(a));
+  const WDAYS  = ['Dom','Lun','Mar','Mié','Jue','Vie','Sáb'];
+  const MNAMES = ['enero','febrero','marzo','abril','mayo','junio','julio','agosto',
+                  'septiembre','octubre','noviembre','diciembre'];
+
+  container.innerHTML = sortedDates.map(dateStr => {
+    const [y, m, d] = dateStr.split('-');
+    const dayObj    = new Date(parseInt(y), parseInt(m) - 1, parseInt(d));
+    const label     = `${WDAYS[dayObj.getDay()]} ${parseInt(d)} de ${MNAMES[parseInt(m)-1]} de ${y}`;
+    const dayExps   = groups[dateStr];
+    const totalDay  = dayExps.reduce((a, e) => a + e.amount, 0);
+    const hasEmpresa  = dayExps.some(e => e.type === 'empresa');
+    const hasPersonal = dayExps.some(e => e.type === 'personal');
+    const grpClass  = hasEmpresa && hasPersonal ? 'both' : (hasEmpresa ? 'empresa' : 'personal');
+
+    return `
+      <div class="exp-day-group exp-day-group--${grpClass}">
+        <div class="exp-day-head">
+          <span class="exp-day-date">${label}</span>
+          <span class="exp-day-daytotal">${clp(totalDay)}</span>
         </div>
-      </td>
-    </tr>
-  `).join('');
+        ${dayExps.map(e => expRowHtml(e)).join('')}
+      </div>`;
+  }).join('');
 }
 
 function populateFilterCategories() {
@@ -1147,10 +1332,20 @@ function init() {
 
   populateFilterCategories();
 
-  // Default filter month to current
-  const curMo = `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}`;
-  document.getElementById('filterMonth').value = curMo;
-  state.expenseFilter.month = curMo;
+  // Default calendar to most recent month with expenses (or current month)
+  const allDates = getExpenses().map(e => e.date).sort();
+  const latestDate = allDates[allDates.length - 1];
+  if (latestDate) {
+    const [ly, lm] = latestDate.split('-');
+    state.expCalDate = new Date(parseInt(ly), parseInt(lm) - 1, 1);
+    const latestMo = `${ly}-${lm}`;
+    document.getElementById('filterMonth').value = latestMo;
+    state.expenseFilter.month = latestMo;
+  } else {
+    const curMo = `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}`;
+    document.getElementById('filterMonth').value = curMo;
+    state.expenseFilter.month = curMo;
+  }
 
   renderDashboard();
   renderExpenses();
@@ -1213,6 +1408,11 @@ function init() {
 
   document.getElementById('filterMonth').addEventListener('change', (e) => {
     state.expenseFilter.month = e.target.value;
+    if (e.target.value) {
+      const [y, m] = e.target.value.split('-');
+      state.expCalDate = new Date(parseInt(y), parseInt(m) - 1, 1);
+    }
+    state.expCalSelected = null;
     renderExpenses();
   });
 
@@ -1222,6 +1422,33 @@ function init() {
   });
 
   document.getElementById('exportCsvBtn').addEventListener('click', exportCsv);
+
+  // ── Expense view toggle ──
+  document.getElementById('expViewToggle').addEventListener('click', (e) => {
+    const btn = e.target.closest('[data-expview]');
+    if (!btn) return;
+    document.querySelectorAll('#expViewToggle [data-expview]').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    state.expenseView = btn.dataset.expview;
+    if (state.expenseView === 'calendar' && state.expenseFilter.month) {
+      const [y, m] = state.expenseFilter.month.split('-');
+      state.expCalDate = new Date(parseInt(y), parseInt(m) - 1, 1);
+    }
+    state.expCalSelected = null;
+    renderExpenses();
+  });
+
+  document.getElementById('expCalPrev').addEventListener('click', () => {
+    state.expCalDate = new Date(state.expCalDate.getFullYear(), state.expCalDate.getMonth() - 1, 1);
+    state.expCalSelected = null;
+    renderExpenses();
+  });
+
+  document.getElementById('expCalNext').addEventListener('click', () => {
+    state.expCalDate = new Date(state.expCalDate.getFullYear(), state.expCalDate.getMonth() + 1, 1);
+    state.expCalSelected = null;
+    renderExpenses();
+  });
 
   document.getElementById('expenseType').addEventListener('change', (e) => {
     populateCategorySelect(e.target.value);
