@@ -1475,8 +1475,8 @@ function initColDrag() {
   board.addEventListener('dragstart', e => {
     const header = e.target.closest('.pipeline-col-header');
     if (!header) return;
-    // Don't drag if user clicked contenteditable title
-    if (e.target.closest('[contenteditable]')) { e.preventDefault(); return; }
+    // Don't drag if user clicked a button or contenteditable
+    if (e.target.closest('button, [contenteditable]')) { e.preventDefault(); return; }
     dragSrc = header.closest('.pipeline-col');
     if (!dragSrc) return;
     e.dataTransfer.effectAllowed = 'move';
@@ -1701,6 +1701,7 @@ function renderPipeline() {
     const cur = PL_STAGES.indexOf(stage);
     col.innerHTML = items.map(l => `
       <div class="pl-card" data-id="${l.id}">
+        ${l.cotizRef ? `<div class="pl-card-cotiz-ref">N°${escHtml(l.cotizRef)}</div>` : ''}
         ${l.price ? `<div class="pl-card-price">${fmtPesos(l.price)} <span class="pl-card-price-label">neto</span></div>` : ''}
         <div class="pl-card-name">${escHtml(l.name)}</div>
         ${l.company ? `<div class="pl-card-company">${escHtml(l.company)}</div>` : ''}

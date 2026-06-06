@@ -1568,6 +1568,18 @@ table { border-collapse: collapse; width: 100%; }
   padding: 10px 12px;
   font-size: .82rem;
 }
+.pl-card-cotiz-ref {
+  display: inline-block;
+  font-size: .68rem;
+  font-weight: 700;
+  color: #2563eb;
+  background: #eff6ff;
+  border: 1px solid #bfdbfe;
+  border-radius: 4px;
+  padding: 1px 6px;
+  margin-bottom: 5px;
+  letter-spacing: .02em;
+}
 .pl-card-price {
   font-size: .92rem;
   font-weight: 800;
