@@ -1379,21 +1379,26 @@ function savePLColors(c) { save('gestipyme_pl_colors', c); }
 
 function applyColColors() {
   const colors = getPLColors();
+  let css = '';
   PL_STAGES.forEach(stage => {
-    const col = document.querySelector(`.pipeline-col[data-stage="${stage}"]`);
-    if (!col) return;
     const c = colors[stage];
-    if (c) {
-      const dark = c.text === '#fff';
-      col.style.setProperty('--col-hbg',  c.bg);
-      col.style.setProperty('--col-htxt', c.text);
-      col.style.setProperty('--col-tbg',  dark ? 'rgba(255,255,255,.1)'  : 'color-mix(in srgb,#16a34a 8%,transparent)');
-      col.style.setProperty('--col-ttxt', dark ? 'rgba(255,255,255,.9)'  : '#16a34a');
-      col.style.setProperty('--col-tbd',  dark ? 'rgba(255,255,255,.18)' : 'color-mix(in srgb,#16a34a 20%,transparent)');
-    } else {
-      ['--col-hbg','--col-htxt','--col-tbg','--col-ttxt','--col-tbd'].forEach(v => col.style.removeProperty(v));
-    }
+    if (!c) return;
+    const dark = c.text === '#fff';
+    const s = `.pipeline-col[data-stage="${stage}"]`;
+    const tBg  = dark ? 'rgba(0,0,0,.25)'         : 'rgba(22,163,74,.12)';
+    const tTxt = dark ? 'rgba(255,255,255,.95)'    : '#15803d';
+    const tBd  = dark ? 'rgba(255,255,255,.2)'     : 'rgba(22,163,74,.25)';
+    css += `
+      ${s} .pipeline-col-header { background: ${c.bg} !important; color: ${c.text} !important; }
+      ${s} .pipeline-col-title  { color: ${c.text} !important; }
+      ${s} .col-color-btn       { color: ${c.text} !important; }
+      ${s} .pipeline-col-badge  { background: rgba(128,128,128,.35) !important; color: ${c.text} !important; }
+      ${s} .pipeline-col-total  { color: ${tTxt} !important; background: ${tBg} !important; border-bottom-color: ${tBd} !important; }
+    `;
   });
+  let el = document.getElementById('pl-col-colors');
+  if (!el) { el = document.createElement('style'); el.id = 'pl-col-colors'; document.head.appendChild(el); }
+  el.textContent = css;
 }
 
 function openColColorPicker(stage, anchorEl) {

@@ -1809,12 +1809,12 @@ table { border-collapse: collapse; width: 100%; }
 
 /* ── Column total strip ── */
 .pipeline-col-total {
-  font-size: .73rem;
-  font-weight: 700;
-  color: var(--col-ttxt);
-  background: var(--col-tbg);
-  border-bottom: 1px solid var(--col-tbd);
-  padding: 3px 12px;
+  font-size: .76rem;
+  font-weight: 800;
+  color: #fff;
+  background: #16a34a;
+  border-bottom: 2px solid #15803d;
+  padding: 5px 14px;
   letter-spacing: .01em;
   display: none;
 }
