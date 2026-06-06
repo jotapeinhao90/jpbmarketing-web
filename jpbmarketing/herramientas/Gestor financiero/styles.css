@@ -1802,6 +1802,12 @@ table { border-collapse: collapse; width: 100%; }
 }
 
 /* ── Column drag-and-drop ── */
+.pipeline-col-header {
+  cursor: grab;
+}
+.pipeline-col-header:active {
+  cursor: grabbing;
+}
 .pipeline-col.col-dragging {
   opacity: .45;
 }

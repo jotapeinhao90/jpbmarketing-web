@@ -1306,14 +1306,14 @@ function seedCotizacionesOficiales() {
   const refs = new Set(existing.map(l => l.cotizRef).filter(Boolean));
   const oficiales = [
     {cotizRef:'17023',name:'Nicolas Yanine',company:'Molino Yanine',biz:'polimer',phone:'',email:'',product:'Fundas PE Transp. 240x140x40mic',qty:'1.750 un · $675 c/u',price:1181250,stage:'oficial',notes:'Cotización oficial N°17023',date:'2026-02-17'},
-    {cotizRef:'17037',name:'Agrofresh',company:'Agrofresh',biz:'polimer',phone:'',email:'',product:'Bolsas PEBD + Basura negras 4 medidas',qty:'5.200 un total',price:0,stage:'oficial',notes:'Cotización oficial N°17037. PEBD 300x275x90 400un; Basura 224x150x80 1000un; 110x120x80 1000un; 70x90x60 2800un',date:'2026-03-12'},
-    {cotizRef:'17040',name:'SUMINEX',company:'SUMINEX',biz:'polimer',phone:'',email:'',product:'PEBD colores + Basura + Doble sello fondo 11 medidas',qty:'79.900 un total',price:0,stage:'oficial',notes:'Cotización oficial N°17040. Bolsas colores 110x120x200mic y múltiples medidas doble sello fondo.',date:'2026-03-18'},
+    {cotizRef:'17037',name:'Agrofresh',company:'Agrofresh',biz:'polimer',phone:'',email:'',product:'Bolsas PEBD + Basura negras 4 medidas',qty:'5.200 un total',price:3445000,stage:'oficial',notes:'Cotización oficial N°17037. PEBD 300x275x90 400un; Basura 224x150x80 1000un; 110x120x80 1000un; 70x90x60 2800un',date:'2026-03-12'},
+    {cotizRef:'17040',name:'SUMINEX',company:'SUMINEX',biz:'polimer',phone:'',email:'',product:'PEBD colores + Basura + Doble sello fondo 11 medidas',qty:'79.900 un total',price:22543560,stage:'oficial',notes:'Cotización oficial N°17040. Bolsas colores 110x120x200mic y múltiples medidas doble sello fondo.',date:'2026-03-18'},
     {cotizRef:'17041',name:'Embotelladora Andina',company:'Embotelladora Andina (Coca-Cola)',biz:'polimer',phone:'',email:'',product:'Bolsas BINS PEBD Transparente 255x215x45mic',qty:'650 un · $1.244 c/u',price:808600,stage:'oficial',notes:'Cotización oficial N°17041. Pago 30 días fecha factura.',date:'2026-03-18'},
-    {cotizRef:'17042',name:'KREEMS',company:'KREEMS',biz:'polimer',phone:'',email:'',product:'Bolsas basura 3 medidas + Prepicadas',qty:'46.500 un + 2.400 kg prepicadas',price:0,stage:'oficial',notes:'Cotización oficial N°17042. Basura 90x120x80 20.000un; 70x90x30 8.500un; 50x70x30 18.000un. Prepicadas 300kg/medida.',date:'2026-03-19'},
-    {cotizRef:'17043',name:'SUMINEX',company:'SUMINEX',biz:'polimer',phone:'',email:'',product:'Bolsas basura + PEBD colores 110x120x200mic',qty:'30.000 un total',price:0,stage:'oficial',notes:'Cotización oficial N°17043. Segunda cotización SUMINEX con variantes 5k/10k.',date:'2026-03-20'},
+    {cotizRef:'17042',name:'KREEMS',company:'KREEMS',biz:'polimer',phone:'',email:'',product:'Bolsas basura 3 medidas + Prepicadas',qty:'46.500 un + 2.400 kg prepicadas',price:6550005,stage:'oficial',notes:'Cotización oficial N°17042. Basura 90x120x80 20.000un; 70x90x30 8.500un; 50x70x30 18.000un. Prepicadas 300kg/medida.',date:'2026-03-19'},
+    {cotizRef:'17043',name:'SUMINEX',company:'SUMINEX',biz:'polimer',phone:'',email:'',product:'Bolsas basura + PEBD colores 110x120x200mic',qty:'30.000 un total',price:28800000,stage:'oficial',notes:'Cotización oficial N°17043. Segunda cotización SUMINEX con variantes 5k/10k.',date:'2026-03-20'},
     {cotizRef:'17044',name:'KERSTING',company:'KERSTING',biz:'polimer',phone:'',email:'',product:'Bolsas PP Transp. Impresas 1 cara "LEXO" 10.4x22.5x80mic',qty:'135.000 un · $29,90 c/u',price:4036500,stage:'oficial',notes:'Cotización oficial N°17044. Pago 30 días factura. Entrega 30-35 días hábiles.',date:'2026-03-20'},
     {cotizRef:'17046',name:'AXPA',company:'AXPA',biz:'polimer',phone:'',email:'',product:'Bolsas PEBD TTE 60x90x60mic',qty:'15.000 un · $120,60 c/u',price:1809000,stage:'oficial',notes:'Cotización oficial N°17046.',date:'2026-03-27'},
-    {cotizRef:'17047',name:'SUMINEX',company:'SUMINEX',biz:'polimer',phone:'',email:'',product:'PEBD colores + Negras dos sellos y fondo, 10 items',qty:'80.000 un total',price:0,stage:'oficial',notes:'Cotización oficial N°17047. Tercera cotización SUMINEX, precios actualizados.',date:'2026-03-27'},
+    {cotizRef:'17047',name:'SUMINEX',company:'SUMINEX',biz:'polimer',phone:'',email:'',product:'PEBD colores + Negras dos sellos y fondo, 10 items',qty:'80.000 un total',price:46765600,stage:'oficial',notes:'Cotización oficial N°17047. Tercera cotización SUMINEX, precios actualizados.',date:'2026-03-27'},
     {cotizRef:'17049',name:'SCHUFFENER LTDA',company:'Schuffener Ltda',biz:'polimer',phone:'',email:'',product:'Fundas PEBD pigmentada negra 140x140x220',qty:'500 un x 90mic + 500 un x 100mic',price:4410000,stage:'oficial',notes:'Cotización oficial N°17049. Archivo: C. Pastenes.',date:'2026-04-06'},
     {cotizRef:'17053',name:'SHEC',company:'SHEC',biz:'polimer',phone:'',email:'',product:'Bolsa BINS Transparente 250x260x50mic',qty:'400 un · $2.036 c/u',price:814400,stage:'oficial',notes:'Cotización oficial N°17053.',date:'2026-04-16'},
     {cotizRef:'17054',name:'Cecinas Española',company:'Cecinas Española',biz:'polimer',phone:'',email:'',product:'Bolsa BD naranja imp. BAXTER 350x500x100mic + Clisés',qty:'10.000 un · $123,90 c/u + clisés $96.000',price:1335000,stage:'oficial',notes:'Cotización oficial N°17054. Incluye clisés para impresión.',date:'2026-04-16'},
@@ -1322,7 +1322,7 @@ function seedCotizacionesOficiales() {
     {cotizRef:'17060',name:'WSS',company:'WSS',biz:'polimer',phone:'',email:'',product:'Bolsa BD Doble Sello 40x60x200mic + BD Transp. 25x35x60mic',qty:'13.000 + 25.000 un',price:4542500,stage:'oficial',notes:'Cotización oficial N°17060. Segunda cotización WSS. Pago cheque 30 días.',date:'2026-05-05'},
     {cotizRef:'17061',name:'San Francisco',company:'San Francisco',biz:'polimer',phone:'',email:'',product:'Bolsa BD Transparente BINS 240x240x50mic',qty:'600 un · $1.820 c/u',price:1092000,stage:'oficial',notes:'Cotización oficial N°17061.',date:'2026-05-05'},
     {cotizRef:'17062',name:'Alimentos Porvenir',company:'Alimentos Porvenir',biz:'polimer',phone:'',email:'',product:'Bolsa BD Transparente Cubre BINS 260x180x80mic',qty:'600 un · $2.176 c/u',price:1305600,stage:'oficial',notes:'Cotización oficial N°17062.',date:'2026-05-06'},
-    {cotizRef:'17063',name:'Aseo Swan',company:'Aseo Swan',biz:'polimer',phone:'',email:'',product:'Bolsas Basura Negras 4 medidas: 110x120 + 50x70 + 70x90 + 140x160',qty:'2.000+10.752+6.000+1.200 un',price:0,stage:'oficial',notes:'Cotización oficial N°17063. Sin fecha en documento.',date:'2026-05-07'},
+    {cotizRef:'17063',name:'Aseo Swan',company:'Aseo Swan',biz:'polimer',phone:'',email:'',product:'Bolsas Basura Negras 4 medidas: 110x120 + 50x70 + 70x90 + 140x160',qty:'2.000+10.752+6.000+1.200 un',price:2657192,stage:'oficial',notes:'Cotización oficial N°17063. Sin fecha en documento.',date:'2026-05-07'},
     {cotizRef:'17068',name:'Frigosur',company:'Frigosur',biz:'polimer',phone:'',email:'ivanfrigosur1@gmail.com',product:'Bolsas BD Virgen Transparente 60x90x80mic',qty:'6.300 un · $244 c/u · Total $1.829.268 c/IVA',price:1537200,stage:'oficial',notes:'Cotización oficial N°17068.',date:'2026-05-11'},
     {cotizRef:'17069',name:'Daily Fresh',company:'Daily Fresh',biz:'polimer',phone:'',email:'pparedes@dailyfresh.cl',product:'Bolsas BD Transparente 90x110x40mic',qty:'4.000 un · $182 c/u · Total $866.320 c/IVA',price:728000,stage:'oficial',notes:'Cotización oficial N°17069. Pago 30 días fecha factura.',date:'2026-05-12'},
     {cotizRef:'17070',name:'Rey Ramos',company:'Rey Ramos',biz:'polimer',phone:'',email:'',product:'Bolsa PEBD Transp. Impresa 1c/1col. 60x60x60mic + Clichés',qty:'8.700 un · $158,20 c/u + clichés $95.000 · Total $1.750.895 c/IVA',price:1471340,stage:'oficial',notes:'Cotización oficial N°17070.',date:'2026-05-13'},
@@ -1382,25 +1382,23 @@ function initColDrag() {
   const board = document.getElementById('pipelineBoard');
   if (!board) return;
   let dragSrc = null;
+  // dragstart fires from the header (draggable="true" on header only)
   board.addEventListener('dragstart', e => {
-    // Only start drag when initiating from the column header background (not interactive children)
-    if (e.target.closest('button, a, input, textarea, select, [contenteditable]')) {
-      e.preventDefault(); return;
-    }
-    const col = e.target.closest('.pipeline-col');
-    if (!col) return;
-    dragSrc = col;
+    const header = e.target.closest('.pipeline-col-header');
+    if (!header) return;
+    // Don't drag if user clicked contenteditable title
+    if (e.target.closest('[contenteditable]')) { e.preventDefault(); return; }
+    dragSrc = header.closest('.pipeline-col');
+    if (!dragSrc) return;
     e.dataTransfer.effectAllowed = 'move';
-    setTimeout(() => col.classList.add('col-dragging'), 0);
+    setTimeout(() => dragSrc.classList.add('col-dragging'), 0);
   });
   board.addEventListener('dragend', e => {
-    const col = e.target.closest('.pipeline-col');
-    if (col) col.classList.remove('col-dragging');
+    if (dragSrc) dragSrc.classList.remove('col-dragging');
     board.querySelectorAll('.pipeline-col').forEach(c => c.classList.remove('col-drag-over'));
-    dragSrc = null;
-    // save order
     const order = [...board.querySelectorAll('.pipeline-col')].map(c => c.dataset.stage);
     save('gestipyme_pl_order', order);
+    dragSrc = null;
   });
   board.addEventListener('dragover', e => {
     e.preventDefault();
