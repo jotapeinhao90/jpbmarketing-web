@@ -1435,28 +1435,103 @@ select { cursor: pointer; }
   .caso3-grid { grid-template-columns: 1fr; }
 }
 
-/* Casos de éxito — historias completas (nosotros.html) */
-.story-block { display: grid; grid-template-columns: 1fr 1fr; gap: 60px; align-items: center; padding: 64px 0; border-bottom: 1px solid var(--card-border); }
-.story-block:last-child { border-bottom: none; }
-.story-block-reverse .story-img { order: 2; }
-.story-block-reverse .story-content { order: 1; }
-.story-img { position: relative; }
-.story-img > img:first-child { width: 100%; height: 340px; object-fit: cover; border-radius: var(--radius-lg); }
-.story-img-bg { height: 340px; background: #0d1b35; border-radius: var(--radius-lg); display: flex; align-items: center; justify-content: center; }
-.story-logo-center { max-height: 90px; max-width: 240px; object-fit: contain; filter: brightness(0) invert(1); }
-.story-logo-overlay { position: absolute; bottom: 16px; left: 16px; background: rgba(255,255,255,0.96); border-radius: 10px; padding: 8px 14px; }
-.story-logo-overlay img { max-height: 36px; max-width: 160px; object-fit: contain; display: block; }
-.story-dual-logos { display: inline-flex; align-items: center; gap: 14px; background: rgba(255,255,255,0.96); border-radius: 10px; padding: 10px 16px; margin-top: 16px; }
-.story-dual-logos img { max-height: 32px; max-width: 110px; object-fit: contain; }
-.story-dual-logos span { color: #9ca3af; font-size: 1.1rem; }
-.story-content .caso-years { margin-bottom: 10px; display: block; }
-.story-content h3 { font-size: 1.3rem; font-weight: 800; color: var(--heading); margin: 10px 0 18px; line-height: 1.3; }
-.story-content p { font-size: 0.95rem; color: var(--body); line-height: 1.75; margin-bottom: 14px; }
+/* ==========================================
+   Client Story Cards — nosotros.html (.cs-*)
+   ========================================== */
+.cs-wrap { max-width: 1100px; margin-inline: auto; padding: 0 24px; }
+.cs-card {
+  display: flex;
+  min-height: 460px;
+  border-radius: 24px;
+  overflow: hidden;
+  box-shadow: 0 8px 40px rgba(30,58,95,.1);
+  background: #fff;
+}
+.cs-wrap-rev .cs-card { flex-direction: row-reverse; }
+
+/* Media panel (photo or dark) */
+.cs-media {
+  flex: 0 0 44%;
+  position: relative;
+  overflow: hidden;
+}
+.cs-media > img { width: 100%; height: 100%; object-fit: cover; object-position: center top; display: block; }
+.cs-media-grad {
+  position: absolute; inset: 0;
+  background: linear-gradient(135deg, rgba(37,99,235,.25) 0%, transparent 55%);
+  pointer-events: none;
+}
+.cs-media-navy {
+  background: #0d1b35;
+  display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 0;
+  position: relative; overflow: hidden;
+}
+.cs-logo-hero {
+  max-height: 100px; max-width: 260px;
+  object-fit: contain; display: block;
+  filter: brightness(0) invert(1);
+  position: relative; z-index: 1;
+}
+.cs-media-dots {
+  position: absolute; inset: 0;
+  background-image: radial-gradient(rgba(255,255,255,.06) 1px, transparent 1px);
+  background-size: 28px 28px;
+}
+
+/* Content panel */
+.cs-body {
+  flex: 1;
+  padding: 48px 52px;
+  display: flex; flex-direction: column; justify-content: center;
+  position: relative;
+  border-left: 4px solid transparent;
+  background: linear-gradient(#fff,#fff) padding-box,
+              linear-gradient(180deg, #2563eb, #0ea5e9) border-box;
+}
+.cs-wrap-rev .cs-body {
+  border-left: none;
+  border-right: 4px solid transparent;
+  background: linear-gradient(#fff,#fff) padding-box,
+              linear-gradient(180deg, #f59e0b, #d97706) border-box;
+}
+.cs-num {
+  position: absolute; top: 20px; right: 28px;
+  font-size: 6rem; font-weight: 900;
+  color: #f1f5f9; line-height: 1;
+  user-select: none; pointer-events: none;
+}
+.cs-top { display: flex; align-items: center; gap: 14px; margin-bottom: 18px; flex-wrap: wrap; }
+.cs-logo-link { display: inline-block; }
+.cs-logo { max-height: 42px; max-width: 160px; width: auto; height: auto; object-fit: contain; display: block; }
+.cs-badge {
+  font-size: .7rem; font-weight: 700; letter-spacing: .04em;
+  padding: 4px 12px; border-radius: 20px;
+  background: #dcfce7; color: #166534;
+  white-space: nowrap;
+}
+.cs-title {
+  font-size: 1.35rem; font-weight: 800; color: #1e3a5f;
+  line-height: 1.3; margin: 0 0 16px;
+}
+.cs-text {
+  font-size: .925rem; color: #475569;
+  line-height: 1.78; margin-bottom: 12px;
+}
+.cs-chips {
+  display: flex; flex-wrap: wrap; gap: 8px; margin-top: 18px;
+}
+.cs-chips span {
+  font-size: .7rem; font-weight: 600; padding: 4px 12px;
+  background: #f1f5f9; border: 1px solid #e2e8f0;
+  border-radius: 20px; color: #1e3a5f;
+}
+
 @media (max-width: 860px) {
-  .story-block { grid-template-columns: 1fr; gap: 28px; padding: 44px 0; }
-  .story-block-reverse .story-img { order: 0; }
-  .story-block-reverse .story-content { order: 0; }
-  .story-img > img:first-child, .story-img-bg { height: 240px; }
+  .cs-card, .cs-wrap-rev .cs-card { flex-direction: column; }
+  .cs-media { flex: none; height: 260px; width: 100%; }
+  .cs-body { padding: 28px 24px; border-left: 4px solid transparent !important; border-right: none !important; }
+  .cs-num { font-size: 4rem; }
+  .cs-title { font-size: 1.1rem; }
 }
 
 @media (max-width: 900px) {
