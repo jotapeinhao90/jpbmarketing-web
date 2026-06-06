@@ -293,10 +293,30 @@ body{font-family:'Inter',system-ui,sans-serif;background:var(--bg);color:var(--t
 
 /* Message generator */
 .msg-tabs{display:flex;gap:6px;margin-bottom:14px;}
-.msg-tab{padding:8px 18px;border:1px solid var(--border);border-radius:8px;background:transparent;color:var(--muted);font-size:13px;font-weight:600;cursor:pointer;font-family:inherit;transition:all .2s;}
-.msg-tab.active{background:var(--gradient);color:#fff;border-color:transparent;}
-.btn-msg{width:26px;height:26px;border:none;background:rgba(108,99,255,.15);border-radius:6px;color:var(--accent);cursor:pointer;font-size:13px;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:background .2s;}
-.btn-msg:hover{background:rgba(108,99,255,.3);}
+.msg-tab{padding:9px 20px;border:1px solid var(--border);border-radius:10px;background:transparent;color:var(--muted);font-size:13px;font-weight:600;cursor:pointer;font-family:inherit;transition:all .2s;display:flex;align-items:center;gap:6px;}
+.msg-tab.active{background:var(--gradient);color:#fff;border-color:transparent;box-shadow:0 4px 16px rgba(108,99,255,.3);}
+.msg-tab:not(.active):hover{border-color:var(--accent);color:var(--text);}
+.btn-msg{padding:5px 12px;border:1px solid rgba(108,99,255,.35);background:rgba(108,99,255,.1);border-radius:7px;color:var(--accent);cursor:pointer;font-size:11px;font-weight:600;display:flex;align-items:center;gap:5px;white-space:nowrap;font-family:inherit;transition:all .2s;}
+.btn-msg:hover{background:rgba(108,99,255,.25);border-color:var(--accent);}
+.msg-contact-bar{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px;}
+.msg-contact-chip{display:inline-flex;align-items:center;gap:6px;padding:7px 14px;border-radius:8px;font-size:12px;font-weight:600;border:1px solid;transition:all .2s;text-decoration:none;cursor:pointer;}
+.msg-chip-wa{background:rgba(37,211,102,.1);border-color:rgba(37,211,102,.3);color:#25D366;}
+.msg-chip-wa:hover{background:rgba(37,211,102,.2);}
+.msg-chip-email{background:rgba(108,99,255,.1);border-color:rgba(108,99,255,.3);color:var(--accent);}
+.msg-chip-email:hover{background:rgba(108,99,255,.2);}
+.msg-chip-phone{background:rgba(0,212,255,.08);border-color:rgba(0,212,255,.25);color:var(--accent2);}
+.msg-chip-phone:hover{background:rgba(0,212,255,.15);}
+.msg-chip-maps{background:rgba(245,158,11,.08);border-color:rgba(245,158,11,.25);color:var(--warning);}
+.msg-chip-maps:hover{background:rgba(245,158,11,.15);}
+.msg-textarea{width:100%;min-height:200px;background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-sm);color:var(--text);font-size:13px;font-family:'Inter',sans-serif;padding:14px;outline:none;resize:vertical;line-height:1.7;margin-bottom:12px;transition:border-color .2s;}
+.msg-textarea:focus{border-color:var(--accent);}
+.msg-actions{display:flex;gap:8px;}
+.btn-msg-copy{flex:1;padding:13px;background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-sm);color:var(--text);font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;transition:all .2s;display:flex;align-items:center;justify-content:center;gap:8px;}
+.btn-msg-copy:hover{border-color:var(--accent);background:var(--glow);}
+.btn-msg-wa{flex:1;padding:13px;background:linear-gradient(135deg,#25D366,#128C7E);border:none;border-radius:var(--radius-sm);color:#fff;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;transition:all .2s;display:flex;align-items:center;justify-content:center;gap:8px;}
+.btn-msg-wa:hover{opacity:.9;transform:translateY(-1px);}
+.btn-msg-sendmail{flex:1;padding:13px;background:var(--gradient);border:none;border-radius:var(--radius-sm);color:#fff;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;transition:all .2s;display:flex;align-items:center;justify-content:center;gap:8px;}
+.btn-msg-sendmail:hover{opacity:.9;transform:translateY(-1px);}
 
 /* Rubros manager */
 .cat-pill-settings{background:transparent!important;border-color:rgba(108,99,255,.3)!important;color:var(--accent)!important;font-size:12px!important;}
@@ -980,26 +1000,39 @@ tbody td a:hover{color:var(--accent);text-decoration:underline;}
 
 <!-- Message generator modal -->
 <div class="modal-overlay" id="msgModal" onclick="if(event.target===this)closeMsgModal()">
-  <div class="modal-box" style="width:600px;">
+  <div class="modal-box" style="width:620px;max-height:90vh;overflow-y:auto;">
     <button class="modal-close" onclick="closeMsgModal()">✕</button>
-    <div id="msgHeader" style="display:flex;align-items:center;gap:12px;margin-bottom:18px;padding-bottom:14px;border-bottom:1px solid var(--border);">
-      <div id="msgCompanyIcon" style="width:40px;height:40px;border-radius:10px;background:var(--gradient);display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;">🏢</div>
-      <div><div id="msgCompanyName" style="font-size:15px;font-weight:700;"></div><div id="msgCompanyMeta" style="font-size:12px;color:var(--muted);margin-top:2px;"></div></div>
+
+    <!-- Company header -->
+    <div style="display:flex;align-items:center;gap:12px;margin-bottom:16px;padding-bottom:14px;border-bottom:1px solid var(--border);">
+      <div style="width:44px;height:44px;border-radius:12px;background:var(--gradient);display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0;">🏢</div>
+      <div style="flex:1;min-width:0;">
+        <div id="msgCompanyName" style="font-size:16px;font-weight:800;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;"></div>
+        <div id="msgCompanyMeta" style="font-size:12px;color:var(--muted);margin-top:2px;"></div>
+      </div>
     </div>
+
+    <!-- Quick contact chips -->
+    <div class="msg-contact-bar" id="msgContactBar"></div>
+
+    <!-- Channel tabs -->
     <div class="msg-tabs">
       <button class="msg-tab active" id="tabWA" onclick="switchMsgTab('wa')">📱 WhatsApp</button>
       <button class="msg-tab" id="tabEmail" onclick="switchMsgTab('email')">📧 Email frío</button>
     </div>
-    <div id="emailSubjectWrap" style="display:none;margin-bottom:8px;">
-      <div style="font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:1px;margin-bottom:4px;">Asunto</div>
-      <input class="modal-input" id="emailSubject" style="margin:0;" readonly>
+
+    <!-- Subject (email only) -->
+    <div id="emailSubjectWrap" style="display:none;margin-bottom:10px;">
+      <div style="font-size:10px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:1.2px;margin-bottom:5px;">Asunto del email</div>
+      <input class="modal-input" id="emailSubject" style="margin:0;font-size:13px;" readonly>
     </div>
-    <textarea id="msgText" style="width:100%;min-height:200px;background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-sm);color:var(--text);font-size:13px;font-family:'Inter',sans-serif;padding:14px;outline:none;resize:vertical;line-height:1.7;margin-bottom:12px;" onfocus="this.style.borderColor='var(--accent)'" onblur="this.style.borderColor='var(--border)'"></textarea>
-    <div style="display:flex;gap:10px;">
-      <button class="btn-modal-save" style="flex:1;" onclick="copyMsg()">📋 Copiar mensaje</button>
-      <button class="btn-modal-save" id="btnOpenWA" style="flex:1;background:linear-gradient(135deg,#25D366,#128C7E);" onclick="openWA()">📲 Abrir WhatsApp</button>
-    </div>
-    <div id="msgCopied" style="text-align:center;font-size:12px;color:var(--success);margin-top:8px;display:none;">✓ Copiado al portapapeles</div>
+
+    <!-- Message textarea -->
+    <textarea class="msg-textarea" id="msgText"></textarea>
+
+    <!-- Action buttons -->
+    <div class="msg-actions" id="msgActionBtns"></div>
+    <div id="msgCopied" style="text-align:center;font-size:12px;color:var(--success);margin-top:10px;display:none;font-weight:600;">✓ Mensaje copiado al portapapeles</div>
   </div>
 </div>
 
@@ -1673,7 +1706,7 @@ function renderTable(){
     const sc=prospectScore(r);
     const scH='<span class="score-badge '+sc.cls+'">'+sc.label+'</span>';
     const chk=selectedIds.has(r.id)?'checked':'';
-    return '<tr><td style="padding:8px 10px;"><input type="checkbox" class="row-check" data-id="'+r.id+'" '+chk+' onchange="toggleSelect(\''+r.id+'\',this)"></td><td style="color:var(--dim)">'+(i+1)+'</td><td><div class="empresa-name">'+r.nombre+' '+mH+'</div><div class="empresa-types">'+r.tipos+'</div></td><td>'+(r.telefono||'<span style="color:var(--dim)">—</span>')+'</td><td>'+eH+'</td><td>'+w+'</td><td>'+rH+'</td><td>'+scH+'</td><td><span style="font-size:11px;'+sC+'">'+r.estado_text+'</span></td><td><span class="hours-text" title="'+r.horario+'">'+(r.horario||'<span style="color:var(--dim)">—</span>')+'</span></td><td><button class="btn-msg" onclick="openMessageGen(\''+r.id+'\')" title="Generar mensaje de contacto">💬</button></td></tr>';
+    return '<tr><td style="padding:8px 10px;"><input type="checkbox" class="row-check" data-id="'+r.id+'" '+chk+' onchange="toggleSelect(\''+r.id+'\',this)"></td><td style="color:var(--dim)">'+(i+1)+'</td><td><div class="empresa-name">'+r.nombre+' '+mH+'</div><div class="empresa-types">'+r.tipos+'</div></td><td>'+(r.telefono||'<span style="color:var(--dim)">—</span>')+'</td><td>'+eH+'</td><td>'+w+'</td><td>'+rH+'</td><td>'+scH+'</td><td><span style="font-size:11px;'+sC+'">'+r.estado_text+'</span></td><td><span class="hours-text" title="'+r.horario+'">'+(r.horario||'<span style="color:var(--dim)">—</span>')+'</span></td><td><button class="btn-msg" onclick="openMessageGen(\''+r.id+'\')">💬 Mensaje</button></td></tr>';
   });
   tb.innerHTML=rows.join('');
 }
@@ -2302,6 +2335,18 @@ function openMessageGen(id){
   _msgId=id;_msgTab='wa';
   document.getElementById('msgCompanyName').textContent=r.nombre;
   document.getElementById('msgCompanyMeta').textContent=(r.tipos||'Empresa')+(r.rating?' · ⭐ '+r.rating:'')+(r.direccion?' · '+r.direccion.split(',')[0]:'');
+  // Build contact chips
+  const bar=document.getElementById('msgContactBar');
+  let chips='';
+  if(r.telefono){
+    const phone=(r.telefono||'').replace(/[\s+\-().]/g,'');
+    chips+=`<a class="msg-contact-chip msg-chip-wa" href="https://wa.me/${phone}" target="_blank">📱 ${r.telefono}</a>`;
+    chips+=`<a class="msg-contact-chip msg-chip-phone" href="tel:${r.telefono}">📞 Llamar</a>`;
+  }
+  if(r.email)chips+=`<a class="msg-contact-chip msg-chip-email" href="mailto:${r.email}">✉️ ${r.email}</a>`;
+  if(r.google_maps)chips+=`<a class="msg-contact-chip msg-chip-maps" href="${r.google_maps}" target="_blank">📍 Ver en Maps</a>`;
+  if(r.sitio_web)chips+=`<a class="msg-contact-chip msg-chip-email" href="${r.sitio_web}" target="_blank" style="color:var(--accent2);border-color:rgba(0,212,255,.3);background:rgba(0,212,255,.06);">🌐 Sitio web</a>`;
+  bar.innerHTML=chips||'<span style="font-size:12px;color:var(--dim);">Sin datos de contacto directo</span>';
   switchMsgTab('wa');
   document.getElementById('msgModal').classList.add('show');
 }
@@ -2311,7 +2356,6 @@ function switchMsgTab(tab){
   _msgTab=tab;
   document.getElementById('tabWA').classList.toggle('active',tab==='wa');
   document.getElementById('tabEmail').classList.toggle('active',tab==='email');
-  document.getElementById('btnOpenWA').style.display=tab==='wa'?'block':'none';
   document.getElementById('emailSubjectWrap').style.display=tab==='email'?'block':'none';
   const r=allResults.find(x=>x.id===_msgId);if(!r)return;
   if(tab==='wa'){
@@ -2321,6 +2365,15 @@ function switchMsgTab(tab){
     document.getElementById('msgText').value=getEmailTemplate(r);
   }
   document.getElementById('msgCopied').style.display='none';
+  // Build action buttons
+  const ab=document.getElementById('msgActionBtns');
+  if(tab==='wa'){
+    const phone=(r.telefono||'').replace(/[\s+\-().]/g,'');
+    ab.innerHTML=`<button class="btn-msg-copy" onclick="copyMsg()">📋 Copiar texto</button><button class="btn-msg-wa" onclick="openWA()">📲 Enviar por WhatsApp${r.telefono?' a '+r.telefono:''}</button>`;
+  }else{
+    const mailto=r.email?`<button class="btn-msg-sendmail" onclick="sendEmail()">📧 Abrir en correo</button>`:'';
+    ab.innerHTML=`<button class="btn-msg-copy" onclick="copyMsg()">📋 Copiar texto</button>${mailto}`;
+  }
 }
 
 function getCity(){return(document.getElementById('city')?.value||'').split(',')[0].trim();}
@@ -2365,6 +2418,12 @@ function copyMsg(){
     const el=document.getElementById('msgCopied');el.style.display='block';
     setTimeout(()=>el.style.display='none',2500);
   }).catch(()=>{document.getElementById('msgText').select();document.execCommand('copy');});
+}
+function sendEmail(){
+  const r=allResults.find(x=>x.id===_msgId);if(!r||!r.email)return;
+  const subj=encodeURIComponent(document.getElementById('emailSubject').value);
+  const body=encodeURIComponent(document.getElementById('msgText').value);
+  window.open('mailto:'+r.email+'?subject='+subj+'&body='+body,'_blank');
 }
 function openWA(){
   const r=allResults.find(x=>x.id===_msgId);if(!r)return;
