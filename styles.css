@@ -2040,38 +2040,111 @@ select { cursor: pointer; }
 .waia-quick-win svg { color: #25d366; flex-shrink: 0; }
 
 /* Comparison table */
-.waia-cmp { background: #f8fafc; padding: 90px 0; }
-.waia-cmp-inner { border-radius: 20px; overflow: hidden; box-shadow: 0 4px 48px rgba(0,0,0,.09); }
+/* ---- Comparison table ---- */
+.waia-cmp { background: #f1f5f9; padding: 90px 0; }
+.waia-cmp-inner {
+  border-radius: 16px; overflow: hidden;
+  box-shadow: 0 4px 32px rgba(0,0,0,.1);
+  border: 1px solid #e2e8f0;
+}
+
+/* Header */
 .waia-cmp-hdr {
   display: grid; grid-template-columns: 2fr 1.4fr 1.6fr;
-  background: #fff; border-bottom: 2px solid #e2e8f0;
 }
-.waia-cmp-hdr > div { padding: 24px 24px; }
-.waia-cmp-hdr-feat { font-size: .72rem; font-weight: 700; color: #94a3b8; text-transform: uppercase; letter-spacing: .08em; display: flex; align-items: flex-end; }
-.waia-cmp-hdr-them { background: #f8fafc; text-align: center; }
-.waia-cmp-hdr-them-label { font-size: .78rem; font-weight: 700; color: #94a3b8; margin-top: 6px; }
-.waia-cmp-hdr-them-sub { font-size: .7rem; color: #cbd5e1; margin-top: 3px; }
-.waia-cmp-hdr-us { background: linear-gradient(135deg,#eff6ff,#f0fdf4); border-left: 3px solid #2563eb; text-align: center; }
-.waia-cmp-badge { display: inline-flex; align-items: center; gap: 4px; background: #dcfce7; color: #16a34a; font-size: .65rem; font-weight: 800; text-transform: uppercase; letter-spacing: .06em; padding: 3px 10px; border-radius: 20px; margin-bottom: 8px; }
-.waia-cmp-hdr-us-label { font-size: .9rem; font-weight: 800; color: #1e3a5f; }
+.waia-cmp-hdr > div { padding: 22px 22px; }
+.waia-cmp-hdr-feat {
+  background: #e9eef5;
+  font-size: .68rem; font-weight: 700; color: #64748b;
+  text-transform: uppercase; letter-spacing: .09em;
+  display: flex; align-items: flex-end;
+}
+.waia-cmp-hdr-them {
+  background: #f8fafc; text-align: center;
+  border-left: 1px solid #e2e8f0;
+}
+.waia-cmp-hdr-them-label { font-size: .8rem; font-weight: 700; color: #475569; margin-top: 4px; }
+.waia-cmp-hdr-them-sub { font-size: .68rem; color: #94a3b8; margin-top: 4px; }
+.waia-cmp-hdr-us {
+  background: #1e3a5f; text-align: center;
+  display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px;
+}
+.waia-cmp-badge {
+  display: inline-flex; align-items: center; gap: 5px;
+  background: rgba(34,197,94,.15); color: #4ade80;
+  border: 1px solid rgba(34,197,94,.35);
+  border-radius: 20px; padding: 3px 10px;
+  font-size: .64rem; font-weight: 800; letter-spacing: .05em; text-transform: uppercase;
+}
+.waia-cmp-hdr-us-label { font-size: .88rem; font-weight: 800; color: #fff; }
 
+/* Rows */
 .waia-cmp-row {
   display: grid; grid-template-columns: 2fr 1.4fr 1.6fr;
-  border-top: 1px solid #f1f5f9; background: #fff;
+  border-top: 1px solid #e2e8f0; background: #fff;
 }
-.waia-cmp-row:nth-child(even) { background: #fafbff; }
-.waia-cmp-feat { padding: 15px 24px; font-size: .875rem; font-weight: 600; color: #334155; display: flex; align-items: center; }
-.waia-cmp-them { padding: 15px 16px; font-size: .8rem; color: #94a3b8; display: flex; align-items: center; justify-content: center; gap: 7px; background: inherit; text-align: center; line-height: 1.4; }
-.waia-cmp-us { padding: 15px 16px; font-size: .82rem; font-weight: 600; color: #1e3a5f; display: flex; align-items: center; justify-content: center; gap: 7px; background: rgba(37,99,235,.025); border-left: 3px solid #dbeafe; text-align: center; line-height: 1.4; }
-.waia-cmp-x { width: 18px; height: 18px; background: #fee2e2; color: #ef4444; border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
-.waia-cmp-v { width: 18px; height: 18px; background: #dcfce7; color: #16a34a; border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
-.waia-cmp-price-row { border-top: 2px solid #e2e8f0 !important; }
+.waia-cmp-row:nth-child(even) .waia-cmp-feat,
+.waia-cmp-row:nth-child(even) .waia-cmp-them { background: #f8fafc; }
+.waia-cmp-row:nth-child(even) .waia-cmp-us { background: #e8f0fe; }
+.waia-cmp-feat {
+  padding: 15px 22px; font-size: .855rem; font-weight: 600; color: #1e293b;
+  display: flex; align-items: center; background: #fff;
+}
+.waia-cmp-them {
+  padding: 15px 14px; font-size: .78rem; color: #64748b;
+  display: flex; align-items: center; gap: 8px;
+  background: #fff; border-left: 1px solid #e2e8f0; line-height: 1.4;
+}
+.waia-cmp-us {
+  padding: 15px 14px; font-size: .8rem; font-weight: 600; color: #1e3a5f;
+  display: flex; align-items: center; gap: 8px;
+  background: #eff4ff; border-left: 3px solid #2563eb; line-height: 1.4;
+}
+.waia-cmp-x {
+  flex-shrink: 0; width: 18px; height: 18px;
+  background: #fee2e2; color: #ef4444;
+  border-radius: 50%; display: flex; align-items: center; justify-content: center;
+}
+.waia-cmp-v {
+  flex-shrink: 0; width: 18px; height: 18px;
+  background: #dcfce7; color: #16a34a;
+  border-radius: 50%; display: flex; align-items: center; justify-content: center;
+}
+.waia-cmp-price-row { border-top: 2px solid #d1dae6 !important; }
 .waia-cmp-price-row .waia-cmp-feat { font-size: .9rem; font-weight: 800; color: #1e3a5f; }
-.waia-cmp-price-row .waia-cmp-us { font-size: .85rem; color: #16a34a; font-weight: 800; }
+.waia-cmp-price-row .waia-cmp-them { color: #94a3b8; font-style: italic; }
+.waia-cmp-price-row .waia-cmp-us { font-size: .84rem; color: #16a34a; font-weight: 800; }
 
-@media (max-width: 700px) {
-  .waia-cmp-hdr, .waia-cmp-row { grid-template-columns: 1.5fr 1fr 1.4fr; }
-  .waia-cmp-hdr > div, .waia-cmp-feat { padding: 14px 14px; }
-  .waia-cmp-feat { font-size: .78rem; }
-  .waia-cmp-them, .waia-cmp-us { padding: 14px 8px; font-size: .73rem; }
+/* Mobile: feature spans full width → competitor | JPB side by side */
+@media (max-width: 640px) {
+  .waia-cmp { padding: 60px 0; }
+  .waia-cmp-hdr { grid-template-columns: 1fr 1fr; }
+  .waia-cmp-hdr-feat { display: none; }
+  .waia-cmp-hdr > div { padding: 16px 14px; }
+  .waia-cmp-row {
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: auto auto;
+  }
+  .waia-cmp-feat {
+    grid-column: 1 / -1; grid-row: 1;
+    background: #e4ecf5 !important;
+    padding: 9px 14px;
+    font-size: .76rem; font-weight: 700; color: #334155;
+    border-top: 1px solid #d5dde8;
+  }
+  .waia-cmp-them {
+    grid-column: 1; grid-row: 2;
+    padding: 11px 10px; font-size: .71rem;
+    border-left: none; border-top: 1px solid #e2e8f0;
+    flex-direction: column; align-items: flex-start; gap: 5px;
+    background: #fff !important;
+  }
+  .waia-cmp-us {
+    grid-column: 2; grid-row: 2;
+    padding: 11px 10px; font-size: .71rem;
+    border-left: 2px solid #2563eb; border-top: 1px solid #e2e8f0;
+    flex-direction: column; align-items: flex-start; gap: 5px;
+    background: #eff4ff !important;
+  }
+  .waia-cmp-row:nth-child(even) .waia-cmp-feat { background: #dce6f0 !important; }
 }
