@@ -2425,3 +2425,104 @@ select { cursor: pointer; }
   .tech-item { padding: 12px 8px; }
   .brow-nav-items { display: none; }
 }
+
+/* ---- Servicio 06: Transformación Digital Integral (sección premium) ---- */
+.svc-digital-section {
+  background: #06091a; overflow: hidden; position: relative; padding: 100px 0;
+}
+.svc-digital-header {
+  text-align: center; max-width: 700px; margin: 0 auto 56px;
+}
+.svc-digital-badge {
+  display: inline-flex; align-items: center; gap: 7px;
+  background: linear-gradient(135deg, rgba(245,158,11,.15), rgba(251,191,36,.1));
+  border: 1px solid rgba(245,158,11,.35);
+  color: #fbbf24; font-size: .72rem; font-weight: 800;
+  text-transform: uppercase; letter-spacing: .09em;
+  padding: 6px 16px; border-radius: 50px; margin-bottom: 20px;
+}
+.svc-digital-title {
+  font-size: clamp(1.8rem, 3.5vw, 2.8rem); font-weight: 900; color: #fff;
+  line-height: 1.15; margin-bottom: 18px; letter-spacing: -.02em;
+}
+.svc-digital-desc {
+  font-size: 1rem; color: #94a3b8; line-height: 1.75; max-width: 580px; margin: 0 auto;
+}
+
+/* Plan card */
+.plan-card {
+  background: #0d1425;
+  border: 1px solid rgba(255,255,255,.08);
+  border-radius: 24px;
+  overflow: hidden;
+  box-shadow: 0 24px 80px rgba(0,0,0,.4), 0 0 0 1px rgba(37,99,235,.15);
+}
+.plan-card-top-badge {
+  background: linear-gradient(90deg, #1e3a5f, #2563eb, #1e3a5f);
+  background-size: 200% 100%;
+  animation: badge-shimmer 4s ease-in-out infinite;
+  text-align: center; padding: 11px;
+  font-size: .72rem; font-weight: 800; color: #fff; letter-spacing: .08em; text-transform: uppercase;
+}
+@keyframes badge-shimmer {
+  0%, 100% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+}
+.plan-services-grid {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 0;
+  border-bottom: 1px solid rgba(255,255,255,.06);
+}
+.plan-svc-item {
+  display: flex; align-items: flex-start; gap: 14px;
+  padding: 20px 24px; border-bottom: 1px solid rgba(255,255,255,.05);
+  border-right: 1px solid rgba(255,255,255,.05);
+  transition: background .2s;
+}
+.plan-svc-item:nth-child(even) { border-right: none; }
+.plan-svc-item:hover { background: rgba(37,99,235,.05); }
+.plan-svc-extra {
+  grid-column: 1 / -1; border-right: none;
+  background: rgba(37,99,235,.06); border-bottom: none;
+}
+.plan-svc-num {
+  flex-shrink: 0; width: 28px; height: 28px;
+  background: rgba(37,99,235,.18); border: 1px solid rgba(37,99,235,.3);
+  border-radius: 8px; display: flex; align-items: center; justify-content: center;
+  font-size: .65rem; font-weight: 900; color: #60a5fa; letter-spacing: .02em;
+  margin-top: 2px;
+}
+.plan-svc-num-plus {
+  background: rgba(245,158,11,.15); border-color: rgba(245,158,11,.3);
+  color: #fbbf24; font-size: .85rem;
+}
+.plan-svc-body { flex: 1; }
+.plan-svc-name { font-size: .88rem; font-weight: 700; color: #e2e8f0; margin-bottom: 4px; }
+.plan-svc-detail { font-size: .75rem; color: #64748b; line-height: 1.5; }
+.plan-svc-extra .plan-svc-name { color: #fde68a; }
+.plan-svc-extra .plan-svc-detail { color: #7c8fa8; }
+.plan-svc-check {
+  flex-shrink: 0; width: 20px; height: 20px;
+  background: rgba(34,197,94,.15); border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  color: #22c55e; margin-top: 4px;
+}
+.plan-svc-check-gold {
+  background: rgba(245,158,11,.15); color: #fbbf24;
+}
+
+/* Plan card footer */
+.plan-card-footer {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 24px 28px; gap: 24px; flex-wrap: wrap;
+}
+.plan-footer-label { font-size: .92rem; font-weight: 700; color: #e2e8f0; margin-bottom: 4px; }
+.plan-footer-sub { font-size: .78rem; color: #475569; }
+.plan-cta-btn { flex-shrink: 0; white-space: nowrap; }
+
+@media (max-width: 700px) {
+  .plan-services-grid { grid-template-columns: 1fr; }
+  .plan-svc-item:nth-child(even) { border-right: none; }
+  .plan-svc-extra { grid-column: 1; }
+  .plan-card-footer { flex-direction: column; align-items: flex-start; }
+  .svc-digital-section { padding: 70px 0; }
+}
