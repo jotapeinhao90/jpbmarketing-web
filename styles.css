@@ -1854,8 +1854,12 @@ select { cursor: pointer; }
 .waia-chat-messages {
   display: flex; flex-direction: column; gap: 8px;
   padding: 14px 12px;
-  animation: waia-chat-scroll 2s ease-in-out 7s forwards;
 }
+#agente-chat {
+  overflow-y: scroll; scrollbar-width: none;
+}
+#agente-chat::-webkit-scrollbar { display: none; }
+.waia-show { animation: waia-msgIn .35s ease forwards; }
 .waia-msg {
   max-width: 82%; padding: 8px 11px 6px;
   border-radius: 10px; font-size: .78rem; line-height: 1.5;

@@ -115,41 +115,8 @@
             </div>
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.4)" stroke-width="2"><circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/><circle cx="5" cy="12" r="1"/></svg>
           </div>
-          <div class="waia-chat-bg">
-            <div class="waia-chat-messages">
-              <div class="waia-msg waia-msg-in waia-anim-1">
-                Buenas, necesito cotizar 200 unidades de acero inoxidable 304 cal.14. Es para fabricación de tanques.
-              </div>
-              <div class="waia-msg waia-msg-out waia-anim-2">
-                Hola. Soy la asistente de <strong>Aceros del Norte</strong>. Dame un momento, voy a verificar stock y precios actualizados...
-              </div>
-              <div class="waia-msg waia-msg-out waia-anim-3">
-                <div class="waia-msg-chip waia-chip-green">
-                  <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>
-                  Cotización #4821 enviada
-                </div>
-                200 un. · Acero 304 cal.14 · $2.840.000 + IVA<br>Entrega: 5 días hábiles
-              </div>
-              <div class="waia-msg waia-msg-in waia-anim-4">
-                ¿Tienen descuento si pedimos 500 unidades en vez de 200?
-              </div>
-              <div class="waia-msg waia-msg-out waia-anim-5">
-                Sí. Desde 500 unidades aplica un 8% de descuento. Precio: <strong>$2.613.000 + IVA</strong> por 500 un. ¿Actualizo la cotización?
-              </div>
-              <div class="waia-msg waia-msg-in waia-anim-6">
-                Perfecto, actualiza. Y necesito coordinar el despacho con alguien de tu equipo.
-              </div>
-              <div class="waia-msg waia-msg-out waia-anim-7">
-                <div class="waia-msg-chip waia-chip-blue">
-                  <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
-                  Reunión agendada
-                </div>
-                Rodrigo (Gte. Comercial) · Martes 10:00 AM<br>Confirmación enviada a tu correo.
-              </div>
-              <div class="waia-typing waia-anim-8">
-                <span></span><span></span><span></span>
-              </div>
-            </div>
+          <div class="waia-chat-bg" id="agente-chat">
+            <div class="waia-chat-messages" id="agente-msgs"></div>
           </div>
         </div>
         <div class="waia-float waia-float-1">
@@ -436,5 +403,61 @@
 </button>
 
 <script src="main.js"></script>
+<script>
+(function () {
+  var chat = document.getElementById('agente-chat');
+  var box  = document.getElementById('agente-msgs');
+  if (!chat || !box) return;
+
+  var chk = '<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>';
+  var cal = '<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>';
+
+  var msgs = [
+    { t: 'in',     ms: 900,   h: 'Buenas, necesito cotizar 200 unidades de acero inoxidable 304 cal.14. Es para fabricación de tanques.' },
+    { t: 'out',    ms: 2200,  h: 'Hola. Soy la asistente de <strong>Aceros del Norte</strong>. Dame un momento, voy a verificar stock y precios...' },
+    { t: 'out',    ms: 4000,  h: '<div class="waia-msg-chip waia-chip-green">' + chk + ' Cotización #4821 enviada</div>200 un. · Acero 304 cal.14 · $2.840.000 + IVA<br>Entrega: 5 días hábiles' },
+    { t: 'in',     ms: 5400,  h: '¿Tienen descuento si pedimos 500 unidades en vez de 200?' },
+    { t: 'out',    ms: 6900,  h: 'Sí. Desde 500 unidades aplica un 8% de descuento. Precio: <strong>$2.613.000 + IVA</strong> por 500 un. ¿Actualizo?' },
+    { t: 'in',     ms: 8200,  h: 'Sí, actualiza. Y necesito coordinar el despacho con alguien de tu equipo.' },
+    { t: 'out',    ms: 9800,  h: '<div class="waia-msg-chip waia-chip-blue">' + cal + ' Reunión agendada</div>Rodrigo (Gte. Comercial) · Martes 10:00 AM<br>Confirmación enviada a tu correo.' },
+    { t: 'typing', ms: 11000 }
+  ];
+
+  var CYCLE = 14500;
+  var handles = [];
+
+  function scrollChat() {
+    setTimeout(function () {
+      chat.scrollTo({ top: chat.scrollHeight, behavior: 'smooth' });
+    }, 60);
+  }
+
+  function startChat() {
+    handles.forEach(clearTimeout);
+    handles = [];
+    box.innerHTML = '';
+    chat.scrollTop = 0;
+
+    msgs.forEach(function (m) {
+      handles.push(setTimeout(function () {
+        var el = document.createElement('div');
+        if (m.t === 'typing') {
+          el.className = 'waia-typing waia-show';
+          el.innerHTML = '<span></span><span></span><span></span>';
+        } else {
+          el.className = 'waia-msg waia-msg-' + m.t + ' waia-show';
+          el.innerHTML = m.h;
+        }
+        box.appendChild(el);
+        scrollChat();
+      }, m.ms));
+    });
+
+    handles.push(setTimeout(startChat, CYCLE));
+  }
+
+  startChat();
+})();
+</script>
 </body>
 </html>
