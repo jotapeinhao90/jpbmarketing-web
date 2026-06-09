@@ -1827,7 +1827,8 @@ select { cursor: pointer; }
 .waia-phone {
   background: #111b21; border-radius: 18px; width: 310px;
   box-shadow: 0 28px 80px rgba(0,0,0,.6), 0 0 0 1px rgba(255,255,255,.06);
-  overflow: hidden;
+  overflow: hidden; height: 480px;
+  display: flex; flex-direction: column;
 }
 .waia-phone-bar { background: #1a1a2e; padding: 10px 14px; display: flex; gap: 6px; }
 .waia-phone-bar-dot { width: 11px; height: 11px; border-radius: 50%; }
@@ -1839,15 +1840,21 @@ select { cursor: pointer; }
 .waia-phone-avatar {
   width: 38px; height: 38px; background: #25d366;
   border-radius: 50%; display: flex; align-items: center;
-  justify-content: center; font-size: 1rem; flex-shrink: 0;
+  justify-content: center; font-size: .65rem; font-weight: 800;
+  color: #fff; letter-spacing: .02em; flex-shrink: 0;
 }
 .waia-phone-name { color: #e9edef; font-size: .85rem; font-weight: 600; }
 .waia-phone-status { display: flex; align-items: center; gap: 5px; font-size: .68rem; color: rgba(255,255,255,.45); margin-top: 1px; }
 .waia-dot-online { width: 6px; height: 6px; background: #25d366; border-radius: 50%; animation: waia-pulse 2s infinite; }
 
 .waia-chat-bg {
-  background: #0b141a url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Crect width='200' height='200' fill='%230b141a'/%3E%3C/svg%3E");
-  padding: 14px 12px; display: flex; flex-direction: column; gap: 8px; min-height: 280px;
+  background: #0b141a;
+  overflow: hidden; flex: 1;
+}
+.waia-chat-messages {
+  display: flex; flex-direction: column; gap: 8px;
+  padding: 14px 12px;
+  animation: waia-chat-scroll 2s ease-in-out 7s forwards;
 }
 .waia-msg {
   max-width: 82%; padding: 8px 11px 6px;
@@ -1859,11 +1866,13 @@ select { cursor: pointer; }
 .waia-msg-out { background: #005c4b; align-self: flex-end; border-top-right-radius: 2px; }
 
 .waia-anim-1 { animation: waia-msgIn .35s ease .6s  forwards; }
-.waia-anim-2 { animation: waia-msgIn .35s ease 1.4s forwards; }
-.waia-anim-3 { animation: waia-msgIn .35s ease 2.3s forwards; }
-.waia-anim-4 { animation: waia-msgIn .35s ease 3.1s forwards; }
-.waia-anim-5 { animation: waia-msgIn .35s ease 3.9s forwards; }
-.waia-anim-6 { animation: waia-msgIn .3s  ease 4.6s forwards; }
+.waia-anim-2 { animation: waia-msgIn .35s ease 1.5s forwards; }
+.waia-anim-3 { animation: waia-msgIn .35s ease 2.4s forwards; }
+.waia-anim-4 { animation: waia-msgIn .35s ease 3.3s forwards; }
+.waia-anim-5 { animation: waia-msgIn .35s ease 4.3s forwards; }
+.waia-anim-6 { animation: waia-msgIn .35s ease 5.1s forwards; }
+.waia-anim-7 { animation: waia-msgIn .35s ease 5.9s forwards; }
+.waia-anim-8 { animation: waia-msgIn .3s  ease 6.7s forwards; }
 
 .waia-typing {
   display: flex; align-items: center; gap: 4px;
@@ -1878,6 +1887,24 @@ select { cursor: pointer; }
 .waia-typing span:nth-child(2) { animation-delay: .2s; }
 .waia-typing span:nth-child(3) { animation-delay: .4s; }
 
+.waia-msg-chip {
+  display: inline-flex; align-items: center; gap: 5px;
+  font-size: .68rem; font-weight: 700;
+  padding: 3px 9px 3px 7px; border-radius: 20px; margin-bottom: 5px;
+}
+.waia-chip-green { background: rgba(37,211,102,.12); color: #4ade80; border: 1px solid rgba(37,211,102,.22); }
+.waia-chip-blue  { background: rgba(96,165,250,.12);  color: #93c5fd; border: 1px solid rgba(96,165,250,.22); }
+
+.waia-icon-sq {
+  width: 48px; height: 48px; border-radius: 12px;
+  background: #eff6ff; border: 1px solid #bfdbfe;
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0; color: #2563eb; margin-bottom: 16px;
+}
+.waia-icon-sq--dark {
+  background: rgba(37,99,235,.12); border-color: rgba(37,99,235,.22); color: #60a5fa;
+}
+
 /* Floating badges */
 .waia-float {
   position: absolute; background: rgba(255,255,255,.96);
@@ -1885,6 +1912,7 @@ select { cursor: pointer; }
   font-size: .74rem; font-weight: 700; color: #1e3a5f;
   box-shadow: 0 8px 24px rgba(0,0,0,.25);
   white-space: nowrap;
+  display: flex; align-items: center; gap: 7px;
 }
 .waia-float-1 { top: -10px; right: -18px; animation: waia-float 3.2s ease-in-out infinite; }
 .waia-float-2 { bottom: 50px; left: -22px; animation: waia-float 3.2s ease-in-out 1.6s infinite; }
@@ -1895,11 +1923,17 @@ select { cursor: pointer; }
 @keyframes waia-dots { 0%,60%,100% { transform:translateY(0);opacity:.5; } 30% { transform:translateY(-5px);opacity:1; } }
 @keyframes waia-pulse { 0%,100% { box-shadow:0 0 0 0 rgba(37,211,102,.4); } 50% { box-shadow:0 0 0 5px rgba(37,211,102,0); } }
 @keyframes waia-float { 0%,100% { transform:translateY(0); } 50% { transform:translateY(-7px); } }
+@keyframes waia-chat-scroll { to { transform: translateY(-96px); } }
 
 /* Problem cards */
 .waia-problems { display: grid; grid-template-columns: repeat(4,1fr); gap: 24px; }
 .waia-problem-card { background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 16px; padding: 28px 24px; }
-.waia-problem-icon { font-size: 2rem; margin-bottom: 14px; }
+.waia-problem-icon {
+  width: 48px; height: 48px; border-radius: 12px;
+  background: #eff6ff; border: 1px solid #bfdbfe;
+  display: flex; align-items: center; justify-content: center;
+  color: #2563eb; margin-bottom: 16px;
+}
 .waia-problem-card h4 { font-size: .95rem; font-weight: 800; color: #1e3a5f; margin-bottom: 8px; }
 .waia-problem-card p { font-size: .85rem; color: #64748b; line-height: 1.65; }
 
@@ -1914,7 +1948,12 @@ select { cursor: pointer; }
 /* Capabilities */
 .waia-caps-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 24px; }
 .waia-cap { background: rgba(255,255,255,.04); border: 1px solid rgba(255,255,255,.08); border-radius: 16px; padding: 28px 24px; }
-.waia-cap-icon { font-size: 1.8rem; margin-bottom: 14px; }
+.waia-cap-icon {
+  width: 48px; height: 48px; border-radius: 12px;
+  background: rgba(37,99,235,.12); border: 1px solid rgba(37,99,235,.22);
+  display: flex; align-items: center; justify-content: center;
+  color: #60a5fa; margin-bottom: 16px;
+}
 .waia-cap h4 { font-size: .95rem; font-weight: 700; color: #fff; margin-bottom: 8px; }
 .waia-cap p { font-size: .85rem; color: rgba(255,255,255,.5); line-height: 1.65; }
 
