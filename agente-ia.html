@@ -497,7 +497,12 @@
 
   function scrollChat() {
     setTimeout(function () {
-      chat.scrollTo({ top: chat.scrollHeight, behavior: 'smooth' });
+      var target = chat.scrollHeight;
+      if (typeof chat.scrollTo === 'function') {
+        try { chat.scrollTo({ top: target, behavior: 'smooth' }); } catch(e) { chat.scrollTop = target; }
+      } else {
+        chat.scrollTop = target;
+      }
     }, 60);
   }
 
@@ -511,13 +516,15 @@
       handles.push(setTimeout(function () {
         var el = document.createElement('div');
         if (m.t === 'typing') {
-          el.className = 'waia-typing waia-show';
+          el.className = 'waia-typing';
           el.innerHTML = '<span></span><span></span><span></span>';
         } else {
-          el.className = 'waia-msg waia-msg-' + m.t + ' waia-show';
+          el.className = 'waia-msg waia-msg-' + m.t;
           el.innerHTML = m.h;
         }
         box.appendChild(el);
+        void el.offsetHeight; /* fuerza reflow — iOS Safari necesita esto para disparar la animación */
+        el.classList.add('waia-show');
         scrollChat();
       }, m.ms));
     });

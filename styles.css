@@ -1857,6 +1857,7 @@ select { cursor: pointer; }
 }
 #agente-chat {
   overflow-y: scroll; scrollbar-width: none;
+  -webkit-overflow-scrolling: touch;
 }
 #agente-chat::-webkit-scrollbar { display: none; }
 .waia-show { animation: waia-msgIn .35s ease forwards; }
