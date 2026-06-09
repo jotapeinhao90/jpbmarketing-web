@@ -1864,7 +1864,12 @@ select { cursor: pointer; }
 .waia-msg {
   max-width: 82%; padding: 8px 11px 6px;
   border-radius: 10px; font-size: .78rem; line-height: 1.5;
-  color: #e9edef; opacity: 0; transform: translateY(8px);
+  color: #e9edef;
+}
+/* estado inicial para animaciones CSS (index.html waia-featured) */
+.waia-anim-1,.waia-anim-2,.waia-anim-3,.waia-anim-4,
+.waia-anim-5,.waia-anim-6,.waia-anim-7,.waia-anim-8 {
+  opacity: 0; transform: translateY(8px);
 }
 .waia-msg strong { font-weight: 700; }
 .waia-msg-in  { background: #202c33; align-self: flex-start; border-top-left-radius: 2px; }
@@ -1883,7 +1888,7 @@ select { cursor: pointer; }
   display: flex; align-items: center; gap: 4px;
   padding: 10px 12px; background: #202c33;
   border-radius: 10px; align-self: flex-start;
-  opacity: 0; width: fit-content;
+  width: fit-content;
 }
 .waia-typing span {
   width: 7px; height: 7px; background: #8696a0;

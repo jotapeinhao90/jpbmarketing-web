@@ -18,8 +18,8 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" onload="this.onload=null;this.rel='stylesheet'">
   <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap"></noscript>
-  <link rel="preload" as="style" href="styles.css?v=4" onload="this.onload=null;this.rel='stylesheet'">
-  <noscript><link rel="stylesheet" href="styles.css?v=4"></noscript>
+  <link rel="preload" as="style" href="styles.css?v=5" onload="this.onload=null;this.rel='stylesheet'">
+  <noscript><link rel="stylesheet" href="styles.css?v=5"></noscript>
 </head>
 <body>
 
@@ -522,9 +522,15 @@
           el.className = 'waia-msg waia-msg-' + m.t;
           el.innerHTML = m.h;
         }
+        /* Estado inicial via inline style — no depende de que el CSS haya cargado */
+        el.style.opacity = '0';
+        el.style.transform = 'translateY(10px)';
+        el.style.transition = 'opacity .35s ease, transform .35s ease';
         box.appendChild(el);
-        void el.offsetHeight; /* fuerza reflow — iOS Safari necesita esto para disparar la animación */
-        el.classList.add('waia-show');
+        /* Reflow antes de animar — obligatorio en iOS Safari */
+        void el.offsetHeight;
+        el.style.opacity = '1';
+        el.style.transform = 'translateY(0)';
         scrollChat();
       }, m.ms));
     });
