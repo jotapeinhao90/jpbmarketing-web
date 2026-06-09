@@ -1961,6 +1961,21 @@ select { cursor: pointer; }
 .waia-cap h4 { font-size: .95rem; font-weight: 700; color: #fff; margin-bottom: 8px; }
 .waia-cap p { font-size: .85rem; color: rgba(255,255,255,.5); line-height: 1.65; }
 
+/* Llave en mano */
+.waia-llave { background: #fff; padding: 90px 0; }
+.waia-llave-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 72px; align-items: center; }
+.waia-llave-tag { display: inline-flex; align-items: center; gap: 7px; font-size: .72rem; font-weight: 700; color: #2563eb; background: #eff6ff; border: 1px solid #bfdbfe; border-radius: 20px; padding: 5px 14px; margin-bottom: 20px; }
+.waia-llave-tag svg { flex-shrink: 0; }
+.waia-llave-title { font-size: clamp(1.6rem, 2.8vw, 2.2rem); font-weight: 900; color: #1e3a5f; line-height: 1.2; margin-bottom: 20px; }
+.waia-llave-desc { font-size: .95rem; color: #475569; line-height: 1.75; margin-bottom: 32px; max-width: 440px; }
+.waia-llave-card { background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 20px; padding: 32px; }
+.waia-llave-card-hdr { font-size: .72rem; font-weight: 800; color: #94a3b8; text-transform: uppercase; letter-spacing: .1em; margin-bottom: 22px; }
+.waia-llave-item { display: flex; gap: 14px; align-items: flex-start; padding-bottom: 18px; border-bottom: 1px solid #f1f5f9; margin-bottom: 18px; }
+.waia-llave-item:last-child { padding-bottom: 0; border-bottom: none; margin-bottom: 0; }
+.waia-llave-check { width: 22px; height: 22px; background: #dcfce7; color: #16a34a; border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0; margin-top: 2px; }
+.waia-llave-item strong { font-size: .88rem; font-weight: 700; color: #1e3a5f; display: block; margin-bottom: 2px; }
+.waia-llave-item p { font-size: .8rem; color: #64748b; line-height: 1.5; margin: 0; }
+
 /* Big stats */
 .waia-big-stats { display: flex; align-items: center; justify-content: center; gap: 0; flex-wrap: wrap; }
 .waia-big-stat { text-align: center; padding: 20px 48px; }
@@ -1988,7 +2003,7 @@ select { cursor: pointer; }
 
 /* Responsive */
 @media (max-width: 900px) {
-  .waia-hero-grid, .waia-featured-grid { grid-template-columns: 1fr; gap: 48px; }
+  .waia-hero-grid, .waia-featured-grid, .waia-llave-grid { grid-template-columns: 1fr; gap: 48px; }
   .waia-problems { grid-template-columns: 1fr 1fr; }
   .waia-steps { flex-direction: column; }
   .waia-step-arrow { transform: rotate(90deg); padding: 0; align-self: center; padding-top: 0; }
