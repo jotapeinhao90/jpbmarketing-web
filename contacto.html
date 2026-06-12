@@ -82,7 +82,7 @@
         <h2 style="font-size:1.5rem;margin-bottom:8px;">Envíanos un mensaje</h2>
         <p style="font-size:0.9rem;color:var(--light);margin-bottom:32px;">Te respondemos en menos de 24 horas hábiles.</p>
 
-        <form action="https://formsubmit.co/jpbayas@jpbmarketing.cl" method="POST" novalidate>
+        <form id="lead-form" action="https://formsubmit.co/jpbayas@jpbmarketing.cl" method="POST" novalidate>
           <!-- Hidden config -->
           <input type="hidden" name="_subject" value="🏭 Nuevo Lead B2B desde jpbmarketing.cl">
           <input type="hidden" name="_next" value="https://jpbmarketing.cl/gracias.html">
@@ -245,5 +245,27 @@
 </button>
 
 <script src="main.js"></script>
+
+<!-- Guardar cada lead en Google Sheets (además del email de FormSubmit) -->
+<script>
+(function () {
+  // 1) Pega aquí la URL de tu Web App de Google Apps Script (termina en /exec)
+  var SHEETS_URL = 'PEGAR_URL_DE_APPS_SCRIPT_AQUI';
+
+  var form = document.getElementById('lead-form');
+  if (!form) return;
+
+  form.addEventListener('submit', function () {
+    // Si aún no configuras la URL, no hace nada y el email sigue funcionando igual
+    if (SHEETS_URL.indexOf('http') !== 0) return;
+    try {
+      var data = new FormData(form);
+      // sendBeacon envía el lead a Google Sheets de forma confiable,
+      // incluso mientras la página redirige a gracias.html
+      navigator.sendBeacon(SHEETS_URL, data);
+    } catch (e) { /* silencioso: nunca bloquea el envío del formulario */ }
+  });
+})();
+</script>
 </body>
 </html>
