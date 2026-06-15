@@ -958,50 +958,65 @@ select { cursor: pointer; }
 .hero-visual { position: relative; padding-bottom: 48px; }
 
 /* ── Hero slider ─────────────────────────────────────────── */
+.hero-visual { padding-bottom: 0; }
+
 .hero-slider-wrap {
-  background: #080f1e;
-  border: 1px solid #1e293b;
+  background: #0b1220;
+  border: 1px solid rgba(255,255,255,.08);
   border-radius: 20px;
   overflow: hidden;
-  box-shadow: 0 24px 64px rgba(0,0,0,.45), 0 0 0 1px rgba(255,255,255,.04);
+  box-shadow: 0 32px 80px rgba(0,0,0,.5);
 }
 
-.hero-slide {
-  display: none;
-  padding: 28px 24px 16px;
-  animation: slide-in .35s ease;
+/* grid stack — ambos slides ocupan el mismo espacio, nunca cambia la altura */
+.hero-slides-container {
+  display: grid;
 }
-.hero-slide.active { display: block; }
-@keyframes slide-in {
-  from { opacity: 0; transform: translateX(14px); }
-  to   { opacity: 1; transform: translateX(0); }
+.hero-slide {
+  grid-column: 1;
+  grid-row: 1;
+  padding: 24px 22px 18px;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity .4s ease, visibility .4s;
+  pointer-events: none;
+}
+.hero-slide.active {
+  opacity: 1;
+  visibility: visible;
+  pointer-events: auto;
+}
+
+/* slide title — aparece en ambos slides */
+.hslide-title {
+  font-size: .7rem; font-weight: 700;
+  color: #4b6a8f;
+  text-transform: uppercase; letter-spacing: .1em;
+  margin-bottom: 12px;
 }
 
 /* control bar */
 .hslider-bar {
-  display: flex; align-items: center; gap: 10px;
-  padding: 10px 16px 14px;
-  border-top: 1px solid #1e293b;
+  display: flex; align-items: center; gap: 8px;
+  padding: 10px 14px 12px;
+  border-top: 1px solid rgba(255,255,255,.06);
+  background: rgba(0,0,0,.2);
 }
 .hsbar-arrow {
-  flex-shrink: 0;
-  width: 30px; height: 30px;
-  background: #1e293b; border: 1px solid #334155;
+  flex-shrink: 0; width: 28px; height: 28px;
+  background: rgba(255,255,255,.06); border: 1px solid rgba(255,255,255,.1);
   border-radius: 50%; cursor: pointer;
   display: flex; align-items: center; justify-content: center;
-  color: #94a3b8;
-  transition: background .2s, color .2s;
+  color: #64748b; transition: background .2s, color .2s;
 }
 .hsbar-arrow:hover { background: #2563eb; color: #fff; border-color: #2563eb; }
-.hsbar-center {
-  flex: 1; display: flex; flex-direction: column; gap: 5px;
-}
+.hsbar-center { flex: 1; display: flex; flex-direction: column; gap: 4px; }
 .hsbar-label {
-  font-size: .72rem; font-weight: 600; color: #64748b;
+  font-size: .68rem; font-weight: 600; color: #475569;
   text-transform: uppercase; letter-spacing: .07em;
 }
 .hsbar-track {
-  height: 3px; background: #1e293b; border-radius: 2px; overflow: hidden;
+  height: 2px; background: rgba(255,255,255,.08); border-radius: 2px; overflow: hidden;
 }
 .hsbar-fill {
   height: 100%; width: 0%;
@@ -1009,15 +1024,13 @@ select { cursor: pointer; }
   border-radius: 2px;
 }
 .hsbar-pause {
-  flex-shrink: 0;
-  width: 30px; height: 30px;
-  background: #1e293b; border: 1px solid #334155;
+  flex-shrink: 0; width: 28px; height: 28px;
+  background: rgba(255,255,255,.06); border: 1px solid rgba(255,255,255,.1);
   border-radius: 50%; cursor: pointer;
   display: flex; align-items: center; justify-content: center;
-  color: #94a3b8;
-  transition: background .2s, color .2s;
+  color: #64748b; transition: background .2s, color .2s;
 }
-.hsbar-pause:hover { background: #334155; color: #fff; }
+.hsbar-pause:hover { background: rgba(255,255,255,.12); color: #94a3b8; }
 
 /* ── Hero offer card ─────────────────────────────────────── */
 .hero-offer-card {
@@ -1196,8 +1209,7 @@ select { cursor: pointer; }
   white-space: nowrap;
   z-index: 2;
 }
-.badge-1 { top: 8px; right: 12px; animation: badge-bob 4s ease-in-out infinite; }
-.badge-2 { bottom: 56px; left: 12px; animation: badge-bob 4s ease-in-out 1.5s infinite; }
+.badge-1, .badge-2 { display: none; }
 @keyframes badge-bob {
   0%, 100% { transform: translateY(0); }
   50%       { transform: translateY(-7px); }
