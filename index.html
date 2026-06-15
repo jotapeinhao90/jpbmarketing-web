@@ -129,16 +129,11 @@
 
       <!-- Dashboard animado + Oferta slide -->
       <div class="hero-visual reveal reveal-delay-2">
+        <div class="hero-slider-wrap">
 
-        <!-- Slide nav dots -->
-        <div class="hero-slide-dots">
-          <button class="hero-dot active" data-slide="0" aria-label="Dashboard"></button>
-          <button class="hero-dot" data-slide="1" aria-label="Oferta"></button>
-        </div>
-
-        <!-- Slide 0: Dashboard -->
-        <div class="hero-slide active" id="hslide-0">
-        <div class="hero-float-badge badge-1">⚡ Setup en 14 días</div>
+          <!-- Slide 0: Dashboard -->
+          <div class="hero-slide active" id="hslide-0">
+          <div class="hero-float-badge badge-1">⚡ Setup en 14 días</div>
         <div class="dash-card">
           <div class="dash-header">
             <div class="dash-status">
@@ -223,8 +218,29 @@
             <a href="/agente-ia#oferta-junio" class="hoc-cta">Ver oferta completa →</a>
             <div class="hoc-cupos">⚠ Solo 7 cupos disponibles</div>
           </div>
-        </div><!-- /hslide-1 -->
+          </div><!-- /hslide-1 -->
 
+          <!-- Control bar -->
+          <div class="hslider-bar">
+            <button class="hsbar-arrow" id="hs-prev" aria-label="Anterior">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"/></svg>
+            </button>
+            <div class="hsbar-center">
+              <span class="hsbar-label" id="hs-label">Sistema de Prospección</span>
+              <div class="hsbar-track">
+                <div class="hsbar-fill" id="hs-fill"></div>
+              </div>
+            </div>
+            <button class="hsbar-pause" id="hs-pause" aria-label="Pausar">
+              <svg class="hs-icon-pause" width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/></svg>
+              <svg class="hs-icon-play" width="12" height="12" viewBox="0 0 24 24" fill="currentColor" style="display:none"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+            </button>
+            <button class="hsbar-arrow" id="hs-next" aria-label="Siguiente">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"/></svg>
+            </button>
+          </div>
+
+        </div><!-- /hero-slider-wrap -->
       </div><!-- /hero-visual -->
 
     </div>
@@ -734,21 +750,64 @@
 <script>
 /* Hero slider */
 (function () {
-  var slides = document.querySelectorAll('.hero-slide');
-  var dots   = document.querySelectorAll('.hero-dot');
-  if (!slides.length) return;
-  var cur = 0;
-  function goTo(n) {
-    slides[cur].classList.remove('active');
-    dots[cur].classList.remove('active');
-    cur = n;
-    slides[cur].classList.add('active');
-    dots[cur].classList.add('active');
+  var slides  = document.querySelectorAll('.hero-slide');
+  var fill    = document.getElementById('hs-fill');
+  var label   = document.getElementById('hs-label');
+  var btnPrev = document.getElementById('hs-prev');
+  var btnNext = document.getElementById('hs-next');
+  var btnPause= document.getElementById('hs-pause');
+  if (!slides.length || !fill) return;
+
+  var labels  = ['Sistema de Prospección', 'Oferta Junio'];
+  var CYCLE   = 6000;
+  var cur     = 0;
+  var paused  = false;
+  var t       = null;
+
+  function resetBar() {
+    fill.style.transition = 'none';
+    fill.style.width = '0%';
+    void fill.offsetHeight;
+    fill.style.transition = 'width ' + CYCLE + 'ms linear';
+    fill.style.width = '100%';
   }
-  dots.forEach(function (d) {
-    d.addEventListener('click', function () { goTo(+d.dataset.slide); clearInterval(t); });
+
+  function goTo(n, manual) {
+    slides[cur].classList.remove('active');
+    cur = (n + slides.length) % slides.length;
+    slides[cur].classList.add('active');
+    if (label) label.textContent = labels[cur];
+    if (manual) { clearTimeout(t); paused = false; setPause(false); }
+    resetBar();
+    if (!paused) schedule();
+  }
+
+  function schedule() {
+    clearTimeout(t);
+    t = setTimeout(function () { goTo(cur + 1); }, CYCLE);
+  }
+
+  function setPause(p) {
+    paused = p;
+    var ip = btnPause.querySelector('.hs-icon-pause');
+    var ipl = btnPause.querySelector('.hs-icon-play');
+    if (ip) ip.style.display = p ? 'none' : '';
+    if (ipl) ipl.style.display = p ? '' : 'none';
+    if (p) {
+      fill.style.animationPlayState = 'paused';
+      fill.style.transition = 'none';
+    }
+  }
+
+  if (btnPrev) btnPrev.addEventListener('click', function () { goTo(cur - 1, true); });
+  if (btnNext) btnNext.addEventListener('click', function () { goTo(cur + 1, true); });
+  if (btnPause) btnPause.addEventListener('click', function () {
+    if (paused) { setPause(false); schedule(); resetBar(); }
+    else        { setPause(true);  clearTimeout(t); }
   });
-  var t = setInterval(function () { goTo((cur + 1) % slides.length); }, 6000);
+
+  resetBar();
+  schedule();
 
   /* mini countdown inside slide */
   var end = new Date('2026-07-01T00:00:00-04:00').getTime();
