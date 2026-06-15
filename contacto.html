@@ -82,12 +82,7 @@
         <h2 style="font-size:1.5rem;margin-bottom:8px;">Envíanos un mensaje</h2>
         <p style="font-size:0.9rem;color:var(--light);margin-bottom:32px;">Te respondemos en menos de 24 horas hábiles.</p>
 
-        <form id="lead-form" action="https://formsubmit.co/jpbayas@jpbmarketing.cl" method="POST" novalidate>
-          <!-- Hidden config -->
-          <input type="hidden" name="_subject" value="🏭 Nuevo Lead B2B desde jpbmarketing.cl">
-          <input type="hidden" name="_next" value="https://jpbmarketing.cl/gracias.html">
-          <input type="hidden" name="_captcha" value="false">
-          <input type="hidden" name="_template" value="table">
+        <form id="lead-form" novalidate>
           <!-- Honeypot anti-spam -->
           <input type="text" name="_honey" style="display:none" tabindex="-1" autocomplete="off">
 
@@ -246,24 +241,32 @@
 
 <script src="main.js"></script>
 
-<!-- Guardar cada lead en Google Sheets (además del email de FormSubmit) -->
+<!-- Enviar leads 100% por Google (Apps Script: guarda en Sheets + email por Gmail) -->
 <script>
 (function () {
-  // 1) Pega aquí la URL de tu Web App de Google Apps Script (termina en /exec)
   var SHEETS_URL = 'https://script.google.com/macros/s/AKfycbyLAtZN7Mmu39ueWkqDVI4zuPIPA6vC11RvGEUMNX8vDvQm29Pr9xRvpzn1MRfJZtrX_Q/exec';
 
   var form = document.getElementById('lead-form');
   if (!form) return;
+  var btn = form.querySelector('button[type="submit"]');
+  var btnHTML = btn ? btn.innerHTML : '';
 
-  form.addEventListener('submit', function () {
-    // Si aún no configuras la URL, no hace nada y el email sigue funcionando igual
-    if (SHEETS_URL.indexOf('http') !== 0) return;
-    try {
-      var data = new FormData(form);
-      // sendBeacon envía el lead a Google Sheets de forma confiable,
-      // incluso mientras la página redirige a gracias.html
-      navigator.sendBeacon(SHEETS_URL, data);
-    } catch (e) { /* silencioso: nunca bloquea el envío del formulario */ }
+  form.addEventListener('submit', function (ev) {
+    ev.preventDefault();
+
+    // Honeypot: si un bot lo rellena, no enviamos nada
+    var honey = form.querySelector('[name="_honey"]');
+    if (honey && honey.value) return;
+
+    // Validación nativa (campos required)
+    if (!form.checkValidity()) { form.reportValidity(); return; }
+
+    if (btn) { btn.disabled = true; btn.innerHTML = 'Enviando...'; }
+
+    var data = new FormData(form);
+    fetch(SHEETS_URL, { method: 'POST', body: data, mode: 'no-cors' })
+      .then(function () { window.location.href = '/gracias.html'; })
+      .catch(function () { window.location.href = '/gracias.html'; });
   });
 })();
 </script>
