@@ -987,6 +987,10 @@ select { cursor: pointer; }
   padding: 28px 26px;
   box-shadow: 0 0 50px rgba(37,99,235,.15);
 }
+.hslide-title {
+  font-size: 1rem; font-weight: 700; color: #f1f5f9;
+  margin-bottom: 12px; text-align: center;
+}
 .hoc-tag {
   font-size: .68rem; font-weight: 800; letter-spacing: .1em;
   text-transform: uppercase; color: #f97316; margin-bottom: 18px;
