@@ -2713,16 +2713,10 @@ select { cursor: pointer; }
 .oferta-section {
   position: relative;
   padding: 100px 0 90px;
-  background: #020817;
+  background: #fff;
   overflow: hidden;
 }
-.oferta-glow {
-  position: absolute;
-  top: -120px; left: 50%; transform: translateX(-50%);
-  width: 700px; height: 700px;
-  background: radial-gradient(circle, rgba(37,99,235,.22) 0%, transparent 70%);
-  pointer-events: none;
-}
+.oferta-glow { display: none; }
 
 /* badge row */
 .oferta-badge-row {
@@ -2737,9 +2731,9 @@ select { cursor: pointer; }
   padding: 6px 16px; border-radius: 100px;
 }
 .oferta-deadline {
-  font-size: .88rem; color: #94a3b8;
+  font-size: .88rem; color: #64748b;
 }
-.oferta-deadline strong { color: #f87171; }
+.oferta-deadline strong { color: #dc2626; }
 
 /* grid */
 .oferta-grid {
@@ -2753,15 +2747,15 @@ select { cursor: pointer; }
 .oferta-title {
   font-size: clamp(1.6rem, 3vw, 2.4rem);
   font-weight: 800; line-height: 1.2;
-  color: #f1f5f9; margin-bottom: 16px;
+  color: #0f172a; margin-bottom: 16px;
 }
 .oferta-highlight {
-  background: linear-gradient(135deg, #3b82f6, #06b6d4);
+  background: linear-gradient(135deg, #2563eb, #0891b2);
   -webkit-background-clip: text; -webkit-text-fill-color: transparent;
   background-clip: text;
 }
 .oferta-sub {
-  font-size: 1rem; color: #94a3b8; line-height: 1.65;
+  font-size: 1rem; color: #475569; line-height: 1.65;
   margin-bottom: 36px;
 }
 .oferta-list {
@@ -2773,26 +2767,26 @@ select { cursor: pointer; }
 .oferta-chk {
   flex-shrink: 0;
   width: 22px; height: 22px;
-  background: rgba(37,99,235,.2);
-  border: 1px solid rgba(37,99,235,.4);
+  background: rgba(37,99,235,.1);
+  border: 1px solid rgba(37,99,235,.3);
   border-radius: 50%;
   display: flex; align-items: center; justify-content: center;
-  color: #60a5fa; font-size: .75rem; font-weight: 800;
+  color: #2563eb; font-size: .75rem; font-weight: 800;
   margin-top: 2px;
 }
-.oferta-list li > div { font-size: .92rem; color: #cbd5e1; line-height: 1.45; }
-.oferta-list li > div strong { color: #f1f5f9; display: block; margin-bottom: 2px; }
-.oferta-list li > div span { font-size: .82rem; color: #64748b; }
+.oferta-list li > div { font-size: .92rem; color: #374151; line-height: 1.45; }
+.oferta-list li > div strong { color: #0f172a; display: block; margin-bottom: 2px; }
+.oferta-list li > div span { font-size: .82rem; color: #6b7280; }
 .oferta-guarantee-block {
   display: flex; align-items: flex-start; gap: 12px;
-  background: rgba(74,222,128,.05);
-  border: 1px solid rgba(74,222,128,.15);
+  background: rgba(37,99,235,.05);
+  border: 1px solid rgba(37,99,235,.15);
   border-radius: 10px;
   padding: 16px;
-  font-size: .82rem; color: #64748b; line-height: 1.5;
+  font-size: .82rem; color: #475569; line-height: 1.5;
 }
 .oferta-guarantee-icon { font-size: 1.3rem; flex-shrink: 0; margin-top: 1px; }
-.oferta-guarantee-block strong { display: block; color: #4ade80; margin-bottom: 3px; font-size: .85rem; }
+.oferta-guarantee-block strong { display: block; color: #2563eb; margin-bottom: 3px; font-size: .85rem; }
 
 /* right card */
 .oferta-card {
