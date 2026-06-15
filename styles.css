@@ -1072,13 +1072,44 @@ select { cursor: pointer; }
   font-size: .82rem; color: #94a3b8; display: flex; align-items: baseline; gap: 8px;
 }
 .hoc-list li span { color: #2563eb; font-weight: 700; flex-shrink: 0; }
-.hoc-timer {
-  font-size: .88rem; font-weight: 700; color: #e2e8f0;
-  background: #1e293b; border-radius: 8px; padding: 8px 14px;
-  display: inline-flex; align-items: center; gap: 6px;
-  margin-bottom: 18px; letter-spacing: .03em;
+.hoc-clock-label {
+  display: flex; align-items: center; gap: 6px;
+  font-size: .68rem; font-weight: 600; color: #475569;
+  text-transform: uppercase; letter-spacing: .08em;
+  margin-bottom: 8px;
 }
-.hoc-timer span { color: #f1f5f9; font-size: 1.05rem; }
+.hoc-live-dot {
+  width: 6px; height: 6px; border-radius: 50%; background: #f97316; flex-shrink: 0;
+  animation: cupos-pulse 1.4s infinite;
+}
+.hoc-clock {
+  display: flex; align-items: center; gap: 6px;
+  margin-bottom: 18px;
+}
+.hoc-unit {
+  flex: 1;
+  background: #0d1829;
+  border: 1px solid rgba(37,99,235,.25);
+  border-radius: 8px;
+  padding: 8px 4px 6px;
+  text-align: center;
+  box-shadow: 0 0 12px rgba(37,99,235,.1);
+}
+.hoc-unit span {
+  display: block;
+  font-size: 1.3rem; font-weight: 800; font-variant-numeric: tabular-nums;
+  color: #f1f5f9; line-height: 1; letter-spacing: -.01em;
+}
+.hoc-unit em {
+  display: block; font-style: normal;
+  font-size: .55rem; color: #475569; text-transform: uppercase;
+  letter-spacing: .06em; margin-top: 3px;
+}
+.hoc-unit-sec { opacity: .7; }
+.hoc-sep {
+  font-size: 1.1rem; font-weight: 700; color: #334155;
+  margin-bottom: 12px; flex-shrink: 0;
+}
 .hoc-cta {
   display: block; width: 100%; text-align: center;
   background: linear-gradient(135deg, #2563eb, #1d4ed8);

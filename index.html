@@ -134,7 +134,7 @@
           <div class="hero-slides-container">
 
           <!-- Slide 0: Dashboard -->
-          <div class="hero-slide active" id="hslide-0">
+          <div class="hero-slide" id="hslide-0">
             <div class="hslide-title">Sistema de Prospección B2B</div>
             <div class="dash-card">
               <div class="dash-header">
@@ -195,7 +195,7 @@
           </div><!-- /hslide-0 -->
 
           <!-- Slide 1: Oferta -->
-          <div class="hero-slide" id="hslide-1">
+          <div class="hero-slide active" id="hslide-1">
             <div class="hslide-title">Agente IA Vendedor en WhatsApp</div>
             <div class="hero-offer-card">
             <div class="hoc-tag">OFERTA JUNIO · hasta 30 jun</div>
@@ -211,10 +211,17 @@
               <li><span>✓</span> Mantención mensual incluida</li>
               <li><span>✓</span> Precio bloqueado para siempre</li>
             </ul>
-            <div class="hoc-timer">
-              <span id="hoc-d">--</span>d
-              <span id="hoc-h">--</span>h
-              <span id="hoc-m">--</span>m
+            <div class="hoc-clock-label">
+              <span class="hoc-live-dot"></span>Precio activo · termina en
+            </div>
+            <div class="hoc-clock">
+              <div class="hoc-unit"><span id="hoc-d">--</span><em>días</em></div>
+              <div class="hoc-sep">:</div>
+              <div class="hoc-unit"><span id="hoc-h">--</span><em>hrs</em></div>
+              <div class="hoc-sep">:</div>
+              <div class="hoc-unit"><span id="hoc-m">--</span><em>min</em></div>
+              <div class="hoc-sep">:</div>
+              <div class="hoc-unit hoc-unit-sec"><span id="hoc-s">--</span><em>seg</em></div>
             </div>
             <a href="/agente-ia#oferta-junio" class="hoc-cta">Ver oferta completa →</a>
             <div class="hoc-cupos">⚠ Solo 7 cupos disponibles</div>
@@ -229,7 +236,7 @@
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"/></svg>
             </button>
             <div class="hsbar-center">
-              <span class="hsbar-label" id="hs-label">Sistema de Prospección</span>
+              <span class="hsbar-label" id="hs-label">Oferta Junio</span>
               <div class="hsbar-track">
                 <div class="hsbar-fill" id="hs-fill"></div>
               </div>
@@ -763,7 +770,7 @@
 
   var labels  = ['Sistema de Prospección', 'Oferta Junio'];
   var CYCLE   = 6000;
-  var cur     = 0;
+  var cur     = 1;
   var paused  = false;
   var t       = null;
 
@@ -817,14 +824,17 @@
   var hd = document.getElementById('hoc-d');
   var hh = document.getElementById('hoc-h');
   var hm = document.getElementById('hoc-m');
+  var hs = document.getElementById('hoc-s');
+  function pad2(n) { return n < 10 ? '0' + n : '' + n; }
   function tickHoc() {
-    var d = end - Date.now();
-    if (d <= 0 || !hd) return;
-    hd.textContent = Math.floor(d / 86400000);
-    hh.textContent = Math.floor((d % 86400000) / 3600000);
-    hm.textContent = Math.floor((d % 3600000) / 60000);
+    var diff = end - Date.now();
+    if (diff <= 0 || !hd) return;
+    hd.textContent = Math.floor(diff / 86400000);
+    hh.textContent = pad2(Math.floor((diff % 86400000) / 3600000));
+    hm.textContent = pad2(Math.floor((diff % 3600000) / 60000));
+    if (hs) hs.textContent = pad2(Math.floor((diff % 60000) / 1000));
   }
-  tickHoc(); setInterval(tickHoc, 60000);
+  tickHoc(); setInterval(tickHoc, 1000);
 })();
 
 /* Announcement bar */
