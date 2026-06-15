@@ -127,8 +127,17 @@
         </div>
       </div>
 
-      <!-- Dashboard animado -->
+      <!-- Dashboard animado + Oferta slide -->
       <div class="hero-visual reveal reveal-delay-2">
+
+        <!-- Slide nav dots -->
+        <div class="hero-slide-dots">
+          <button class="hero-dot active" data-slide="0" aria-label="Dashboard"></button>
+          <button class="hero-dot" data-slide="1" aria-label="Oferta"></button>
+        </div>
+
+        <!-- Slide 0: Dashboard -->
+        <div class="hero-slide active" id="hslide-0">
         <div class="hero-float-badge badge-1">⚡ Setup en 14 días</div>
         <div class="dash-card">
           <div class="dash-header">
@@ -187,7 +196,35 @@
           </div>
         </div>
         <div class="hero-float-badge badge-2">🏭 5 sectores industriales</div>
-      </div>
+        </div><!-- /hslide-0 -->
+
+        <!-- Slide 1: Oferta Cliente Fundador -->
+        <div class="hero-slide" id="hslide-1">
+          <div class="hero-offer-card">
+            <div class="hoc-tag">⭐ CLIENTE FUNDADOR · hasta 30 jun</div>
+            <div class="hoc-price-row">
+              <span class="hoc-old">$290.000<em>/mes</em></span>
+              <div class="hoc-new">$119.000<span>/mes<br>de por vida</span></div>
+            </div>
+            <div class="hoc-saving">Ahorras $2.052.000 al año</div>
+            <ul class="hoc-list">
+              <li><span>✓</span> Agente IA vendedor en WhatsApp 24/7</li>
+              <li><span>✓</span> Implementación completa gratis ($150.000)</li>
+              <li><span>✓</span> Entrenamiento con tu catálogo y precios</li>
+              <li><span>✓</span> Mantención mensual incluida</li>
+              <li><span>✓</span> Precio bloqueado para siempre</li>
+            </ul>
+            <div class="hoc-timer">
+              <span id="hoc-d">--</span>d
+              <span id="hoc-h">--</span>h
+              <span id="hoc-m">--</span>m
+            </div>
+            <a href="/contacto" class="hoc-cta">Quiero este precio →</a>
+            <div class="hoc-cupos">⚠ Solo 7 cupos disponibles</div>
+          </div>
+        </div><!-- /hslide-1 -->
+
+      </div><!-- /hero-visual -->
 
     </div>
   </div>
@@ -693,6 +730,39 @@
 
 <script src="main.js"></script>
 <script>
+/* Hero slider */
+(function () {
+  var slides = document.querySelectorAll('.hero-slide');
+  var dots   = document.querySelectorAll('.hero-dot');
+  if (!slides.length) return;
+  var cur = 0;
+  function goTo(n) {
+    slides[cur].classList.remove('active');
+    dots[cur].classList.remove('active');
+    cur = n;
+    slides[cur].classList.add('active');
+    dots[cur].classList.add('active');
+  }
+  dots.forEach(function (d) {
+    d.addEventListener('click', function () { goTo(+d.dataset.slide); clearInterval(t); });
+  });
+  var t = setInterval(function () { goTo((cur + 1) % slides.length); }, 6000);
+
+  /* mini countdown inside slide */
+  var end = new Date('2026-07-01T00:00:00-04:00').getTime();
+  var hd = document.getElementById('hoc-d');
+  var hh = document.getElementById('hoc-h');
+  var hm = document.getElementById('hoc-m');
+  function tickHoc() {
+    var d = end - Date.now();
+    if (d <= 0 || !hd) return;
+    hd.textContent = Math.floor(d / 86400000);
+    hh.textContent = Math.floor((d % 86400000) / 3600000);
+    hm.textContent = Math.floor((d % 3600000) / 60000);
+  }
+  tickHoc(); setInterval(tickHoc, 60000);
+})();
+
 /* Announcement bar */
 (function () {
   var bar   = document.getElementById('announce-bar');
