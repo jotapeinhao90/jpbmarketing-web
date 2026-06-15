@@ -397,13 +397,8 @@
               <div class="waia-phone-status"><span class="waia-dot-online"></span>en línea siempre</div>
             </div>
           </div>
-          <div class="waia-chat-bg">
-            <div class="waia-msg waia-msg-in waia-anim-1">Hola, necesito una cotización urgente 🔩</div>
-            <div class="waia-msg waia-msg-out waia-anim-2">¡Hola! Dime el producto y cantidad — preparo la cotización ahora mismo 📋</div>
-            <div class="waia-msg waia-msg-out waia-anim-3">✅ Cotización enviada. ¿Quieres hablar con un ejecutivo?</div>
-            <div class="waia-msg waia-msg-in waia-anim-4">Sí, mañana martes</div>
-            <div class="waia-msg waia-msg-out waia-anim-5">📅 Agendado para mañana a las 10am. ¡Hasta mañana!</div>
-            <div class="waia-typing waia-anim-6"><span></span><span></span><span></span></div>
+          <div class="waia-chat-bg" id="index-chat">
+            <div class="waia-chat-messages" id="index-msgs"></div>
           </div>
         </div>
         <div class="waia-float waia-float-1">⚡ Respondió en 2 seg</div>
@@ -605,5 +600,70 @@
 </button>
 
 <script src="main.js"></script>
+<script>
+(function () {
+  var chat = document.getElementById('index-chat');
+  var box  = document.getElementById('index-msgs');
+  if (!chat || !box) return;
+
+  var chk = '<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>';
+  var cal = '<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>';
+
+  var msgs = [
+    { t: 'in',     ms: 700,   h: 'Hola, necesito una cotización urgente 🔩' },
+    { t: 'out',    ms: 2000,  h: '¡Hola! Dime el producto y cantidad — preparo la cotización ahora mismo 📋' },
+    { t: 'out',    ms: 4000,  h: '<div class="waia-msg-chip waia-chip-green">' + chk + ' Cotización enviada</div>200 un. · Acero 304 cal.14 · $2.840.000 + IVA' },
+    { t: 'in',     ms: 5400,  h: 'Sí, mañana martes' },
+    { t: 'out',    ms: 7000,  h: '<div class="waia-msg-chip waia-chip-blue">' + cal + ' Reunión agendada</div>Rodrigo (Gte. Comercial) · Martes 10:00 AM' },
+    { t: 'typing', ms: 8800  }
+  ];
+
+  var CYCLE = 12000;
+  var handles = [];
+
+  function scrollChat() {
+    setTimeout(function () {
+      var target = chat.scrollHeight;
+      if (typeof chat.scrollTo === 'function') {
+        try { chat.scrollTo({ top: target, behavior: 'smooth' }); } catch(e) { chat.scrollTop = target; }
+      } else {
+        chat.scrollTop = target;
+      }
+    }, 60);
+  }
+
+  function startChat() {
+    handles.forEach(clearTimeout);
+    handles = [];
+    box.innerHTML = '';
+    chat.scrollTop = 0;
+
+    msgs.forEach(function (m) {
+      handles.push(setTimeout(function () {
+        var el = document.createElement('div');
+        if (m.t === 'typing') {
+          el.className = 'waia-typing';
+          el.innerHTML = '<span></span><span></span><span></span>';
+        } else {
+          el.className = 'waia-msg waia-msg-' + m.t;
+          el.innerHTML = m.h;
+        }
+        el.style.opacity = '0';
+        el.style.transform = 'translateY(10px)';
+        el.style.transition = 'opacity .35s ease, transform .35s ease';
+        box.appendChild(el);
+        void el.offsetHeight;
+        el.style.opacity = '1';
+        el.style.transform = 'translateY(0)';
+        scrollChat();
+      }, m.ms));
+    });
+
+    handles.push(setTimeout(startChat, CYCLE));
+  }
+
+  startChat();
+})();
+</script>
 </body>
 </html>
