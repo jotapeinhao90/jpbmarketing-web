@@ -990,7 +990,7 @@ select { cursor: pointer; }
 /* slide title — aparece en ambos slides */
 .hslide-title {
   font-size: .7rem; font-weight: 700;
-  color: #4b6a8f;
+  color: #e2e8f0;
   text-transform: uppercase; letter-spacing: .1em;
   margin-bottom: 12px;
 }
@@ -1040,7 +1040,7 @@ select { cursor: pointer; }
   padding: 20px 22px;
 }
 .hslide-title {
-  font-size: .8rem; font-weight: 700; color: #475569;
+  font-size: .8rem; font-weight: 700; color: #e2e8f0;
   margin-bottom: 14px; text-transform: uppercase; letter-spacing: .06em;
 }
 .hoc-tag {
