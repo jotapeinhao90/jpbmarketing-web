@@ -19,13 +19,24 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" onload="this.onload=null;this.rel='stylesheet'">
   <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap"></noscript>
-  <link rel="preload" as="style" href="styles.css?v=3" onload="this.onload=null;this.rel='stylesheet'">
-  <noscript><link rel="stylesheet" href="styles.css?v=3"></noscript>
+  <link rel="preload" as="style" href="styles.css?v=10" onload="this.onload=null;this.rel='stylesheet'">
+  <noscript><link rel="stylesheet" href="styles.css?v=10"></noscript>
   <script type="application/ld+json">
   {"@context":"https://schema.org","@type":"Organization","name":"JPB Marketing","url":"https://jpbmarketing.cl","logo":"https://jpbmarketing.cl/assets/logo.webp","description":"Agencia B2B Industrial en Chile. Prospección, automatización con IA y presencia digital para fábricas.","telephone":"+56944843503","email":"jpbayas@jpbmarketing.cl","address":{"@type":"PostalAddress","addressLocality":"Santiago","addressCountry":"CL"}}
   </script>
 </head>
 <body>
+
+<!-- ANNOUNCEMENT BAR -->
+<div class="announce-bar" id="announce-bar">
+  <div class="announce-inner">
+    <span class="announce-tag">⭐ Cliente Fundador</span>
+    <span class="announce-text">Agente IA $119.000/mes · Precio bloqueado hasta el 30 jun</span>
+    <span class="announce-count" id="ann-count"></span>
+    <a href="#oferta-junio" class="announce-cta">Ver oferta →</a>
+    <button class="announce-close" id="announce-close" aria-label="Cerrar">✕</button>
+  </div>
+</div>
 
 <!-- PRELOADER -->
 <div id="preloader">
@@ -681,6 +692,31 @@
 
 <script src="main.js"></script>
 <script>
+/* Announcement bar */
+(function () {
+  var bar   = document.getElementById('announce-bar');
+  var close = document.getElementById('announce-close');
+  var count = document.getElementById('ann-count');
+  if (!bar) return;
+  if (sessionStorage.getItem('ann-closed')) { bar.remove(); return; }
+  document.body.classList.add('body-announce');
+  close.addEventListener('click', function () {
+    bar.classList.add('ann-hide');
+    document.body.classList.remove('body-announce');
+    sessionStorage.setItem('ann-closed', '1');
+  });
+  var end = new Date('2026-07-01T00:00:00-04:00').getTime();
+  function tickAnn() {
+    var d = end - Date.now();
+    if (d <= 0 || !count) return;
+    var days = Math.floor(d / 86400000);
+    var hrs  = Math.floor((d % 86400000) / 3600000);
+    count.textContent = '· ' + days + 'd ' + hrs + 'h';
+  }
+  tickAnn(); setInterval(tickAnn, 60000);
+})();
+
+/* Countdown oferta */
 (function () {
   var end = new Date('2026-07-01T00:00:00-04:00').getTime();
   var days = document.getElementById('ot-days');
