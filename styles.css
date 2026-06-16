@@ -855,7 +855,6 @@ select { cursor: pointer; }
 }
 .footer-brand { max-width: 300px; }
 .footer-logo { display: flex; align-items: center; gap: 10px; margin-bottom: 16px; }
-.footer-logo img { background: #fff; border-radius: 10px; padding: 6px; }
 .footer-logo span { font-weight: 700; color: var(--white); font-size: var(--tx-md); }
 .footer-brand p { font-size: var(--tx-sm); line-height: 1.65; }
 .footer-col h5 {
