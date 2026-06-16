@@ -111,7 +111,7 @@
   --radius: 12px;
   --radius-lg: 20px;
   --announce-h: 44px;
-  --brand-strip-h: 38px;
+  --brand-strip-h: 0px;
   --navbar-h: 72px;
   --ease: 0.3s ease;
 }
@@ -252,36 +252,6 @@ h4 { font-size: 1.125rem; font-weight: 600; }
   .announce-tag  { font-size: .68rem; }
 }
 
-/* ── Brand strip ─────────────────────────────────────────── */
-.brand-strip {
-  position: fixed;
-  top: 0; left: 0; right: 0;
-  height: var(--brand-strip-h);
-  background: var(--heading);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 10px;
-  z-index: 1001;
-}
-.brand-strip-name {
-  font-size: 0.9rem;
-  font-weight: 800;
-  letter-spacing: 0.02em;
-  background: linear-gradient(90deg, #ffffff 0%, #7dd3fc 40%, #ffffff 100%);
-  background-size: 300%;
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-  animation: brand-flow 5s ease-in-out infinite;
-}
-.brand-strip-sep { color: rgba(255,255,255,0.3); font-size: 0.75rem; }
-.brand-strip-tag {
-  font-size: 0.72rem;
-  font-weight: 500;
-  color: rgba(255,255,255,0.55);
-  letter-spacing: 0.05em;
-}
 
 /* ── Navbar ──────────────────────────────────────────────── */
 .navbar {
