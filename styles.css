@@ -856,13 +856,14 @@ select { cursor: pointer; }
 .footer-brand { max-width: 300px; }
 .footer-logo { display: inline-flex; align-items: center; gap: 10px; margin-bottom: 16px; }
 .footer-logo img {
-  height: 52px; width: auto;
-  background: rgba(255,255,255,0.08);
-  border: 1px solid rgba(255,255,255,0.14);
-  border-radius: 14px;
-  padding: 8px 12px;
-  backdrop-filter: blur(8px);
-  box-shadow: 0 2px 12px rgba(0,0,0,0.25), inset 0 1px 0 rgba(255,255,255,0.1);
+  height: 56px; width: auto;
+  background: rgba(255,255,255,0.95);
+  border-radius: 16px;
+  padding: 8px 14px;
+  box-shadow:
+    0 0 0 1px rgba(37,99,235,0.2),
+    0 4px 16px rgba(14,165,233,0.25),
+    0 0 32px rgba(37,99,235,0.15);
 }
 .footer-logo span { font-weight: 700; color: var(--white); font-size: var(--tx-md); }
 .footer-brand p { font-size: var(--tx-sm); line-height: 1.65; }
