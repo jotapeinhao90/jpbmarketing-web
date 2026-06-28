@@ -1261,19 +1261,6 @@ function doLogout(){
   auth.signOut().catch(()=>{});
 }
 
-// Auto-restore session
-(function(){
-  const saved=localStorage.getItem('jpb_email');
-  if(saved){
-    userEmail=saved;
-    const stored=localStorage.getItem('jpb_usage_'+saved);
-    userData=stored?JSON.parse(stored):{contactCount:0,searchCount:0,premium:false};
-    if(ADMIN_EMAILS.includes(saved.toLowerCase())||localStorage.getItem('jpb_unlimited_access')==='1'){userData.premium=true;isPremium=true;saveUsage();}
-    checkPremiumStatus(saved);
-    showApp();
-  }
-})();
-
 function updateUsageUI(){
   if(!userData)return;
   const count=userData.contactCount||0;
@@ -2583,6 +2570,19 @@ const QUOTES=[
     el.style.opacity='0';
     setTimeout(()=>{i=(i+1)%QUOTES.length;el.textContent=QUOTES[i];el.style.opacity='1';},500);
   },6000);
+})();
+
+// Auto-restore session (runs last, after all consts/functions are initialized)
+(function(){
+  const saved=localStorage.getItem('jpb_email');
+  if(saved){
+    userEmail=saved;
+    const stored=localStorage.getItem('jpb_usage_'+saved);
+    userData=stored?JSON.parse(stored):{contactCount:0,searchCount:0,premium:false};
+    if(ADMIN_EMAILS.includes(saved.toLowerCase())||localStorage.getItem('jpb_unlimited_access')==='1'){userData.premium=true;isPremium=true;saveUsage();}
+    checkPremiumStatus(saved);
+    showApp();
+  }
 })();
 </script>
 </body>
