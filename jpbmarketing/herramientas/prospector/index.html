@@ -2065,16 +2065,17 @@ function extractEmails(html,domain){
   ).sort((a,b)=>(a.toLowerCase().includes(domain)?0:1)-(b.toLowerCase().includes(domain)?0:1));
 }
 
-// Race all 3 proxies — fastest one wins
-// Race 4 CORS proxies simultaneously — fastest wins
+// Race 3 CORS proxies simultaneously — fastest wins
+// codetabs.com fue removido: su API está rechazando ~100% de los requests
+// (400 Bad Request incluso para dominios válidos), era la fuente casi
+// exclusiva del spam de errores en consola sin aportar ningún resultado.
 async function fetchHtml(url,ms=5000){
   const t=new Promise(r=>setTimeout(()=>r(null),ms));
   const enc=encodeURIComponent(url);
   const p1=fetch('https://corsproxy.io/?url='+enc).then(r=>r.ok?r.text():Promise.reject()).catch(()=>null);
   const p2=fetch('https://api.allorigins.win/get?url='+enc).then(r=>r.ok?r.json().then(d=>d.contents||Promise.reject()):Promise.reject()).catch(()=>null);
-  const p3=fetch('https://api.codetabs.com/v1/proxy?quest='+enc).then(r=>r.ok?r.text():Promise.reject()).catch(()=>null);
   const p4=fetch('https://thingproxy.freeboard.io/fetch/'+url).then(r=>r.ok?r.text():Promise.reject()).catch(()=>null);
-  return(await Promise.race([Promise.any([p1,p2,p3,p4]).catch(()=>null),t]))||null;
+  return(await Promise.race([Promise.any([p1,p2,p4]).catch(()=>null),t]))||null;
 }
 
 // Fetch all contact page candidates in parallel, return first with email
