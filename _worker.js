@@ -206,6 +206,60 @@ async function markUserPremium(docName, accessToken, expiresAt) {
   });
 }
 
+function toFirestoreValue(v) {
+  if (typeof v === 'boolean') return { booleanValue: v };
+  if (typeof v === 'number') return { doubleValue: v };
+  return { stringValue: String(v == null ? '' : v) };
+}
+
+async function addFirestoreDoc(collection, fields, accessToken, projectId) {
+  const fsFields = {};
+  for (const [k, v] of Object.entries(fields)) fsFields[k] = toFirestoreValue(v);
+  const resp = await fetch(
+    `https://firestore.googleapis.com/v1/projects/${projectId}/databases/(default)/documents/${collection}`,
+    {
+      method: 'POST',
+      headers: { 'Authorization': 'Bearer ' + accessToken, 'Content-Type': 'application/json' },
+      body: JSON.stringify({ fields: fsFields }),
+    }
+  );
+  if (!resp.ok) throw new Error('firestore_write_failed: ' + (await resp.text()));
+  return resp.json();
+}
+
+const AFFILIATE_CODES = ['LINKEDIN60'];
+
+async function handleAffiliateSignup(request, env) {
+  const origin = request.headers.get('Origin') || '';
+  if (!ALLOWED_ORIGINS.some(o => origin.startsWith(o))) {
+    return new Response(JSON.stringify({ error: 'forbidden' }), { status: 403 });
+  }
+  let body;
+  try { body = await request.json(); } catch (e) { return new Response(JSON.stringify({ error: 'bad_json' }), { status: 400 }); }
+  const code = (body.code || '').trim().toUpperCase();
+  const name = (body.name || '').trim();
+  const email = (body.email || '').trim();
+  const empresa = (body.empresa || '').trim();
+  const motivo = (body.motivo || '').trim();
+
+  if (!code || !name || !email || !motivo || !email.includes('@')) {
+    return new Response(JSON.stringify({ error: 'missing_fields' }), { status: 400 });
+  }
+  if (!AFFILIATE_CODES.includes(code)) {
+    return new Response(JSON.stringify({ error: 'invalid_code' }), { status: 400 });
+  }
+
+  try {
+    const accessToken = await getGoogleAccessToken(env);
+    await addFirestoreDoc('affiliate_signups', { code, name, email, empresa, motivo, createdAt: new Date().toISOString() }, accessToken, 'jpb-marketing');
+    return new Response(JSON.stringify({ ok: true }), {
+      headers: { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': origin },
+    });
+  } catch (e) {
+    return new Response(JSON.stringify({ error: 'internal_error' }), { status: 500 });
+  }
+}
+
 async function handleFlowWebhook(request, env) {
   let token;
   try {
@@ -255,6 +309,9 @@ export default {
     }
     if (url.pathname === '/api/flow-webhook' && request.method === 'POST') {
       return handleFlowWebhook(request, env);
+    }
+    if (url.pathname === '/api/affiliate-signup' && request.method === 'POST') {
+      return handleAffiliateSignup(request, env);
     }
     return env.ASSETS.fetch(request);
   },

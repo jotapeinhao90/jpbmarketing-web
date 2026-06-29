@@ -1303,10 +1303,9 @@ async function submitAffiliateCode(){
   saveUsage();
 
   try{
-    await db.collection('affiliate_signups').add({
-      code,name,email,empresa,motivo,
-      expiresAt,
-      createdAt:firebase.firestore.FieldValue.serverTimestamp()
+    await fetch('/api/affiliate-signup',{
+      method:'POST',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({code,name,email,empresa,motivo})
     });
   }catch(e){/* best-effort, no bloquea el acceso si falla */}
 
