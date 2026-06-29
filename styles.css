@@ -333,6 +333,15 @@ h4 { font-size: 1.125rem; font-weight: 600; }
   box-shadow: 0 2px 8px rgba(37,99,235,0.25);
   background-color: transparent;
 }
+.nav-links .nav-login, .nav-mobile .nav-login {
+  border: 1.5px solid var(--primary);
+  color: var(--primary) !important;
+  font-weight: 600;
+}
+.nav-links .nav-login:hover, .nav-mobile .nav-login:hover {
+  background: var(--primary) !important;
+  color: var(--white) !important;
+}
 .nav-links .btn-nav-cta:hover {
   background: var(--gradient-hover) !important;
   color: var(--white) !important;
@@ -1612,6 +1621,10 @@ select { cursor: pointer; }
 }
 .caso-link { display: inline-flex; align-items: center; gap: 6px; color: var(--primary); font-size: var(--tx-sm); font-weight: 600; text-decoration: none; margin-top: 16px; transition: gap .2s; }
 .caso-link:hover { gap: 10px; }
+.caso-links-row { display: flex; align-items: center; gap: 18px; flex-wrap: wrap; margin-top: 16px; }
+.caso-links-row .caso-link { margin-top: 0; }
+.caso-link-visit { display: inline-flex; align-items: center; gap: 6px; color: var(--light); font-size: var(--tx-sm); font-weight: 600; text-decoration: none; padding: 6px 14px; border: 1px solid var(--card-border); border-radius: 999px; transition: all .2s; }
+.caso-link-visit:hover { color: var(--primary); border-color: var(--primary); background: rgba(37,99,235,0.06); }
 .casos-cta-row { text-align: center; margin-top: 48px; }
 
 /* 3-col client cards (index.html) */
