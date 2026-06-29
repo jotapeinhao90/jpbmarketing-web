@@ -995,6 +995,8 @@ tbody td a:hover{color:var(--accent);text-decoration:underline;}
     <input type="text" class="modal-input" id="affName" placeholder="Tu nombre completo">
     <div class="modal-section-label">Email</div>
     <input type="email" class="modal-input" id="affEmail" placeholder="tu@email.com">
+    <div class="modal-section-label">Crea una contraseña</div>
+    <input type="password" class="modal-input" id="affPass" placeholder="Mín. 6 caracteres" minlength="6">
     <div class="modal-section-label">Empresa (opcional)</div>
     <input type="text" class="modal-input" id="affEmpresa" placeholder="Nombre de tu empresa">
     <div class="modal-section-label">¿Para qué vas a usar el prospector?</div>
@@ -1266,19 +1268,25 @@ async function submitAffiliateCode(){
   const code=document.getElementById('affCode').value.trim().toUpperCase();
   const name=document.getElementById('affName').value.trim();
   const email=document.getElementById('affEmail').value.trim();
+  const pass=document.getElementById('affPass').value;
   const empresa=document.getElementById('affEmpresa').value.trim();
   const motivo=document.getElementById('affMotivo').value.trim();
   const err=document.getElementById('affError');
   const ok=document.getElementById('affSuccess');
   err.style.display='none';
 
-  if(!code||!name||!email||!motivo){
-    err.textContent='Completa código, nombre, email y motivo de uso.';
+  if(!code||!name||!email||!pass||!motivo){
+    err.textContent='Completa código, nombre, email, contraseña y motivo de uso.';
     err.style.display='block';
     return;
   }
   if(!email.includes('@')){
     err.textContent='Ingresa un email válido.';
+    err.style.display='block';
+    return;
+  }
+  if(pass.length<6){
+    err.textContent='La contraseña debe tener al menos 6 caracteres.';
     err.style.display='block';
     return;
   }
@@ -1291,6 +1299,29 @@ async function submitAffiliateCode(){
   const btn=document.getElementById('affSubmitBtn');
   btn.disabled=true;btn.textContent='Activando...';
 
+  // Create (or sign in to) a real Firebase Auth account for this affiliate user
+  try{
+    const cred=await auth.createUserWithEmailAndPassword(email,pass);
+    fbUser=cred.user;
+  }catch(e){
+    if(e.code==='auth/email-already-in-use'){
+      try{
+        const cred=await auth.signInWithEmailAndPassword(email,pass);
+        fbUser=cred.user;
+      }catch(e2){
+        err.textContent='Ya existe una cuenta con ese email y la contraseña no coincide.';
+        err.style.display='block';
+        btn.disabled=false;btn.textContent='Activar acceso de 60 días';
+        return;
+      }
+    }else{
+      err.textContent=e.message;
+      err.style.display='block';
+      btn.disabled=false;btn.textContent='Activar acceso de 60 días';
+      return;
+    }
+  }
+
   const expiresAt=new Date(Date.now()+AFFILIATE_DAYS*24*60*60*1000).toISOString();
   userEmail=email;
   localStorage.setItem('jpb_email',email);
@@ -1301,6 +1332,15 @@ async function submitAffiliateCode(){
   userData.affiliateExpiresAt=expiresAt;
   userData.affiliateLimit=AFFILIATE_LIMIT;
   saveUsage();
+
+  try{
+    await db.collection('users').doc(fbUser.uid).set({
+      email,nombre:name,empresa,
+      createdAt:firebase.firestore.FieldValue.serverTimestamp(),
+      contactCount:userData.contactCount||0,searchCount:userData.searchCount||0,
+      premium:false,affiliateActive:true,affiliateCode:code,affiliateExpiresAt:expiresAt
+    },{merge:true});
+  }catch(e){/* best-effort */}
 
   try{
     await fetch('/api/affiliate-signup',{
