@@ -546,8 +546,8 @@ tbody td a:hover{color:var(--accent);text-decoration:underline;}
         <a href="https://jpbmarketing.cl" class="nav-menu-link">Inicio</a>
         <a href="https://jpbmarketing.cl/servicios" class="nav-menu-link">Servicios</a>
         <a href="#howItWorks" class="nav-menu-link">Cómo funciona</a>
-        <a href="#" onclick="openLoginModal();return false;" class="nav-menu-link nav-menu-login">Iniciar sesión</a>
         <a href="https://jpbmarketing.cl/contacto" class="nav-menu-link nav-menu-cta">Contacto</a>
+        <a href="#" onclick="openLoginModal();return false;" class="nav-menu-link nav-menu-login">Iniciar sesión</a>
       </div>
     </div>
   </nav>
@@ -1025,6 +1025,7 @@ tbody td a:hover{color:var(--accent);text-decoration:underline;}
     <input type="password" class="modal-input" id="loginPass" placeholder="Tu contraseña" onkeypress="if(event.key==='Enter')submitLogin()">
     <div class="affiliate-error" id="loginError"></div>
     <button class="btn-modal-save" id="loginSubmitBtn" onclick="submitLogin()">Entrar</button>
+    <p style="text-align:center;font-size:13px;color:var(--muted);margin-top:14px;">¿No tienes cuenta? <a href="#" onclick="submitSignup();return false;" style="color:var(--accent);text-decoration:underline;">Créala con este email y contraseña</a></p>
   </div>
 </div>
 
@@ -1434,6 +1435,52 @@ async function submitLogin(){
   }catch(e){
     err.textContent=e.code==='auth/wrong-password'||e.code==='auth/user-not-found'||e.code==='auth/invalid-credential'
       ?'Email o contraseña incorrectos.':e.message;
+    err.style.display='block';
+  }finally{
+    btn.disabled=false;btn.textContent='Entrar';
+  }
+}
+
+async function submitSignup(){
+  const email=document.getElementById('loginEmail').value.trim();
+  const pass=document.getElementById('loginPass').value;
+  const err=document.getElementById('loginError');
+  err.style.display='none';
+
+  if(!email||!email.includes('@')||!pass){
+    err.textContent='Ingresa tu email y contraseña para crear la cuenta.';
+    err.style.display='block';
+    return;
+  }
+  if(pass.length<6){
+    err.textContent='La contraseña debe tener al menos 6 caracteres.';
+    err.style.display='block';
+    return;
+  }
+
+  const btn=document.getElementById('loginSubmitBtn');
+  btn.disabled=true;btn.textContent='Creando cuenta...';
+
+  try{
+    const cred=await auth.createUserWithEmailAndPassword(email,pass);
+    fbUser=cred.user;
+    userEmail=email;
+    localStorage.setItem('jpb_email',email);
+    userData={contactCount:0,searchCount:0,premium:false};
+    saveUsage();
+    try{
+      await db.collection('users').doc(cred.user.uid).set({
+        email,createdAt:firebase.firestore.FieldValue.serverTimestamp(),
+        contactCount:0,searchCount:0,premium:false
+      },{merge:true});
+    }catch(e){/* best-effort */}
+    closeLoginModal();
+    document.getElementById('loginEmail').value='';
+    document.getElementById('loginPass').value='';
+    showApp();
+  }catch(e){
+    err.textContent=e.code==='auth/email-already-in-use'
+      ?'Ya existe una cuenta con ese email. Usa "Entrar" en vez de crear cuenta.':e.message;
     err.style.display='block';
   }finally{
     btn.disabled=false;btn.textContent='Entrar';
