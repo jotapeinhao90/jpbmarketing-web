@@ -544,6 +544,7 @@ tbody td a:hover{color:var(--accent);text-decoration:underline;}
         <a href="https://jpbmarketing.cl" class="nav-menu-link">Inicio</a>
         <a href="https://jpbmarketing.cl/servicios" class="nav-menu-link">Servicios</a>
         <a href="https://jpbmarketing.cl/herramienta-prospector" class="nav-menu-link">Cómo funciona</a>
+        <a href="#" onclick="openLoginModal();return false;" class="nav-menu-link">Iniciar sesión</a>
         <a href="https://jpbmarketing.cl/contacto" class="nav-menu-link nav-menu-cta">Contacto</a>
       </div>
     </div>
@@ -2848,6 +2849,11 @@ const QUOTES=[
     checkPremiumStatus(saved);
     showApp();
   }
+})();
+
+// Open login modal automatically if linked from the main site (?login=1)
+(function(){
+  if(new URLSearchParams(window.location.search).get('login')==='1')openLoginModal();
 })();
 </script>
 </body>
