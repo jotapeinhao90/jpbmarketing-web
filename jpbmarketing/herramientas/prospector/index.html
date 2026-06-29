@@ -276,6 +276,11 @@ body{font-family:'Inter',system-ui,sans-serif;background:var(--bg);color:var(--t
 .modal-input{width:100%;padding:13px 16px;background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-sm);color:var(--text);font-size:14px;font-family:inherit;outline:none;transition:border-color .2s;margin-bottom:12px;}
 .modal-input:focus{border-color:var(--accent);box-shadow:0 0 0 3px var(--glow);}
 .modal-input::placeholder{color:var(--dim);}
+.modal-textarea{resize:vertical;min-height:80px;}
+.affiliate-btn{background:none;border:1px solid rgba(124,108,255,.35);color:var(--accent);padding:11px 20px;border-radius:999px;font-size:13px;font-weight:600;font-family:inherit;cursor:pointer;transition:all .2s;}
+.affiliate-btn:hover{background:rgba(124,108,255,.12);border-color:var(--accent);}
+.affiliate-error{display:none;color:#ff6b81;font-size:13px;margin:-4px 0 12px;}
+.affiliate-success{display:none;color:#4ade80;font-size:13px;margin:8px 0 0;text-align:center;}
 .btn-modal-save{width:100%;padding:14px;background:var(--gradient);border:none;border-radius:var(--radius-sm);color:#fff;font-size:14px;font-weight:700;cursor:pointer;font-family:inherit;transition:all .2s;}
 .btn-modal-save:hover{opacity:.9;}
 
@@ -563,6 +568,10 @@ tbody td a:hover{color:var(--accent);text-decoration:underline;}
             <button onclick="validateAccessCode()" style="padding:13px 20px;background:rgba(108,99,255,.15);border:1px solid rgba(108,99,255,.3);border-radius:var(--radius-sm);color:var(--accent);font-size:13px;font-weight:600;cursor:pointer;font-family:inherit;white-space:nowrap;transition:all .2s;" onmouseover="this.style.background='rgba(108,99,255,.25)'" onmouseout="this.style.background='rgba(108,99,255,.15)'">Activar</button>
           </div>
           <div id="codeMessage" style="display:none;padding:10px 14px;border-radius:8px;font-size:13px;font-weight:600;max-width:480px;margin:10px auto 0;text-align:center;"></div>
+        </div>
+
+        <div class="fade-in fade-in-d3" style="margin-top:18px;">
+          <button onclick="openAffiliateModal()" class="affiliate-btn">🎁 Tengo un código de afiliado de LinkedIn</button>
         </div>
       </div>
     </section>
@@ -961,6 +970,28 @@ tbody td a:hover{color:var(--accent);text-decoration:underline;}
   </div>
 </div>
 
+<!-- Affiliate code modal -->
+<div class="modal-overlay" id="affiliateModal" onclick="if(event.target===this)closeAffiliateModal()">
+  <div class="modal-box">
+    <button class="modal-close" onclick="closeAffiliateModal()">✕</button>
+    <h3>🎁 Código de afiliado</h3>
+    <p class="modal-sub">Acceso a 10.000 búsquedas por 60 días. Completa tus datos para activarlo.</p>
+    <div class="modal-section-label">Código de afiliado</div>
+    <input type="text" class="modal-input" id="affCode" placeholder="Ej: LINKEDIN60" style="text-transform:uppercase;letter-spacing:1px;" oninput="this.value=this.value.toUpperCase()">
+    <div class="modal-section-label">Nombre</div>
+    <input type="text" class="modal-input" id="affName" placeholder="Tu nombre completo">
+    <div class="modal-section-label">Email</div>
+    <input type="email" class="modal-input" id="affEmail" placeholder="tu@email.com">
+    <div class="modal-section-label">Empresa (opcional)</div>
+    <input type="text" class="modal-input" id="affEmpresa" placeholder="Nombre de tu empresa">
+    <div class="modal-section-label">¿Para qué vas a usar el prospector?</div>
+    <textarea class="modal-input modal-textarea" id="affMotivo" placeholder="Ej: buscar clientes industriales en Santiago para mi empresa de..."></textarea>
+    <div class="affiliate-error" id="affError"></div>
+    <div class="affiliate-success" id="affSuccess">¡Listo! Activando tu acceso...</div>
+    <button class="btn-modal-save" id="affSubmitBtn" onclick="submitAffiliateCode()">Activar acceso de 60 días</button>
+  </div>
+</div>
+
 <!-- Merge lists modal -->
 <div class="modal-overlay" id="mergeModal" onclick="if(event.target===this)closeMergeModal()">
   <div class="modal-box">
@@ -1145,6 +1176,9 @@ const K=[65,73,122,97,83,121,68,108,89,66,101,56,97,118,45,45,57,54,80,67,53,51,
 const FREE_LIMIT=200;
 const FLOW_LINK='https://www.flow.cl/uri/L28a2jNfS';
 const ADMIN_EMAILS=['bayas.juanpablo1@gmail.com'];
+const AFFILIATE_CODES=['LINKEDIN60'];
+const AFFILIATE_LIMIT=10000;
+const AFFILIATE_DAYS=60;
 
 firebase.initializeApp({
   apiKey:"AIzaSyAR6ujw56sIz98nlg8bsR-qIYpXopyOLac",
@@ -1207,6 +1241,79 @@ function validateAccessCode(){
     document.getElementById('accessCodeInput').value='';
     document.getElementById('accessCodeInput').focus();
   }
+}
+
+// =============================================
+// AFFILIATE CODE (LinkedIn gift — 10.000 búsquedas / 60 días)
+// =============================================
+function openAffiliateModal(){document.getElementById('affiliateModal').classList.add('show');}
+function closeAffiliateModal(){document.getElementById('affiliateModal').classList.remove('show');}
+
+async function submitAffiliateCode(){
+  const code=document.getElementById('affCode').value.trim().toUpperCase();
+  const name=document.getElementById('affName').value.trim();
+  const email=document.getElementById('affEmail').value.trim();
+  const empresa=document.getElementById('affEmpresa').value.trim();
+  const motivo=document.getElementById('affMotivo').value.trim();
+  const err=document.getElementById('affError');
+  const ok=document.getElementById('affSuccess');
+  err.style.display='none';
+
+  if(!code||!name||!email||!motivo){
+    err.textContent='Completa código, nombre, email y motivo de uso.';
+    err.style.display='block';
+    return;
+  }
+  if(!email.includes('@')){
+    err.textContent='Ingresa un email válido.';
+    err.style.display='block';
+    return;
+  }
+  if(!AFFILIATE_CODES.includes(code)){
+    err.textContent='Código de afiliado inválido.';
+    err.style.display='block';
+    return;
+  }
+
+  const btn=document.getElementById('affSubmitBtn');
+  btn.disabled=true;btn.textContent='Activando...';
+
+  const expiresAt=new Date(Date.now()+AFFILIATE_DAYS*24*60*60*1000).toISOString();
+  userEmail=email;
+  localStorage.setItem('jpb_email',email);
+  const stored=localStorage.getItem('jpb_usage_'+email);
+  userData=stored?JSON.parse(stored):{contactCount:0,searchCount:0,premium:false};
+  userData.affiliateActive=true;
+  userData.affiliateCode=code;
+  userData.affiliateExpiresAt=expiresAt;
+  userData.affiliateLimit=AFFILIATE_LIMIT;
+  saveUsage();
+
+  try{
+    await db.collection('affiliate_signups').add({
+      code,name,email,empresa,motivo,
+      expiresAt,
+      createdAt:firebase.firestore.FieldValue.serverTimestamp()
+    });
+  }catch(e){/* best-effort, no bloquea el acceso si falla */}
+
+  ok.style.display='block';
+  setTimeout(()=>{
+    closeAffiliateModal();
+    btn.disabled=false;btn.textContent='Activar acceso de 60 días';
+    ok.style.display='none';
+    showApp();
+  },900);
+}
+
+function affiliateStatus(){
+  if(!userData||!userData.affiliateActive)return null;
+  const expired=Date.now()>new Date(userData.affiliateExpiresAt).getTime();
+  if(expired){userData.affiliateActive=false;saveUsage();return null;}
+  return{
+    limit:userData.affiliateLimit||AFFILIATE_LIMIT,
+    daysLeft:Math.max(0,Math.ceil((new Date(userData.affiliateExpiresAt).getTime()-Date.now())/86400000))
+  };
 }
 
 // =============================================
@@ -1276,13 +1383,22 @@ function updateUsageUI(){
   if(!userData)return;
   const count=userData.contactCount||0;
   isPremium=userData.premium||false;
-  const pct=isPremium?0:Math.min((count/FREE_LIMIT)*100,100);
+  const aff=affiliateStatus();
+  const limit=aff?aff.limit:FREE_LIMIT;
+  const pct=isPremium?0:Math.min((count/limit)*100,100);
   const badge=document.getElementById('planBadge');
   const bar=document.getElementById('usageBar');
   const isAdmin=ADMIN_EMAILS.includes((userEmail||'').toLowerCase());
   if(isPremium){
     badge.textContent=isAdmin?'ADMIN':'PRO';badge.className='nav-plan premium';
     bar.style.display='none';
+  }else if(aff){
+    badge.textContent='AFILIADO';badge.className='nav-plan premium';
+    bar.style.display='block';
+    document.getElementById('usageLabel').innerHTML='Contactos: <strong>'+count+'</strong> / '+limit+' · '+aff.daysLeft+' días restantes';
+    document.getElementById('usageFill').style.width=pct+'%';
+    document.getElementById('usageFill').className='usage-fill '+(pct>=80?'warn':'ok');
+    document.getElementById('usageUpgrade').style.display='none';
   }else{
     badge.textContent='GRATIS';badge.className='nav-plan free';
     bar.style.display='block';
@@ -1296,6 +1412,8 @@ function updateUsageUI(){
 function canSearch(){
   if(!userData)return false;
   if(userData.premium)return true;
+  const aff=affiliateStatus();
+  if(aff)return(userData.contactCount||0)<aff.limit;
   return(userData.contactCount||0)<FREE_LIMIT;
 }
 
@@ -1795,7 +1913,8 @@ async function startSearch(){
   document.getElementById('statsGrid').style.display='grid';
   document.getElementById('resultsCard').style.display='block';
   contactLimit=parseInt(document.getElementById('contactLimitInput').value)||500;
-  const effectiveLimit=isPremium?contactLimit:Math.min(contactLimit,FREE_LIMIT);
+  const _aff=affiliateStatus();
+  const effectiveLimit=isPremium?contactLimit:Math.min(contactLimit,_aff?_aff.limit:FREE_LIMIT);
   // Build query list based on selected categories
   const _rcfg=getRubroConfig();
   let rawQueries;
@@ -1834,7 +1953,7 @@ async function startSearch(){
   // Render table once at the end
   filtered=[...allResults];
   renderTable();
-  const hitLimit=!isPremium&&allResults.length>=FREE_LIMIT;
+  const hitLimit=!isPremium&&allResults.length>=(_aff?_aff.limit:FREE_LIMIT);
   document.getElementById('searchDots').style.display='none';
   document.getElementById('progressLabel').textContent=hitLimit?'Límite gratuito alcanzado':stopped?'Búsqueda detenida':'Búsqueda completada';
   document.getElementById('progressLabel').style.color=stopped?'var(--warning)':'var(--success)';
