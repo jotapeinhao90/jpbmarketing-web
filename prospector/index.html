@@ -581,6 +581,10 @@ tbody td a:hover{color:var(--accent);text-decoration:underline;}
         <div class="fade-in fade-in-d3" style="margin-top:18px;">
           <button onclick="openAffiliateModal()" class="affiliate-btn">🎁 Tengo un código de afiliado de LinkedIn</button>
         </div>
+
+        <div class="fade-in fade-in-d3" style="margin-top:14px;">
+          <a href="#" onclick="openLoginModal();return false;" style="color:var(--muted);font-size:13px;text-decoration:underline;">¿Ya tienes cuenta? Iniciar sesión</a>
+        </div>
       </div>
     </section>
 
@@ -1007,6 +1011,21 @@ tbody td a:hover{color:var(--accent);text-decoration:underline;}
   </div>
 </div>
 
+<!-- Login modal -->
+<div class="modal-overlay" id="loginModal" onclick="if(event.target===this)closeLoginModal()">
+  <div class="modal-box">
+    <button class="modal-close" onclick="closeLoginModal()">✕</button>
+    <h3>🔑 Iniciar sesión</h3>
+    <p class="modal-sub">Si ya tienes cuenta (pago o código de afiliado), entra con tu email y contraseña.</p>
+    <div class="modal-section-label">Email</div>
+    <input type="email" class="modal-input" id="loginEmail" placeholder="tu@email.com" onkeypress="if(event.key==='Enter')document.getElementById('loginPass').focus()">
+    <div class="modal-section-label">Contraseña</div>
+    <input type="password" class="modal-input" id="loginPass" placeholder="Tu contraseña" onkeypress="if(event.key==='Enter')submitLogin()">
+    <div class="affiliate-error" id="loginError"></div>
+    <button class="btn-modal-save" id="loginSubmitBtn" onclick="submitLogin()">Entrar</button>
+  </div>
+</div>
+
 <!-- Merge lists modal -->
 <div class="modal-overlay" id="mergeModal" onclick="if(event.target===this)closeMergeModal()">
   <div class="modal-box">
@@ -1366,6 +1385,57 @@ function affiliateStatus(){
     limit:userData.affiliateLimit||AFFILIATE_LIMIT,
     daysLeft:Math.max(0,Math.ceil((new Date(userData.affiliateExpiresAt).getTime()-Date.now())/86400000))
   };
+}
+
+// =============================================
+// LOGIN (returning users with a real Firebase account — paid or affiliate)
+// =============================================
+function openLoginModal(){document.getElementById('loginModal').classList.add('show');}
+function closeLoginModal(){document.getElementById('loginModal').classList.remove('show');}
+
+async function submitLogin(){
+  const email=document.getElementById('loginEmail').value.trim();
+  const pass=document.getElementById('loginPass').value;
+  const err=document.getElementById('loginError');
+  err.style.display='none';
+
+  if(!email||!email.includes('@')||!pass){
+    err.textContent='Ingresa tu email y contraseña.';
+    err.style.display='block';
+    return;
+  }
+
+  const btn=document.getElementById('loginSubmitBtn');
+  btn.disabled=true;btn.textContent='Entrando...';
+
+  try{
+    const cred=await auth.signInWithEmailAndPassword(email,pass);
+    fbUser=cred.user;
+    const doc=await db.collection('users').doc(cred.user.uid).get();
+    const d=doc.exists?doc.data():{};
+    userEmail=email;
+    localStorage.setItem('jpb_email',email);
+    userData={
+      contactCount:d.contactCount||0,
+      searchCount:d.searchCount||0,
+      premium:!!d.premium,
+      affiliateActive:!!d.affiliateActive,
+      affiliateCode:d.affiliateCode||null,
+      affiliateExpiresAt:d.affiliateExpiresAt||null,
+      affiliateLimit:d.affiliateLimit||AFFILIATE_LIMIT,
+    };
+    saveUsage();
+    closeLoginModal();
+    document.getElementById('loginEmail').value='';
+    document.getElementById('loginPass').value='';
+    showApp();
+  }catch(e){
+    err.textContent=e.code==='auth/wrong-password'||e.code==='auth/user-not-found'||e.code==='auth/invalid-credential'
+      ?'Email o contraseña incorrectos.':e.message;
+    err.style.display='block';
+  }finally{
+    btn.disabled=false;btn.textContent='Entrar';
+  }
 }
 
 // =============================================
