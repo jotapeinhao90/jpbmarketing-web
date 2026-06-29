@@ -2065,16 +2065,13 @@ function extractEmails(html,domain){
   ).sort((a,b)=>(a.toLowerCase().includes(domain)?0:1)-(b.toLowerCase().includes(domain)?0:1));
 }
 
-// Race all 3 proxies — fastest one wins
-// Race 4 CORS proxies simultaneously — fastest wins
-async function fetchHtml(url,ms=5000){
+// Fetch via our own Cloudflare Worker endpoint (/api/fetch-page) — no CORS,
+// no dependency on third-party proxies (corsproxy.io/allorigins/thingproxy
+// todos están caídos o bloqueados a junio 2026).
+async function fetchHtml(url,ms=6000){
   const t=new Promise(r=>setTimeout(()=>r(null),ms));
-  const enc=encodeURIComponent(url);
-  const p1=fetch('https://corsproxy.io/?url='+enc).then(r=>r.ok?r.text():Promise.reject()).catch(()=>null);
-  const p2=fetch('https://api.allorigins.win/get?url='+enc).then(r=>r.ok?r.json().then(d=>d.contents||Promise.reject()):Promise.reject()).catch(()=>null);
-  const p3=fetch('https://api.codetabs.com/v1/proxy?quest='+enc).then(r=>r.ok?r.text():Promise.reject()).catch(()=>null);
-  const p4=fetch('https://thingproxy.freeboard.io/fetch/'+url).then(r=>r.ok?r.text():Promise.reject()).catch(()=>null);
-  return(await Promise.race([Promise.any([p1,p2,p3,p4]).catch(()=>null),t]))||null;
+  const p=fetch('/api/fetch-page?url='+encodeURIComponent(url)).then(r=>r.ok?r.text():Promise.reject()).catch(()=>null);
+  return(await Promise.race([p,t]))||null;
 }
 
 // Fetch all contact page candidates in parallel, return first with email
