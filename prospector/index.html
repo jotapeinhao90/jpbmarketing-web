@@ -42,6 +42,7 @@ body{font-family:'Inter',system-ui,sans-serif;background:var(--bg);color:var(--t
 .nav-name{font-weight:700;font-size:15px;}
 .nav-name span{background:var(--gradient);-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
 .nav-right{display:flex;align-items:center;gap:14px;}
+.nav-menu-links{display:flex;align-items:center;gap:20px;}
 .nav-menu-link{color:var(--muted);text-decoration:none;font-size:14px;font-weight:600;transition:color .2s;}
 .nav-menu-link:hover{color:var(--text);}
 .nav-menu-cta{background:var(--gradient);color:#fff!important;padding:9px 18px;border-radius:var(--radius-sm,8px);}
@@ -701,6 +702,11 @@ tbody td a:hover{color:var(--accent);text-decoration:underline;}
         <div class="nav-name">JPB <span>Prospector</span></div>
       </a>
       <div class="nav-right">
+        <div class="nav-menu-links">
+          <a href="https://jpbmarketing.cl" class="nav-menu-link">Inicio</a>
+          <a href="https://jpbmarketing.cl/servicios" class="nav-menu-link">Servicios</a>
+          <a href="https://jpbmarketing.cl/herramienta-prospector" class="nav-menu-link">Cómo funciona</a>
+        </div>
         <span class="nav-plan free" id="planBadge">GRATIS</span>
         <span class="nav-user" id="navEmail"></span>
         <button class="btn-logout" onclick="document.getElementById('listsSection').scrollIntoView({behavior:'smooth'})" style="border-color:rgba(108,99,255,.3);color:var(--accent);">📋 Mis listas</button>
