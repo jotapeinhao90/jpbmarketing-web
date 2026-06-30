@@ -1267,7 +1267,7 @@ function validateAccessCode(){
   const msg=document.getElementById('codeMessage');
   if(!code)return;
   if(code==='GRAVITY2026'){
-    localStorage.setItem('jpb_unlimited_access','1');
+    sessionStorage.setItem('jpb_pending_unlimited','1');
     msg.style.cssText='display:block;background:rgba(16,185,129,.15);color:var(--success);padding:10px 14px;border-radius:8px;font-size:13px;font-weight:600;max-width:480px;margin:10px auto 0;text-align:center;';
     msg.innerHTML='✅ ¡Código válido! Ingresa tu email para comenzar con acceso ilimitado.';
     document.getElementById('accessCodeInput').disabled=true;
@@ -1507,10 +1507,12 @@ function enterWithEmail(){
     userData.premium=true;isPremium=true;
     saveUsage();
   }
-  // Access code unlocks unlimited
-  if(localStorage.getItem('jpb_unlimited_access')==='1'){
+  // Access code unlocks unlimited — one-time grant, consumed immediately so it
+  // can never silently apply to a different email entered later on this browser
+  if(sessionStorage.getItem('jpb_pending_unlimited')==='1'){
     userData.premium=true;isPremium=true;
     saveUsage();
+    sessionStorage.removeItem('jpb_pending_unlimited');
   }
   // Check if they have a Firebase account (premium)
   checkPremiumStatus(email);
@@ -2893,7 +2895,7 @@ const QUOTES=[
     userEmail=saved;
     const stored=localStorage.getItem('jpb_usage_'+saved);
     userData=stored?JSON.parse(stored):{contactCount:0,searchCount:0,premium:false};
-    if(ADMIN_EMAILS.includes(saved.toLowerCase())||localStorage.getItem('jpb_unlimited_access')==='1'){userData.premium=true;isPremium=true;saveUsage();}
+    if(ADMIN_EMAILS.includes(saved.toLowerCase())){userData.premium=true;isPremium=true;saveUsage();}
     checkPremiumStatus(saved);
     showApp();
   }
