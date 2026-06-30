@@ -1378,12 +1378,14 @@ async function submitAffiliateCode(){
   saveUsage();
 
   try{
-    await db.collection('users').doc(fbUser.uid).set({
-      email,nombre:name,empresa,
-      createdAt:firebase.firestore.FieldValue.serverTimestamp(),
-      contactCount:userData.contactCount||0,searchCount:userData.searchCount||0,
-      premium:false,affiliateActive:true,affiliateCode:code,affiliateExpiresAt:expiresAt
-    },{merge:true});
+    await fetch('/api/user-upsert',{
+      method:'POST',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({
+        uid:fbUser.uid,email,nombre:name,empresa,
+        contactCount:userData.contactCount||0,searchCount:userData.searchCount||0,
+        premium:false,affiliateActive:true,affiliateCode:code,affiliateExpiresAt:expiresAt
+      })
+    });
   }catch(e){/* best-effort */}
 
   try{
@@ -1491,10 +1493,10 @@ async function submitSignup(){
     userData={contactCount:0,searchCount:0,premium:false};
     saveUsage();
     try{
-      await db.collection('users').doc(cred.user.uid).set({
-        email,createdAt:firebase.firestore.FieldValue.serverTimestamp(),
-        contactCount:0,searchCount:0,premium:false
-      },{merge:true});
+      await fetch('/api/user-upsert',{
+        method:'POST',headers:{'Content-Type':'application/json'},
+        body:JSON.stringify({uid:cred.user.uid,email,contactCount:0,searchCount:0,premium:false})
+      });
     }catch(e){/* best-effort */}
     closeLoginModal();
     document.getElementById('loginEmail').value='';
@@ -1698,12 +1700,15 @@ async function handlePayClick(){
   // Create Firebase account
   try{
     const cred=await auth.createUserWithEmailAndPassword(userEmail,pass);
-    await db.collection('users').doc(cred.user.uid).set({
-      email:userEmail,createdAt:firebase.firestore.FieldValue.serverTimestamp(),
-      contactCount:userData.contactCount||0,searchCount:userData.searchCount||0,
-      premium:false,pendingPayment:true
-    });
     fbUser=cred.user;
+    try{
+      await fetch('/api/user-upsert',{
+        method:'POST',headers:{'Content-Type':'application/json'},
+        body:JSON.stringify({uid:cred.user.uid,email:userEmail,
+          contactCount:userData.contactCount||0,searchCount:userData.searchCount||0,
+          premium:false,pendingPayment:true})
+      });
+    }catch(e2){/* best-effort */}
   }catch(e){
     if(e.code==='auth/email-already-in-use'){
       // Already has account, try login

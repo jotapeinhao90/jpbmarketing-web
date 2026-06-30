@@ -246,6 +246,49 @@ async function addFirestoreDoc(collection, fields, accessToken, projectId) {
 
 const AFFILIATE_CODES = ['LINKEDIN60'];
 
+// Upserts a user doc by Firebase UID (called after client-side Firebase Auth succeeds)
+async function handleUserUpsert(request, env) {
+  const origin = request.headers.get('Origin') || '';
+  if (!ALLOWED_ORIGINS.some(o => origin.startsWith(o))) {
+    return new Response(JSON.stringify({ error: 'forbidden' }), { status: 403 });
+  }
+  let body;
+  try { body = await request.json(); } catch (e) { return new Response(JSON.stringify({ error: 'bad_json' }), { status: 400 }); }
+  const uid = (body.uid || '').trim();
+  if (!uid) return new Response(JSON.stringify({ error: 'missing_uid' }), { status: 400 });
+
+  // Build fields — only include what's passed
+  const allowed = ['email','nombre','empresa','contactCount','searchCount','premium',
+                   'affiliateActive','affiliateCode','affiliateExpiresAt','createdAt'];
+  const fields = {};
+  for (const k of allowed) {
+    if (body[k] !== undefined) fields[k] = body[k];
+  }
+  if (!fields.createdAt) fields.createdAt = new Date().toISOString();
+
+  try {
+    const accessToken = await getGoogleAccessToken(env);
+    const docPath = `projects/jpb-marketing/databases/(default)/documents/users/${uid}`;
+    const fsFields = {};
+    for (const [k, v] of Object.entries(fields)) fsFields[k] = toFirestoreValue(v);
+    const fieldsParam = Object.keys(fsFields).map(k => 'updateMask.fieldPaths=' + encodeURIComponent(k)).join('&');
+    const resp = await fetch(`https://firestore.googleapis.com/v1/${docPath}?${fieldsParam}`, {
+      method: 'PATCH',
+      headers: { 'Authorization': 'Bearer ' + accessToken, 'Content-Type': 'application/json' },
+      body: JSON.stringify({ fields: fsFields }),
+    });
+    if (!resp.ok) {
+      const txt = await resp.text();
+      return new Response(JSON.stringify({ error: 'firestore_error', detail: txt }), { status: 502 });
+    }
+    return new Response(JSON.stringify({ ok: true }), {
+      headers: { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': origin },
+    });
+  } catch (e) {
+    return new Response(JSON.stringify({ error: 'internal_error', detail: e.message }), { status: 500 });
+  }
+}
+
 async function handleAffiliateSignup(request, env) {
   const origin = request.headers.get('Origin') || '';
   if (!ALLOWED_ORIGINS.some(o => origin.startsWith(o))) {
@@ -329,6 +372,9 @@ export default {
     }
     if (url.pathname === '/api/affiliate-signup' && request.method === 'POST') {
       return handleAffiliateSignup(request, env);
+    }
+    if (url.pathname === '/api/user-upsert' && request.method === 'POST') {
+      return handleUserUpsert(request, env);
     }
     return env.ASSETS.fetch(request);
   },
