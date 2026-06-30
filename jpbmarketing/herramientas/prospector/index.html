@@ -291,6 +291,15 @@ body{font-family:'Inter',system-ui,sans-serif;background:var(--bg);color:var(--t
 .affiliate-btn:hover{background:rgba(124,108,255,.12);border-color:var(--accent);}
 .affiliate-error{display:none;color:#ff6b81;font-size:13px;margin:-4px 0 12px;}
 .affiliate-success{display:none;color:#4ade80;font-size:13px;margin:8px 0 0;text-align:center;}
+.account-row{display:flex;justify-content:space-between;align-items:center;gap:14px;padding:12px 0;border-bottom:1px solid var(--border);}
+.account-row:last-of-type{border-bottom:none;}
+.account-label{font-size:13px;color:var(--muted);}
+.account-value{font-size:13px;font-weight:700;color:var(--text);text-align:right;}
+.account-badge-admin,.account-badge-pro{color:#4ade80;}
+.account-badge-aff{color:#38bdf8;}
+.account-badge-free{color:var(--warning,#fbbf24);}
+.account-note{font-size:12px;color:var(--muted);line-height:1.6;margin:16px 0;}
+.account-paused-box{background:rgba(251,191,36,.1);border:1px solid rgba(251,191,36,.3);border-radius:10px;padding:14px 16px;font-size:13px;color:var(--text);line-height:1.6;margin-top:18px;}
 .btn-modal-save{width:100%;padding:14px;background:var(--gradient);border:none;border-radius:var(--radius-sm);color:#fff;font-size:14px;font-weight:700;cursor:pointer;font-family:inherit;transition:all .2s;}
 .btn-modal-save:hover{opacity:.9;}
 
@@ -534,6 +543,8 @@ tbody td a:hover{color:var(--accent);text-decoration:underline;}
 <div class="bg-glow bg-glow-1"></div>
 <div class="bg-glow bg-glow-2"></div>
 
+<div id="paySuccessBanner" style="display:none;position:fixed;top:90px;left:50%;transform:translateX(-50%);z-index:2000;background:#16a34a;color:#fff;padding:14px 24px;border-radius:12px;font-weight:700;font-size:14px;box-shadow:0 8px 30px rgba(0,0,0,.35);max-width:90vw;text-align:center;">✅ ¡Gracias por tu compra! Activando tu cuenta PRO...</div>
+
 <!-- ==================== LANDING ==================== -->
 <div class="wrapper" id="landingPage">
   <nav class="nav">
@@ -693,7 +704,7 @@ tbody td a:hover{color:var(--accent);text-decoration:underline;}
               <li><span class="ck">✓</span> Búsquedas ilimitadas</li>
               <li><span class="ck">✓</span> Soporte prioritario</li>
             </ul>
-            <button class="price-btn price-btn-pro" onclick="document.getElementById('gateEmail').focus();window.scrollTo({top:0,behavior:'smooth'});">Comenzar y luego upgrade</button>
+            <button class="price-btn price-btn-pro" disabled style="opacity:.6;cursor:not-allowed;">Próximamente disponible</button>
           </div>
         </div>
       </div>
@@ -723,6 +734,7 @@ tbody td a:hover{color:var(--accent);text-decoration:underline;}
         <span class="nav-plan free" id="planBadge">GRATIS</span>
         <span class="nav-user" id="navEmail"></span>
         <button class="btn-logout" onclick="document.getElementById('listsSection').scrollIntoView({behavior:'smooth'})" style="border-color:rgba(108,99,255,.3);color:var(--accent);">📋 Mis listas</button>
+        <button class="btn-logout" onclick="openAccountModal()" style="border-color:rgba(108,99,255,.3);color:var(--accent);">⚙️ Mi cuenta</button>
         <button class="btn-logout" onclick="doLogout()">Salir</button>
       </div>
     </div>
@@ -1029,6 +1041,16 @@ tbody td a:hover{color:var(--accent);text-decoration:underline;}
   </div>
 </div>
 
+<!-- Account panel modal -->
+<div class="modal-overlay" id="accountModal" onclick="if(event.target===this)closeAccountModal()">
+  <div class="modal-box" style="width:520px;">
+    <button class="modal-close" onclick="closeAccountModal()">✕</button>
+    <h3>⚙️ Mi cuenta</h3>
+    <p class="modal-sub">Tu plan, facturación y configuración de cuenta.</p>
+    <div id="accountPanelBody">Cargando...</div>
+  </div>
+</div>
+
 <!-- Merge lists modal -->
 <div class="modal-overlay" id="mergeModal" onclick="if(event.target===this)closeMergeModal()">
   <div class="modal-box">
@@ -1198,10 +1220,10 @@ tbody td a:hover{color:var(--accent);text-decoration:underline;}
     </div>
     <div class="pw-step">
       <div class="pw-step-label">2. Paga con WebPay</div>
-      <button type="button" class="btn-pay" id="pwPayBtn" onclick="handlePayClick()">Pagar $34.990 CLP / mes</button>
+      <button type="button" class="btn-pay" id="pwPayBtn" disabled style="opacity:.6;cursor:not-allowed;">Próximamente disponible</button>
     </div>
     <div class="pw-error" id="pwError"></div>
-    <p class="pw-note">Pago seguro vía Flow.cl con WebPay. Tras confirmar el pago, tu cuenta se activará en minutos.</p>
+    <p class="pw-note">🚧 El plan PRO está temporalmente en pausa mientras afinamos detalles de facturación. Mientras tanto, podés seguir usando tus 200 contactos gratis.</p>
   </div>
 </div>
 
@@ -1488,6 +1510,72 @@ async function submitSignup(){
 }
 
 // =============================================
+// ACCOUNT PANEL (plan, facturación, cancelar)
+// =============================================
+function openAccountModal(){
+  document.getElementById('accountModal').classList.add('show');
+  renderAccountPanel();
+}
+function closeAccountModal(){document.getElementById('accountModal').classList.remove('show');}
+
+async function renderAccountPanel(){
+  const body=document.getElementById('accountPanelBody');
+  body.innerHTML='Cargando...';
+
+  let d={};
+  if(fbUser){
+    try{
+      const doc=await db.collection('users').doc(fbUser.uid).get();
+      if(doc.exists)d=doc.data();
+    }catch(e){}
+  }
+
+  const isAdmin=ADMIN_EMAILS.includes((userEmail||'').toLowerCase());
+  const aff=affiliateStatus();
+  const count=userData.contactCount||0;
+  let html='';
+  html+='<div class="account-row"><span class="account-label">Email</span><span class="account-value">'+userEmail+'</span></div>';
+
+  if(isAdmin){
+    html+='<div class="account-row"><span class="account-label">Plan</span><span class="account-value account-badge-admin">ADMIN — acceso ilimitado</span></div>';
+  }else if(userData.premium){
+    const expires=d.premiumExpiresAt||userData.premiumExpiresAt;
+    const expiresFmt=expires?new Date(expires).toLocaleDateString('es-CL',{day:'2-digit',month:'long',year:'numeric'}):'—';
+    const daysLeft=expires?Math.max(0,Math.ceil((new Date(expires).getTime()-Date.now())/86400000)):null;
+    html+='<div class="account-row"><span class="account-label">Plan</span><span class="account-value account-badge-pro">PRO — acceso ilimitado</span></div>';
+    html+='<div class="account-row"><span class="account-label">Acceso válido hasta</span><span class="account-value">'+expiresFmt+(daysLeft!==null?' ('+daysLeft+' días restantes)':'')+'</span></div>';
+    if(d.lastPaymentAt){
+      const paidFmt=new Date(d.lastPaymentAt).toLocaleDateString('es-CL',{day:'2-digit',month:'long',year:'numeric'});
+      html+='<div class="account-row"><span class="account-label">Último pago</span><span class="account-value">$'+(d.lastPaymentAmount||'34.990')+' CLP — '+paidFmt+'</span></div>';
+    }
+    html+='<p class="account-note">Tu acceso no se renueva automáticamente con cargo a tarjeta — para seguir después de esa fecha vas a tener que volver a pagar. Si cancelas ahora, vuelves al plan gratuito de inmediato.</p>';
+    html+='<button class="btn-modal-save" style="background:#ef4444;" onclick="cancelSubscription()">Cancelar y volver a plan gratuito</button>';
+  }else if(aff){
+    html+='<div class="account-row"><span class="account-label">Plan</span><span class="account-value account-badge-aff">AFILIADO — código '+(userData.affiliateCode||'')+'</span></div>';
+    html+='<div class="account-row"><span class="account-label">Vence en</span><span class="account-value">'+aff.daysLeft+' días</span></div>';
+    html+='<div class="account-row"><span class="account-label">Contactos usados</span><span class="account-value">'+count+' / '+aff.limit+'</span></div>';
+  }else{
+    html+='<div class="account-row"><span class="account-label">Plan</span><span class="account-value account-badge-free">GRATIS</span></div>';
+    html+='<div class="account-row"><span class="account-label">Contactos usados</span><span class="account-value">'+count+' / '+FREE_LIMIT+'</span></div>';
+    html+='<div class="account-paused-box">🚧 El plan PRO ($34.990 CLP/mes) está temporalmente en pausa mientras afinamos detalles de facturación. Vuelve pronto.</div>';
+  }
+
+  body.innerHTML=html;
+}
+
+async function cancelSubscription(){
+  if(!confirm('¿Seguro que quieres cancelar? Volverás al plan gratuito (200 contactos) de inmediato.'))return;
+  userData.premium=false;
+  isPremium=false;
+  saveUsage();
+  if(fbUser){
+    try{ await db.collection('users').doc(fbUser.uid).set({premium:false},{merge:true}); }catch(e){}
+  }
+  updateUsageUI();
+  renderAccountPanel();
+}
+
+// =============================================
 // EMAIL GATE (no password, just email to start)
 // =============================================
 function enterWithEmail(){
@@ -1643,7 +1731,10 @@ async function handlePayClick(){
       window.location.href=data.redirectUrl;
     }else{
       const err=document.getElementById('pwError');
-      err.textContent='No se pudo iniciar el pago. Intenta de nuevo.';err.style.display='block';
+      err.textContent=data.error==='payments_paused'
+        ?'El plan PRO está temporalmente en pausa mientras afinamos detalles de facturación. Vuelve pronto.'
+        :'No se pudo iniciar el pago. Intenta de nuevo.';
+      err.style.display='block';
       btn.disabled=false;btn.textContent='Pagar $34.990 CLP / mes';
     }
   }catch(e){
@@ -2904,6 +2995,18 @@ const QUOTES=[
 // Open login modal automatically if linked from the main site (?login=1)
 (function(){
   if(new URLSearchParams(window.location.search).get('login')==='1')openLoginModal();
+})();
+
+// Show "thanks for your purchase" banner when returning from a successful Flow payment
+(function(){
+  if(new URLSearchParams(window.location.search).get('pago')==='ok'){
+    const banner=document.getElementById('paySuccessBanner');
+    if(banner){
+      banner.style.display='block';
+      setTimeout(()=>{banner.style.display='none';},8000);
+    }
+    setTimeout(()=>{ if(userEmail)checkPremiumStatus(userEmail); },1500);
+  }
 })();
 </script>
 </body>

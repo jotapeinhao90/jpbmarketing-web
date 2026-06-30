@@ -66,6 +66,9 @@ async function handleFetchPage(request) {
 // ──────────────────────────────────────────────────────────
 const FLOW_PRICE_CLP = '34990';
 const FLOW_API_BASE = 'https://www.flow.cl/api';
+// Pausa temporal de cobros mientras se resuelven detalles legales/de facturación.
+// Para reactivar, cambiar a false — no requiere ningún otro cambio.
+const PAYMENTS_PAUSED = true;
 
 function b64url(bytes) {
   let str = '';
@@ -91,6 +94,12 @@ async function handleFlowCreatePayment(request, env) {
   const origin = request.headers.get('Origin') || '';
   if (!ALLOWED_ORIGINS.some(o => origin.startsWith(o))) {
     return new Response(JSON.stringify({ error: 'forbidden' }), { status: 403 });
+  }
+  if (PAYMENTS_PAUSED) {
+    return new Response(JSON.stringify({ error: 'payments_paused', message: 'Los pagos están temporalmente en pausa.' }), {
+      status: 503,
+      headers: { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': origin },
+    });
   }
   let body;
   try { body = await request.json(); } catch (e) { return new Response(JSON.stringify({ error: 'bad_json' }), { status: 400 }); }
@@ -192,7 +201,13 @@ async function findUserDocByEmail(email, accessToken, projectId) {
 }
 
 async function markUserPremium(docName, accessToken, expiresAt) {
-  const fieldsParam = ['updateMask.fieldPaths=premium', 'updateMask.fieldPaths=premiumExpiresAt', 'updateMask.fieldPaths=pendingPayment'].join('&');
+  const fieldsParam = [
+    'updateMask.fieldPaths=premium',
+    'updateMask.fieldPaths=premiumExpiresAt',
+    'updateMask.fieldPaths=pendingPayment',
+    'updateMask.fieldPaths=lastPaymentAt',
+    'updateMask.fieldPaths=lastPaymentAmount',
+  ].join('&');
   await fetch(`https://firestore.googleapis.com/v1/${docName}?${fieldsParam}`, {
     method: 'PATCH',
     headers: { 'Authorization': 'Bearer ' + accessToken, 'Content-Type': 'application/json' },
@@ -201,6 +216,8 @@ async function markUserPremium(docName, accessToken, expiresAt) {
         premium: { booleanValue: true },
         premiumExpiresAt: { stringValue: expiresAt },
         pendingPayment: { booleanValue: false },
+        lastPaymentAt: { stringValue: new Date().toISOString() },
+        lastPaymentAmount: { stringValue: FLOW_PRICE_CLP },
       },
     }),
   });
