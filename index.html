@@ -806,17 +806,20 @@
 
   resetBar();
   schedule();
+})();
 
-  /* mini countdown inside slide */
+/* Hero card countdown */
+(function () {
   var end = new Date('2026-07-31T23:59:59-04:00').getTime();
   var hd = document.getElementById('hoc-d');
   var hh = document.getElementById('hoc-h');
   var hm = document.getElementById('hoc-m');
   var hs = document.getElementById('hoc-s');
+  if (!hd) return;
   function pad2(n) { return n < 10 ? '0' + n : '' + n; }
   function tickHoc() {
     var diff = end - Date.now();
-    if (diff <= 0 || !hd) return;
+    if (diff <= 0) return;
     hd.textContent = Math.floor(diff / 86400000);
     hh.textContent = pad2(Math.floor((diff % 86400000) / 3600000));
     hm.textContent = pad2(Math.floor((diff % 3600000) / 60000));
