@@ -320,6 +320,95 @@ async function handleAffiliateSignup(request, env) {
   }
 }
 
+// ──────────────────────────────────────────────────────────
+// Panel de recordatorios (multi-cliente) — proxy hacia Google Apps Script
+// El navegador nunca ve la URL del script ni el secreto de cada cliente:
+// solo manda la "contraseña" del cliente, y este Worker resuelve a qué
+// backend corresponde y agrega el secreto real del lado del servidor.
+// ──────────────────────────────────────────────────────────
+const RECORDATORIOS_CLIENTES = {
+  'the-kem-2026': {
+    nombre: 'The Kem Barbershop',
+    scriptUrl: 'https://script.google.com/macros/s/AKfycbxsvZiB6B4aSbeHFz00sXC7wKztxJWXVz4sBOECBYeUkOjIAf2uzLJ8vWTmDTcHq0-GdA/exec',
+    secreto: 'Nexmarketing90@',
+  },
+  // Para sumar un cliente nuevo, agregar otra entrada acá con su propia
+  // contraseña, scriptUrl y secreto — no requiere tocar nada más.
+};
+
+function resolveCliente(password) {
+  return RECORDATORIOS_CLIENTES[(password || '').trim()] || null;
+}
+
+async function handleRecordatoriosList(request) {
+  const origin = request.headers.get('Origin') || '';
+  if (!ALLOWED_ORIGINS.some(o => origin.startsWith(o))) {
+    return new Response(JSON.stringify({ error: 'forbidden' }), { status: 403 });
+  }
+  let body;
+  try { body = await request.json(); } catch (e) { return new Response(JSON.stringify({ error: 'bad_json' }), { status: 400 }); }
+  const cliente = resolveCliente(body.password);
+  if (!cliente) {
+    return new Response(JSON.stringify({ error: 'invalid_password' }), {
+      status: 401,
+      headers: { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': origin },
+    });
+  }
+  try {
+    const target = cliente.scriptUrl + '?secreto=' + encodeURIComponent(cliente.secreto);
+    const resp = await fetch(target, { redirect: 'follow' });
+    const data = await resp.json();
+    return new Response(JSON.stringify({ ok: true, nombre: cliente.nombre, ...data }), {
+      headers: { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': origin },
+    });
+  } catch (e) {
+    return new Response(JSON.stringify({ error: 'upstream_error' }), {
+      status: 502,
+      headers: { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': origin },
+    });
+  }
+}
+
+async function handleRecordatoriosAction(request) {
+  const origin = request.headers.get('Origin') || '';
+  if (!ALLOWED_ORIGINS.some(o => origin.startsWith(o))) {
+    return new Response(JSON.stringify({ error: 'forbidden' }), { status: 403 });
+  }
+  let body;
+  try { body = await request.json(); } catch (e) { return new Response(JSON.stringify({ error: 'bad_json' }), { status: 400 }); }
+  const cliente = resolveCliente(body.password);
+  if (!cliente) {
+    return new Response(JSON.stringify({ error: 'invalid_password' }), {
+      status: 401,
+      headers: { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': origin },
+    });
+  }
+  const numero = (body.numero || '').toString().trim();
+  const accion = (body.accion || '').toString().trim();
+  if (!numero || !['cancelar', 'reactivar'].includes(accion)) {
+    return new Response(JSON.stringify({ error: 'missing_fields' }), {
+      status: 400,
+      headers: { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': origin },
+    });
+  }
+  try {
+    const resp = await fetch(cliente.scriptUrl, {
+      method: 'POST',
+      headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+      body: JSON.stringify({ numero, accion, secreto: cliente.secreto }),
+    });
+    const data = await resp.json();
+    return new Response(JSON.stringify(data), {
+      headers: { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': origin },
+    });
+  } catch (e) {
+    return new Response(JSON.stringify({ error: 'upstream_error' }), {
+      status: 502,
+      headers: { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': origin },
+    });
+  }
+}
+
 async function handleFlowWebhook(request, env) {
   let token;
   try {
@@ -375,6 +464,12 @@ export default {
     }
     if (url.pathname === '/api/user-upsert' && request.method === 'POST') {
       return handleUserUpsert(request, env);
+    }
+    if (url.pathname === '/api/recordatorios-list' && request.method === 'POST') {
+      return handleRecordatoriosList(request);
+    }
+    if (url.pathname === '/api/recordatorios-action' && request.method === 'POST') {
+      return handleRecordatoriosAction(request);
     }
     return env.ASSETS.fetch(request);
   },

@@ -1,0 +1,575 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Panel de Recordatorios — JPB Marketing</title>
+<meta name="robots" content="noindex, nofollow">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>⏱️</text></svg>">
+<style>
+  :root {
+    --bg: #F4F6F3;
+    --surface: #FFFFFF;
+    --surface-2: #ECEFE9;
+    --border: #DEE3D7;
+    --ink: #16201B;
+    --ink-soft: #5D695F;
+    --ink-faint: #8A9389;
+    --brand: #1F5D50;
+    --brand-hover: #184A40;
+    --brand-soft: #E1EEE9;
+    --good: #2E7D46;
+    --good-soft: #E4F3E8;
+    --warn: #A06A16;
+    --warn-soft: #F5EAD4;
+    --bad: #B5402A;
+    --bad-soft: #F7E2DC;
+    --shadow: 0 1px 2px rgba(20,30,25,0.06), 0 8px 24px -12px rgba(20,30,25,0.12);
+  }
+  :root[data-theme="dark"] {
+    --bg: #12140F; --surface: #1A1D16; --surface-2: #20241C; --border: #2C3126;
+    --ink: #ECF0E8; --ink-soft: #A6AF9F; --ink-faint: #6D766A;
+    --brand: #55B39C; --brand-hover: #6BC2AC; --brand-soft: #1C2B26;
+    --good: #7BC98F; --good-soft: #17261B;
+    --warn: #E0B15A; --warn-soft: #2C2515;
+    --bad: #E28874; --bad-soft: #2C1D18;
+    --shadow: 0 1px 2px rgba(0,0,0,0.3), 0 8px 24px -12px rgba(0,0,0,0.5);
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #12140F; --surface: #1A1D16; --surface-2: #20241C; --border: #2C3126;
+      --ink: #ECF0E8; --ink-soft: #A6AF9F; --ink-faint: #6D766A;
+      --brand: #55B39C; --brand-hover: #6BC2AC; --brand-soft: #1C2B26;
+      --good: #7BC98F; --good-soft: #17261B;
+      --warn: #E0B15A; --warn-soft: #2C2515;
+      --bad: #E28874; --bad-soft: #2C1D18;
+      --shadow: 0 1px 2px rgba(0,0,0,0.3), 0 8px 24px -12px rgba(0,0,0,0.5);
+    }
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; }
+  body {
+    background: var(--bg);
+    color: var(--ink);
+    font-family: -apple-system, "Segoe UI", Roboto, sans-serif;
+    font-size: 15px;
+    line-height: 1.5;
+    min-height: 100vh;
+    -webkit-font-smoothing: antialiased;
+  }
+  button { font-family: inherit; }
+  ::selection { background: var(--brand-soft); }
+
+  /* ---------- Login ---------- */
+  .login-screen {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 1.5rem;
+  }
+  .login-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    box-shadow: var(--shadow);
+    padding: 2.25rem 2rem;
+    width: 100%;
+    max-width: 380px;
+  }
+  .login-mark {
+    width: 40px; height: 40px;
+    border-radius: 10px;
+    background: var(--brand-soft);
+    color: var(--brand);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.1rem;
+    margin-bottom: 1.1rem;
+  }
+  .login-card h1 { font-size: 1.25rem; margin: 0 0 0.35rem; letter-spacing: -0.01em; }
+  .login-card p { color: var(--ink-soft); font-size: 0.9rem; margin: 0 0 1.5rem; }
+  .field { margin-bottom: 1rem; }
+  .field label { display: block; font-size: 0.78rem; font-weight: 600; color: var(--ink-soft); margin-bottom: 0.4rem; letter-spacing: 0.01em; }
+  .field input {
+    width: 100%;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 0.65rem 0.8rem;
+    font-size: 0.95rem;
+    color: var(--ink);
+    outline: none;
+    transition: border-color .15s;
+  }
+  .field input:focus { border-color: var(--brand); }
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.4rem;
+    background: var(--brand);
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    padding: 0.65rem 1.1rem;
+    font-size: 0.92rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background .15s;
+    width: 100%;
+  }
+  .btn:hover { background: var(--brand-hover); }
+  .btn:disabled { opacity: 0.6; cursor: default; }
+  .btn-ghost {
+    background: transparent;
+    color: var(--ink-soft);
+    border: 1px solid var(--border);
+    width: auto;
+  }
+  .btn-ghost:hover { background: var(--surface-2); color: var(--ink); }
+  .btn-sm { padding: 0.4rem 0.75rem; font-size: 0.82rem; width: auto; }
+  .error-msg {
+    background: var(--bad-soft);
+    color: var(--bad);
+    border-radius: 8px;
+    padding: 0.6rem 0.8rem;
+    font-size: 0.85rem;
+    margin-bottom: 1rem;
+    display: none;
+  }
+  .error-msg.show { display: block; }
+
+  /* ---------- App shell ---------- */
+  .app { display: none; min-height: 100vh; flex-direction: column; }
+  .app.show { display: flex; }
+  header.topbar {
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    padding: 1rem 1.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+  }
+  .topbar-id { display: flex; align-items: center; gap: 0.7rem; }
+  .topbar-mark { width: 34px; height: 34px; border-radius: 8px; background: var(--brand-soft); color: var(--brand); display: flex; align-items: center; justify-content: center; font-size: 0.95rem; }
+  .topbar-id h1 { font-size: 1.02rem; margin: 0; letter-spacing: -0.005em; }
+  .topbar-id .sub { font-size: 0.78rem; color: var(--ink-faint); }
+  .topbar-actions { display: flex; gap: 0.6rem; align-items: center; }
+
+  main { flex: 1; padding: 1.75rem 1.5rem 3rem; max-width: 1080px; margin: 0 auto; width: 100%; }
+
+  .kpi-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 0.85rem; margin-bottom: 1.75rem; }
+  .kpi {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 1.1rem 1.2rem;
+  }
+  .kpi .label { font-size: 0.74rem; color: var(--ink-faint); text-transform: uppercase; letter-spacing: 0.06em; font-weight: 600; margin-bottom: 0.5rem; }
+  .kpi .value { font-size: 1.7rem; font-weight: 700; font-variant-numeric: tabular-nums; letter-spacing: -0.02em; }
+  .kpi.good .value { color: var(--good); }
+  .kpi.warn .value { color: var(--warn); }
+  .kpi.bad .value { color: var(--bad); }
+
+  .panel {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    overflow: hidden;
+  }
+  .panel-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    padding: 1rem 1.25rem;
+    border-bottom: 1px solid var(--border);
+    flex-wrap: wrap;
+  }
+  .panel-head h2 { font-size: 0.98rem; margin: 0; }
+  .search-box {
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 0.4rem 0.7rem;
+    font-size: 0.85rem;
+    color: var(--ink);
+    width: 220px;
+    outline: none;
+  }
+  .search-box:focus { border-color: var(--brand); }
+
+  .table-wrap { overflow-x: auto; }
+  table { width: 100%; border-collapse: collapse; font-size: 0.87rem; }
+  th, td { text-align: left; padding: 0.7rem 1.1rem; border-bottom: 1px solid var(--border); white-space: nowrap; }
+  th { font-size: 0.68rem; text-transform: uppercase; letter-spacing: 0.06em; color: var(--ink-faint); font-weight: 700; background: var(--surface-2); }
+  tbody tr:last-child td { border-bottom: none; }
+  tbody tr:hover { background: var(--surface-2); }
+  td.numero { font-variant-numeric: tabular-nums; font-weight: 600; }
+  td.mensaje-cell { max-width: 260px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: var(--ink-soft); }
+
+  .pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35em;
+    padding: 0.22em 0.65em;
+    border-radius: 100px;
+    font-size: 0.76rem;
+    font-weight: 700;
+    letter-spacing: 0.01em;
+  }
+  .pill::before { content: ""; width: 6px; height: 6px; border-radius: 50%; background: currentColor; }
+  .pill.activo { background: var(--good-soft); color: var(--good); }
+  .pill.pausado { background: var(--warn-soft); color: var(--warn); }
+  .pill.error { background: var(--bad-soft); color: var(--bad); }
+
+  .row-action {
+    background: transparent;
+    border: 1px solid var(--border);
+    border-radius: 7px;
+    padding: 0.35rem 0.75rem;
+    font-size: 0.8rem;
+    font-weight: 600;
+    cursor: pointer;
+    color: var(--ink);
+  }
+  .row-action:hover { border-color: var(--brand); color: var(--brand); }
+  .row-action:disabled { opacity: 0.5; cursor: default; }
+  .row-action.reactivar { color: var(--good); border-color: var(--good-soft); }
+  .row-action.reactivar:hover { border-color: var(--good); }
+
+  .empty-state, .loading-state {
+    padding: 3rem 1.5rem;
+    text-align: center;
+    color: var(--ink-faint);
+    font-size: 0.9rem;
+  }
+
+  .toast {
+    position: fixed;
+    bottom: 1.5rem;
+    left: 50%;
+    transform: translateX(-50%) translateY(120%);
+    background: var(--ink);
+    color: var(--bg);
+    padding: 0.7rem 1.2rem;
+    border-radius: 100px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    box-shadow: var(--shadow);
+    transition: transform .25s ease;
+    z-index: 50;
+  }
+  .toast.show { transform: translateX(-50%) translateY(0); }
+
+  @media (max-width: 560px) {
+    .search-box { width: 100%; }
+    .panel-head { flex-direction: column; align-items: stretch; }
+  }
+</style>
+</head>
+<body>
+
+  <!-- LOGIN -->
+  <div class="login-screen" id="loginScreen">
+    <div class="login-card">
+      <div class="login-mark">⏱️</div>
+      <h1>Panel de Recordatorios</h1>
+      <p>Ingresá el código de acceso que te entregó JPB Marketing para gestionar los recordatorios automáticos de tu negocio.</p>
+      <div class="error-msg" id="loginError">Código incorrecto. Probá de nuevo.</div>
+      <div class="field">
+        <label for="passwordInput">Código de acceso</label>
+        <input type="password" id="passwordInput" autocomplete="current-password" placeholder="••••••••••">
+      </div>
+      <button class="btn" id="loginBtn">Entrar</button>
+    </div>
+  </div>
+
+  <!-- APP -->
+  <div class="app" id="app">
+    <header class="topbar">
+      <div class="topbar-id">
+        <div class="topbar-mark">⏱️</div>
+        <div>
+          <h1 id="clienteNombre">—</h1>
+          <div class="sub">Panel de Recordatorios · JPB Marketing</div>
+        </div>
+      </div>
+      <div class="topbar-actions">
+        <button class="btn btn-ghost btn-sm" id="refreshBtn">↻ Actualizar</button>
+        <button class="btn btn-ghost btn-sm" id="logoutBtn">Salir</button>
+      </div>
+    </header>
+
+    <main>
+      <div class="kpi-row">
+        <div class="kpi">
+          <div class="label">Total registrados</div>
+          <div class="value" id="kpiTotal">—</div>
+        </div>
+        <div class="kpi good">
+          <div class="label">Activos</div>
+          <div class="value" id="kpiActivos">—</div>
+        </div>
+        <div class="kpi warn">
+          <div class="label">Pausados</div>
+          <div class="value" id="kpiPausados">—</div>
+        </div>
+        <div class="kpi bad">
+          <div class="label">Con error</div>
+          <div class="value" id="kpiErrores">—</div>
+        </div>
+      </div>
+
+      <div class="panel">
+        <div class="panel-head">
+          <h2>Clientes registrados</h2>
+          <input type="text" class="search-box" id="searchBox" placeholder="Buscar número...">
+        </div>
+        <div class="table-wrap">
+          <table id="tabla" style="display:none;">
+            <thead>
+              <tr>
+                <th>Número</th>
+                <th>Estado</th>
+                <th>Registrado</th>
+                <th>Último envío</th>
+                <th>Mensaje</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody id="tablaBody"></tbody>
+          </table>
+          <div class="loading-state" id="loadingState">Cargando...</div>
+          <div class="empty-state" id="emptyState" style="display:none;">Todavía no hay clientes registrados.</div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <div class="toast" id="toast"></div>
+
+<script>
+(function () {
+  const SESSION_KEY = 'jpb_recordatorios_pw';
+  let filasData = [];
+
+  const loginScreen = document.getElementById('loginScreen');
+  const app = document.getElementById('app');
+  const passwordInput = document.getElementById('passwordInput');
+  const loginBtn = document.getElementById('loginBtn');
+  const loginError = document.getElementById('loginError');
+  const logoutBtn = document.getElementById('logoutBtn');
+  const refreshBtn = document.getElementById('refreshBtn');
+  const searchBox = document.getElementById('searchBox');
+  const clienteNombre = document.getElementById('clienteNombre');
+  const tabla = document.getElementById('tabla');
+  const tablaBody = document.getElementById('tablaBody');
+  const loadingState = document.getElementById('loadingState');
+  const emptyState = document.getElementById('emptyState');
+  const toast = document.getElementById('toast');
+
+  function showToast(msg) {
+    toast.textContent = msg;
+    toast.classList.add('show');
+    setTimeout(function () { toast.classList.remove('show'); }, 2600);
+  }
+
+  function fmtFecha(iso) {
+    if (!iso) return '—';
+    const d = new Date(iso);
+    if (isNaN(d)) return '—';
+    return d.toLocaleDateString('es-CL', { day: '2-digit', month: '2-digit', year: 'numeric' })
+      + ' ' + d.toLocaleTimeString('es-CL', { hour: '2-digit', minute: '2-digit' });
+  }
+
+  function estadoInfo(estado) {
+    if (estado === 'pausado') return { cls: 'pausado', label: 'Pausado' };
+    if (estado && estado.indexOf('error:') === 0) return { cls: 'error', label: 'Error de envío' };
+    return { cls: 'activo', label: 'Activo' };
+  }
+
+  async function login() {
+    const pw = passwordInput.value.trim();
+    if (!pw) return;
+    loginBtn.disabled = true;
+    loginBtn.textContent = 'Entrando...';
+    loginError.classList.remove('show');
+    try {
+      const data = await callApi('/api/recordatorios-list', { password: pw });
+      if (!data.ok) {
+        loginError.textContent = 'Código incorrecto. Probá de nuevo.';
+        loginError.classList.add('show');
+        return;
+      }
+      sessionStorage.setItem(SESSION_KEY, pw);
+      enterApp(data);
+    } catch (e) {
+      loginError.textContent = 'No se pudo conectar. Probá de nuevo en un momento.';
+      loginError.classList.add('show');
+    } finally {
+      loginBtn.disabled = false;
+      loginBtn.textContent = 'Entrar';
+    }
+  }
+
+  function enterApp(data) {
+    clienteNombre.textContent = data.nombre || 'Panel de Recordatorios';
+    loginScreen.style.display = 'none';
+    app.classList.add('show');
+    renderFilas(data.filas || []);
+  }
+
+  async function callApi(path, payload) {
+    const resp = await fetch(path, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload),
+    });
+    return resp.json();
+  }
+
+  async function cargarDatos(silencioso) {
+    const pw = sessionStorage.getItem(SESSION_KEY);
+    if (!pw) return;
+    if (!silencioso) {
+      loadingState.style.display = 'block';
+      tabla.style.display = 'none';
+      emptyState.style.display = 'none';
+    }
+    try {
+      const data = await callApi('/api/recordatorios-list', { password: pw });
+      if (!data.ok) { logout(); return; }
+      clienteNombre.textContent = data.nombre || 'Panel de Recordatorios';
+      renderFilas(data.filas || []);
+    } catch (e) {
+      showToast('No se pudo actualizar. Revisá tu conexión.');
+    }
+  }
+
+  function renderFilas(filas) {
+    filasData = filas;
+    loadingState.style.display = 'none';
+
+    const total = filas.length;
+    const activos = filas.filter(function (f) { return estadoInfo(f.estado).cls === 'activo'; }).length;
+    const pausados = filas.filter(function (f) { return estadoInfo(f.estado).cls === 'pausado'; }).length;
+    const errores = filas.filter(function (f) { return estadoInfo(f.estado).cls === 'error'; }).length;
+    document.getElementById('kpiTotal').textContent = total;
+    document.getElementById('kpiActivos').textContent = activos;
+    document.getElementById('kpiPausados').textContent = pausados;
+    document.getElementById('kpiErrores').textContent = errores;
+
+    if (total === 0) {
+      tabla.style.display = 'none';
+      emptyState.style.display = 'block';
+      return;
+    }
+    emptyState.style.display = 'none';
+    tabla.style.display = 'table';
+    pintarTabla(filas);
+  }
+
+  function pintarTabla(filas) {
+    const q = searchBox.value.trim().toLowerCase();
+    const visibles = q ? filas.filter(function (f) { return f.numero.toLowerCase().indexOf(q) !== -1; }) : filas;
+
+    tablaBody.innerHTML = '';
+    visibles.forEach(function (f) {
+      const info = estadoInfo(f.estado);
+      const tr = document.createElement('tr');
+
+      const tdNum = document.createElement('td');
+      tdNum.className = 'numero';
+      tdNum.textContent = f.numero;
+      tr.appendChild(tdNum);
+
+      const tdEstado = document.createElement('td');
+      const pill = document.createElement('span');
+      pill.className = 'pill ' + info.cls;
+      pill.textContent = info.label;
+      tdEstado.appendChild(pill);
+      tr.appendChild(tdEstado);
+
+      const tdReg = document.createElement('td');
+      tdReg.textContent = fmtFecha(f.fechaRegistro);
+      tr.appendChild(tdReg);
+
+      const tdUlt = document.createElement('td');
+      tdUlt.textContent = f.ultimoEnvio ? fmtFecha(f.ultimoEnvio) : 'Todavía no';
+      tr.appendChild(tdUlt);
+
+      const tdMsg = document.createElement('td');
+      tdMsg.className = 'mensaje-cell';
+      tdMsg.title = f.mensaje || '';
+      tdMsg.textContent = f.mensaje || '—';
+      tr.appendChild(tdMsg);
+
+      const tdAccion = document.createElement('td');
+      const btn = document.createElement('button');
+      const esPausado = info.cls === 'pausado';
+      btn.className = 'row-action' + (esPausado ? ' reactivar' : '');
+      btn.textContent = esPausado ? 'Reactivar' : 'Pausar';
+      btn.addEventListener('click', function () { toggleEstado(f.numero, esPausado, btn); });
+      tdAccion.appendChild(btn);
+      tr.appendChild(tdAccion);
+
+      tablaBody.appendChild(tr);
+    });
+  }
+
+  async function toggleEstado(numero, estaPausado, btn) {
+    const pw = sessionStorage.getItem(SESSION_KEY);
+    const accion = estaPausado ? 'reactivar' : 'cancelar';
+    btn.disabled = true;
+    btn.textContent = '...';
+    try {
+      const data = await callApi('/api/recordatorios-action', { password: pw, numero: numero, accion: accion });
+      if (!data.ok) { showToast('No se pudo actualizar ese número.'); return; }
+      showToast(estaPausado ? 'Reactivado ✅' : 'Pausado ✅');
+      cargarDatos(true);
+    } catch (e) {
+      showToast('Error de conexión. Probá de nuevo.');
+    } finally {
+      btn.disabled = false;
+    }
+  }
+
+  function logout() {
+    sessionStorage.removeItem(SESSION_KEY);
+    app.classList.remove('show');
+    loginScreen.style.display = 'flex';
+    passwordInput.value = '';
+  }
+
+  loginBtn.addEventListener('click', login);
+  passwordInput.addEventListener('keydown', function (e) { if (e.key === 'Enter') login(); });
+  logoutBtn.addEventListener('click', logout);
+  refreshBtn.addEventListener('click', function () { cargarDatos(false); });
+  searchBox.addEventListener('input', function () { pintarTabla(filasData); });
+
+  // Auto-refresh cada 60s mientras la pestaña está activa
+  setInterval(function () {
+    if (app.classList.contains('show') && document.visibilityState === 'visible') cargarDatos(true);
+  }, 60000);
+
+  // Sesión ya iniciada en este navegador
+  const savedPw = sessionStorage.getItem(SESSION_KEY);
+  if (savedPw) {
+    passwordInput.value = savedPw;
+    cargarDatos(false).then(function () {
+      if (app.classList.contains('show') === false) {
+        // callApi ya habrá disparado logout si el password guardado ya no es válido
+      }
+    });
+    // Mostrar app optimistamente; cargarDatos hace logout() si el password no sirve
+    loginScreen.style.display = 'none';
+    app.classList.add('show');
+  }
+})();
+</script>
+
+</body>
+</html>
