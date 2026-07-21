@@ -1,0 +1,29 @@
+.git
+**/.git/**
+.DS_Store
+**/.DS_Store
+node_modules
+**/node_modules/**
+.env
+.env.*
+**/.env
+**/.env.*
+*.pdf
+*.pptx
+*.py
+cine-hoyts/
+polimer-etp/
+polimer-etp-cl/
+polymer-cl/
+Empresa\ ricardo/
+Fierros\ Idini/
+The\ kem\ barbershop/
+Video\ de\ prueba*/
+conflex/
+plastiservi/
+juego3d/
+jpbmarketing/
+_worker.js
+wrangler.jsonc
+.assetsignore
+.gitignore
