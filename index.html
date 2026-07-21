@@ -228,26 +228,6 @@
 
           </div><!-- /hero-slides-container -->
 
-          <!-- Control bar -->
-          <div class="hslider-bar">
-            <button class="hsbar-arrow" id="hs-prev" aria-label="Anterior">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"/></svg>
-            </button>
-            <div class="hsbar-center">
-              <span class="hsbar-label" id="hs-label">Oferta Junio</span>
-              <div class="hsbar-track">
-                <div class="hsbar-fill" id="hs-fill"></div>
-              </div>
-            </div>
-            <button class="hsbar-pause" id="hs-pause" aria-label="Pausar">
-              <svg class="hs-icon-pause" width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/></svg>
-              <svg class="hs-icon-play" width="12" height="12" viewBox="0 0 24 24" fill="currentColor" style="display:none"><polygon points="5 3 19 12 5 21 5 3"/></svg>
-            </button>
-            <button class="hsbar-arrow" id="hs-next" aria-label="Siguiente">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"/></svg>
-            </button>
-          </div>
-
         </div><!-- /hero-slider-wrap -->
       </div><!-- /hero-visual -->
 
@@ -828,7 +808,7 @@
   schedule();
 
   /* mini countdown inside slide */
-  var end = new Date('2026-07-01T00:00:00-04:00').getTime();
+  var end = new Date('2026-07-31T23:59:59-04:00').getTime();
   var hd = document.getElementById('hoc-d');
   var hh = document.getElementById('hoc-h');
   var hm = document.getElementById('hoc-m');
@@ -858,7 +838,7 @@
     document.body.classList.remove('body-announce');
     sessionStorage.setItem('ann-closed', '1');
   });
-  var end = new Date('2026-07-01T00:00:00-04:00').getTime();
+  var end = new Date('2026-07-31T23:59:59-04:00').getTime();
   function tickAnn() {
     var d = end - Date.now();
     if (d <= 0 || !count) return;
@@ -871,7 +851,7 @@
 
 /* Countdown oferta */
 (function () {
-  var end = new Date('2026-07-01T00:00:00-04:00').getTime();
+  var end = new Date('2026-07-31T23:59:59-04:00').getTime();
   var days = document.getElementById('ot-days');
   var hrs  = document.getElementById('ot-hrs');
   var min  = document.getElementById('ot-min');
