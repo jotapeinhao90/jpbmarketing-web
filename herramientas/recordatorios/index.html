@@ -172,6 +172,13 @@
   .kpi.good .value { color: var(--good); }
   .kpi.warn .value { color: var(--warn); }
   .kpi.bad .value { color: var(--bad); }
+  .kpi .sub-note { font-size: 0.72rem; color: var(--ink-faint); margin-top: 0.3rem; }
+
+  .proximo { font-size: 0.83rem; }
+  .proximo.hoy { color: var(--warn); font-weight: 700; }
+  .proximo.vencido { color: var(--bad); font-weight: 700; }
+  .proximo.lejos { color: var(--ink-soft); }
+  .proximo.na { color: var(--ink-faint); }
 
   .panel {
     background: var(--surface);
@@ -321,6 +328,15 @@
           <div class="label">Con error</div>
           <div class="value" id="kpiErrores">—</div>
         </div>
+        <div class="kpi warn">
+          <div class="label">Pendientes de envío</div>
+          <div class="value" id="kpiPendientes">—</div>
+          <div class="sub-note">vencidos o para hoy</div>
+        </div>
+        <div class="kpi">
+          <div class="label">Próximos 7 días</div>
+          <div class="value" id="kpiProximaSemana">—</div>
+        </div>
       </div>
 
       <div class="panel">
@@ -334,6 +350,7 @@
               <tr>
                 <th>Número</th>
                 <th>Estado</th>
+                <th>Próximo recordatorio</th>
                 <th>Registrado</th>
                 <th>Último envío</th>
                 <th>Mensaje</th>
@@ -355,6 +372,7 @@
 (function () {
   const SESSION_KEY = 'jpb_recordatorios_pw';
   let filasData = [];
+  let intervaloMinutos = 0;
 
   const loginScreen = document.getElementById('loginScreen');
   const app = document.getElementById('app');
@@ -391,6 +409,28 @@
     return { cls: 'activo', label: 'Activo' };
   }
 
+  // Fecha estimada del próximo recordatorio para una fila activa, o null
+  // si está pausada / no aplica (no depende del cron real, es una
+  // proyección a partir del último envío + el intervalo configurado).
+  function proximoEnvio(f) {
+    if (estadoInfo(f.estado).cls === 'pausado' || !intervaloMinutos) return null;
+    const base = f.ultimoEnvio ? new Date(f.ultimoEnvio) : new Date(f.fechaRegistro);
+    if (isNaN(base)) return null;
+    return new Date(base.getTime() + intervaloMinutos * 60000);
+  }
+
+  function fmtProximo(fecha) {
+    if (!fecha) return { texto: '—', cls: 'na' };
+    const ahora = new Date();
+    const diffMs = fecha - ahora;
+    const diffDias = Math.floor(diffMs / 86400000);
+    if (diffMs <= 0) return { texto: 'Vencido — pendiente de envío', cls: 'vencido' };
+    if (diffDias === 0) return { texto: 'Hoy', cls: 'hoy' };
+    if (diffDias === 1) return { texto: 'Mañana', cls: 'lejos' };
+    if (diffDias < 30) return { texto: 'En ' + diffDias + ' días', cls: 'lejos' };
+    return { texto: fecha.toLocaleDateString('es-CL', { day: '2-digit', month: 'short', year: 'numeric' }), cls: 'lejos' };
+  }
+
   async function login() {
     const pw = passwordInput.value.trim();
     if (!pw) return;
@@ -417,6 +457,7 @@
 
   function enterApp(data) {
     clienteNombre.textContent = data.nombre || 'Panel de Recordatorios';
+    intervaloMinutos = data.intervaloMinutos || 0;
     loginScreen.style.display = 'none';
     app.classList.add('show');
     renderFilas(data.filas || []);
@@ -443,6 +484,7 @@
       const data = await callApi('/api/recordatorios-list', { password: pw });
       if (!data.ok) { logout(); return; }
       clienteNombre.textContent = data.nombre || 'Panel de Recordatorios';
+      intervaloMinutos = data.intervaloMinutos || 0;
       renderFilas(data.filas || []);
     } catch (e) {
       showToast('No se pudo actualizar. Revisá tu conexión.');
@@ -457,10 +499,23 @@
     const activos = filas.filter(function (f) { return estadoInfo(f.estado).cls === 'activo'; }).length;
     const pausados = filas.filter(function (f) { return estadoInfo(f.estado).cls === 'pausado'; }).length;
     const errores = filas.filter(function (f) { return estadoInfo(f.estado).cls === 'error'; }).length;
+
+    const ahora = new Date();
+    const en7dias = new Date(ahora.getTime() + 7 * 86400000);
+    let pendientes = 0, proximaSemana = 0;
+    filas.forEach(function (f) {
+      const p = proximoEnvio(f);
+      if (!p) return;
+      if (p <= ahora) pendientes++;
+      else if (p <= en7dias) proximaSemana++;
+    });
+
     document.getElementById('kpiTotal').textContent = total;
     document.getElementById('kpiActivos').textContent = activos;
     document.getElementById('kpiPausados').textContent = pausados;
     document.getElementById('kpiErrores').textContent = errores;
+    document.getElementById('kpiPendientes').textContent = pendientes;
+    document.getElementById('kpiProximaSemana').textContent = proximaSemana;
 
     if (total === 0) {
       tabla.style.display = 'none';
@@ -474,7 +529,18 @@
 
   function pintarTabla(filas) {
     const q = searchBox.value.trim().toLowerCase();
-    const visibles = q ? filas.filter(function (f) { return f.numero.toLowerCase().indexOf(q) !== -1; }) : filas;
+    let visibles = q ? filas.filter(function (f) { return f.numero.toLowerCase().indexOf(q) !== -1; }) : filas.slice();
+
+    // Orden por urgencia: lo que necesita atención primero (vencido > hoy >
+    // más cerca en el tiempo), pausados y sin próximo envío al final.
+    visibles.sort(function (a, b) {
+      const pa = proximoEnvio(a);
+      const pb = proximoEnvio(b);
+      if (pa && pb) return pa - pb;
+      if (pa && !pb) return -1;
+      if (!pa && pb) return 1;
+      return a.numero.localeCompare(b.numero);
+    });
 
     tablaBody.innerHTML = '';
     visibles.forEach(function (f) {
@@ -492,6 +558,12 @@
       pill.textContent = info.label;
       tdEstado.appendChild(pill);
       tr.appendChild(tdEstado);
+
+      const tdProximo = document.createElement('td');
+      const prox = fmtProximo(proximoEnvio(f));
+      tdProximo.className = 'proximo ' + prox.cls;
+      tdProximo.textContent = prox.texto;
+      tr.appendChild(tdProximo);
 
       const tdReg = document.createElement('td');
       tdReg.textContent = fmtFecha(f.fechaRegistro);
