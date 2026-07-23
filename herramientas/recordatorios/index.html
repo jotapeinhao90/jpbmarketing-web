@@ -406,6 +406,42 @@
   @media (max-width: 560px) {
     .search-box { width: 100%; }
     .panel-head { flex-direction: column; align-items: stretch; }
+
+    /* Tabla → tarjetas apiladas: en una pantalla angosta una tabla de 7
+       columnas no entra ni resumida, así que cada fila pasa a ser una
+       tarjeta con el nombre del campo al lado del valor. */
+    .table-wrap { overflow-x: visible; }
+    table { table-layout: auto; }
+    .col-resizer { display: none; }
+    thead { display: none; }
+    tbody, tr, td { display: block; width: auto !important; }
+    tr {
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      margin-bottom: 0.75rem;
+      overflow: hidden;
+    }
+    td {
+      border-bottom: 1px solid var(--border);
+      padding: 0.55rem 0.9rem;
+      text-align: right;
+      white-space: normal;
+      overflow: visible;
+      text-overflow: clip;
+    }
+    tr:last-child, td:last-child { border-bottom: none; }
+    td[data-label]::before {
+      content: attr(data-label);
+      float: left;
+      font-size: 0.68rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      color: var(--ink-faint);
+    }
+    td.mensaje-cell { max-width: none; white-space: normal; text-align: right; }
+    td.accion-cell { text-align: center; padding: 0.7rem 0.9rem; }
+    td.accion-cell .row-action { width: 100%; }
   }
 </style>
 </head>
@@ -740,10 +776,12 @@
 
       const tdNum = document.createElement('td');
       tdNum.className = 'numero';
+      tdNum.dataset.label = 'Número';
       tdNum.textContent = f.numero;
       tr.appendChild(tdNum);
 
       const tdEstado = document.createElement('td');
+      tdEstado.dataset.label = 'Estado';
       const pill = document.createElement('span');
       pill.className = 'pill ' + info.cls;
       pill.textContent = info.label;
@@ -751,6 +789,7 @@
       tr.appendChild(tdEstado);
 
       const tdProximo = document.createElement('td');
+      tdProximo.dataset.label = 'Próximo recordatorio';
       const fechaProx = proximoEnvio(f);
       if (fechaProx) {
         tdProximo.dataset.target = fechaProx.toISOString();
@@ -764,20 +803,24 @@
       tr.appendChild(tdProximo);
 
       const tdReg = document.createElement('td');
+      tdReg.dataset.label = 'Registrado';
       tdReg.textContent = fmtFecha(f.fechaRegistro);
       tr.appendChild(tdReg);
 
       const tdUlt = document.createElement('td');
+      tdUlt.dataset.label = 'Último envío';
       tdUlt.textContent = f.ultimoEnvio ? fmtFecha(f.ultimoEnvio) : 'Todavía no';
       tr.appendChild(tdUlt);
 
       const tdMsg = document.createElement('td');
       tdMsg.className = 'mensaje-cell';
+      tdMsg.dataset.label = 'Mensaje';
       tdMsg.title = f.mensaje || '';
       tdMsg.textContent = f.mensaje || '—';
       tr.appendChild(tdMsg);
 
       const tdAccion = document.createElement('td');
+      tdAccion.className = 'accion-cell';
       const btn = document.createElement('button');
       const esPausado = info.cls === 'pausado';
       btn.className = 'row-action' + (esPausado ? ' reactivar' : '');
