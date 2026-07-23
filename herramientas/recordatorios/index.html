@@ -304,7 +304,9 @@
   .table-wrap { overflow-x: auto; }
   table { width: 100%; border-collapse: collapse; font-size: 0.83rem; table-layout: fixed; }
   th, td { text-align: left; padding: 0.65rem 0.6rem; border-bottom: 1px solid var(--border); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-  th { font-size: 0.65rem; text-transform: uppercase; letter-spacing: 0.05em; color: var(--ink-faint); font-weight: 700; background: var(--surface-2); }
+  th { position: relative; font-size: 0.65rem; text-transform: uppercase; letter-spacing: 0.05em; color: var(--ink-faint); font-weight: 700; background: var(--surface-2); }
+  .col-resizer { position: absolute; top: 0; right: 0; width: 8px; height: 100%; cursor: col-resize; user-select: none; touch-action: none; }
+  .col-resizer:hover, .col-resizer.resizing { background: var(--brand); opacity: 0.6; }
   tbody tr:last-child td { border-bottom: none; }
   tbody tr:hover { background: var(--surface-2); }
   td.numero { font-variant-numeric: tabular-nums; font-weight: 600; }
@@ -551,15 +553,16 @@
     if (!fecha) return { texto: '—', cls: 'na' };
     const ahora = new Date();
     const diffMs = fecha - ahora;
-    const pad = function (n) { return n.toString().padStart(2, '0'); };
-    const totalSeg = Math.floor(Math.abs(diffMs) / 1000);
+    if (diffMs <= 0) return { texto: 'Vencido', cls: 'vencido' };
+    const totalSeg = Math.floor(diffMs / 1000);
     const dias = Math.floor(totalSeg / 86400);
     const horas = Math.floor((totalSeg % 86400) / 3600);
     const mins = Math.floor((totalSeg % 3600) / 60);
     const segs = totalSeg % 60;
-    const reloj = (dias > 0 ? dias + 'd ' : '') + pad(horas) + ':' + pad(mins) + ':' + pad(segs);
-    if (diffMs <= 0) return { texto: 'Vencido hace ' + reloj, cls: 'vencido' };
-    return { texto: reloj, cls: dias > 0 ? 'lejos' : 'hoy' };
+    const pad = function (n) { return n.toString().padStart(2, '0'); };
+    const reloj = pad(horas) + ':' + pad(mins) + ':' + pad(segs);
+    if (dias > 0) return { texto: dias + 'd ' + reloj, cls: 'lejos' };
+    return { texto: reloj, cls: 'hoy' };
   }
 
   // Recorre todas las celdas con contador activo y actualiza su texto —
@@ -788,6 +791,34 @@
   setInterval(function () {
     if (app.classList.contains('show') && document.visibilityState === 'visible') tickContadores();
   }, 1000);
+
+  // Columnas redimensionables (arrastrar el borde derecho de cada encabezado,
+  // igual que en Excel) para poder ver el texto completo cuando se corta.
+  (function habilitarResizeColumnas() {
+    let thActivo = null, startX = 0, startWidth = 0;
+    document.querySelectorAll('#tabla thead th').forEach(function (th) {
+      const resizer = document.createElement('span');
+      resizer.className = 'col-resizer';
+      th.appendChild(resizer);
+      resizer.addEventListener('mousedown', function (e) {
+        thActivo = th;
+        startX = e.pageX;
+        startWidth = th.offsetWidth;
+        resizer.classList.add('resizing');
+        document.body.style.cursor = 'col-resize';
+        e.preventDefault();
+      });
+    });
+    document.addEventListener('mousemove', function (e) {
+      if (!thActivo) return;
+      thActivo.style.width = Math.max(60, startWidth + (e.pageX - startX)) + 'px';
+    });
+    document.addEventListener('mouseup', function () {
+      if (thActivo) document.querySelectorAll('.col-resizer.resizing').forEach(function (r) { r.classList.remove('resizing'); });
+      thActivo = null;
+      document.body.style.cursor = '';
+    });
+  })();
 
   // Sesión ya iniciada en este navegador
   const savedPw = sessionStorage.getItem(SESSION_KEY);
