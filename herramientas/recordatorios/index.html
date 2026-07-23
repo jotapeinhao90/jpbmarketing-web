@@ -302,6 +302,20 @@
   .proximo.vencido { color: var(--bad); font-weight: 700; }
   .proximo.lejos { color: var(--ink-soft); }
   .proximo.na { color: var(--ink-faint); }
+  .clock-ico { display: inline-block; margin-right: 0.3em; transform-origin: 50% 70%; }
+  .clock-ico.tick { animation: clock-tick 0.5s ease; }
+  @keyframes clock-tick {
+    0% { transform: rotate(0deg); }
+    30% { transform: rotate(-14deg); }
+    60% { transform: rotate(10deg); }
+    100% { transform: rotate(0deg); }
+  }
+  .clock-colon { animation: clock-blink 1s steps(1, start) infinite; }
+  @keyframes clock-blink { 50% { opacity: 0.15; } }
+  @media (prefers-reduced-motion: reduce) {
+    .clock-ico.tick { animation: none; }
+    .clock-colon { animation: none; }
+  }
 
   .panel {
     background: var(--surface);
@@ -631,20 +645,29 @@
 
   // Contador en vivo tipo reloj ("3d 04:12:33" o "04:12:33" si falta
   // menos de un día). Se recalcula cada segundo desde tickContadores().
+  function renderReloj(dias, horas, mins, segs) {
+    const pad = function (n) { return n.toString().padStart(2, '0'); };
+    let html = '<span class="clock-ico">⏱</span>';
+    if (dias > 0) html += '<span class="clock-d">' + dias + 'd</span> ';
+    html += '<span class="clock-num">' + pad(horas) + '</span>'
+      + '<span class="clock-colon">:</span>'
+      + '<span class="clock-num">' + pad(mins) + '</span>'
+      + '<span class="clock-colon">:</span>'
+      + '<span class="clock-num">' + pad(segs) + '</span>';
+    return html;
+  }
+
   function calcularCountdown(fecha) {
-    if (!fecha) return { texto: '—', cls: 'na' };
+    if (!fecha) return { texto: '—', cls: 'na', html: false };
     const ahora = new Date();
     const diffMs = fecha - ahora;
-    if (diffMs <= 0) return { texto: 'Vencido', cls: 'vencido' };
+    if (diffMs <= 0) return { texto: 'Vencido', cls: 'vencido', html: false };
     const totalSeg = Math.floor(diffMs / 1000);
     const dias = Math.floor(totalSeg / 86400);
     const horas = Math.floor((totalSeg % 86400) / 3600);
     const mins = Math.floor((totalSeg % 3600) / 60);
     const segs = totalSeg % 60;
-    const pad = function (n) { return n.toString().padStart(2, '0'); };
-    const reloj = pad(horas) + ':' + pad(mins) + ':' + pad(segs);
-    if (dias > 0) return { texto: dias + 'd ' + reloj, cls: 'lejos' };
-    return { texto: reloj, cls: 'hoy' };
+    return { texto: renderReloj(dias, horas, mins, segs), cls: dias > 0 ? 'lejos' : 'hoy', html: true };
   }
 
   // Recorre todas las celdas con contador activo y actualiza su texto —
@@ -653,8 +676,14 @@
     document.querySelectorAll('.proximo[data-target]').forEach(function (el) {
       const fecha = new Date(el.dataset.target);
       const c = calcularCountdown(fecha);
-      el.textContent = c.texto;
+      if (c.html) { el.innerHTML = c.texto; } else { el.textContent = c.texto; }
       el.className = 'proximo ' + c.cls;
+      const ico = el.querySelector('.clock-ico');
+      if (ico) {
+        ico.classList.remove('tick');
+        void ico.offsetWidth;
+        ico.classList.add('tick');
+      }
     });
   }
 
@@ -795,7 +824,7 @@
         tdProximo.dataset.target = fechaProx.toISOString();
         const c = calcularCountdown(fechaProx);
         tdProximo.className = 'proximo ' + c.cls;
-        tdProximo.textContent = c.texto;
+        if (c.html) { tdProximo.innerHTML = c.texto; } else { tdProximo.textContent = c.texto; }
       } else {
         tdProximo.className = 'proximo na';
         tdProximo.textContent = '—';
