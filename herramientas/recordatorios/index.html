@@ -283,15 +283,39 @@
   .quote-card .quote-autor { margin-top: 0.3rem; font-size: 0.75rem; color: var(--ink-faint); text-transform: uppercase; letter-spacing: 0.04em; transition: opacity 0.4s ease; }
   .quote-card .fade-out { opacity: 0; }
 
-  .kpi-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 0.85rem; margin-bottom: 1.75rem; }
+  .kpi-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 0.9rem; margin-bottom: 1.75rem; }
   .kpi {
+    position: relative;
     background: var(--surface);
     border: 1px solid var(--border);
-    border-radius: 12px;
-    padding: 1.1rem 1.2rem;
+    border-radius: 14px;
+    padding: 1.15rem 1.25rem 1.25rem;
+    overflow: hidden;
+    transition: transform 0.15s ease, box-shadow 0.15s ease, border-color 0.15s ease;
   }
-  .kpi .label { font-size: 0.74rem; color: var(--ink-faint); text-transform: uppercase; letter-spacing: 0.06em; font-weight: 600; margin-bottom: 0.5rem; }
-  .kpi .value { font-size: 1.7rem; font-weight: 700; font-variant-numeric: tabular-nums; letter-spacing: -0.02em; }
+  .kpi:hover { transform: translateY(-2px); box-shadow: var(--shadow); border-color: var(--brand); }
+  .kpi::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 3px;
+    background: var(--brand);
+    opacity: 0.55;
+  }
+  .kpi.good::before { background: var(--good); }
+  .kpi.warn::before { background: var(--warn); }
+  .kpi.bad::before { background: var(--bad); }
+  .kpi-head { display: flex; align-items: center; gap: 0.55rem; margin-bottom: 0.75rem; }
+  .kpi-ico {
+    width: 30px; height: 30px; border-radius: 8px; flex-shrink: 0;
+    display: flex; align-items: center; justify-content: center;
+    background: var(--brand-soft); font-size: 0.95rem;
+  }
+  .kpi.good .kpi-ico { background: var(--good-soft); }
+  .kpi.warn .kpi-ico { background: var(--warn-soft); }
+  .kpi.bad .kpi-ico { background: var(--bad-soft); }
+  .kpi .label { font-size: 0.72rem; color: var(--ink-faint); text-transform: uppercase; letter-spacing: 0.06em; font-weight: 700; }
+  .kpi .value { font-size: 1.85rem; font-weight: 800; font-variant-numeric: tabular-nums; letter-spacing: -0.02em; }
   .kpi.good .value { color: var(--good); }
   .kpi.warn .value { color: var(--warn); }
   .kpi.bad .value { color: var(--bad); }
@@ -529,28 +553,46 @@
 
       <div class="kpi-row">
         <div class="kpi">
-          <div class="label">Total registrados</div>
+          <div class="kpi-head">
+            <div class="kpi-ico">👥</div>
+            <div class="label">Total registrados</div>
+          </div>
           <div class="value" id="kpiTotal">—</div>
         </div>
         <div class="kpi good">
-          <div class="label">Activos</div>
+          <div class="kpi-head">
+            <div class="kpi-ico">✓</div>
+            <div class="label">Activos</div>
+          </div>
           <div class="value" id="kpiActivos">—</div>
         </div>
         <div class="kpi warn">
-          <div class="label">Pausados</div>
+          <div class="kpi-head">
+            <div class="kpi-ico">⏸</div>
+            <div class="label">Pausados</div>
+          </div>
           <div class="value" id="kpiPausados">—</div>
         </div>
         <div class="kpi bad">
-          <div class="label">Con error</div>
+          <div class="kpi-head">
+            <div class="kpi-ico">⚠</div>
+            <div class="label">Con error</div>
+          </div>
           <div class="value" id="kpiErrores">—</div>
         </div>
         <div class="kpi warn">
-          <div class="label">Pendientes de envío</div>
+          <div class="kpi-head">
+            <div class="kpi-ico">📤</div>
+            <div class="label">Pendientes de envío</div>
+          </div>
           <div class="value" id="kpiPendientes">—</div>
           <div class="sub-note">vencidos o para hoy</div>
         </div>
         <div class="kpi">
-          <div class="label">Próximos 7 días</div>
+          <div class="kpi-head">
+            <div class="kpi-ico">📅</div>
+            <div class="label">Próximos 14 días</div>
+          </div>
           <div class="value" id="kpiProximaSemana">—</div>
         </div>
       </div>
@@ -757,13 +799,13 @@
     const errores = filas.filter(function (f) { return estadoInfo(f.estado).cls === 'error'; }).length;
 
     const ahora = new Date();
-    const en7dias = new Date(ahora.getTime() + 7 * 86400000);
-    let pendientes = 0, proximaSemana = 0;
+    const en14dias = new Date(ahora.getTime() + 14 * 86400000);
+    let pendientes = 0, proximosCatorceDias = 0;
     filas.forEach(function (f) {
       const p = proximoEnvio(f);
       if (!p) return;
       if (p <= ahora) pendientes++;
-      else if (p <= en7dias) proximaSemana++;
+      else if (p <= en14dias) proximosCatorceDias++;
     });
 
     document.getElementById('kpiTotal').textContent = total;
@@ -771,7 +813,7 @@
     document.getElementById('kpiPausados').textContent = pausados;
     document.getElementById('kpiErrores').textContent = errores;
     document.getElementById('kpiPendientes').textContent = pendientes;
-    document.getElementById('kpiProximaSemana').textContent = proximaSemana;
+    document.getElementById('kpiProximaSemana').textContent = proximosCatorceDias;
 
     if (total === 0) {
       tabla.style.display = 'none';
