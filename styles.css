@@ -315,13 +315,14 @@ h4 { font-size: 1.125rem; font-weight: 600; }
   font-size: var(--tx-sm);
   flex-shrink: 0;
 }
-.nav-links { display: flex; align-items: center; gap: 12px; }
+.nav-links { display: flex; align-items: center; gap: 4px; }
 .nav-links a {
-  padding: 8px 16px;
+  padding: 8px 12px;
   border-radius: 8px;
   font-size: var(--tx-sm);
   font-weight: 500;
   color: var(--body);
+  white-space: nowrap;
   transition: all var(--ease);
 }
 .nav-links a:hover, .nav-links a.active { color: var(--primary); background: rgba(37,99,235,0.07); }
@@ -1550,6 +1551,14 @@ select { cursor: pointer; }
   .contact-form { padding: 32px 24px; }
   .form-row { grid-template-columns: 1fr; }
   .icp-card { padding: 32px 24px; }
+}
+
+/* Nav switches to hamburger earlier than the rest of the layout: with
+   "Acceso Clientes" + "Iniciar sesión" the full link row no longer fits
+   between 769–1140px and would overflow the navbar. */
+@media (max-width: 1140px) {
+  .nav-links { display: none; }
+  .nav-hamburger { display: flex; }
 }
 
 /* ── Casos de éxito ─────────────────────────────────────── */
