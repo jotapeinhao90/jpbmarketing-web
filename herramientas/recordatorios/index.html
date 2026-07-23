@@ -267,7 +267,7 @@
   .kpi.bad .value { color: var(--bad); }
   .kpi .sub-note { font-size: 0.72rem; color: var(--ink-faint); margin-top: 0.3rem; }
 
-  .proximo { font-size: 0.83rem; }
+  .proximo { font-size: 0.83rem; font-variant-numeric: tabular-nums; }
   .proximo.hoy { color: var(--warn); font-weight: 700; }
   .proximo.vencido { color: var(--bad); font-weight: 700; }
   .proximo.lejos { color: var(--ink-soft); }
@@ -538,16 +538,33 @@
     return new Date(base.getTime() + intervaloMinutos * 60000);
   }
 
-  function fmtProximo(fecha) {
+  // Contador en vivo tipo reloj ("3d 04:12:33" o "04:12:33" si falta
+  // menos de un día). Se recalcula cada segundo desde tickContadores().
+  function calcularCountdown(fecha) {
     if (!fecha) return { texto: '—', cls: 'na' };
     const ahora = new Date();
     const diffMs = fecha - ahora;
-    const diffDias = Math.floor(diffMs / 86400000);
     if (diffMs <= 0) return { texto: 'Vencido — pendiente de envío', cls: 'vencido' };
-    if (diffDias === 0) return { texto: 'Hoy', cls: 'hoy' };
-    if (diffDias === 1) return { texto: 'Mañana', cls: 'lejos' };
-    if (diffDias < 30) return { texto: 'En ' + diffDias + ' días', cls: 'lejos' };
-    return { texto: fecha.toLocaleDateString('es-CL', { day: '2-digit', month: 'short', year: 'numeric' }), cls: 'lejos' };
+    const totalSeg = Math.floor(diffMs / 1000);
+    const dias = Math.floor(totalSeg / 86400);
+    const horas = Math.floor((totalSeg % 86400) / 3600);
+    const mins = Math.floor((totalSeg % 3600) / 60);
+    const segs = totalSeg % 60;
+    const pad = function (n) { return n.toString().padStart(2, '0'); };
+    const reloj = pad(horas) + ':' + pad(mins) + ':' + pad(segs);
+    if (dias > 0) return { texto: dias + 'd ' + reloj, cls: 'lejos' };
+    return { texto: reloj, cls: 'hoy' };
+  }
+
+  // Recorre todas las celdas con contador activo y actualiza su texto —
+  // no vuelve a pintar la tabla entera, solo el número.
+  function tickContadores() {
+    document.querySelectorAll('.proximo[data-target]').forEach(function (el) {
+      const fecha = new Date(el.dataset.target);
+      const c = calcularCountdown(fecha);
+      el.textContent = c.texto;
+      el.className = 'proximo ' + c.cls;
+    });
   }
 
   async function login() {
@@ -679,9 +696,16 @@
       tr.appendChild(tdEstado);
 
       const tdProximo = document.createElement('td');
-      const prox = fmtProximo(proximoEnvio(f));
-      tdProximo.className = 'proximo ' + prox.cls;
-      tdProximo.textContent = prox.texto;
+      const fechaProx = proximoEnvio(f);
+      if (fechaProx) {
+        tdProximo.dataset.target = fechaProx.toISOString();
+        const c = calcularCountdown(fechaProx);
+        tdProximo.className = 'proximo ' + c.cls;
+        tdProximo.textContent = c.texto;
+      } else {
+        tdProximo.className = 'proximo na';
+        tdProximo.textContent = '—';
+      }
       tr.appendChild(tdProximo);
 
       const tdReg = document.createElement('td');
@@ -752,6 +776,12 @@
   setInterval(function () {
     if (app.classList.contains('show') && document.visibilityState === 'visible') cargarDatos(true);
   }, 60000);
+
+  // Timer en vivo por cliente: corre independiente del refresh de 60s,
+  // así que sobrevive a cada re-render de la tabla.
+  setInterval(function () {
+    if (app.classList.contains('show') && document.visibilityState === 'visible') tickContadores();
+  }, 1000);
 
   // Sesión ya iniciada en este navegador
   const savedPw = sessionStorage.getItem(SESSION_KEY);
