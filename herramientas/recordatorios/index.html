@@ -253,6 +253,20 @@
 
   main { flex: 1; padding: 1.75rem 1.5rem 3rem; max-width: 1080px; margin: 0 auto; width: 100%; }
 
+  .quote-card {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.9rem;
+    background: linear-gradient(135deg, var(--brand-soft), var(--surface));
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 1.1rem 1.3rem;
+    margin-bottom: 1.25rem;
+  }
+  .quote-card .quote-mark { font-size: 1.6rem; line-height: 1; color: var(--brand); font-weight: 800; font-family: Georgia, serif; }
+  .quote-card .quote-text { font-size: 0.92rem; color: var(--ink); font-weight: 600; line-height: 1.5; }
+  .quote-card .quote-autor { margin-top: 0.3rem; font-size: 0.75rem; color: var(--ink-faint); text-transform: uppercase; letter-spacing: 0.04em; }
+
   .kpi-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 0.85rem; margin-bottom: 1.75rem; }
   .kpi {
     background: var(--surface);
@@ -439,6 +453,14 @@
     </header>
 
     <main>
+      <div class="quote-card">
+        <div class="quote-mark">&ldquo;</div>
+        <div>
+          <div class="quote-text" id="quoteText">—</div>
+          <div class="quote-autor" id="quoteAutor"></div>
+        </div>
+      </div>
+
       <div class="kpi-row">
         <div class="kpi">
           <div class="label">Total registrados</div>
@@ -774,6 +796,25 @@
     navHamburger.classList.toggle('open');
     navMobile.classList.toggle('open');
   });
+
+  // Frases sobre fidelización de clientes, con guiño al rubro barbería.
+  const FRASES_FIDELIZACION = [
+    { texto: 'Un cliente fiel no vuelve por el corte, vuelve por cómo lo hiciste sentir.', autor: 'Fidelización de clientes' },
+    { texto: 'Cuesta cinco veces más conseguir un cliente nuevo que mantener uno que ya confía en ti.', autor: 'Retención de clientes' },
+    { texto: 'La silla del barbero vende un servicio; el recuerdo de la visita vende el regreso.', autor: 'Experiencia de cliente' },
+    { texto: 'Un recordatorio a tiempo dice "te esperamos", no "cómprame de nuevo".', autor: 'Fidelización de clientes' },
+    { texto: 'El mejor marketing de una barbería es un cliente que no tiene que pensarlo dos veces para volver.', autor: 'Retención de clientes' },
+    { texto: 'La lealtad no se pide, se construye corte tras corte.', autor: 'Fidelización de clientes' },
+    { texto: 'Un descuento trae al cliente una vez; un buen trato lo trae siempre.', autor: 'Experiencia de cliente' },
+    { texto: 'Cada catorce días no es solo un recordatorio, es una excusa para que se sientan cuidados.', autor: 'Fidelización de clientes' },
+    { texto: 'Los negocios que crecen no tienen más clientes nuevos, tienen menos clientes que se van.', autor: 'Retención de clientes' },
+    { texto: 'Un buen barbero corta el pelo; un buen negocio corta la distancia con el cliente.', autor: 'Fidelización de clientes' }
+  ];
+  (function mostrarFraseAleatoria() {
+    const f = FRASES_FIDELIZACION[Math.floor(Math.random() * FRASES_FIDELIZACION.length)];
+    document.getElementById('quoteText').textContent = f.texto;
+    document.getElementById('quoteAutor').textContent = f.autor;
+  })();
 
   loginBtn.addEventListener('click', login);
   passwordInput.addEventListener('keydown', function (e) { if (e.key === 'Enter') login(); });
