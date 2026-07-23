@@ -234,6 +234,21 @@
 
   /* ---------- App shell ---------- */
   .app { display: none; min-height: calc(100vh - 64px); flex-direction: column; }
+
+  .site-footer {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+    padding: 1.5rem 1.5rem 2rem;
+    border-top: 1px solid var(--border);
+    color: var(--ink-faint);
+    font-size: 0.78rem;
+  }
+  .site-footer .dot { opacity: 0.6; }
+  .site-footer a { color: var(--ink-faint); text-decoration: none; }
+  .site-footer a:hover { color: var(--brand); text-decoration: underline; }
   .app.show { display: flex; }
   header.topbar {
     background: var(--surface);
@@ -264,8 +279,9 @@
     margin-bottom: 1.25rem;
   }
   .quote-card .quote-mark { font-size: 1.6rem; line-height: 1; color: var(--brand); font-weight: 800; font-family: Georgia, serif; }
-  .quote-card .quote-text { font-size: 0.92rem; color: var(--ink); font-weight: 600; line-height: 1.5; }
-  .quote-card .quote-autor { margin-top: 0.3rem; font-size: 0.75rem; color: var(--ink-faint); text-transform: uppercase; letter-spacing: 0.04em; }
+  .quote-card .quote-text { font-size: 0.92rem; color: var(--ink); font-weight: 600; line-height: 1.5; transition: opacity 0.4s ease; }
+  .quote-card .quote-autor { margin-top: 0.3rem; font-size: 0.75rem; color: var(--ink-faint); text-transform: uppercase; letter-spacing: 0.04em; transition: opacity 0.4s ease; }
+  .quote-card .fade-out { opacity: 0; }
 
   .kpi-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 0.85rem; margin-bottom: 1.75rem; }
   .kpi {
@@ -514,6 +530,14 @@
         </div>
       </div>
     </main>
+
+    <footer class="site-footer">
+      <span>© 2026 JPB Marketing</span>
+      <span class="dot">·</span>
+      <a href="https://jpbmarketing.cl/" target="_blank" rel="noopener">jpbmarketing.cl</a>
+      <span class="dot">·</span>
+      <span>Panel de Recordatorios</span>
+    </footer>
   </div>
 
   <div class="toast" id="toast"></div>
@@ -810,11 +834,27 @@
     { texto: 'Los negocios que crecen no tienen más clientes nuevos, tienen menos clientes que se van.', autor: 'Retención de clientes' },
     { texto: 'Un buen barbero corta el pelo; un buen negocio corta la distancia con el cliente.', autor: 'Fidelización de clientes' }
   ];
-  (function mostrarFraseAleatoria() {
-    const f = FRASES_FIDELIZACION[Math.floor(Math.random() * FRASES_FIDELIZACION.length)];
-    document.getElementById('quoteText').textContent = f.texto;
-    document.getElementById('quoteAutor').textContent = f.autor;
-  })();
+  let indiceFraseActual = -1;
+  function mostrarFraseAleatoria() {
+    const quoteText = document.getElementById('quoteText');
+    const quoteAutor = document.getElementById('quoteAutor');
+    let idx;
+    do { idx = Math.floor(Math.random() * FRASES_FIDELIZACION.length); } while (idx === indiceFraseActual && FRASES_FIDELIZACION.length > 1);
+    indiceFraseActual = idx;
+    quoteText.classList.add('fade-out');
+    quoteAutor.classList.add('fade-out');
+    setTimeout(function () {
+      const f = FRASES_FIDELIZACION[idx];
+      quoteText.textContent = f.texto;
+      quoteAutor.textContent = f.autor;
+      quoteText.classList.remove('fade-out');
+      quoteAutor.classList.remove('fade-out');
+    }, 400);
+  }
+  mostrarFraseAleatoria();
+  setInterval(function () {
+    if (document.visibilityState === 'visible') mostrarFraseAleatoria();
+  }, 15000);
 
   loginBtn.addEventListener('click', login);
   passwordInput.addEventListener('keydown', function (e) { if (e.key === 'Enter') login(); });
