@@ -551,16 +551,15 @@
     if (!fecha) return { texto: '—', cls: 'na' };
     const ahora = new Date();
     const diffMs = fecha - ahora;
-    if (diffMs <= 0) return { texto: 'Vencido', cls: 'vencido' };
-    const totalSeg = Math.floor(diffMs / 1000);
+    const pad = function (n) { return n.toString().padStart(2, '0'); };
+    const totalSeg = Math.floor(Math.abs(diffMs) / 1000);
     const dias = Math.floor(totalSeg / 86400);
     const horas = Math.floor((totalSeg % 86400) / 3600);
     const mins = Math.floor((totalSeg % 3600) / 60);
     const segs = totalSeg % 60;
-    const pad = function (n) { return n.toString().padStart(2, '0'); };
-    const reloj = pad(horas) + ':' + pad(mins) + ':' + pad(segs);
-    if (dias > 0) return { texto: dias + 'd ' + reloj, cls: 'lejos' };
-    return { texto: reloj, cls: 'hoy' };
+    const reloj = (dias > 0 ? dias + 'd ' : '') + pad(horas) + ':' + pad(mins) + ':' + pad(segs);
+    if (diffMs <= 0) return { texto: 'Vencido hace ' + reloj, cls: 'vencido' };
+    return { texto: reloj, cls: dias > 0 ? 'lejos' : 'hoy' };
   }
 
   // Recorre todas las celdas con contador activo y actualiza su texto —
