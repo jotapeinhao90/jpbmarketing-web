@@ -302,13 +302,20 @@
   .search-box:focus { border-color: var(--brand); }
 
   .table-wrap { overflow-x: auto; }
-  table { width: 100%; border-collapse: collapse; font-size: 0.87rem; }
-  th, td { text-align: left; padding: 0.7rem 1.1rem; border-bottom: 1px solid var(--border); white-space: nowrap; }
-  th { font-size: 0.68rem; text-transform: uppercase; letter-spacing: 0.06em; color: var(--ink-faint); font-weight: 700; background: var(--surface-2); }
+  table { width: 100%; border-collapse: collapse; font-size: 0.83rem; table-layout: fixed; }
+  th, td { text-align: left; padding: 0.65rem 0.6rem; border-bottom: 1px solid var(--border); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  th { font-size: 0.65rem; text-transform: uppercase; letter-spacing: 0.05em; color: var(--ink-faint); font-weight: 700; background: var(--surface-2); }
   tbody tr:last-child td { border-bottom: none; }
   tbody tr:hover { background: var(--surface-2); }
   td.numero { font-variant-numeric: tabular-nums; font-weight: 600; }
-  td.mensaje-cell { max-width: 260px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: var(--ink-soft); }
+  td.mensaje-cell { color: var(--ink-soft); }
+  th:nth-child(1), td:nth-child(1) { width: 13%; }
+  th:nth-child(2), td:nth-child(2) { width: 10%; }
+  th:nth-child(3), td:nth-child(3) { width: 15%; }
+  th:nth-child(4), td:nth-child(4) { width: 14%; }
+  th:nth-child(5), td:nth-child(5) { width: 14%; }
+  th:nth-child(6), td:nth-child(6) { width: 24%; }
+  th:nth-child(7), td:nth-child(7) { width: 10%; text-align: right; }
 
   .pill {
     display: inline-flex;
@@ -518,7 +525,7 @@
     if (!iso) return '—';
     const d = new Date(iso);
     if (isNaN(d)) return '—';
-    return d.toLocaleDateString('es-CL', { day: '2-digit', month: '2-digit', year: 'numeric' })
+    return d.toLocaleDateString('es-CL', { day: '2-digit', month: '2-digit', year: '2-digit' })
       + ' ' + d.toLocaleTimeString('es-CL', { hour: '2-digit', minute: '2-digit' });
   }
 
@@ -544,7 +551,7 @@
     if (!fecha) return { texto: '—', cls: 'na' };
     const ahora = new Date();
     const diffMs = fecha - ahora;
-    if (diffMs <= 0) return { texto: 'Vencido — pendiente de envío', cls: 'vencido' };
+    if (diffMs <= 0) return { texto: 'Vencido', cls: 'vencido' };
     const totalSeg = Math.floor(diffMs / 1000);
     const dias = Math.floor(totalSeg / 86400);
     const horas = Math.floor((totalSeg % 86400) / 3600);
