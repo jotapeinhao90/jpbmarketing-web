@@ -194,6 +194,22 @@
     outline: none;
     transition: border-color .15s;
   }
+  .password-wrap { position: relative; }
+  .password-wrap input { padding-right: 2.6rem; }
+  .password-toggle {
+    position: absolute;
+    top: 50%; right: 0.35rem;
+    transform: translateY(-50%);
+    width: 2.1rem; height: 2.1rem;
+    border: none;
+    background: transparent;
+    border-radius: 6px;
+    font-size: 1rem;
+    cursor: pointer;
+    opacity: 0.55;
+    transition: opacity .15s, background .15s;
+  }
+  .password-toggle:hover { opacity: 1; background: var(--surface-2); }
   .field input:focus { border-color: var(--brand); }
   .btn {
     display: inline-flex;
@@ -323,21 +339,21 @@
   .kpi.bad .value { color: var(--bad); }
   .kpi .sub-note { font-size: 0.72rem; color: var(--ink-faint); margin-top: 0.3rem; }
 
-  .proximo { font-size: 0.83rem; font-variant-numeric: tabular-nums; }
-  .proximo.hoy { color: var(--warn); font-weight: 700; }
-  .proximo.vencido { color: var(--bad); font-weight: 700; }
-  .proximo.lejos { color: var(--ink-soft); }
-  .proximo.na { color: var(--ink-faint); }
+  .proximo { font-size: 0.8rem; font-weight: 400; font-variant-numeric: tabular-nums; }
+  .proximo.hoy { color: var(--warn); font-weight: 500; }
+  .proximo.vencido { color: var(--bad); font-weight: 500; }
+  .proximo.lejos { color: var(--ink-soft); font-weight: 400; }
+  .proximo.na { color: var(--ink-faint); font-weight: 400; }
   .clock-ico { display: inline-block; margin-right: 0.3em; transform-origin: 50% 70%; }
   .clock-ico.tick { animation: clock-tick 0.5s ease; }
   @keyframes clock-tick {
     0% { transform: rotate(0deg); }
-    30% { transform: rotate(-14deg); }
-    60% { transform: rotate(10deg); }
+    30% { transform: rotate(-8deg); }
+    60% { transform: rotate(6deg); }
     100% { transform: rotate(0deg); }
   }
-  .clock-colon { animation: clock-blink 1s steps(1, start) infinite; }
-  @keyframes clock-blink { 50% { opacity: 0.15; } }
+  .clock-colon { animation: clock-blink 1s steps(1, start) infinite; opacity: 0.7; }
+  @keyframes clock-blink { 50% { opacity: 0.25; } }
   @media (prefers-reduced-motion: reduce) {
     .clock-ico.tick { animation: none; }
     .clock-colon { animation: none; }
@@ -524,7 +540,10 @@
       <div class="error-msg" id="loginError">Código incorrecto. Probá de nuevo.</div>
       <div class="field">
         <label for="passwordInput">Código de acceso</label>
-        <input type="password" id="passwordInput" autocomplete="current-password" placeholder="••••••••••">
+        <div class="password-wrap">
+          <input type="password" id="passwordInput" autocomplete="current-password" placeholder="••••••••••">
+          <button type="button" class="password-toggle" id="passwordToggle" aria-label="Mostrar contraseña">👁</button>
+        </div>
       </div>
       <button class="btn" id="loginBtn">Entrar</button>
     </div>
@@ -973,6 +992,14 @@
   setInterval(function () {
     if (document.visibilityState === 'visible') mostrarFraseAleatoria();
   }, 15000);
+
+  const passwordToggle = document.getElementById('passwordToggle');
+  passwordToggle.addEventListener('click', function () {
+    const oculto = passwordInput.type === 'password';
+    passwordInput.type = oculto ? 'text' : 'password';
+    passwordToggle.textContent = oculto ? '🙈' : '👁';
+    passwordToggle.setAttribute('aria-label', oculto ? 'Ocultar contraseña' : 'Mostrar contraseña');
+  });
 
   loginBtn.addEventListener('click', login);
   passwordInput.addEventListener('keydown', function (e) { if (e.key === 'Enter') login(); });

@@ -327,7 +327,7 @@ async function handleAffiliateSignup(request, env) {
 // backend corresponde y agrega el secreto real del lado del servidor.
 // ──────────────────────────────────────────────────────────
 const RECORDATORIOS_CLIENTES = {
-  'the-kem-2026': {
+  'thekem2026': {
     nombre: 'The Kem Barbershop',
     scriptUrl: 'https://script.google.com/macros/s/AKfycbxsvZiB6B4aSbeHFz00sXC7wKztxJWXVz4sBOECBYeUkOjIAf2uzLJ8vWTmDTcHq0-GdA/exec',
     secreto: 'Nexmarketing90@',
