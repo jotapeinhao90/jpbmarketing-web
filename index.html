@@ -19,7 +19,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" onload="this.onload=null;this.rel='stylesheet'">
   <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap"></noscript>
-  <link rel="stylesheet" href="styles.css?v=13">
+  <link rel="stylesheet" href="styles.css?v=14">
   <script type="application/ld+json">
   {"@context":"https://schema.org","@type":"Organization","name":"JPB Marketing","url":"https://jpbmarketing.cl","logo":"https://jpbmarketing.cl/assets/logo.webp","description":"Agencia B2B Industrial en Chile. Prospección, automatización con IA y presencia digital para fábricas.","telephone":"+56944843503","email":"jpbayas@jpbmarketing.cl","address":{"@type":"PostalAddress","addressLocality":"Santiago","addressCountry":"CL"}}
   </script>
@@ -675,6 +675,86 @@
   </div>
 </section>
 
+<!-- NOTICIAS DE LA EMPRESA -->
+<section class="news-section">
+  <div class="container">
+    <div class="news-header">
+      <div>
+        <span class="section-label reveal">Noticias</span>
+        <h2 class="section-title reveal reveal-delay-1">Novedades de <span class="text-gradient">JPB Marketing</span></h2>
+        <p class="section-desc reveal reveal-delay-2">Casos de clientes, guías y avances del equipo — todo lo que vamos publicando, en un solo lugar.</p>
+      </div>
+      <a href="/blog" class="btn btn-primary news-header-btn reveal reveal-delay-2">Ver todas las noticias →</a>
+    </div>
+
+    <div class="news-slider-wrap reveal reveal-delay-3">
+      <button class="news-arrow news-arrow-prev" id="newsPrev" aria-label="Anterior">‹</button>
+      <div class="news-slider" id="newsSlider">
+        <div class="news-track">
+
+          <a href="/nosotros#polimer" class="news-card">
+            <span class="news-card-tag">Caso de éxito</span>
+            <span class="news-card-date">Cliente activo · 2+ años</span>
+            <h3>ETP Polimer: de cero presencia digital a competidor activo</h3>
+            <p>Identidad visual y web desde cero, hoy con Google Ads y prospección outbound automatizada.</p>
+            <span class="news-card-link">Ver historia →</span>
+          </a>
+
+          <a href="/nosotros#fierros-idini" class="news-card">
+            <span class="news-card-tag">Caso de éxito</span>
+            <span class="news-card-date">Cliente activo · 3 plantas</span>
+            <h3>Fierros Idini: 1.700 productos online y tráfico orgánico sostenido</h3>
+            <p>Sitio reconstruido desde cero con catálogo completo, base para SEO y Google Ads de largo plazo.</p>
+            <span class="news-card-link">Ver historia →</span>
+          </a>
+
+          <a href="/nosotros#plastiservi-conflex" class="news-card">
+            <span class="news-card-tag">Caso de éxito</span>
+            <span class="news-card-date">Cliente activo · Nueva empresa</span>
+            <h3>Plastiservi + Conflex: de cliente histórico a nueva empresa</h3>
+            <p>Años de asesoría digital derivaron en construir Conflex juntos desde el día uno: marca, web y Ads.</p>
+            <span class="news-card-link">Ver historia →</span>
+          </a>
+
+          <a href="/prospeccion-b2b-chile" class="news-card">
+            <span class="news-card-tag">Blog · Prospección</span>
+            <span class="news-card-date">Mayo 2026</span>
+            <h3>Cómo hacer Prospección B2B Industrial en Chile: Guía Completa 2026</h3>
+            <p>El sistema que usamos para prospectar 1,600 contactos industriales diarios con 3x tasa de respuesta.</p>
+            <span class="news-card-link">Leer →</span>
+          </a>
+
+          <a href="/automatizacion-n8n-chile" class="news-card">
+            <span class="news-card-tag">Blog · Automatización</span>
+            <span class="news-card-date">Mayo 2026</span>
+            <h3>Automatización con n8n y Make para Empresas Industriales en Chile</h3>
+            <p>5 casos de uso reales que están usando fábricas chilenas para reducir trabajo manual.</p>
+            <span class="news-card-link">Leer →</span>
+          </a>
+
+          <a href="/whatsapp-business-api-chile" class="news-card">
+            <span class="news-card-tag">Blog · WhatsApp IA</span>
+            <span class="news-card-date">Mayo 2026</span>
+            <h3>WhatsApp Business API para Empresas Industriales en Chile</h3>
+            <p>Cómo implementar una secretaria IA que atiende, califica y agenda reuniones automáticamente.</p>
+            <span class="news-card-link">Leer →</span>
+          </a>
+
+          <a href="/keyword-research-b2b-industrial-chile" class="news-card">
+            <span class="news-card-tag">Blog · SEO</span>
+            <span class="news-card-date">Junio 2026</span>
+            <h3>Por Qué el Keyword Planner Dice que tu Cliente B2B No Existe</h3>
+            <p>Por qué las búsquedas B2B industriales se subestiman y cómo hacer keyword research real en nicho.</p>
+            <span class="news-card-link">Leer →</span>
+          </a>
+
+        </div>
+      </div>
+      <button class="news-arrow news-arrow-next" id="newsNext" aria-label="Siguiente">›</button>
+    </div>
+  </div>
+</section>
+
 <!-- CTA FINAL -->
 <section class="cta-section">
   <div class="container">
@@ -938,6 +1018,20 @@
   }
 
   startChat();
+})();
+</script>
+<script>
+(function(){
+  var slider = document.getElementById('newsSlider');
+  var prev = document.getElementById('newsPrev');
+  var next = document.getElementById('newsNext');
+  if (!slider || !prev || !next) return;
+  function step(){
+    var card = slider.querySelector('.news-card');
+    return card ? card.getBoundingClientRect().width + 24 : 320;
+  }
+  prev.addEventListener('click', function(){ slider.scrollBy({ left: -step(), behavior: 'smooth' }); });
+  next.addEventListener('click', function(){ slider.scrollBy({ left: step(), behavior: 'smooth' }); });
 })();
 </script>
 </body>
