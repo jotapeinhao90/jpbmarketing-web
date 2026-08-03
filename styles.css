@@ -1666,52 +1666,42 @@ select { cursor: pointer; }
   .caso3-grid { grid-template-columns: 1fr; }
 }
 
-/* ── Noticias de la empresa (home) ──────────────────────── */
-.news-section { padding: 100px 0; }
-.news-header {
-  display: flex; align-items: flex-end; justify-content: space-between; gap: 24px;
-  margin-bottom: 40px; flex-wrap: wrap;
+/* ── Noticias (ticker mini, debajo del hero) ────────────── */
+.news-ticker {
+  background: var(--bg-light);
+  border-top: 1px solid var(--card-border);
+  border-bottom: 1px solid var(--card-border);
+  padding: 10px 0;
+  overflow: hidden;
 }
-.news-header .section-label,
-.news-header .section-title,
-.news-header .section-desc { text-align: left; margin: 0; }
-.news-header .section-title { margin-top: 8px; margin-bottom: 10px; }
-.news-header-btn { flex-shrink: 0; white-space: nowrap; }
-
-.news-slider-wrap { position: relative; display: flex; align-items: center; gap: 12px; }
-.news-slider { overflow-x: auto; scroll-snap-type: x mandatory; scrollbar-width: none; flex: 1; }
-.news-slider::-webkit-scrollbar { display: none; }
-.news-track { display: flex; gap: 24px; padding: 4px 4px 12px; }
-
-.news-card {
-  scroll-snap-align: start;
-  flex: 0 0 320px;
-  background: var(--card-bg);
-  border: 1px solid var(--card-border);
-  border-radius: var(--radius-lg);
-  padding: 26px 26px 22px;
-  display: flex;
-  flex-direction: column;
-  color: inherit;
-  transition: box-shadow var(--ease), transform var(--ease);
+.news-ticker-inner { display: flex; align-items: center; gap: 18px; }
+.news-ticker-label {
+  flex-shrink: 0;
+  font-size: var(--tx-xs); font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em;
+  color: var(--primary); display: flex; align-items: center; gap: 4px;
+  padding-right: 16px; border-right: 1px solid var(--card-border);
 }
-.news-card:hover { box-shadow: var(--shadow-md); transform: translateY(-3px); border-color: rgba(37,99,235,0.18); }
-.news-card-tag { font-size: var(--tx-xs); font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: var(--primary); }
-.news-card-date { font-size: var(--tx-xs); color: var(--light); margin-top: 6px; margin-bottom: 14px; }
-.news-card h3 { font-size: 1.05rem; font-weight: 800; color: var(--heading); line-height: 1.35; margin-bottom: 10px; }
-.news-card p { font-size: var(--tx-sm); color: var(--body); line-height: 1.6; flex: 1; margin-bottom: 16px; }
-.news-card-link { font-size: var(--tx-sm); font-weight: 600; color: var(--primary); }
-
-.news-arrow {
-  flex-shrink: 0; width: 44px; height: 44px; border-radius: 50%;
-  border: 1px solid var(--card-border); background: var(--card-bg); color: var(--heading);
-  font-size: 1.5rem; line-height: 1; cursor: pointer; display: flex; align-items: center; justify-content: center;
-  transition: all var(--ease);
+.news-ticker-label span { transition: transform .2s; }
+.news-ticker-label:hover span { transform: translateX(3px); }
+.news-ticker-viewport { flex: 1; overflow: hidden; mask-image: linear-gradient(90deg, transparent, #000 5%, #000 95%, transparent); -webkit-mask-image: linear-gradient(90deg, transparent, #000 5%, #000 95%, transparent); }
+.news-ticker-track {
+  display: flex; align-items: center; gap: 40px; width: max-content;
+  animation: news-ticker-scroll 38s linear infinite;
 }
-.news-arrow:hover { background: var(--primary); color: #fff; border-color: var(--primary); }
-@media (max-width: 720px) {
-  .news-arrow { display: none; }
-  .news-card { flex-basis: 82vw; }
+.news-ticker:hover .news-ticker-track { animation-play-state: paused; }
+.news-ticker-item {
+  flex-shrink: 0; display: flex; align-items: center; gap: 8px;
+  font-size: var(--tx-xs); font-weight: 500; color: var(--body); white-space: nowrap;
+  transition: color .2s;
+}
+.news-ticker-item:hover { color: var(--primary); }
+.nti-dot { width: 5px; height: 5px; border-radius: 50%; background: var(--primary); flex-shrink: 0; }
+@keyframes news-ticker-scroll {
+  from { transform: translateX(0); }
+  to { transform: translateX(-50%); }
+}
+@media (max-width: 640px) {
+  .news-ticker-label { display: none; }
 }
 
 /* ==========================================
