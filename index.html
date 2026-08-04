@@ -29,10 +29,10 @@
 <!-- ANNOUNCEMENT BAR -->
 <div class="announce-bar" id="announce-bar">
   <div class="announce-inner">
-    <span class="announce-tag">OFERTA JULIO</span>
-    <span class="announce-text">Agente IA $119.000/mes · Precio bloqueado hasta el 31 jul</span>
+    <span class="announce-tag">OFERTA AGOSTO</span>
+    <span class="announce-text">Agente IA $119.000/mes · Precio bloqueado hasta el 31 ago</span>
     <span class="announce-count" id="ann-count"></span>
-    <a href="/agente-ia#oferta-julio" class="announce-cta">Ver oferta →</a>
+    <a href="/agente-ia#oferta-agosto" class="announce-cta">Ver oferta →</a>
     <button class="announce-close" id="announce-close" aria-label="Cerrar">✕</button>
   </div>
 </div>
@@ -114,7 +114,7 @@
         <div class="hero-trust reveal reveal-delay-4">
           <div class="trust-item">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
-            180k+ contactos B2B
+            200M+ negocios en Google Maps
           </div>
           <div class="trust-item">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
@@ -198,7 +198,7 @@
           <div class="hero-slide active" id="hslide-1">
             <div class="hslide-title">Agente IA Vendedor en WhatsApp</div>
             <div class="hero-offer-card">
-            <div class="hoc-tag">OFERTA JULIO · hasta 31 jul</div>
+            <div class="hoc-tag">OFERTA AGOSTO · hasta 31 ago</div>
             <div class="hoc-price-row">
               <span class="hoc-old">$290.000<em>/mes</em></span>
               <div class="hoc-new">$119.000<span>/mes<br>de por vida</span></div>
@@ -223,7 +223,7 @@
               <div class="hoc-sep">:</div>
               <div class="hoc-unit hoc-unit-sec"><span id="hoc-s">--</span><em>seg</em></div>
             </div>
-            <a href="/agente-ia#oferta-julio" class="hoc-cta">Ver oferta completa →</a>
+            <a href="/agente-ia#oferta-agosto" class="hoc-cta">Ver oferta completa →</a>
             <div class="hoc-cupos">⚠ Solo 7 cupos disponibles</div>
           </div>
           </div><!-- /hslide-1 -->
@@ -242,8 +242,8 @@
   <div class="container">
     <div class="stats-grid">
       <div class="stat-item reveal">
-        <div class="stat-number"><span data-count="180" data-suffix="k+">180k+</span></div>
-        <div class="stat-label">Contactos para<br>Industrias</div>
+        <div class="stat-number"><span data-count="200" data-suffix="M+">200M+</span></div>
+        <div class="stat-label">Negocios Indexados<br>en Google Maps</div>
       </div>
       <div class="stat-item reveal reveal-delay-1">
         <div class="stat-number"><span data-count="1600" data-suffix="+">1,600+</span></div>
@@ -266,22 +266,59 @@
   <div class="container news-ticker-inner">
     <a href="/blog" class="news-ticker-label">Noticias <span>→</span></a>
     <div class="news-ticker-viewport">
-      <div class="news-ticker-track">
-        <a href="/nosotros#polimer" class="news-ticker-item"><span class="nti-dot"></span>Caso de éxito: ETP Polimer, de cero a competidor activo</a>
-        <a href="/nosotros#fierros-idini" class="news-ticker-item"><span class="nti-dot"></span>Caso de éxito: Fierros Idini, 1.700 productos online</a>
-        <a href="/nosotros#plastiservi-conflex" class="news-ticker-item"><span class="nti-dot"></span>Caso de éxito: Plastiservi + Conflex, nueva empresa</a>
-        <a href="/prospeccion-b2b-chile" class="news-ticker-item"><span class="nti-dot"></span>Guía: Prospección B2B Industrial en Chile 2026</a>
-        <a href="/automatizacion-n8n-chile" class="news-ticker-item"><span class="nti-dot"></span>Automatización con n8n y Make para Industriales</a>
-        <a href="/whatsapp-business-api-chile" class="news-ticker-item"><span class="nti-dot"></span>WhatsApp Business API con secretaria IA 24/7</a>
-        <a href="/keyword-research-b2b-industrial-chile" class="news-ticker-item"><span class="nti-dot"></span>Por qué el Keyword Planner subestima al B2B</a>
+      <div class="news-ticker-track" id="newsTickerTrack">
+
+        <a href="/nosotros#polimer" class="ncm">
+          <div class="ncm-photo"><img src="Clientes/Foto_con_polimer.webp" alt="Caso ETP Polimer" loading="lazy"></div>
+          <div class="ncm-body"><span class="ncm-tag">Caso de éxito</span><h4>ETP Polimer</h4></div>
+        </a>
+        <a href="/nosotros#fierros-idini" class="ncm">
+          <div class="ncm-photo"><img src="Clientes/Fierros_idini_foto.webp" alt="Caso Fierros Idini" loading="lazy"></div>
+          <div class="ncm-body"><span class="ncm-tag">Caso de éxito</span><h4>Fierros Idini</h4></div>
+        </a>
+        <a href="/nosotros#plastiservi-conflex" class="ncm">
+          <div class="ncm-photo"><img src="Clientes/4413EF69-A08E-4B0B-96FA-4A9EE240617A.webp" alt="Caso Plastiservi y Conflex" loading="lazy"></div>
+          <div class="ncm-body"><span class="ncm-tag">Caso de éxito</span><h4>Plastiservi + Conflex</h4></div>
+        </a>
+        <a href="/prospeccion-b2b-chile" class="ncm ncm-nophoto">
+          <div class="ncm-body"><span class="ncm-tag">Blog</span><h4>Prospección B2B Industrial en Chile 2026</h4></div>
+        </a>
+        <a href="/automatizacion-n8n-chile" class="ncm ncm-nophoto">
+          <div class="ncm-body"><span class="ncm-tag">Blog</span><h4>Automatización con n8n y Make</h4></div>
+        </a>
+        <a href="/whatsapp-business-api-chile" class="ncm ncm-nophoto">
+          <div class="ncm-body"><span class="ncm-tag">Blog</span><h4>WhatsApp Business API con IA 24/7</h4></div>
+        </a>
+        <a href="/keyword-research-b2b-industrial-chile" class="ncm ncm-nophoto">
+          <div class="ncm-body"><span class="ncm-tag">Blog</span><h4>El Keyword Planner subestima al B2B</h4></div>
+        </a>
+
         <!-- duplicado para loop continuo -->
-        <a href="/nosotros#polimer" class="news-ticker-item" aria-hidden="true" tabindex="-1"><span class="nti-dot"></span>Caso de éxito: ETP Polimer, de cero a competidor activo</a>
-        <a href="/nosotros#fierros-idini" class="news-ticker-item" aria-hidden="true" tabindex="-1"><span class="nti-dot"></span>Caso de éxito: Fierros Idini, 1.700 productos online</a>
-        <a href="/nosotros#plastiservi-conflex" class="news-ticker-item" aria-hidden="true" tabindex="-1"><span class="nti-dot"></span>Caso de éxito: Plastiservi + Conflex, nueva empresa</a>
-        <a href="/prospeccion-b2b-chile" class="news-ticker-item" aria-hidden="true" tabindex="-1"><span class="nti-dot"></span>Guía: Prospección B2B Industrial en Chile 2026</a>
-        <a href="/automatizacion-n8n-chile" class="news-ticker-item" aria-hidden="true" tabindex="-1"><span class="nti-dot"></span>Automatización con n8n y Make para Industriales</a>
-        <a href="/whatsapp-business-api-chile" class="news-ticker-item" aria-hidden="true" tabindex="-1"><span class="nti-dot"></span>WhatsApp Business API con secretaria IA 24/7</a>
-        <a href="/keyword-research-b2b-industrial-chile" class="news-ticker-item" aria-hidden="true" tabindex="-1"><span class="nti-dot"></span>Por qué el Keyword Planner subestima al B2B</a>
+        <a href="/nosotros#polimer" class="ncm" aria-hidden="true" tabindex="-1">
+          <div class="ncm-photo"><img src="Clientes/Foto_con_polimer.webp" alt="" loading="lazy"></div>
+          <div class="ncm-body"><span class="ncm-tag">Caso de éxito</span><h4>ETP Polimer</h4></div>
+        </a>
+        <a href="/nosotros#fierros-idini" class="ncm" aria-hidden="true" tabindex="-1">
+          <div class="ncm-photo"><img src="Clientes/Fierros_idini_foto.webp" alt="" loading="lazy"></div>
+          <div class="ncm-body"><span class="ncm-tag">Caso de éxito</span><h4>Fierros Idini</h4></div>
+        </a>
+        <a href="/nosotros#plastiservi-conflex" class="ncm" aria-hidden="true" tabindex="-1">
+          <div class="ncm-photo"><img src="Clientes/4413EF69-A08E-4B0B-96FA-4A9EE240617A.webp" alt="" loading="lazy"></div>
+          <div class="ncm-body"><span class="ncm-tag">Caso de éxito</span><h4>Plastiservi + Conflex</h4></div>
+        </a>
+        <a href="/prospeccion-b2b-chile" class="ncm ncm-nophoto" aria-hidden="true" tabindex="-1">
+          <div class="ncm-body"><span class="ncm-tag">Blog</span><h4>Prospección B2B Industrial en Chile 2026</h4></div>
+        </a>
+        <a href="/automatizacion-n8n-chile" class="ncm ncm-nophoto" aria-hidden="true" tabindex="-1">
+          <div class="ncm-body"><span class="ncm-tag">Blog</span><h4>Automatización con n8n y Make</h4></div>
+        </a>
+        <a href="/whatsapp-business-api-chile" class="ncm ncm-nophoto" aria-hidden="true" tabindex="-1">
+          <div class="ncm-body"><span class="ncm-tag">Blog</span><h4>WhatsApp Business API con IA 24/7</h4></div>
+        </a>
+        <a href="/keyword-research-b2b-industrial-chile" class="ncm ncm-nophoto" aria-hidden="true" tabindex="-1">
+          <div class="ncm-body"><span class="ncm-tag">Blog</span><h4>El Keyword Planner subestima al B2B</h4></div>
+        </a>
+
       </div>
     </div>
   </div>
@@ -519,14 +556,14 @@
   </div>
 </section>
 
-<!-- OFERTA JULIO -->
-<section class="oferta-section" id="oferta-julio">
+<!-- OFERTA AGOSTO -->
+<section class="oferta-section" id="oferta-agosto">
   <div class="oferta-glow"></div>
   <div class="container">
 
     <div class="oferta-badge-row">
-      <span class="oferta-fire-badge">OFERTA JULIO</span>
-      <span class="oferta-deadline">Precio bloqueado solo hasta el <strong>31 de julio</strong></span>
+      <span class="oferta-fire-badge">OFERTA AGOSTO</span>
+      <span class="oferta-deadline">Precio bloqueado solo hasta el <strong>31 de agosto</strong></span>
     </div>
 
     <div class="oferta-grid">
@@ -560,7 +597,7 @@
       <!-- RIGHT: price card + timer + CTA -->
       <div class="oferta-right reveal reveal-delay-1">
         <div class="oferta-card">
-          <div class="oferta-card-tag">PRECIO BLOQUEADO HASTA EL 31 JUL</div>
+          <div class="oferta-card-tag">PRECIO BLOQUEADO HASTA EL 31 AGO</div>
 
           <div class="oferta-price-row">
             <span class="oferta-price-old">$290.000<span>/mes</span></span>
@@ -838,7 +875,7 @@
 
 /* Hero card countdown */
 (function () {
-  var end = new Date('2026-07-31T23:59:59-04:00').getTime();
+  var end = new Date('2026-08-31T23:59:59-04:00').getTime();
   var hd = document.getElementById('hoc-d');
   var hh = document.getElementById('hoc-h');
   var hm = document.getElementById('hoc-m');
@@ -869,7 +906,7 @@
     document.body.classList.remove('body-announce');
     sessionStorage.setItem('ann-closed', '1');
   });
-  var end = new Date('2026-07-31T23:59:59-04:00').getTime();
+  var end = new Date('2026-08-31T23:59:59-04:00').getTime();
   function tickAnn() {
     var d = end - Date.now();
     if (d <= 0 || !count) return;
@@ -882,7 +919,7 @@
 
 /* Countdown oferta */
 (function () {
-  var end = new Date('2026-07-31T23:59:59-04:00').getTime();
+  var end = new Date('2026-08-31T23:59:59-04:00').getTime();
   var days = document.getElementById('ot-days');
   var hrs  = document.getElementById('ot-hrs');
   var min  = document.getElementById('ot-min');
