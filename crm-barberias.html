@@ -1,0 +1,475 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex, nofollow">
+<title>CRM Barberías — JPB Marketing</title>
+<style>
+  :root{
+    --primary:#2563eb; --primary-dark:#1d4ed8; --accent:#0ea5e9;
+    --heading:#1e3a5f; --body:#4b5563; --light:#6b7280;
+    --card-bg:#ffffff; --card-border:#e5e7eb; --bg-light:#f8f9fc;
+    --radius:12px; --radius-lg:20px;
+    --ok:#16a34a; --warn:#d97706; --danger:#dc2626;
+  }
+  *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:'Inter',system-ui,-apple-system,sans-serif;background:var(--bg-light);color:var(--body);line-height:1.5;-webkit-font-smoothing:antialiased}
+  h1,h2,h3{color:var(--heading)}
+  button{font-family:inherit;cursor:pointer}
+  input,select,textarea{font-family:inherit;font-size:1rem}
+
+  /* Login */
+  #loginScreen{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:24px}
+  .login-box{background:#fff;border:1px solid var(--card-border);border-radius:var(--radius-lg);padding:32px;max-width:360px;width:100%;box-shadow:0 8px 40px rgba(37,99,235,.12)}
+  .login-box h1{font-size:1.3rem;margin-bottom:6px}
+  .login-box p{font-size:.9rem;color:var(--light);margin-bottom:20px}
+  .login-box input{width:100%;padding:12px 14px;border:1px solid var(--card-border);border-radius:var(--radius);margin-bottom:12px}
+  .login-box button{width:100%;padding:12px;border:none;border-radius:var(--radius);background:linear-gradient(135deg,var(--primary),var(--accent));color:#fff;font-weight:600}
+  #loginError{color:var(--danger);font-size:.85rem;margin-top:8px;display:none}
+
+  /* App */
+  #app{display:none;max-width:1100px;margin:0 auto;padding:20px 16px 80px}
+  header.top{display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;flex-wrap:wrap;gap:10px}
+  header.top h1{font-size:1.4rem}
+  header.top .sub{font-size:.85rem;color:var(--light)}
+  #logoutBtn{background:none;border:1px solid var(--card-border);border-radius:var(--radius);padding:8px 14px;font-size:.85rem;color:var(--body)}
+
+  .cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;margin-bottom:20px}
+  .card{background:#fff;border:1px solid var(--card-border);border-radius:var(--radius);padding:16px}
+  .card .num{font-size:1.7rem;font-weight:700;color:var(--heading)}
+  .card .label{font-size:.78rem;color:var(--light);margin-top:2px}
+  .card .bar{height:6px;background:#eef1f6;border-radius:4px;margin-top:10px;overflow:hidden}
+  .card .bar-fill{height:100%;background:linear-gradient(90deg,var(--primary),var(--accent));border-radius:4px}
+
+  .panel{background:#fff;border:1px solid var(--card-border);border-radius:var(--radius-lg);padding:20px;margin-bottom:20px}
+  .panel h2{font-size:1.05rem;margin-bottom:14px}
+
+  form.add-form{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+  form.add-form .full{grid-column:1/-1}
+  form.add-form label{font-size:.78rem;color:var(--light);display:block;margin-bottom:4px}
+  form.add-form input,form.add-form select,form.add-form textarea{width:100%;padding:10px 12px;border:1px solid var(--card-border);border-radius:var(--radius)}
+  form.add-form textarea{resize:vertical;min-height:56px}
+  form.add-form button{grid-column:1/-1;padding:12px;border:none;border-radius:var(--radius);background:linear-gradient(135deg,var(--primary),var(--accent));color:#fff;font-weight:600}
+  @media(max-width:560px){form.add-form{grid-template-columns:1fr}}
+
+  .filters{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px}
+  .filters button{padding:6px 12px;border-radius:999px;border:1px solid var(--card-border);background:#fff;font-size:.8rem;color:var(--body)}
+  .filters button.active{background:var(--primary);color:#fff;border-color:var(--primary)}
+
+  table{width:100%;border-collapse:collapse}
+  th,td{text-align:left;padding:10px 8px;border-bottom:1px solid var(--card-border);font-size:.88rem;vertical-align:top}
+  th{font-size:.75rem;text-transform:uppercase;color:var(--light);letter-spacing:.03em}
+  tr.row{cursor:pointer}
+  tr.row:hover{background:#f8fafc}
+  .badge{display:inline-block;padding:3px 9px;border-radius:999px;font-size:.72rem;font-weight:600;white-space:nowrap}
+  .b-pendiente{background:#e5e7eb;color:#374151}
+  .b-no_estaba_dueno{background:#fef3c7;color:#92400e}
+  .b-visitada_interesado{background:#dbeafe;color:#1d4ed8}
+  .b-visitada_no_interesado{background:#fee2e2;color:#991b1b}
+  .b-cliente{background:#dcfce7;color:#166534}
+  .b-volver_visitar{background:#ffedd5;color:#9a3412}
+  .notas-preview{color:var(--light);font-size:.8rem;max-width:200px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  #tableEmpty{padding:24px;text-align:center;color:var(--light);font-size:.9rem}
+
+  /* Modal */
+  .modal-overlay{display:none;position:fixed;inset:0;background:rgba(15,23,42,.5);align-items:center;justify-content:center;padding:16px;z-index:50}
+  .modal{background:#fff;border-radius:var(--radius-lg);padding:22px;max-width:420px;width:100%;max-height:90vh;overflow-y:auto}
+  .modal h3{margin-bottom:14px}
+  .modal label{font-size:.78rem;color:var(--light);display:block;margin:10px 0 4px}
+  .modal input,.modal select,.modal textarea{width:100%;padding:10px 12px;border:1px solid var(--card-border);border-radius:var(--radius)}
+  .modal textarea{min-height:80px;resize:vertical}
+  .modal-actions{display:flex;gap:8px;margin-top:16px;flex-wrap:wrap}
+  .modal-actions button{flex:1;padding:11px;border-radius:var(--radius);border:none;font-weight:600;font-size:.88rem}
+  .btn-save{background:linear-gradient(135deg,var(--primary),var(--accent));color:#fff}
+  .btn-cancel{background:#f1f5f9;color:var(--body)}
+  .btn-delete{background:#fef2f2;color:var(--danger);flex-basis:100%}
+
+  canvas{max-width:100%}
+  .loading{text-align:center;padding:30px;color:var(--light)}
+</style>
+</head>
+<body>
+
+<div id="loginScreen">
+  <div class="login-box">
+    <h1>🔒 Seguimiento de Barberías</h1>
+    <p>Acceso privado — JPB Marketing</p>
+    <input type="password" id="pwInput" placeholder="Contraseña" autocomplete="off">
+    <button id="pwSubmit">Entrar</button>
+    <div id="loginError">Contraseña incorrecta.</div>
+  </div>
+</div>
+
+<div id="app">
+  <header class="top">
+    <div>
+      <h1>Seguimiento de Barberías</h1>
+      <div class="sub">Ruta de prospección — meta 50 clientes a fin de 2026</div>
+    </div>
+    <button id="logoutBtn">Cerrar sesión</button>
+  </header>
+
+  <div class="cards" id="statCards"></div>
+
+  <div class="panel">
+    <h2>Visitas por semana</h2>
+    <canvas id="weekChart" height="90"></canvas>
+  </div>
+
+  <div class="panel">
+    <h2>Agregar barbería</h2>
+    <form class="add-form" id="addForm">
+      <div>
+        <label>Nombre *</label>
+        <input type="text" id="f-nombre" required>
+      </div>
+      <div>
+        <label>Comuna</label>
+        <input type="text" id="f-comuna">
+      </div>
+      <div class="full">
+        <label>Dirección</label>
+        <input type="text" id="f-direccion">
+      </div>
+      <div>
+        <label>Teléfono / WhatsApp</label>
+        <input type="text" id="f-telefono">
+      </div>
+      <div>
+        <label>Estado</label>
+        <select id="f-estado">
+          <option value="pendiente">Por visitar</option>
+          <option value="no_estaba_dueno">No estaba el dueño</option>
+          <option value="visitada_interesado">Visitada — Interesado</option>
+          <option value="visitada_no_interesado">Visitada — No interesado</option>
+          <option value="cliente">Cliente</option>
+          <option value="volver_visitar">Volver a visitar</option>
+        </select>
+      </div>
+      <div class="full">
+        <label>Notas</label>
+        <textarea id="f-notas" placeholder="Ej: habló con el barbero, dueño vuelve el jueves..."></textarea>
+      </div>
+      <button type="submit">+ Agregar barbería</button>
+    </form>
+  </div>
+
+  <div class="panel">
+    <h2>Barberías registradas</h2>
+    <div class="filters" id="filters"></div>
+    <div style="overflow-x:auto">
+      <table id="tbl">
+        <thead>
+          <tr><th>Nombre</th><th>Comuna</th><th>Estado</th><th>Notas</th></tr>
+        </thead>
+        <tbody id="tbody"></tbody>
+      </table>
+    </div>
+    <div id="tableEmpty" style="display:none">Aún no hay barberías registradas.</div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="modalOverlay">
+  <div class="modal">
+    <h3>Editar barbería</h3>
+    <input type="hidden" id="m-id">
+    <label>Nombre</label>
+    <input type="text" id="m-nombre">
+    <label>Comuna</label>
+    <input type="text" id="m-comuna">
+    <label>Dirección</label>
+    <input type="text" id="m-direccion">
+    <label>Teléfono / WhatsApp</label>
+    <input type="text" id="m-telefono">
+    <label>Estado</label>
+    <select id="m-estado">
+      <option value="pendiente">Por visitar</option>
+      <option value="no_estaba_dueno">No estaba el dueño</option>
+      <option value="visitada_interesado">Visitada — Interesado</option>
+      <option value="visitada_no_interesado">Visitada — No interesado</option>
+      <option value="cliente">Cliente</option>
+      <option value="volver_visitar">Volver a visitar</option>
+    </select>
+    <label>Fecha de visita</label>
+    <input type="date" id="m-fechaVisita">
+    <label>Notas</label>
+    <textarea id="m-notas"></textarea>
+    <div class="modal-actions">
+      <button class="btn-cancel" id="m-cancel">Cancelar</button>
+      <button class="btn-save" id="m-save">Guardar</button>
+      <button class="btn-delete" id="m-delete">Eliminar barbería</button>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
+<script>
+const ESTADOS = {
+  pendiente: 'Por visitar',
+  no_estaba_dueno: 'No estaba el dueño',
+  visitada_interesado: 'Visitada — Interesado',
+  visitada_no_interesado: 'Visitada — No interesado',
+  cliente: 'Cliente',
+  volver_visitar: 'Volver a visitar',
+};
+const META_SEMANAL = 10;
+const META_ANUAL = 50;
+const LS_KEY = 'barberias_pw';
+
+let items = [];
+let activeFilter = 'todas';
+let weekChart = null;
+
+const $ = (id) => document.getElementById(id);
+
+function api(path, payload) {
+  return fetch('/api/' + path, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(payload),
+  }).then(r => r.json().then(data => ({ ok: r.ok, data })));
+}
+
+function getPassword() { return localStorage.getItem(LS_KEY) || ''; }
+
+async function tryLogin(pw) {
+  const { ok, data } = await api('barberias-list', { password: pw });
+  if (ok && data.ok) {
+    localStorage.setItem(LS_KEY, pw);
+    items = data.items || [];
+    showApp();
+  } else {
+    $('loginError').style.display = 'block';
+  }
+}
+
+function showApp() {
+  $('loginScreen').style.display = 'none';
+  $('app').style.display = 'block';
+  render();
+}
+
+$('pwSubmit').addEventListener('click', () => tryLogin($('pwInput').value));
+$('pwInput').addEventListener('keydown', e => { if (e.key === 'Enter') tryLogin($('pwInput').value); });
+$('logoutBtn').addEventListener('click', () => {
+  localStorage.removeItem(LS_KEY);
+  location.reload();
+});
+
+async function refreshItems() {
+  const { ok, data } = await api('barberias-list', { password: getPassword() });
+  if (!ok || !data.ok) { localStorage.removeItem(LS_KEY); location.reload(); return; }
+  items = data.items || [];
+  render();
+}
+
+function isoWeekKey(dateStr) {
+  if (!dateStr) return null;
+  const d = new Date(dateStr + 'T00:00:00');
+  if (isNaN(d)) return null;
+  const day = (d.getDay() + 6) % 7;
+  d.setDate(d.getDate() - day + 3);
+  const firstThursday = new Date(d.getFullYear(), 0, 4);
+  const week = 1 + Math.round(((d - firstThursday) / 86400000 - 3 + ((firstThursday.getDay() + 6) % 7)) / 7);
+  return d.getFullYear() + '-W' + String(week).padStart(2, '0');
+}
+
+function currentWeekKey() {
+  const today = new Date();
+  const iso = today.toISOString().slice(0, 10);
+  return isoWeekKey(iso);
+}
+
+function visitedStates() {
+  return ['no_estaba_dueno', 'visitada_interesado', 'visitada_no_interesado', 'cliente', 'volver_visitar'];
+}
+
+function renderStats() {
+  const total = items.length;
+  const clientes = items.filter(i => i.estado === 'cliente').length;
+  const wk = currentWeekKey();
+  const visitadasEstaSemana = items.filter(i => i.fechaVisita && visitedStates().includes(i.estado) && isoWeekKey(i.fechaVisita) === wk).length;
+  const pendientes = items.filter(i => i.estado === 'pendiente').length;
+
+  const pctSemana = Math.min(100, Math.round((visitadasEstaSemana / META_SEMANAL) * 100));
+  const pctAnual = Math.min(100, Math.round((clientes / META_ANUAL) * 100));
+
+  $('statCards').innerHTML = `
+    <div class="card">
+      <div class="num">${total}</div>
+      <div class="label">Barberías registradas</div>
+    </div>
+    <div class="card">
+      <div class="num">${visitadasEstaSemana}/${META_SEMANAL}</div>
+      <div class="label">Visitadas esta semana</div>
+      <div class="bar"><div class="bar-fill" style="width:${pctSemana}%"></div></div>
+    </div>
+    <div class="card">
+      <div class="num">${clientes}/${META_ANUAL}</div>
+      <div class="label">Clientes convertidos (meta 2026)</div>
+      <div class="bar"><div class="bar-fill" style="width:${pctAnual}%"></div></div>
+    </div>
+    <div class="card">
+      <div class="num">${pendientes}</div>
+      <div class="label">Pendientes por visitar</div>
+    </div>
+  `;
+}
+
+function renderChart() {
+  const buckets = {};
+  const now = new Date();
+  const keys = [];
+  for (let i = 7; i >= 0; i--) {
+    const d = new Date(now);
+    d.setDate(d.getDate() - i * 7);
+    const k = isoWeekKey(d.toISOString().slice(0, 10));
+    keys.push(k);
+    buckets[k] = 0;
+  }
+  items.forEach(it => {
+    if (it.fechaVisita && visitedStates().includes(it.estado)) {
+      const k = isoWeekKey(it.fechaVisita);
+      if (k in buckets) buckets[k]++;
+    }
+  });
+  const ctx = $('weekChart').getContext('2d');
+  const dataVals = keys.map(k => buckets[k]);
+  if (weekChart) weekChart.destroy();
+  weekChart = new Chart(ctx, {
+    type: 'bar',
+    data: {
+      labels: keys.map(k => k.split('-W')[1] ? 'S' + k.split('-W')[1] : k),
+      datasets: [{
+        label: 'Visitas',
+        data: dataVals,
+        backgroundColor: '#2563eb',
+        borderRadius: 6,
+      }],
+    },
+    options: {
+      responsive: true,
+      plugins: { legend: { display: false } },
+      scales: { y: { beginAtZero: true, ticks: { stepSize: 1 } } },
+    },
+  });
+}
+
+function renderFilters() {
+  const counts = { todas: items.length };
+  Object.keys(ESTADOS).forEach(k => counts[k] = items.filter(i => i.estado === k).length);
+  const opts = [['todas', 'Todas']].concat(Object.entries(ESTADOS));
+  $('filters').innerHTML = opts.map(([key, label]) =>
+    `<button data-f="${key}" class="${activeFilter === key ? 'active' : ''}">${label} (${counts[key] || 0})</button>`
+  ).join('');
+  $('filters').querySelectorAll('button').forEach(btn => {
+    btn.addEventListener('click', () => { activeFilter = btn.dataset.f; render(); });
+  });
+}
+
+function renderTable() {
+  const filtered = activeFilter === 'todas' ? items : items.filter(i => i.estado === activeFilter);
+  const sorted = filtered.slice().sort((a, b) => (b.updatedAt || b.createdAt || '').localeCompare(a.updatedAt || a.createdAt || ''));
+  $('tbody').innerHTML = sorted.map(it => `
+    <tr class="row" data-id="${it.id}">
+      <td><strong>${escapeHtml(it.nombre || '')}</strong>${it.telefono ? '<br><span style="color:var(--light);font-size:.78rem">' + escapeHtml(it.telefono) + '</span>' : ''}</td>
+      <td>${escapeHtml(it.comuna || '')}</td>
+      <td><span class="badge b-${it.estado || 'pendiente'}">${ESTADOS[it.estado] || 'Por visitar'}</span></td>
+      <td class="notas-preview">${escapeHtml(it.notas || '')}</td>
+    </tr>
+  `).join('');
+  $('tableEmpty').style.display = sorted.length ? 'none' : 'block';
+  $('tbody').querySelectorAll('tr.row').forEach(tr => {
+    tr.addEventListener('click', () => openModal(tr.dataset.id));
+  });
+}
+
+function escapeHtml(s) {
+  return String(s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+}
+
+function render() {
+  renderStats();
+  renderChart();
+  renderFilters();
+  renderTable();
+}
+
+$('addForm').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const payload = {
+    password: getPassword(),
+    nombre: $('f-nombre').value.trim(),
+    comuna: $('f-comuna').value.trim(),
+    direccion: $('f-direccion').value.trim(),
+    telefono: $('f-telefono').value.trim(),
+    estado: $('f-estado').value,
+    notas: $('f-notas').value.trim(),
+  };
+  if (!payload.nombre) return;
+  if (payload.estado !== 'pendiente') payload.fechaVisita = new Date().toISOString().slice(0, 10);
+  const { ok, data } = await api('barberias-upsert', payload);
+  if (ok && data.ok) {
+    $('addForm').reset();
+    $('f-estado').value = 'pendiente';
+    await refreshItems();
+  }
+});
+
+function openModal(id) {
+  const it = items.find(i => i.id === id);
+  if (!it) return;
+  $('m-id').value = it.id;
+  $('m-nombre').value = it.nombre || '';
+  $('m-comuna').value = it.comuna || '';
+  $('m-direccion').value = it.direccion || '';
+  $('m-telefono').value = it.telefono || '';
+  $('m-estado').value = it.estado || 'pendiente';
+  $('m-fechaVisita').value = it.fechaVisita || '';
+  $('m-notas').value = it.notas || '';
+  $('modalOverlay').style.display = 'flex';
+}
+
+function closeModal() { $('modalOverlay').style.display = 'none'; }
+$('m-cancel').addEventListener('click', closeModal);
+$('modalOverlay').addEventListener('click', (e) => { if (e.target === $('modalOverlay')) closeModal(); });
+
+$('m-save').addEventListener('click', async () => {
+  const id = $('m-id').value;
+  const nuevoEstado = $('m-estado').value;
+  const original = items.find(i => i.id === id);
+  let fechaVisita = $('m-fechaVisita').value;
+  if (!fechaVisita && nuevoEstado !== 'pendiente' && original && original.estado !== nuevoEstado) {
+    fechaVisita = new Date().toISOString().slice(0, 10);
+  }
+  const payload = {
+    password: getPassword(),
+    id,
+    nombre: $('m-nombre').value.trim(),
+    comuna: $('m-comuna').value.trim(),
+    direccion: $('m-direccion').value.trim(),
+    telefono: $('m-telefono').value.trim(),
+    estado: nuevoEstado,
+    fechaVisita,
+    notas: $('m-notas').value.trim(),
+  };
+  const { ok, data } = await api('barberias-upsert', payload);
+  if (ok && data.ok) { closeModal(); await refreshItems(); }
+});
+
+$('m-delete').addEventListener('click', async () => {
+  const id = $('m-id').value;
+  if (!confirm('¿Eliminar esta barbería del seguimiento?')) return;
+  const { ok, data } = await api('barberias-delete', { password: getPassword(), id });
+  if (ok && data.ok) { closeModal(); await refreshItems(); }
+});
+
+// Init
+(function init() {
+  const pw = getPassword();
+  if (pw) tryLogin(pw);
+})();
+</script>
+</body>
+</html>

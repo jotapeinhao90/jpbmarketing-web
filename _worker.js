@@ -244,6 +244,58 @@ async function addFirestoreDoc(collection, fields, accessToken, projectId) {
   return resp.json();
 }
 
+function fromFirestoreValue(v) {
+  if (!v) return null;
+  if (v.booleanValue !== undefined) return v.booleanValue;
+  if (v.doubleValue !== undefined) return v.doubleValue;
+  if (v.integerValue !== undefined) return Number(v.integerValue);
+  if (v.stringValue !== undefined) return v.stringValue;
+  return null;
+}
+
+function docIdFromName(name) {
+  return name.split('/').pop();
+}
+
+async function listFirestoreDocs(collection, accessToken, projectId) {
+  const resp = await fetch(
+    `https://firestore.googleapis.com/v1/projects/${projectId}/databases/(default)/documents/${collection}?pageSize=300`,
+    { headers: { 'Authorization': 'Bearer ' + accessToken } }
+  );
+  if (!resp.ok) throw new Error('firestore_list_failed: ' + (await resp.text()));
+  const data = await resp.json();
+  const docs = data.documents || [];
+  return docs.map(d => {
+    const obj = { id: docIdFromName(d.name) };
+    for (const [k, v] of Object.entries(d.fields || {})) obj[k] = fromFirestoreValue(v);
+    return obj;
+  });
+}
+
+async function updateFirestoreDoc(collection, id, fields, accessToken, projectId) {
+  const fsFields = {};
+  for (const [k, v] of Object.entries(fields)) fsFields[k] = toFirestoreValue(v);
+  const fieldsParam = Object.keys(fsFields).map(k => 'updateMask.fieldPaths=' + encodeURIComponent(k)).join('&');
+  const resp = await fetch(
+    `https://firestore.googleapis.com/v1/projects/${projectId}/databases/(default)/documents/${collection}/${id}?${fieldsParam}`,
+    {
+      method: 'PATCH',
+      headers: { 'Authorization': 'Bearer ' + accessToken, 'Content-Type': 'application/json' },
+      body: JSON.stringify({ fields: fsFields }),
+    }
+  );
+  if (!resp.ok) throw new Error('firestore_update_failed: ' + (await resp.text()));
+  return resp.json();
+}
+
+async function deleteFirestoreDoc(collection, id, accessToken, projectId) {
+  const resp = await fetch(
+    `https://firestore.googleapis.com/v1/projects/${projectId}/databases/(default)/documents/${collection}/${id}`,
+    { method: 'DELETE', headers: { 'Authorization': 'Bearer ' + accessToken } }
+  );
+  if (!resp.ok) throw new Error('firestore_delete_failed: ' + (await resp.text()));
+}
+
 const AFFILIATE_CODES = ['LINKEDIN60'];
 
 // Upserts a user doc by Firebase UID (called after client-side Firebase Auth succeeds)
@@ -409,6 +461,79 @@ async function handleRecordatoriosAction(request) {
   }
 }
 
+// ──────────────────────────────────────────────────────────
+// CRM privado de prospección de barberías (uso interno JPB)
+// ──────────────────────────────────────────────────────────
+const BARBERIAS_PASSWORD = 'gravity50';
+const BARBERIAS_PROJECT_ID = 'jpb-marketing';
+const BARBERIAS_COLLECTION = 'barberias_prospeccion';
+const BARBERIAS_FIELDS = ['nombre', 'direccion', 'comuna', 'telefono', 'estado', 'notas', 'fechaVisita'];
+
+function corsJson(origin, body, status) {
+  return new Response(JSON.stringify(body), {
+    status: status || 200,
+    headers: { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': origin },
+  });
+}
+
+async function handleBarberiasList(request, env) {
+  const origin = request.headers.get('Origin') || '';
+  if (!ALLOWED_ORIGINS.some(o => origin.startsWith(o))) return new Response('Forbidden', { status: 403 });
+  let body;
+  try { body = await request.json(); } catch (e) { return corsJson(origin, { error: 'bad_json' }, 400); }
+  if ((body.password || '').trim() !== BARBERIAS_PASSWORD) return corsJson(origin, { error: 'invalid_password' }, 401);
+  try {
+    const accessToken = await getGoogleAccessToken(env);
+    const items = await listFirestoreDocs(BARBERIAS_COLLECTION, accessToken, BARBERIAS_PROJECT_ID);
+    return corsJson(origin, { ok: true, items });
+  } catch (e) {
+    return corsJson(origin, { error: 'internal_error', detail: e.message }, 500);
+  }
+}
+
+async function handleBarberiasUpsert(request, env) {
+  const origin = request.headers.get('Origin') || '';
+  if (!ALLOWED_ORIGINS.some(o => origin.startsWith(o))) return new Response('Forbidden', { status: 403 });
+  let body;
+  try { body = await request.json(); } catch (e) { return corsJson(origin, { error: 'bad_json' }, 400); }
+  if ((body.password || '').trim() !== BARBERIAS_PASSWORD) return corsJson(origin, { error: 'invalid_password' }, 401);
+
+  const fields = {};
+  for (const k of BARBERIAS_FIELDS) if (body[k] !== undefined) fields[k] = body[k];
+  if (!body.id && !(fields.nombre || '').trim()) return corsJson(origin, { error: 'missing_fields' }, 400);
+
+  try {
+    const accessToken = await getGoogleAccessToken(env);
+    if (body.id) {
+      fields.updatedAt = new Date().toISOString();
+      await updateFirestoreDoc(BARBERIAS_COLLECTION, body.id, fields, accessToken, BARBERIAS_PROJECT_ID);
+      return corsJson(origin, { ok: true, id: body.id });
+    }
+    if (!fields.estado) fields.estado = 'pendiente';
+    fields.createdAt = new Date().toISOString();
+    const result = await addFirestoreDoc(BARBERIAS_COLLECTION, fields, accessToken, BARBERIAS_PROJECT_ID);
+    return corsJson(origin, { ok: true, id: docIdFromName(result.name) });
+  } catch (e) {
+    return corsJson(origin, { error: 'internal_error', detail: e.message }, 500);
+  }
+}
+
+async function handleBarberiasDelete(request, env) {
+  const origin = request.headers.get('Origin') || '';
+  if (!ALLOWED_ORIGINS.some(o => origin.startsWith(o))) return new Response('Forbidden', { status: 403 });
+  let body;
+  try { body = await request.json(); } catch (e) { return corsJson(origin, { error: 'bad_json' }, 400); }
+  if ((body.password || '').trim() !== BARBERIAS_PASSWORD) return corsJson(origin, { error: 'invalid_password' }, 401);
+  if (!body.id) return corsJson(origin, { error: 'missing_id' }, 400);
+  try {
+    const accessToken = await getGoogleAccessToken(env);
+    await deleteFirestoreDoc(BARBERIAS_COLLECTION, body.id, accessToken, BARBERIAS_PROJECT_ID);
+    return corsJson(origin, { ok: true });
+  } catch (e) {
+    return corsJson(origin, { error: 'internal_error', detail: e.message }, 500);
+  }
+}
+
 async function handleFlowWebhook(request, env) {
   let token;
   try {
@@ -470,6 +595,15 @@ export default {
     }
     if (url.pathname === '/api/recordatorios-action' && request.method === 'POST') {
       return handleRecordatoriosAction(request);
+    }
+    if (url.pathname === '/api/barberias-list' && request.method === 'POST') {
+      return handleBarberiasList(request, env);
+    }
+    if (url.pathname === '/api/barberias-upsert' && request.method === 'POST') {
+      return handleBarberiasUpsert(request, env);
+    }
+    if (url.pathname === '/api/barberias-delete' && request.method === 'POST') {
+      return handleBarberiasDelete(request, env);
     }
     return env.ASSETS.fetch(request);
   },

@@ -1,5 +1,7 @@
 User-agent: *
 Allow: /
 Disallow: /gracias.html
+Disallow: /crm-barberias.html
+Disallow: /crm-barberias
 
 Sitemap: https://jpbmarketing.cl/sitemap.xml
