@@ -467,7 +467,7 @@ async function handleRecordatoriosAction(request) {
 const BARBERIAS_PASSWORD = 'gravity50';
 const BARBERIAS_PROJECT_ID = 'jpb-marketing';
 const BARBERIAS_COLLECTION = 'barberias_prospeccion';
-const BARBERIAS_FIELDS = ['nombre', 'direccion', 'comuna', 'telefono', 'estado', 'notas', 'fechaVisita'];
+const BARBERIAS_FIELDS = ['nombre', 'direccion', 'comuna', 'telefono', 'estado', 'notas', 'fechaVisita', 'rating', 'resenas', 'servicios', 'fuente'];
 
 function corsJson(origin, body, status) {
   return new Response(JSON.stringify(body), {

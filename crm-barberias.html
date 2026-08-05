@@ -53,9 +53,13 @@
   form.add-form button{grid-column:1/-1;padding:12px;border:none;border-radius:var(--radius);background:linear-gradient(135deg,var(--primary),var(--accent));color:#fff;font-weight:600}
   @media(max-width:560px){form.add-form{grid-template-columns:1fr}}
 
-  .filters{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px}
+  .filters{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:10px}
   .filters button{padding:6px 12px;border-radius:999px;border:1px solid var(--card-border);background:#fff;font-size:.8rem;color:var(--body)}
   .filters button.active{background:var(--primary);color:#fff;border-color:var(--primary)}
+  .filter-row{display:flex;align-items:center;gap:10px;margin-bottom:10px;flex-wrap:wrap}
+  .filter-row select{padding:7px 10px;border:1px solid var(--card-border);border-radius:var(--radius);font-size:.82rem;color:var(--body);background:#fff}
+  .rating-chip{font-size:.78rem;color:var(--light);white-space:nowrap}
+  .servicios-preview{color:var(--light);font-size:.78rem}
 
   table{width:100%;border-collapse:collapse}
   th,td{text-align:left;padding:10px 8px;border-bottom:1px solid var(--card-border);font-size:.88rem;vertical-align:top}
@@ -147,6 +151,18 @@
           <option value="volver_visitar">Volver a visitar</option>
         </select>
       </div>
+      <div>
+        <label>Rating (Google/AgendaPro)</label>
+        <input type="text" id="f-rating" placeholder="Ej: 4.9">
+      </div>
+      <div>
+        <label>N° de reseñas</label>
+        <input type="text" id="f-resenas" placeholder="Ej: 83">
+      </div>
+      <div class="full">
+        <label>Servicios</label>
+        <input type="text" id="f-servicios" placeholder="Ej: Corte, corte+barba, cejas">
+      </div>
       <div class="full">
         <label>Notas</label>
         <textarea id="f-notas" placeholder="Ej: habló con el barbero, dueño vuelve el jueves..."></textarea>
@@ -157,11 +173,15 @@
 
   <div class="panel">
     <h2>Barberías registradas</h2>
+    <div class="filter-row">
+      <label style="font-size:.8rem;color:var(--light)">Comuna:</label>
+      <select id="comunaFilter"><option value="todas">Todas las comunas</option></select>
+    </div>
     <div class="filters" id="filters"></div>
     <div style="overflow-x:auto">
       <table id="tbl">
         <thead>
-          <tr><th>Nombre</th><th>Comuna</th><th>Estado</th><th>Notas</th></tr>
+          <tr><th>Nombre</th><th>Comuna</th><th>Rating</th><th>Estado</th><th>Notas</th></tr>
         </thead>
         <tbody id="tbody"></tbody>
       </table>
@@ -193,6 +213,12 @@
     </select>
     <label>Fecha de visita</label>
     <input type="date" id="m-fechaVisita">
+    <label>Rating (Google/AgendaPro)</label>
+    <input type="text" id="m-rating">
+    <label>N° de reseñas</label>
+    <input type="text" id="m-resenas">
+    <label>Servicios</label>
+    <input type="text" id="m-servicios">
     <label>Notas</label>
     <textarea id="m-notas"></textarea>
     <div class="modal-actions">
@@ -219,6 +245,7 @@ const LS_KEY = 'barberias_pw';
 
 let items = [];
 let activeFilter = 'todas';
+let activeComuna = 'todas';
 let weekChart = null;
 
 const $ = (id) => document.getElementById(id);
@@ -368,13 +395,30 @@ function renderFilters() {
   });
 }
 
+function renderComunaFilter() {
+  const comunas = Array.from(new Set(items.map(i => (i.comuna || '').trim()).filter(Boolean))).sort();
+  const sel = $('comunaFilter');
+  const prev = activeComuna;
+  sel.innerHTML = '<option value="todas">Todas las comunas</option>' +
+    comunas.map(c => `<option value="${escapeHtml(c)}">${escapeHtml(c)} (${items.filter(i => i.comuna === c).length})</option>`).join('');
+  sel.value = comunas.includes(prev) || prev === 'todas' ? prev : 'todas';
+  activeComuna = sel.value;
+}
+
 function renderTable() {
-  const filtered = activeFilter === 'todas' ? items : items.filter(i => i.estado === activeFilter);
+  let filtered = activeFilter === 'todas' ? items : items.filter(i => i.estado === activeFilter);
+  if (activeComuna !== 'todas') filtered = filtered.filter(i => i.comuna === activeComuna);
   const sorted = filtered.slice().sort((a, b) => (b.updatedAt || b.createdAt || '').localeCompare(a.updatedAt || a.createdAt || ''));
   $('tbody').innerHTML = sorted.map(it => `
     <tr class="row" data-id="${it.id}">
-      <td><strong>${escapeHtml(it.nombre || '')}</strong>${it.telefono ? '<br><span style="color:var(--light);font-size:.78rem">' + escapeHtml(it.telefono) + '</span>' : ''}</td>
+      <td>
+        <strong>${escapeHtml(it.nombre || '')}</strong>
+        ${it.direccion ? '<br><span style="color:var(--light);font-size:.78rem">' + escapeHtml(it.direccion) + '</span>' : ''}
+        ${it.telefono ? '<br><span style="color:var(--light);font-size:.78rem">' + escapeHtml(it.telefono) + '</span>' : ''}
+        ${it.servicios ? '<br><span class="servicios-preview">' + escapeHtml(it.servicios) + '</span>' : ''}
+      </td>
       <td>${escapeHtml(it.comuna || '')}</td>
+      <td class="rating-chip">${it.rating ? '⭐ ' + escapeHtml(String(it.rating)) + (it.resenas ? ' (' + escapeHtml(String(it.resenas)) + ')' : '') : 'N/D'}</td>
       <td><span class="badge b-${it.estado || 'pendiente'}">${ESTADOS[it.estado] || 'Por visitar'}</span></td>
       <td class="notas-preview">${escapeHtml(it.notas || '')}</td>
     </tr>
@@ -385,6 +429,8 @@ function renderTable() {
   });
 }
 
+$('comunaFilter').addEventListener('change', () => { activeComuna = $('comunaFilter').value; renderTable(); });
+
 function escapeHtml(s) {
   return String(s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 }
@@ -393,6 +439,7 @@ function render() {
   renderStats();
   renderChart();
   renderFilters();
+  renderComunaFilter();
   renderTable();
 }
 
@@ -405,6 +452,9 @@ $('addForm').addEventListener('submit', async (e) => {
     direccion: $('f-direccion').value.trim(),
     telefono: $('f-telefono').value.trim(),
     estado: $('f-estado').value,
+    rating: $('f-rating').value.trim(),
+    resenas: $('f-resenas').value.trim(),
+    servicios: $('f-servicios').value.trim(),
     notas: $('f-notas').value.trim(),
   };
   if (!payload.nombre) return;
@@ -427,6 +477,9 @@ function openModal(id) {
   $('m-telefono').value = it.telefono || '';
   $('m-estado').value = it.estado || 'pendiente';
   $('m-fechaVisita').value = it.fechaVisita || '';
+  $('m-rating').value = it.rating || '';
+  $('m-resenas').value = it.resenas || '';
+  $('m-servicios').value = it.servicios || '';
   $('m-notas').value = it.notas || '';
   $('modalOverlay').style.display = 'flex';
 }
@@ -452,6 +505,9 @@ $('m-save').addEventListener('click', async () => {
     telefono: $('m-telefono').value.trim(),
     estado: nuevoEstado,
     fechaVisita,
+    rating: $('m-rating').value.trim(),
+    resenas: $('m-resenas').value.trim(),
+    servicios: $('m-servicios').value.trim(),
     notas: $('m-notas').value.trim(),
   };
   const { ok, data } = await api('barberias-upsert', payload);
