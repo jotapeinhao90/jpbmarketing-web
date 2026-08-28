@@ -1,0 +1,809 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, maximum-scale=1.0, user-scalable=no">
+<title>Panel JPB — Demo interactiva</title>
+<meta name="robots" content="noindex, nofollow">
+<meta name="theme-color" content="#16324f">
+<style>
+  :root {
+    --navy: #16324f;
+    --navy-2: #21496f;
+    --orange: #ec7a33;
+    --orange-dark: #d1621f;
+    --bg: #f3f5f8;
+    --card: #ffffff;
+    --border: #e7eaf0;
+    --text: #161a1f;
+    --text2: #68727e;
+    --success-bg: #e5f6ec; --success-fg: #17874a;
+    --danger-bg: #fdeaea; --danger-fg: #c23c34;
+    --r-sm: 10px; --r-md: 14px; --r-lg: 20px;
+    --shadow-sm: 0 1px 2px rgba(16,24,32,.06), 0 1px 1px rgba(16,24,32,.04);
+    --header-h: 90px;
+    --nav-h: 58px;
+  }
+  * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+  html, body { height: 100%; }
+  body {
+    margin: 0; background: var(--bg); color: var(--text);
+    font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Helvetica Neue", Arial, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    overscroll-behavior-y: none;
+    overflow: hidden;
+  }
+  button { cursor: pointer; border: none; font-weight: 700; font-family: inherit; }
+
+  .btn {
+    display: inline-flex; align-items: center; justify-content: center; gap: 6px;
+    border-radius: 999px; padding: 12px 20px; font-size: 14px; min-height: 44px;
+  }
+  .btn-outline { background: #fff; border: 1px solid var(--border); color: var(--navy); }
+  .btn-block { width: 100%; }
+
+  .icon-btn {
+    width: 34px; height: 34px; border-radius: 50%; background: rgba(255,255,255,0.14); color: #fff;
+    display: flex; align-items: center; justify-content: center; font-size: 15px; flex-shrink: 0;
+  }
+
+  /* ---- App shell ---- */
+  .app { position: relative; height: 100%; display: flex; flex-direction: column; }
+
+  .topbar {
+    position: relative; z-index: 20; flex-shrink: 0;
+    background: linear-gradient(155deg, var(--navy), var(--navy-2));
+    padding: 44px 14px 10px;
+    min-height: var(--header-h);
+    display: flex; align-items: center; justify-content: space-between; gap: 10px;
+  }
+  .client-pill {
+    display: flex; align-items: center; gap: 9px; background: rgba(255,255,255,0.1);
+    border-radius: 999px; padding: 5px 12px 5px 5px; color: #fff; min-height: 36px;
+  }
+  .client-avatar {
+    width: 27px; height: 27px; border-radius: 50%; background: var(--orange); color: #fff;
+    display: flex; align-items: center; justify-content: center; font-size: 11.5px; font-weight: 800; flex-shrink: 0;
+  }
+  .client-info { display: flex; flex-direction: column; align-items: flex-start; min-width: 0; }
+  .client-label { font-size: 9px; text-transform: uppercase; letter-spacing: .5px; color: rgba(255,255,255,0.55); line-height: 1.25; }
+  .client-name { font-size: 13px; font-weight: 700; line-height: 1.25; white-space: nowrap; }
+  .demo-tag {
+    font-size: 9px; font-weight: 800; letter-spacing: .4px; color: #fff; background: var(--orange);
+    padding: 4px 9px; border-radius: 999px; flex-shrink: 0;
+  }
+
+  #cliente-content { flex: 1; min-height: 0; display: flex; flex-direction: column; }
+  .content { flex: 1; min-height: 0; overflow-y: auto; -webkit-overflow-scrolling: touch; max-width: 720px; width: 100%; margin: 0 auto; padding: 14px 12px calc(var(--nav-h) + 14px); }
+  .view { display: none; }
+  .view.active { display: block; height: 100%; }
+
+  .bottom-nav {
+    position: relative; z-index: 20; flex-shrink: 0;
+    display: flex; background: #fff; border-top: 1px solid var(--border);
+    box-shadow: 0 -2px 12px rgba(16,24,32,.05);
+  }
+  .nav-btn {
+    flex: 1; background: none; display: flex; flex-direction: column; align-items: center; gap: 2px;
+    padding: 8px 0 10px; color: var(--text2); font-size: 9.5px; font-weight: 700;
+  }
+  .nav-btn .nav-icon { font-size: 18px; }
+  .nav-btn.active { color: var(--orange); }
+
+  /* ---- Stats ---- */
+  .stats { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 12px; }
+  .stat {
+    background: var(--card); border: 1px solid var(--border); border-radius: var(--r-md);
+    padding: 10px 11px; display: flex; align-items: center; gap: 9px; box-shadow: var(--shadow-sm);
+  }
+  .stat-icon {
+    width: 30px; height: 30px; border-radius: 9px; background: #f0f3f7; flex-shrink: 0;
+    display: flex; align-items: center; justify-content: center; font-size: 14px;
+  }
+  .stat-body { min-width: 0; }
+  .stat .label { font-size: 9.5px; text-transform: uppercase; letter-spacing: .3px; color: var(--text2); margin-bottom: 1px; }
+  .stat .value { font-size: 14.5px; font-weight: 800; color: var(--navy); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .stat .value.orange { color: var(--orange-dark); }
+
+  .panel { background: var(--card); border: 1px solid var(--border); border-radius: var(--r-md); overflow: hidden; box-shadow: var(--shadow-sm); }
+  .panel-title {
+    padding: 11px 14px; font-size: 11px; font-weight: 800; color: var(--navy);
+    text-transform: uppercase; letter-spacing: .3px; border-bottom: 1px solid var(--border);
+    display: flex; justify-content: space-between; align-items: center;
+  }
+
+  /* ---- Inbox ---- */
+  .inbox-list { background: var(--card); border: 1px solid var(--border); border-radius: var(--r-md); overflow: hidden; box-shadow: var(--shadow-sm); }
+  .inbox-item { display: flex; gap: 10px; padding: 11px 12px; border-bottom: 1px solid var(--border); }
+  .inbox-item:last-child { border-bottom: none; }
+  .inbox-item:active { background: #f6f7f9; }
+  .inbox-item.selected { background: #fdf1e8; }
+  .inbox-avatar {
+    width: 34px; height: 34px; border-radius: 50%; background: var(--navy); color: #fff;
+    display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 800; flex-shrink: 0;
+  }
+  .inbox-item-body { min-width: 0; flex: 1; }
+  .inbox-item-top { display: flex; justify-content: space-between; gap: 6px; }
+  .inbox-item-name { font-weight: 700; font-size: 13px; color: var(--navy); }
+  .inbox-item-time { font-size: 10px; color: var(--text2); white-space: nowrap; }
+  .inbox-item-preview { font-size: 11.5px; color: var(--text2); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; margin-top: 2px; }
+  .inbox-item-badges { display: flex; gap: 5px; margin-top: 5px; }
+  .badge { display: inline-block; font-size: 9px; font-weight: 800; padding: 2px 7px; border-radius: 999px; text-transform: uppercase; letter-spacing: .2px; }
+  .badge.pausado { background: var(--danger-bg); color: var(--danger-fg); }
+  .badge.activo { background: var(--success-bg); color: var(--success-fg); }
+
+  .inbox-chat {
+    display: none; flex-direction: column; background: var(--bg);
+    position: fixed; left: 0; right: 0; top: var(--header-h); bottom: var(--nav-h); z-index: 15;
+  }
+  .inbox.chat-open .inbox-list { display: none; }
+  .inbox.chat-open .inbox-chat { display: flex; }
+  .back-btn {
+    width: 30px; height: 30px; border-radius: 50%; background: #f0f3f7; color: var(--navy);
+    display: flex; align-items: center; justify-content: center; font-size: 19px; font-weight: 800; flex-shrink: 0;
+  }
+  .inbox-chat-head {
+    padding: 10px 12px; background: var(--card); border-bottom: 1px solid var(--border);
+    display: flex; align-items: center; gap: 9px;
+  }
+  .inbox-chat-head .num { font-weight: 800; color: var(--navy); font-size: 13.5px; flex: 1; }
+  .inbox-reanudar { background: #eef1f6; color: var(--navy); padding: 6px 12px; font-size: 10.5px; border-radius: 999px; }
+  .inbox-chat-body { flex: 1; overflow-y: auto; padding: 14px; display: flex; flex-direction: column; gap: 8px; -webkit-overflow-scrolling: touch; }
+  .bubble { max-width: 82%; padding: 8px 12px; border-radius: 15px; font-size: 13px; line-height: 1.4; white-space: pre-wrap; box-shadow: var(--shadow-sm); }
+  .bubble.cliente { align-self: flex-start; background: #fff; border-bottom-left-radius: 4px; }
+  .bubble.bot { align-self: flex-end; background: var(--navy); color: #fff; border-bottom-right-radius: 4px; }
+  .inbox-input-row { display: flex; gap: 7px; padding: 9px 11px; background: var(--card); border-top: 1px solid var(--border); }
+  .inbox-input-row input {
+    flex: 1; border-radius: 999px; font-size: 13.5px; border: 1px solid var(--border);
+    padding: 10px 13px; background: #fff; color: var(--text);
+  }
+  .send-btn {
+    width: 38px; height: 38px; border-radius: 50%; background: var(--orange); color: #fff; font-size: 15px;
+    display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+  }
+
+  /* ---- Pipeline ---- */
+  .pipeline-updated { font-size: 10.5px; color: var(--text2); text-align: center; margin-bottom: 12px; }
+  .pipeline-section { margin-bottom: 16px; }
+  .pipeline-section-title {
+    display: flex; align-items: center; gap: 6px; font-size: 11px; font-weight: 800; color: var(--navy);
+    text-transform: uppercase; letter-spacing: .3px; margin-bottom: 8px; padding: 0 2px;
+  }
+  .pipeline-section-count {
+    background: #eef1f6; color: var(--text2); font-size: 9.5px; font-weight: 800;
+    border-radius: 999px; padding: 1px 7px;
+  }
+  .pipeline-cards { display: flex; flex-direction: column; gap: 7px; }
+  .pipeline-card {
+    background: var(--card); border: 1px solid var(--border); border-left: 4px solid var(--border);
+    border-radius: var(--r-sm); padding: 10px 12px; box-shadow: var(--shadow-sm); display: flex; gap: 10px; align-items: center;
+  }
+  .pipeline-card.urgente { border-left-color: var(--danger-fg); }
+  .pipeline-card.tibio { border-left-color: var(--orange); }
+  .pipeline-card.frio { border-left-color: #c7ccd4; }
+  .pipeline-card.ganado { border-left-color: var(--success-fg); }
+  .pipeline-card-avatar {
+    width: 32px; height: 32px; border-radius: 50%; background: var(--navy); color: #fff; flex-shrink: 0;
+    display: flex; align-items: center; justify-content: center; font-size: 10px; font-weight: 800;
+  }
+  .pipeline-card-body { min-width: 0; flex: 1; }
+  .pipeline-card-top { display: flex; justify-content: space-between; gap: 6px; }
+  .pipeline-card-tel { font-weight: 700; font-size: 12.5px; color: var(--navy); }
+  .pipeline-card-time { font-size: 10px; color: var(--text2); white-space: nowrap; }
+  .pipeline-card-resumen { font-size: 11.5px; color: var(--text2); margin-top: 2px; overflow: hidden; text-overflow: ellipsis; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; }
+
+  /* ---- Gráfico ---- */
+  .chart-wrap { padding: 14px 12px 10px; }
+  .chart-bars { display: flex; align-items: flex-end; gap: 3px; height: 90px; }
+  .chart-bar { flex: 1; background: var(--orange); border-radius: 3px 3px 0 0; min-width: 3px; min-height: 3px; }
+  .chart-labels { display: flex; justify-content: space-between; font-size: 9.5px; color: var(--text2); margin-top: 7px; }
+
+  /* ---- Calendario ---- */
+  .calendar-wrap { padding: 12px; }
+  .calendar-month-label { text-align: center; font-size: 11.5px; font-weight: 800; color: var(--navy); margin-bottom: 9px; text-transform: capitalize; }
+  .calendar-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 3px; }
+  .calendar-dow { font-size: 8.5px; color: var(--text2); text-align: center; font-weight: 800; text-transform: uppercase; padding-bottom: 2px; }
+  .calendar-day {
+    aspect-ratio: 1; border-radius: 7px; display: flex; align-items: center; justify-content: center;
+    font-size: 10.5px; font-weight: 700; color: var(--navy); background: #f3f5f8;
+  }
+  .calendar-day.empty { visibility: hidden; }
+  .calendar-day.has-data { cursor: pointer; }
+  .calendar-day.selected { box-shadow: inset 0 0 0 2px var(--navy); }
+  .calendar-detail { padding: 0 14px 14px; font-size: 11px; color: var(--text2); text-align: center; min-height: 14px; }
+
+  /* ---- Campañas ---- */
+  .campaign-list { display: flex; flex-direction: column; }
+  .campaign-card { border-bottom: 1px solid var(--border); }
+  .campaign-card:last-child { border-bottom: none; }
+  .campaign-head { padding: 11px 14px; display: flex; align-items: center; gap: 9px; }
+  .campaign-head:active { background: #fafbfd; }
+  .campaign-head-body { flex: 1; min-width: 0; }
+  .campaign-name { font-weight: 700; font-size: 12.5px; color: var(--navy); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .campaign-meta { display: flex; gap: 6px; align-items: center; margin-top: 4px; }
+  .campaign-meta-clicks { font-size: 10px; color: var(--text2); }
+  .campaign-budget-bar { height: 4px; border-radius: 3px; background: #eef1f6; margin-top: 7px; overflow: hidden; }
+  .campaign-budget-fill { height: 100%; background: var(--orange); border-radius: 3px; }
+  .campaign-gasto { font-weight: 800; font-size: 13px; color: var(--navy); white-space: nowrap; }
+  .campaign-chevron { color: var(--text2); transition: transform .15s ease; flex-shrink: 0; }
+  .campaign-card.open .campaign-chevron { transform: rotate(180deg); }
+  .campaign-detail { display: none; padding: 0 14px 14px; }
+  .campaign-card.open .campaign-detail { display: block; }
+  .campaign-detail-stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 7px; margin-bottom: 10px; }
+  .campaign-detail-stat { background: #fafbfd; border: 1px solid var(--border); border-radius: 8px; padding: 8px 3px; text-align: center; }
+  .campaign-detail-stat .v { font-weight: 800; color: var(--navy); font-size: 11.5px; }
+  .campaign-detail-stat .l { font-size: 8.5px; color: var(--text2); text-transform: uppercase; margin-top: 2px; letter-spacing: .2px; }
+
+  /* ---- Clientes ---- */
+  .client-roster { display: flex; flex-direction: column; gap: 7px; }
+  .client-roster-card {
+    background: var(--card); border: 1px solid var(--border); border-radius: var(--r-sm);
+    padding: 11px 13px; box-shadow: var(--shadow-sm); display: flex; gap: 11px; align-items: center;
+  }
+  .client-roster-avatar {
+    width: 34px; height: 34px; border-radius: 50%; background: var(--navy); color: #fff; flex-shrink: 0;
+    display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 800;
+  }
+  .client-roster-body { min-width: 0; flex: 1; }
+  .client-roster-name { font-weight: 700; font-size: 12.5px; color: var(--navy); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .client-roster-meta { font-size: 10.5px; color: var(--text2); margin-top: 2px; }
+  .client-roster-tags { display: flex; gap: 5px; margin-top: 5px; }
+  .tag { font-size: 9px; font-weight: 700; padding: 2px 6px; border-radius: 999px; text-transform: uppercase; letter-spacing: .2px; }
+  .tag.on { background: var(--success-bg); color: var(--success-fg); }
+  .client-roster-total { text-align: right; flex-shrink: 0; }
+  .client-roster-total .v { font-weight: 800; font-size: 13px; color: var(--orange-dark); white-space: nowrap; }
+  .client-roster-total .v.sin { color: var(--text2); font-weight: 600; font-size: 11px; }
+  .client-roster-total .n { font-size: 9px; color: var(--text2); margin-top: 2px; }
+
+  .toast {
+    position: fixed; left: 50%; bottom: calc(var(--nav-h) + 14px); transform: translateX(-50%) translateY(20px);
+    background: rgba(22,50,79,0.96); color: #fff; font-size: 11.5px; font-weight: 600;
+    padding: 9px 16px; border-radius: 999px; z-index: 40; opacity: 0; pointer-events: none;
+    transition: opacity .2s ease, transform .2s ease; white-space: nowrap; box-shadow: 0 6px 18px rgba(0,0,0,.25);
+  }
+  .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+</style>
+</head>
+<body>
+
+<div class="app">
+  <header class="topbar">
+    <div class="client-pill">
+      <span class="client-avatar">AS</span>
+      <span class="client-info">
+        <span class="client-label">Cliente</span>
+        <span class="client-name">Aceros del Sur</span>
+      </span>
+    </div>
+    <div style="display:flex;align-items:center;gap:8px;">
+      <button class="icon-btn" id="btn-bell" aria-label="Notificaciones">🔔</button>
+      <span class="demo-tag">DEMO</span>
+    </div>
+  </header>
+
+  <div id="cliente-content">
+    <main class="content">
+      <div class="view active" id="view-chats">
+        <div class="inbox" id="chats-inbox">
+          <div class="inbox-list" id="inbox-list"></div>
+          <div class="inbox-chat" id="inbox-chat">
+            <div class="inbox-chat-head">
+              <button class="back-btn" id="btn-volver-chats" aria-label="Volver">‹</button>
+              <span class="num" id="inbox-chat-telefono"></span>
+              <button class="inbox-reanudar" id="chat-reanudar" style="display:none;">▶ Reactivar</button>
+            </div>
+            <div class="inbox-chat-body" id="chat-body"></div>
+            <div class="inbox-input-row">
+              <input type="text" id="chat-input" placeholder="Escribe una respuesta...">
+              <button class="send-btn" id="chat-send" aria-label="Enviar">➤</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="view" id="view-pipeline">
+        <div class="pipeline-updated" id="pipeline-updated"></div>
+        <button class="btn btn-outline btn-block" id="btn-ejecutar-pipeline" style="margin-bottom:14px;">🔄 Actualizar ahora</button>
+        <div id="pipeline-content"></div>
+      </div>
+
+      <div class="view" id="view-clientes">
+        <div class="pipeline-updated" id="clientes-updated"></div>
+        <button class="btn btn-outline btn-block" id="btn-sincronizar-clientes" style="margin-bottom:14px;">🔄 Actualizar ahora</button>
+        <div class="stats" id="clientes-stats"></div>
+        <div class="client-roster" id="clientes-content"></div>
+      </div>
+
+      <div class="view" id="view-ads">
+        <div class="pipeline-updated" id="ads-updated"></div>
+        <div class="stats" id="ads-stats"></div>
+        <div class="panel" style="margin-bottom:14px;">
+          <div class="panel-title"><span>Gasto diario</span></div>
+          <div class="chart-wrap" id="ads-chart"></div>
+        </div>
+        <div class="panel" style="margin-bottom:14px;">
+          <div class="panel-title"><span>Calendario</span></div>
+          <div class="calendar-wrap" id="ads-calendar"></div>
+          <div class="calendar-detail" id="ads-calendar-detail">Toca un día para ver el detalle.</div>
+        </div>
+        <div class="panel">
+          <div class="panel-title">
+            <span>Campañas</span>
+            <button class="btn btn-outline" style="padding:5px 12px;min-height:26px;font-size:10.5px;" id="btn-sincronizar-ads">🔄 Sincronizar</button>
+          </div>
+          <div class="campaign-list" id="ads-campanas"></div>
+        </div>
+      </div>
+    </main>
+
+    <nav class="bottom-nav">
+      <button class="nav-btn active" data-view="chats"><span class="nav-icon">💬</span><span>WhatsApp</span></button>
+      <button class="nav-btn" data-view="pipeline"><span class="nav-icon">🗂️</span><span>Pipeline</span></button>
+      <button class="nav-btn" data-view="clientes"><span class="nav-icon">👥</span><span>Clientes</span></button>
+      <button class="nav-btn" data-view="ads"><span class="nav-icon">📈</span><span>Ads</span></button>
+    </nav>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+function clp(n) {
+  if (n === null || n === undefined) return '—';
+  return '$' + Math.round(n).toLocaleString('es-CL');
+}
+function iniciales(nombre) {
+  return (nombre || '?').trim().slice(0, 2).toUpperCase();
+}
+function tiempoRelativo(ts) {
+  if (!ts) return '';
+  const diffMin = Math.round((Date.now() - ts) / 60000);
+  if (diffMin < 1) return 'ahora';
+  if (diffMin < 60) return `hace ${diffMin} min`;
+  const diffH = Math.round(diffMin / 60);
+  if (diffH < 24) return `hace ${diffH} h`;
+  return `hace ${Math.round(diffH / 24)} d`;
+}
+let toastTimer = null;
+function toast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => t.classList.remove('show'), 2200);
+}
+
+const now = Date.now();
+const MIN = 60000, H = 3600000, D = 86400000;
+
+// ---- Datos de ejemplo: "Aceros del Sur" (distribuidor de acero industrial) ----
+const MENSAJES = {
+  '+56 9 1234 5678': [
+    { rol: 'cliente', texto: 'Hola, necesito cotizar 50 planchas de acero galvanizado de 4x8.' },
+    { rol: 'bot', texto: '¡Hola! Con gusto. ¿En qué espesor las necesitas y para qué comuna sería el despacho?' },
+    { rol: 'cliente', texto: 'Espesor 4mm, despacho a Rancagua.' },
+    { rol: 'bot', texto: 'Perfecto, te preparo la cotización con despacho incluido y te la envío por este mismo medio en unos minutos.' },
+    { rol: 'cliente', texto: '¿Cuándo llega la cotización de las planchas?' },
+  ],
+  '+56 9 4567 8901': [
+    { rol: 'cliente', texto: 'Necesitamos 200 tubos estructurales cuadrados de 50x50.' },
+    { rol: 'bot', texto: 'Claro. ¿Tienes el largo requerido y la comuna de despacho para calcular el flete?' },
+    { rol: 'cliente', texto: '6 metros cada uno, despacho a Puente Alto.' },
+    { rol: 'cliente', texto: 'Perfecto, quedo atento a la OC entonces' },
+  ],
+  '+56 9 7890 1234': [
+    { rol: 'cliente', texto: 'Confirmamos la compra de 80 planchas + despacho a Rancagua.' },
+    { rol: 'bot', texto: '¡Excelente! Te dejo los datos bancarios para la transferencia y coordinamos el despacho.' },
+    { rol: 'cliente', texto: 'Gracias! Ya hicimos la transferencia' },
+  ],
+  '+56 9 5678 9012': [
+    { rol: 'cliente', texto: '¿Tienen stock de planchas antideslizantes?' },
+    { rol: 'bot', texto: 'Por el momento no tenemos stock de ese producto, el próximo ingreso está estimado para octubre. ¿Quieres que te avisemos apenas llegue?' },
+  ],
+  '+56 9 9988 7766': [
+    { rol: 'cliente', texto: '¿Hacen despacho a Rancagua?' },
+    { rol: 'bot', texto: 'Sí, hacemos despacho a Rancagua y alrededores. El costo depende del volumen del pedido — ¿qué necesitas cotizar?' },
+  ],
+};
+
+const CHATS = [
+  { telefono: '+56 9 9988 7766', ultimoMensaje: '¿Hacen despacho a Rancagua?', ultimoTs: now - 15 * MIN, pausada: false },
+  { telefono: '+56 9 4567 8901', ultimoMensaje: 'Perfecto, quedo atento a la OC entonces', ultimoTs: now - 1 * H, pausada: false },
+  { telefono: '+56 9 5678 9012', ultimoMensaje: '¿Tienen stock de planchas antideslizantes?', ultimoTs: now - 5 * H, pausada: false },
+  { telefono: '+56 9 7890 1234', ultimoMensaje: 'Gracias! Ya hicimos la transferencia', ultimoTs: now - 6 * H, pausada: true },
+  { telefono: '+56 9 1234 5678', ultimoMensaje: '¿Cuándo llega la cotización de las planchas?', ultimoTs: now - 30 * H, pausada: false },
+];
+
+const PIPELINE_ITEMS = [
+  { telefono: '+56 9 1234 5678', etapa: 'enviada', actualizadoTs: now - 30 * H, resumen: 'Cotización de 50 planchas de acero galvanizado enviada, sin respuesta.' },
+  { telefono: '+56 9 2345 6789', etapa: 'enviada', actualizadoTs: now - 40 * H, resumen: 'Perfiles C 100x50 cotizados, cliente pidió descuento por volumen.' },
+  { telefono: '+56 9 3456 7890', etapa: 'enviada', actualizadoTs: now - 3 * H, resumen: 'Cotización de mallas ACMA enviada hace unas horas.' },
+  { telefono: '+56 9 4567 8901', etapa: 'pendiente', actualizadoTs: now - 1 * H, resumen: 'Pidió cotización de 200 tubos estructurales, falta calcular despacho.' },
+  { telefono: '+56 9 5678 9012', etapa: 'sin_stock', actualizadoTs: now - 5 * H, resumen: 'Preguntó por planchas antideslizantes, sin stock hasta octubre.' },
+  { telefono: '+56 9 6789 0123', etapa: 'no_interesado', actualizadoTs: now - 2 * D, resumen: 'Encontró mejor precio con otro proveedor.' },
+  { telefono: '+56 9 7890 1234', etapa: 'ganado', actualizadoTs: now - 6 * H, resumen: 'Cerró compra de 80 planchas + despacho a Rancagua. OC recibida.' },
+  { telefono: '+56 9 8901 2345', etapa: 'ganado', actualizadoTs: now - 1 * D, resumen: 'Compró perfiles y pidió que lo contacten el próximo mes para más.' },
+];
+
+const CLIENTES_ROSTER = [
+  { nombre: 'Constructora Rivas Ltda.', telefono: '+56 9 1234 5678', totalCotizado: 4850000, cantidadCotizaciones: 2, origenWhatsapp: true, ultimaFecha: '20-08-2026' },
+  { nombre: 'Ferretería El Tornillo', telefono: '+56 9 2345 6789', totalCotizado: 1230000, cantidadCotizaciones: 1, origenWhatsapp: true, ultimaFecha: '19-08-2026' },
+  { nombre: 'Metalúrgica Andina SpA', telefono: '+56 9 3456 7890', totalCotizado: 0, cantidadCotizaciones: 0, origenWhatsapp: true, ultimaFecha: null },
+  { nombre: 'Constructora Los Ríos', telefono: '+56 9 4567 8901', totalCotizado: 2100000, cantidadCotizaciones: 1, origenWhatsapp: true, ultimaFecha: '26-08-2026' },
+  { nombre: 'Bodega Industrial Maipú', telefono: '+56 9 5678 9012', totalCotizado: 0, cantidadCotizaciones: 0, origenWhatsapp: true, ultimaFecha: null },
+  { nombre: 'Transportes del Sur', telefono: '+56 9 7890 1234', totalCotizado: 6400000, cantidadCotizaciones: 3, origenWhatsapp: true, ultimaFecha: '27-08-2026' },
+  { nombre: 'Aceros Rancagua Ltda.', telefono: '+56 9 9988 7766', totalCotizado: 890000, cantidadCotizaciones: 1, origenWhatsapp: true, ultimaFecha: '27-08-2026' },
+];
+
+const DIARIO = [
+  { fecha: '2026-08-14', gasto: 52000, clicks: 38, impresiones: 2400, conversiones: 3 },
+  { fecha: '2026-08-15', gasto: 61000, clicks: 44, impresiones: 2700, conversiones: 4 },
+  { fecha: '2026-08-16', gasto: 38000, clicks: 29, impresiones: 1900, conversiones: 2 },
+  { fecha: '2026-08-17', gasto: 12000, clicks: 9, impresiones: 700, conversiones: 0 },
+  { fecha: '2026-08-18', gasto: 67000, clicks: 49, impresiones: 3100, conversiones: 5 },
+  { fecha: '2026-08-19', gasto: 73000, clicks: 52, impresiones: 3400, conversiones: 6 },
+  { fecha: '2026-08-20', gasto: 58000, clicks: 41, impresiones: 2600, conversiones: 3 },
+  { fecha: '2026-08-21', gasto: 64000, clicks: 47, impresiones: 2900, conversiones: 4 },
+  { fecha: '2026-08-22', gasto: 70000, clicks: 53, impresiones: 3300, conversiones: 7 },
+  { fecha: '2026-08-23', gasto: 41000, clicks: 31, impresiones: 2000, conversiones: 2 },
+  { fecha: '2026-08-24', gasto: 15000, clicks: 11, impresiones: 800, conversiones: 0 },
+  { fecha: '2026-08-25', gasto: 69000, clicks: 50, impresiones: 3200, conversiones: 5 },
+  { fecha: '2026-08-26', gasto: 76000, clicks: 56, impresiones: 3600, conversiones: 8 },
+  { fecha: '2026-08-27', gasto: 59000, clicks: 43, impresiones: 2750, conversiones: 4 },
+];
+
+const TOTALES_ADS = {
+  gasto: 755000, clicks: 553, impresiones: 34850, conversiones: 53,
+  cpc_promedio: 1365, costo_por_conversion: 14245,
+};
+
+const CAMPANAS = [
+  {
+    nombre: 'Búsqueda — Perfiles y Planchas de Acero', estado: 'ENABLED',
+    gasto: 424000, clicks: 310, conversiones: 32, ctr: 4.8, cpc_promedio: 1368,
+    valor_conversiones: 9800000, presupuesto_diario: 18000,
+    diario: [29000, 34000, 21000, 7000, 38000, 41000, 32000, 36000, 39000, 23000, 8000, 39000, 43000, 33000],
+  },
+  {
+    nombre: 'Remarketing — Visitantes del sitio', estado: 'ENABLED',
+    gasto: 192000, clicks: 160, conversiones: 14, ctr: 3.1, cpc_promedio: 1200,
+    valor_conversiones: 3200000, presupuesto_diario: 8000,
+    diario: [13000, 15000, 9000, 3000, 16000, 18000, 14000, 15000, 17000, 10000, 3000, 17000, 19000, 14000],
+  },
+  {
+    nombre: 'Búsqueda — Despacho a Regiones', estado: 'PAUSED',
+    gasto: 139000, clicks: 83, conversiones: 7, ctr: 2.4, cpc_promedio: 1675,
+    valor_conversiones: 1450000, presupuesto_diario: 6000,
+    diario: [10000, 12000, 8000, 2000, 13000, 14000, 12000, 13000, 14000, 8000, 4000, 13000, 14000, 12000],
+  },
+];
+
+// ---- Navegación inferior ----
+document.querySelectorAll('.nav-btn').forEach((btn) => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.nav-btn').forEach((b) => b.classList.remove('active'));
+    document.querySelectorAll('.view').forEach((v) => v.classList.remove('active'));
+    btn.classList.add('active');
+    document.getElementById('view-' + btn.dataset.view).classList.add('active');
+  });
+});
+
+document.getElementById('btn-bell').addEventListener('click', () => toast('🔔 3 conversaciones nuevas hoy'));
+
+// ---- Chats de WhatsApp ----
+let chatAbierto = null;
+
+function renderListaChats() {
+  const list = document.getElementById('inbox-list');
+  list.innerHTML = CHATS.map((c) => `
+    <div class="inbox-item ${c.telefono === chatAbierto ? 'selected' : ''}" data-telefono="${c.telefono}">
+      <div class="inbox-avatar">${c.telefono.slice(-2)}</div>
+      <div class="inbox-item-body">
+        <div class="inbox-item-top">
+          <span class="inbox-item-name">${c.telefono}</span>
+          <span class="inbox-item-time">${tiempoRelativo(c.ultimoTs)}</span>
+        </div>
+        <div class="inbox-item-preview">${(c.ultimoMensaje || 'Sin mensajes').slice(0, 60)}</div>
+        <div class="inbox-item-badges">
+          <span class="badge ${c.pausada ? 'pausado' : 'activo'}">${c.pausada ? 'Pausado' : 'Bot activo'}</span>
+        </div>
+      </div>
+    </div>
+  `).join('');
+  list.querySelectorAll('.inbox-item').forEach((el) => {
+    el.addEventListener('click', () => abrirChat(el.dataset.telefono));
+  });
+}
+
+function abrirChat(telefono) {
+  chatAbierto = telefono;
+  document.getElementById('chats-inbox').classList.add('chat-open');
+  document.getElementById('inbox-chat-telefono').textContent = telefono;
+  const chat = CHATS.find((c) => c.telefono === telefono);
+  document.getElementById('chat-reanudar').style.display = chat && chat.pausada ? '' : 'none';
+  renderListaChats();
+  const body = document.getElementById('chat-body');
+  const mensajes = MENSAJES[telefono] || [];
+  body.innerHTML = mensajes.map((m) => `<div class="bubble ${m.rol}">${m.texto}</div>`).join('');
+  body.scrollTop = body.scrollHeight;
+}
+
+document.getElementById('btn-volver-chats').addEventListener('click', () => {
+  document.getElementById('chats-inbox').classList.remove('chat-open');
+});
+
+document.getElementById('chat-send').addEventListener('click', enviarMensajeChat);
+document.getElementById('chat-input').addEventListener('keydown', (e) => {
+  if (e.key === 'Enter') enviarMensajeChat();
+});
+function enviarMensajeChat() {
+  const input = document.getElementById('chat-input');
+  const texto = input.value.trim();
+  if (!texto || !chatAbierto) return;
+  input.value = '';
+  const body = document.getElementById('chat-body');
+  body.insertAdjacentHTML('beforeend', `<div class="bubble bot">${texto}</div>`);
+  body.scrollTop = body.scrollHeight;
+}
+document.getElementById('chat-reanudar').addEventListener('click', () => {
+  toast('▶ Bot reactivado para esta conversación');
+  document.getElementById('chat-reanudar').style.display = 'none';
+});
+
+// ---- Pipeline ----
+const PIPELINE_SECCIONES = [
+  { etapa: 'enviada', urgente: true, titulo: '🔴 Necesita seguimiento', clase: 'urgente' },
+  { etapa: 'enviada', urgente: false, titulo: '🟠 Cotización enviada', clase: 'tibio' },
+  { etapa: 'pendiente', titulo: '🟡 Pendiente de cotizar', clase: 'tibio' },
+  { etapa: 'sin_stock', titulo: '⚪ Sin stock / no disponible', clase: 'frio' },
+  { etapa: 'no_interesado', titulo: '⚫ No interesado', clase: 'frio' },
+  { etapa: 'ganado', titulo: '🟢 Ganado', clase: 'ganado' },
+];
+const PIPELINE_STALE_MS = 24 * H;
+
+function renderPipeline() {
+  document.getElementById('pipeline-updated').textContent = 'Última clasificación automática: ' + tiempoRelativo(now - 20 * MIN);
+  const content = document.getElementById('pipeline-content');
+  content.innerHTML = PIPELINE_SECCIONES.map((sec) => {
+    const items = PIPELINE_ITEMS.filter((it) => {
+      if (it.etapa !== sec.etapa) return false;
+      if (sec.etapa !== 'enviada') return true;
+      const esUrgente = now - (it.actualizadoTs || 0) > PIPELINE_STALE_MS;
+      return sec.urgente ? esUrgente : !esUrgente;
+    });
+    if (!items.length) return '';
+    return `
+      <div class="pipeline-section">
+        <div class="pipeline-section-title">${sec.titulo} <span class="pipeline-section-count">${items.length}</span></div>
+        <div class="pipeline-cards">
+          ${items.map((it) => `
+            <div class="pipeline-card ${sec.clase}" data-telefono="${it.telefono}">
+              <div class="pipeline-card-avatar">${it.telefono.slice(-2)}</div>
+              <div class="pipeline-card-body">
+                <div class="pipeline-card-top">
+                  <span class="pipeline-card-tel">${it.telefono}</span>
+                  <span class="pipeline-card-time">${tiempoRelativo(it.actualizadoTs)}</span>
+                </div>
+                <div class="pipeline-card-resumen">${it.resumen || ''}</div>
+              </div>
+            </div>
+          `).join('')}
+        </div>
+      </div>
+    `;
+  }).join('');
+
+  content.querySelectorAll('.pipeline-card').forEach((el) => {
+    el.addEventListener('click', () => {
+      document.querySelectorAll('.nav-btn').forEach((b) => b.classList.remove('active'));
+      document.querySelectorAll('.view').forEach((v) => v.classList.remove('active'));
+      document.querySelector('.nav-btn[data-view="chats"]').classList.add('active');
+      document.getElementById('view-chats').classList.add('active');
+      if (!MENSAJES[el.dataset.telefono]) {
+        MENSAJES[el.dataset.telefono] = [{ rol: 'cliente', texto: '(Conversación de ejemplo)' }];
+        if (!CHATS.find((c) => c.telefono === el.dataset.telefono)) {
+          CHATS.unshift({ telefono: el.dataset.telefono, ultimoMensaje: '(Conversación de ejemplo)', ultimoTs: now, pausada: false });
+        }
+      }
+      abrirChat(el.dataset.telefono);
+    });
+  });
+}
+
+document.getElementById('btn-ejecutar-pipeline').addEventListener('click', (e) => {
+  const btn = e.currentTarget;
+  btn.disabled = true;
+  btn.textContent = 'Clasificando conversaciones...';
+  setTimeout(() => {
+    btn.disabled = false;
+    btn.textContent = '🔄 Actualizar ahora';
+    toast('✓ Pipeline actualizado');
+  }, 900);
+});
+
+// ---- Clientes ----
+function renderClientesRoster() {
+  document.getElementById('clientes-updated').textContent = 'Actualizado ' + tiempoRelativo(now - 20 * MIN);
+  const totalGeneral = CLIENTES_ROSTER.reduce((sum, cl) => sum + (cl.totalCotizado || 0), 0);
+  const conCotizacion = CLIENTES_ROSTER.filter((cl) => cl.totalCotizado > 0).length;
+  document.getElementById('clientes-stats').innerHTML = `
+    <div class="stat"><div class="stat-icon">💰</div><div class="stat-body"><div class="label">Total cotizado</div><div class="value orange">${clp(totalGeneral)}</div></div></div>
+    <div class="stat"><div class="stat-icon">👥</div><div class="stat-body"><div class="label">Clientes</div><div class="value">${CLIENTES_ROSTER.length} (${conCotizacion} cotizados)</div></div></div>
+  `;
+  const content = document.getElementById('clientes-content');
+  content.innerHTML = CLIENTES_ROSTER.map((cl) => `
+    <div class="client-roster-card" data-telefono="${cl.telefono || ''}">
+      <div class="client-roster-avatar">${iniciales(cl.nombre)}</div>
+      <div class="client-roster-body">
+        <div class="client-roster-name">${cl.nombre}</div>
+        <div class="client-roster-meta">${cl.telefono || 'Sin contacto'}</div>
+        <div class="client-roster-tags">
+          ${cl.origenWhatsapp ? '<span class="tag on">WhatsApp</span>' : ''}
+          ${cl.cantidadCotizaciones ? `<span class="tag off">${cl.cantidadCotizaciones} cotización(es)</span>` : ''}
+        </div>
+      </div>
+      <div class="client-roster-total">
+        ${cl.totalCotizado ? `<div class="v">${clp(cl.totalCotizado)}</div>` : '<div class="v sin">Sin cotizar</div>'}
+        ${cl.ultimaFecha ? `<div class="n">${cl.ultimaFecha}</div>` : ''}
+      </div>
+    </div>
+  `).join('');
+  content.querySelectorAll('.client-roster-card').forEach((el) => {
+    if (!el.dataset.telefono) return;
+    el.addEventListener('click', () => {
+      document.querySelectorAll('.nav-btn').forEach((b) => b.classList.remove('active'));
+      document.querySelectorAll('.view').forEach((v) => v.classList.remove('active'));
+      document.querySelector('.nav-btn[data-view="chats"]').classList.add('active');
+      document.getElementById('view-chats').classList.add('active');
+      abrirChat(el.dataset.telefono);
+    });
+  });
+}
+document.getElementById('btn-sincronizar-clientes').addEventListener('click', (e) => {
+  const btn = e.currentTarget;
+  btn.disabled = true;
+  btn.textContent = 'Actualizando...';
+  setTimeout(() => {
+    btn.disabled = false;
+    btn.textContent = '🔄 Actualizar ahora';
+    toast('✓ Clientes actualizados');
+  }, 900);
+});
+
+// ---- Google Ads ----
+function renderGraficoDiario(diario) {
+  const wrap = document.getElementById('ads-chart');
+  const max = Math.max(1, ...diario.map((d) => d.gasto));
+  const barras = diario.map((d) => `<div class="chart-bar" style="height:${Math.max(3, Math.round((d.gasto / max) * 100))}%" title="${d.fecha}: ${clp(d.gasto)}"></div>`).join('');
+  wrap.innerHTML = `
+    <div class="chart-bars">${barras}</div>
+    <div class="chart-labels"><span>${diario[0].fecha}</span><span>${diario[diario.length - 1].fecha}</span></div>
+  `;
+}
+
+const MESES_ES = ['enero','febrero','marzo','abril','mayo','junio','julio','agosto','septiembre','octubre','noviembre','diciembre'];
+
+function renderCalendario(diario) {
+  const wrap = document.getElementById('ads-calendar');
+  const detail = document.getElementById('ads-calendar-detail');
+  const porFecha = {};
+  let max = 1;
+  diario.forEach((d) => { porFecha[d.fecha] = d; if (d.gasto > max) max = d.gasto; });
+
+  const ultima = diario[diario.length - 1].fecha;
+  const [anio, mes] = ultima.split('-').map(Number);
+  const diasEnMes = new Date(anio, mes, 0).getDate();
+  const offset = (new Date(anio, mes - 1, 1).getDay() + 6) % 7;
+
+  let celdas = '';
+  for (let i = 0; i < offset; i++) celdas += '<div class="calendar-day empty"></div>';
+  for (let dia = 1; dia <= diasEnMes; dia++) {
+    const fecha = `${anio}-${String(mes).padStart(2, '0')}-${String(dia).padStart(2, '0')}`;
+    const d = porFecha[fecha];
+    let estilo = '';
+    if (d) {
+      const ratio = d.gasto / max;
+      const alpha = ratio > 0.66 ? 1 : ratio > 0.33 ? 0.55 : 0.22;
+      const color = alpha > 0.6 ? '#fff' : '#16324f';
+      estilo = `style="background:rgba(236,122,51,${alpha});color:${color};"`;
+    }
+    celdas += `<div class="calendar-day ${d ? 'has-data' : ''}" ${estilo} data-fecha="${fecha}">${dia}</div>`;
+  }
+
+  wrap.innerHTML = `
+    <div class="calendar-month-label">${MESES_ES[mes - 1]} ${anio}</div>
+    <div class="calendar-grid">
+      ${['L', 'M', 'M', 'J', 'V', 'S', 'D'].map((d) => `<div class="calendar-dow">${d}</div>`).join('')}
+      ${celdas}
+    </div>
+  `;
+
+  wrap.querySelectorAll('.calendar-day.has-data').forEach((el) => {
+    el.addEventListener('click', () => {
+      wrap.querySelectorAll('.calendar-day').forEach((x) => x.classList.remove('selected'));
+      el.classList.add('selected');
+      const d = porFecha[el.dataset.fecha];
+      detail.textContent = `${el.dataset.fecha} — ${clp(d.gasto)} · ${d.clicks} clicks · ${d.impresiones} impresiones · ${d.conversiones} conv.`;
+    });
+  });
+}
+
+function campanaSparkline(diarioGastos) {
+  if (!diarioGastos.length) return '';
+  const max = Math.max(1, ...diarioGastos);
+  const barras = diarioGastos.map((g) => `<div class="chart-bar" style="height:${Math.max(3, Math.round((g / max) * 100))}%"></div>`).join('');
+  return `<div class="chart-bars" style="height:50px;">${barras}</div>`;
+}
+
+function renderCampanas() {
+  const wrap = document.getElementById('ads-campanas');
+  wrap.innerHTML = CAMPANAS.map((camp, i) => {
+    const promedioDiario = camp.gasto / camp.diario.length;
+    const pctBudget = camp.presupuesto_diario ? Math.min(100, Math.round((promedioDiario / camp.presupuesto_diario) * 100)) : 0;
+    const activa = camp.estado === 'ENABLED';
+    return `
+      <div class="campaign-card" data-idx="${i}">
+        <div class="campaign-head">
+          <div class="campaign-head-body">
+            <div class="campaign-name">${camp.nombre}</div>
+            <div class="campaign-meta">
+              <span class="badge ${activa ? 'activo' : 'pausado'}">${activa ? 'Activa' : 'Pausada'}</span>
+              <span class="campaign-meta-clicks">${camp.clicks} clicks · ${camp.conversiones} conv.</span>
+            </div>
+            <div class="campaign-budget-bar"><div class="campaign-budget-fill" style="width:${pctBudget}%"></div></div>
+          </div>
+          <div class="campaign-gasto">${clp(camp.gasto)}</div>
+          <svg class="campaign-chevron" width="15" height="15" viewBox="0 0 24 24"><path d="M7 10l5 5 5-5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </div>
+        <div class="campaign-detail">
+          <div class="campaign-detail-stats">
+            <div class="campaign-detail-stat"><div class="v">${camp.ctr}%</div><div class="l">CTR</div></div>
+            <div class="campaign-detail-stat"><div class="v">${clp(camp.cpc_promedio)}</div><div class="l">CPC prom.</div></div>
+            <div class="campaign-detail-stat"><div class="v">${clp(camp.valor_conversiones)}</div><div class="l">Valor conv.</div></div>
+          </div>
+          ${campanaSparkline(camp.diario)}
+        </div>
+      </div>
+    `;
+  }).join('');
+  wrap.querySelectorAll('.campaign-head').forEach((el) => {
+    el.addEventListener('click', () => el.closest('.campaign-card').classList.toggle('open'));
+  });
+}
+
+document.getElementById('btn-sincronizar-ads').addEventListener('click', (e) => {
+  const btn = e.currentTarget;
+  const original = btn.textContent;
+  btn.disabled = true;
+  btn.textContent = 'Sincronizando...';
+  setTimeout(() => {
+    btn.disabled = false;
+    btn.textContent = original;
+    toast('✓ Sincronizado con Google Ads');
+  }, 900);
+});
+
+function renderAds() {
+  document.getElementById('ads-updated').textContent = 'Actualizado ' + tiempoRelativo(now - 45 * MIN);
+  const t = TOTALES_ADS;
+  document.getElementById('ads-stats').innerHTML = `
+    <div class="stat"><div class="stat-icon">💰</div><div class="stat-body"><div class="label">Gasto total</div><div class="value orange">${clp(t.gasto)}</div></div></div>
+    <div class="stat"><div class="stat-icon">🖱️</div><div class="stat-body"><div class="label">Clicks</div><div class="value">${t.clicks}</div></div></div>
+    <div class="stat"><div class="stat-icon">👁️</div><div class="stat-body"><div class="label">Impresiones</div><div class="value">${t.impresiones.toLocaleString('es-CL')}</div></div></div>
+    <div class="stat"><div class="stat-icon">✅</div><div class="stat-body"><div class="label">Conversiones</div><div class="value">${t.conversiones}</div></div></div>
+    <div class="stat"><div class="stat-icon">📊</div><div class="stat-body"><div class="label">CPC prom.</div><div class="value">${clp(t.cpc_promedio)}</div></div></div>
+    <div class="stat"><div class="stat-icon">🎯</div><div class="stat-body"><div class="label">Costo/conv.</div><div class="value">${clp(t.costo_por_conversion)}</div></div></div>
+  `;
+  renderGraficoDiario(DIARIO);
+  renderCalendario(DIARIO);
+  renderCampanas();
+}
+
+// ---- Init ----
+renderListaChats();
+renderPipeline();
+renderClientesRoster();
+renderAds();
+</script>
+</body>
+</html>
