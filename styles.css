@@ -513,7 +513,7 @@ h4 { font-size: 1.125rem; font-weight: 600; }
 /* ── Services Section ────────────────────────────────────── */
 .services-section {
   background: #0d1b35;
-  padding: 100px 0;
+  padding: 60px 0;
 }
 .services-section .section-label {
   background: rgba(14,165,233,0.12);
@@ -581,6 +581,55 @@ h4 { font-size: 1.125rem; font-weight: 600; }
   transition: gap var(--ease);
 }
 .service-card-link:hover { gap: 10px; }
+
+/* ── Service cards compactos (home) ──────────────────────── */
+.services-grid-mini {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+}
+.service-card-mini {
+  display: flex;
+  align-items: center;
+  gap: 13px;
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 12px;
+  padding: 14px 16px;
+  text-decoration: none;
+  transition: all var(--ease);
+}
+.service-card-mini:hover {
+  border-color: rgba(37,99,235,0.45);
+  background: rgba(255,255,255,0.07);
+  transform: translateY(-2px);
+}
+.service-icon-mini {
+  width: 38px; height: 38px;
+  background: var(--gradient);
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  box-shadow: 0 6px 16px rgba(37,99,235,0.3);
+}
+.service-icon-mini svg { width: 19px; height: 19px; color: #fff; }
+.service-card-mini h3 {
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: #fff;
+  margin: 0;
+  line-height: 1.3;
+}
+.services-cta-row { text-align: center; margin-top: 24px; }
+
+@media (max-width: 900px) {
+  .services-grid-mini { grid-template-columns: repeat(2, 1fr); }
+}
+@media (max-width: 560px) {
+  .services-grid-mini { grid-template-columns: 1fr; }
+}
 
 /* ── Service Cards (large / servicios page) ──────────────── */
 .services-list { display: flex; flex-direction: column; gap: 24px; }
@@ -3051,7 +3100,7 @@ select { cursor: pointer; }
 }
 .panel-app-grid {
   display: grid;
-  grid-template-columns: 0.9fr 1.1fr;
+  grid-template-columns: 1fr 360px;
   gap: 56px;
   align-items: center;
   position: relative;
@@ -3144,15 +3193,31 @@ select { cursor: pointer; }
 /* iPhone mockup */
 .iphone-mockup {
   position: relative;
-  width: min(440px, 90vw);
+  width: min(280px, 74vw);
   margin: 0 auto;
+  transform: rotate(-4deg);
+  transition: transform 0.4s ease;
+}
+.iphone-mockup:hover { transform: rotate(0deg) scale(1.03); }
+.iphone-mockup::before {
+  content: "";
+  position: absolute;
+  inset: -36px;
+  background: radial-gradient(circle, rgba(236,122,51,0.4) 0%, transparent 72%);
+  filter: blur(28px);
+  z-index: -1;
+  animation: phone-glow-pulse 3.5s ease-in-out infinite;
+}
+@keyframes phone-glow-pulse {
+  0%, 100% { opacity: 0.55; transform: scale(1); }
+  50% { opacity: 1; transform: scale(1.1); }
 }
 .iphone-frame {
   position: relative;
   background: linear-gradient(155deg, #2a2a2d, #0e0e10 60%, #232326);
-  border-radius: 58px;
-  padding: 14px;
-  box-shadow: 0 40px 90px -20px rgba(0,0,0,0.55), inset 0 0 0 2px rgba(255,255,255,0.06);
+  border-radius: 46px;
+  padding: 11px;
+  box-shadow: 0 30px 70px -18px rgba(0,0,0,0.55), inset 0 0 0 2px rgba(255,255,255,0.06);
 }
 .iphone-frame::before,
 .iphone-frame::after {
@@ -3163,18 +3228,18 @@ select { cursor: pointer; }
   border-radius: 3px 0 0 3px;
   background: #1c1c1e;
 }
-.iphone-frame::before { top: 108px; height: 30px; }
-.iphone-frame::after { top: 150px; height: 46px; }
+.iphone-frame::before { top: 69px; height: 19px; }
+.iphone-frame::after { top: 95px; height: 29px; }
 .iphone-power-btn {
   position: absolute;
-  right: -3px; top: 168px;
-  width: 3px; height: 64px;
+  right: -3px; top: 107px;
+  width: 3px; height: 41px;
   border-radius: 0 3px 3px 0;
   background: #1c1c1e;
 }
 .iphone-screen {
   position: relative;
-  border-radius: 44px;
+  border-radius: 34px;
   overflow: hidden;
   background: #000;
   aspect-ratio: 9 / 19.3;
@@ -3187,23 +3252,25 @@ select { cursor: pointer; }
 }
 .iphone-island {
   position: absolute;
-  top: 12px; left: 50%; transform: translateX(-50%);
-  width: 34%; max-width: 118px; height: 26px;
+  top: 8px; left: 50%; transform: translateX(-50%);
+  width: 34%; max-width: 75px; height: 17px;
   background: #000;
-  border-radius: 20px;
+  border-radius: 14px;
   z-index: 6;
   box-shadow: inset 0 0 0 1px rgba(255,255,255,0.05);
 }
 .iphone-time {
-  position: absolute; top: 15px; left: 26px; z-index: 6;
-  color: #fff; font-size: 13px; font-weight: 600;
+  position: absolute; top: 9px; left: 16px; z-index: 6;
+  color: #fff; font-size: 10px; font-weight: 600;
   font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", Arial, sans-serif;
   pointer-events: none;
 }
 .iphone-status-icons {
-  position: absolute; top: 16px; right: 24px; z-index: 6;
-  display: flex; align-items: center; gap: 4px;
+  position: absolute; top: 10px; right: 15px; z-index: 6;
+  display: flex; align-items: center; gap: 3px;
   pointer-events: none;
+  transform: scale(0.72);
+  transform-origin: right center;
 }
 @media (max-width: 1024px) {
   .panel-app-grid { grid-template-columns: 1fr; gap: 48px; }
