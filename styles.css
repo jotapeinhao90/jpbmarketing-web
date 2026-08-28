@@ -3134,18 +3134,13 @@ select { cursor: pointer; }
   line-height: 1.18;
   margin-bottom: 20px;
 }
-.panel-app-sub {
-  font-size: var(--tx-md);
-  color: rgba(255,255,255,0.68);
-  line-height: 1.65;
-  margin-bottom: 30px;
-  max-width: 520px;
-}
 .panel-app-features {
   display: flex;
   flex-direction: column;
   gap: 12px;
-  margin-bottom: 34px;
+  width: 100%;
+  max-width: 300px;
+  margin: 26px auto 0;
 }
 .panel-app-features span {
   display: flex;
@@ -3193,15 +3188,15 @@ select { cursor: pointer; }
 /* iPhone mockup */
 .iphone-mockup {
   position: relative;
-  width: min(280px, 74vw);
+  width: min(300px, 76vw);
   margin: 0 auto;
 }
 .iphone-mockup::before {
   content: "";
   position: absolute;
-  inset: -36px;
-  background: radial-gradient(circle, rgba(236,122,51,0.4) 0%, transparent 72%);
-  filter: blur(28px);
+  inset: -40px;
+  background: radial-gradient(circle, rgba(236,122,51,0.45) 0%, transparent 72%);
+  filter: blur(30px);
   z-index: -1;
   animation: phone-glow-pulse 3.5s ease-in-out infinite;
 }
@@ -3214,7 +3209,17 @@ select { cursor: pointer; }
   background: linear-gradient(155deg, #2a2a2d, #0e0e10 60%, #232326);
   border-radius: 46px;
   padding: 11px;
-  box-shadow: 0 30px 70px -18px rgba(0,0,0,0.55), inset 0 0 0 2px rgba(255,255,255,0.06);
+  animation: frame-ring-pulse 3.5s ease-in-out infinite;
+}
+@keyframes frame-ring-pulse {
+  0%, 100% {
+    box-shadow: 0 30px 70px -18px rgba(0,0,0,0.55), inset 0 0 0 2px rgba(255,255,255,0.06),
+      0 0 0 2px rgba(236,122,51,0.35), 0 0 24px 4px rgba(236,122,51,0.2);
+  }
+  50% {
+    box-shadow: 0 30px 70px -18px rgba(0,0,0,0.55), inset 0 0 0 2px rgba(255,255,255,0.06),
+      0 0 0 2px rgba(236,122,51,0.7), 0 0 44px 10px rgba(236,122,51,0.45);
+  }
 }
 .iphone-frame::before,
 .iphone-frame::after {
