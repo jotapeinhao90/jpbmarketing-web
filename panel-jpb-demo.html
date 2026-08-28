@@ -404,14 +404,37 @@ const MENSAJES = {
     { rol: 'cliente', texto: '¿Hacen despacho a Rancagua?' },
     { rol: 'bot', texto: 'Sí, hacemos despacho a Rancagua y alrededores. El costo depende del volumen del pedido — ¿qué necesitas cotizar?' },
   ],
+  '+56 9 6789 0234': [
+    { rol: 'cliente', texto: '¿Despachan también a Concepción?' },
+    { rol: 'bot', texto: 'Sí, despachamos a todo el sur, incluyendo Concepción. El flete se calcula según el volumen del pedido.' },
+    { rol: 'cliente', texto: 'Perfecto, ¿me pueden cotizar 30 planchas de acero inoxidable?' },
+    { rol: 'bot', texto: 'Claro, dame un momento y te preparo la cotización con el despacho incluido.' },
+  ],
+  '+56 9 8811 2233': [
+    { rol: 'cliente', texto: 'Necesito una cotización urgente de fierro estriado, es para hoy si se puede.' },
+    { rol: 'bot', texto: '¡Hola! Tenemos stock disponible. ¿Cuántos kilos o barras necesitas y para qué comuna es el despacho?' },
+    { rol: 'cliente', texto: '2 toneladas, despacho en Santiago centro.' },
+  ],
+  '+56 9 7722 3344': [
+    { rol: 'cliente', texto: '¿Puedo pagar la mitad ahora y el resto contra entrega?' },
+    { rol: 'bot', texto: 'Sí, aceptamos pago en dos partes para pedidos sobre $1.000.000. Te paso los datos para la primera transferencia.' },
+  ],
+  '+56 9 3344 5566': [
+    { rol: 'cliente', texto: 'Ya llegó el camión, gracias!' },
+    { rol: 'bot', texto: '¡Genial! Cualquier cosa que necesites, aquí estamos.' },
+  ],
 };
 
 const CHATS = [
   { telefono: '+56 9 9988 7766', ultimoMensaje: '¿Hacen despacho a Rancagua?', ultimoTs: now - 15 * MIN, pausada: false },
+  { telefono: '+56 9 6789 0234', ultimoMensaje: 'Perfecto, ¿me pueden cotizar 30 planchas de acero inoxidable?', ultimoTs: now - 40 * MIN, pausada: false },
   { telefono: '+56 9 4567 8901', ultimoMensaje: 'Perfecto, quedo atento a la OC entonces', ultimoTs: now - 1 * H, pausada: false },
+  { telefono: '+56 9 8811 2233', ultimoMensaje: '2 toneladas, despacho en Santiago centro.', ultimoTs: now - 2 * H, pausada: false },
   { telefono: '+56 9 5678 9012', ultimoMensaje: '¿Tienen stock de planchas antideslizantes?', ultimoTs: now - 5 * H, pausada: false },
   { telefono: '+56 9 7890 1234', ultimoMensaje: 'Gracias! Ya hicimos la transferencia', ultimoTs: now - 6 * H, pausada: true },
+  { telefono: '+56 9 7722 3344', ultimoMensaje: 'Sí, aceptamos pago en dos partes para pedidos sobre $1.000.000.', ultimoTs: now - 10 * H, pausada: false },
   { telefono: '+56 9 1234 5678', ultimoMensaje: '¿Cuándo llega la cotización de las planchas?', ultimoTs: now - 30 * H, pausada: false },
+  { telefono: '+56 9 3344 5566', ultimoMensaje: 'Ya llegó el camión, gracias!', ultimoTs: now - 2 * D, pausada: true },
 ];
 
 const PIPELINE_ITEMS = [
