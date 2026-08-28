@@ -3195,10 +3195,7 @@ select { cursor: pointer; }
   position: relative;
   width: min(280px, 74vw);
   margin: 0 auto;
-  transform: rotate(-4deg);
-  transition: transform 0.4s ease;
 }
-.iphone-mockup:hover { transform: rotate(0deg) scale(1.03); }
 .iphone-mockup::before {
   content: "";
   position: absolute;
