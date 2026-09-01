@@ -1,0 +1,25 @@
+name = "llamadas-b2b"
+main = "src/worker.js"
+compatibility_date = "2026-09-01"
+
+routes = [
+  { pattern = "llamadas.jpbmarketing.cl", custom_domain = true }
+]
+
+[[d1_databases]]
+binding = "DB"
+database_name = "llamadas-b2b"
+database_id = "2354bfba-c0a5-4b2e-aa78-c9282c77f53d"
+
+# Workers AI: estructura las notas de voz dictadas en resumen + campos, corre en la
+# misma cuenta de Cloudflare, sin API key externa.
+[ai]
+binding = "AI"
+
+[assets]
+directory = "public"
+binding = "ASSETS"
+run_worker_first = true
+
+# Secrets (NO van acá, se configuran con `wrangler secret put`):
+#   DASHBOARD_PASSWORD -> password del Basic Auth (usuario fijo "jpb")

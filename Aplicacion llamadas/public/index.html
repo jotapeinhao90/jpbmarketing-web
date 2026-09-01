@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="es-CL">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Llamadas B2B</title>
+<style>
+  :root {
+    --bg: #f4f5f7;
+    --card: #ffffff;
+    --text: #1a1d23;
+    --muted: #6b7280;
+    --accent: #2563eb;
+    --accent-dark: #1d4ed8;
+    --border: #e5e7eb;
+    --green: #16a34a;
+    --red: #dc2626;
+    --amber: #d97706;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--text);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    padding-bottom: 40px;
+  }
+  header {
+    background: var(--accent);
+    color: #fff;
+    padding: 18px 16px;
+    position: sticky;
+    top: 0;
+    z-index: 10;
+  }
+  header h1 { margin: 0; font-size: 1.2rem; }
+  header p { margin: 4px 0 0; font-size: 0.8rem; opacity: 0.9; }
+  main {
+    max-width: 720px;
+    margin: 0 auto;
+    padding: 16px;
+  }
+  .card {
+    background: var(--card);
+    border-radius: 12px;
+    padding: 16px;
+    margin-bottom: 20px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+  }
+  .card h2 {
+    font-size: 1rem;
+    margin: 0 0 14px;
+  }
+  label {
+    display: block;
+    font-size: 0.85rem;
+    font-weight: 600;
+    margin-bottom: 6px;
+    color: var(--muted);
+  }
+  input, textarea, select {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    font-size: 1rem;
+    margin-bottom: 14px;
+    font-family: inherit;
+  }
+  textarea {
+    min-height: 110px;
+    resize: vertical;
+  }
+  .hint {
+    font-size: 0.78rem;
+    color: var(--muted);
+    margin-top: -10px;
+    margin-bottom: 14px;
+  }
+  button {
+    width: 100%;
+    padding: 14px;
+    border: none;
+    border-radius: 8px;
+    background: var(--accent);
+    color: #fff;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+  }
+  button:active { background: var(--accent-dark); }
+  button:disabled { opacity: 0.6; }
+
+  .resultado-badge {
+    display: inline-block;
+    padding: 3px 10px;
+    border-radius: 999px;
+    font-size: 0.72rem;
+    font-weight: 600;
+    color: #fff;
+  }
+  .r-venta { background: var(--green); }
+  .r-interes, .r-cotiz { background: var(--accent); }
+  .r-reagendar { background: var(--amber); }
+  .r-no, .r-rechazo { background: var(--red); }
+  .r-otro { background: var(--muted); }
+
+  #confirmacion {
+    display: none;
+    background: #ecfdf5;
+    border: 1px solid #a7f3d0;
+    border-radius: 10px;
+    padding: 14px;
+    margin-bottom: 20px;
+    font-size: 0.9rem;
+  }
+
+  .filtros {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 14px;
+  }
+  .filtros select, .filtros input {
+    margin-bottom: 0;
+  }
+
+  .llamada-item {
+    border-bottom: 1px solid var(--border);
+    padding: 12px 0;
+  }
+  .llamada-item:last-child { border-bottom: none; }
+  .llamada-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 6px;
+  }
+  .llamada-empresa { font-weight: 700; font-size: 0.95rem; }
+  .llamada-meta { font-size: 0.78rem; color: var(--muted); }
+  .llamada-resumen { font-size: 0.88rem; margin: 4px 0; }
+  .llamada-proximo {
+    font-size: 0.8rem;
+    color: var(--accent-dark);
+    margin-top: 4px;
+  }
+  .empty { color: var(--muted); font-size: 0.9rem; text-align: center; padding: 24px 0; }
+  .loading { color: var(--muted); font-size: 0.85rem; }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>Llamadas B2B</h1>
+  <p>Registro y resumen automático de llamadas de venta</p>
+</header>
+
+<main>
+  <div class="card">
+    <h2>Registrar llamada</h2>
+    <div id="confirmacion"></div>
+    <form id="form-llamada">
+      <label for="vendedor">Vendedor</label>
+      <input type="text" id="vendedor" name="vendedor" placeholder="Tu nombre" required autocomplete="name">
+
+      <label for="telefono">Teléfono del cliente (opcional)</label>
+      <input type="tel" id="telefono" name="telefono" placeholder="+56 9 1234 5678">
+
+      <label for="nota">¿Qué pasó en la llamada?</label>
+      <textarea id="nota" name="nota" placeholder="Toca el micrófono del teclado y dicta: con quién hablaste, de qué empresa, qué cotizó, y el próximo paso." required></textarea>
+      <p class="hint">Tip: usa el micrófono del teclado de tu celular para dictar en vez de escribir.</p>
+
+      <button type="submit" id="btn-guardar">Guardar llamada</button>
+    </form>
+  </div>
+
+  <div class="card">
+    <h2>Historial</h2>
+    <div class="filtros">
+      <select id="filtro-vendedor">
+        <option value="">Todos los vendedores</option>
+      </select>
+    </div>
+    <div id="lista-llamadas"><p class="loading">Cargando...</p></div>
+  </div>
+</main>
+
+<script>
+const RESULTADO_CLASE = {
+  'venta cerrada': 'r-venta',
+  'interesado': 'r-interes',
+  'cotización enviada': 'r-cotiz',
+  'reagendar': 'r-reagendar',
+  'no contesta': 'r-no',
+  'rechazado': 'r-rechazo',
+  'otro': 'r-otro',
+};
+
+const form = document.getElementById('form-llamada');
+const btnGuardar = document.getElementById('btn-guardar');
+const confirmacion = document.getElementById('confirmacion');
+const listaEl = document.getElementById('lista-llamadas');
+const filtroVendedor = document.getElementById('filtro-vendedor');
+
+function fmtFecha(iso) {
+  const d = new Date(iso);
+  return d.toLocaleDateString('es-CL', { day: '2-digit', month: 'short' }) + ' ' +
+         d.toLocaleTimeString('es-CL', { hour: '2-digit', minute: '2-digit' });
+}
+
+async function cargarLlamadas() {
+  listaEl.innerHTML = '<p class="loading">Cargando...</p>';
+  const qs = filtroVendedor.value ? '?vendedor=' + encodeURIComponent(filtroVendedor.value) : '';
+  const res = await fetch('/api/llamadas' + qs);
+  const llamadas = await res.json();
+
+  if (!llamadas.length) {
+    listaEl.innerHTML = '<p class="empty">Todavía no hay llamadas registradas.</p>';
+    return;
+  }
+
+  const vendedoresUnicos = [...new Set(llamadas.map(l => l.vendedor))];
+  const valorActual = filtroVendedor.value;
+  filtroVendedor.innerHTML = '<option value="">Todos los vendedores</option>' +
+    vendedoresUnicos.map(v => `<option value="${v}">${v}</option>`).join('');
+  filtroVendedor.value = valorActual;
+
+  listaEl.innerHTML = llamadas.map(l => `
+    <div class="llamada-item">
+      <div class="llamada-top">
+        <span class="llamada-empresa">${l.empresa || 'Empresa no indicada'}</span>
+        <span class="resultado-badge ${RESULTADO_CLASE[l.resultado] || 'r-otro'}">${l.resultado || 'otro'}</span>
+      </div>
+      <div class="llamada-meta">${fmtFecha(l.created_at)} · ${l.vendedor}${l.contacto ? ' · ' + l.contacto : ''}${l.telefono ? ' · ' + l.telefono : ''}</div>
+      <div class="llamada-resumen">${l.resumen || ''}</div>
+      ${l.proximo_paso ? `<div class="llamada-proximo">➜ ${l.proximo_paso}${l.fecha_seguimiento ? ' (' + l.fecha_seguimiento + ')' : ''}</div>` : ''}
+    </div>
+  `).join('');
+}
+
+filtroVendedor.addEventListener('change', cargarLlamadas);
+
+form.addEventListener('submit', async (e) => {
+  e.preventDefault();
+  btnGuardar.disabled = true;
+  btnGuardar.textContent = 'Guardando...';
+  confirmacion.style.display = 'none';
+
+  const vendedor = document.getElementById('vendedor').value.trim();
+  const telefono = document.getElementById('telefono').value.trim();
+  const nota = document.getElementById('nota').value.trim();
+
+  try {
+    const res = await fetch('/api/llamadas', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ vendedor, telefono, nota }),
+    });
+    if (!res.ok) throw new Error('Error al guardar');
+    const data = await res.json();
+
+    confirmacion.style.display = 'block';
+    confirmacion.innerHTML = `<strong>Llamada guardada.</strong><br>${data.resumen || ''}`;
+
+    document.getElementById('telefono').value = '';
+    document.getElementById('nota').value = '';
+    localStorage.setItem('ultimo_vendedor', vendedor);
+
+    cargarLlamadas();
+  } catch (err) {
+    confirmacion.style.display = 'block';
+    confirmacion.style.background = '#fef2f2';
+    confirmacion.style.borderColor = '#fecaca';
+    confirmacion.innerHTML = 'Ocurrió un error al guardar. Intenta de nuevo.';
+  } finally {
+    btnGuardar.disabled = false;
+    btnGuardar.textContent = 'Guardar llamada';
+  }
+});
+
+const ultimoVendedor = localStorage.getItem('ultimo_vendedor');
+if (ultimoVendedor) document.getElementById('vendedor').value = ultimoVendedor;
+
+cargarLlamadas();
+</script>
+
+</body>
+</html>
