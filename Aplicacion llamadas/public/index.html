@@ -246,6 +246,53 @@
   .empty { color: var(--muted); font-size: 0.9rem; text-align: center; padding: 24px 0; }
   .loading { color: var(--muted); font-size: 0.85rem; }
 
+  /* --- Ficha de contacto (autocompletado al marcar) --- */
+  #ficha-contacto:empty { display: none; }
+  .ficha {
+    background: rgba(139,123,255,0.08);
+    border: 1px solid rgba(139,123,255,0.25);
+    border-radius: 14px;
+    padding: 12px 14px;
+    margin: -10px 0 18px;
+    font-size: 0.85rem;
+  }
+  .ficha .ficha-empresa { font-weight: 700; color: #cfc7ff; }
+  .ficha .ficha-linea { color: var(--muted); margin-top: 3px; }
+
+  /* --- Contactos --- */
+  .cobertura { margin-bottom: 18px; }
+  .cobertura-texto { font-size: 0.78rem; color: var(--muted); margin-bottom: 6px; }
+  .cobertura-barra { height: 8px; border-radius: 999px; background: rgba(255,255,255,0.08); overflow: hidden; }
+  .cobertura-relleno { height: 100%; background: linear-gradient(90deg, var(--accent-2), var(--accent)); border-radius: 999px; transition: width 0.4s; }
+
+  .btn-importar {
+    display: block;
+    text-align: center;
+    padding: 14px;
+    border: 1.5px dashed var(--border);
+    border-radius: 14px;
+    color: var(--accent);
+    font-weight: 700;
+    font-size: 0.9rem;
+    cursor: pointer;
+    margin-bottom: 8px;
+    transition: border-color 0.15s, background 0.15s;
+  }
+  .btn-importar:hover { border-color: var(--accent); background: rgba(186,255,61,0.05); }
+
+  .contacto-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 10px;
+    border-bottom: 1px solid var(--border);
+    padding: 12px 2px;
+  }
+  .contacto-item:last-child { border-bottom: none; }
+  .contacto-nombre { font-weight: 600; font-size: 0.92rem; }
+  .contacto-meta { font-size: 0.76rem; color: var(--muted); margin-top: 2px; }
+  .temp-badge { font-size: 1.1rem; flex-shrink: 0; }
+
   .origen-tag {
     font-size: 0.65rem;
     color: var(--muted);
@@ -417,6 +464,7 @@
         <input type="tel" id="numero-cliente" placeholder=" ">
         <label for="numero-cliente">Teléfono del cliente</label>
       </div>
+      <div id="ficha-contacto"></div>
 
       <label style="display:block; font-size:0.68rem; font-weight:700; text-transform:uppercase; letter-spacing:0.08em; color:var(--muted); margin-bottom:10px;">Número que verá el cliente</label>
       <div class="chips" id="chips-numeros"></div>
@@ -463,6 +511,29 @@
 
       <button type="submit" id="btn-guardar">Guardar llamada</button>
     </form>
+  </div>
+
+  <div class="card">
+    <h2>📇 Contactos</h2>
+    <div id="cobertura" class="cobertura"></div>
+
+    <label for="input-csv" class="btn-importar">
+      ⬆️ Importar base de contactos (.csv)
+      <input type="file" id="input-csv" accept=".csv" style="display:none">
+    </label>
+    <p class="hint">Columnas: <span class="mono">telefono,empresa,contacto,cargo,notas</span> (con encabezado en la primera fila). "notas" es opcional — sirve para el rubro o qué vende la empresa.</p>
+    <div id="estado-importacion"></div>
+
+    <div class="filtros" style="margin-top:16px;">
+      <select id="filtro-temperatura">
+        <option value="">Todas las prioridades</option>
+        <option value="tibio">🟡 Seguimiento pendiente</option>
+        <option value="nuevo">⚪ Nunca contactados</option>
+        <option value="caliente">🔥 Calientes</option>
+        <option value="frio">🧊 Fríos</option>
+      </select>
+    </div>
+    <div id="lista-contactos"><p class="loading">Cargando...</p></div>
   </div>
 
   <div class="card">
@@ -788,6 +859,136 @@ btnLlamar.addEventListener('click', async () => {
 btnColgar.addEventListener('click', () => {
   if (activeCall) activeCall.disconnect();
 });
+
+// --- Ficha de contacto: autocompletado al marcar ---
+const fichaContacto = document.getElementById('ficha-contacto');
+let debounceLookup = null;
+
+numeroClienteEl.addEventListener('input', () => {
+  clearTimeout(debounceLookup);
+  const digitos = numeroClienteEl.value.replace(/\D/g, '');
+  if (digitos.length < 8) { fichaContacto.innerHTML = ''; return; }
+
+  debounceLookup = setTimeout(async () => {
+    try {
+      const res = await fetch('/api/contactos/buscar?telefono=' + encodeURIComponent(numeroClienteEl.value));
+      const d = await res.json();
+      if (!d.encontrado) { fichaContacto.innerHTML = ''; return; }
+
+      let historialTxt = 'Nunca contactado antes.';
+      if (d.veces_llamado > 0) {
+        historialTxt = `Ya contactado ${d.veces_llamado} ${d.veces_llamado === 1 ? 'vez' : 'veces'} · última el ${fmtFecha(d.ultima_llamada)} por ${d.ultimo_vendedor} · resultado: ${d.ultimo_resultado}`;
+      }
+
+      fichaContacto.innerHTML = `
+        <div class="ficha">
+          <div class="ficha-empresa">🏢 ${d.empresa || 'Empresa sin nombre'}</div>
+          <div class="ficha-linea">${d.contacto || 'Contacto sin nombre'}${d.cargo ? ' · ' + d.cargo : ''}</div>
+          ${d.notas ? `<div class="ficha-linea">${d.notas}</div>` : ''}
+          <div class="ficha-linea">${historialTxt}</div>
+        </div>`;
+    } catch (err) { /* silencioso: el autocompletado es un plus, no crítico */ }
+  }, 500);
+});
+
+// --- Contactos: importar CSV, cobertura, cola priorizada ---
+const inputCsv = document.getElementById('input-csv');
+const estadoImportacion = document.getElementById('estado-importacion');
+const coberturaEl = document.getElementById('cobertura');
+const listaContactos = document.getElementById('lista-contactos');
+const filtroTemperatura = document.getElementById('filtro-temperatura');
+
+const TEMP_INFO = {
+  nuevo:    { emoji: '⚪', texto: 'Nunca contactado' },
+  tibio:    { emoji: '🟡', texto: 'Seguimiento pendiente' },
+  caliente: { emoji: '🔥', texto: 'Caliente' },
+  frio:     { emoji: '🧊', texto: 'Frío' },
+};
+
+function parseCsv(texto) {
+  const lineas = texto.split(/\r?\n/).filter(l => l.trim());
+  const encabezado = lineas[0].split(',').map(h => h.trim().toLowerCase());
+  return lineas.slice(1).map(linea => {
+    const valores = linea.split(',').map(v => v.trim().replace(/^"|"$/g, ''));
+    const obj = {};
+    encabezado.forEach((h, i) => { obj[h] = valores[i] || ''; });
+    return obj;
+  });
+}
+
+inputCsv.addEventListener('change', async () => {
+  const file = inputCsv.files[0];
+  if (!file) return;
+  const texto = await file.text();
+  const filas = parseCsv(texto).filter(f => f.telefono);
+
+  if (!filas.length) {
+    estadoImportacion.innerHTML = '<p class="mensaje-error">No se encontraron filas con teléfono en el archivo.</p>';
+    return;
+  }
+
+  const LOTE = 150;
+  let importados = 0;
+  estadoImportacion.innerHTML = `<p class="loading">Importando 0 / ${filas.length}...</p>`;
+
+  for (let i = 0; i < filas.length; i += LOTE) {
+    const lote = filas.slice(i, i + LOTE);
+    const res = await fetch('/api/contactos/importar', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ contactos: lote }),
+    });
+    const d = await res.json();
+    importados += d.importados || 0;
+    estadoImportacion.innerHTML = `<p class="loading">Importando ${Math.min(i + LOTE, filas.length)} / ${filas.length}...</p>`;
+  }
+
+  estadoImportacion.innerHTML = `<p class="mensaje-final" style="text-align:left">✅ ${importados} contactos importados.</p>`;
+  inputCsv.value = '';
+  cargarContactos();
+});
+
+async function cargarContactos() {
+  listaContactos.innerHTML = '<p class="loading">Cargando...</p>';
+  const res = await fetch('/api/contactos');
+  const contactos = await res.json();
+
+  if (!contactos.length) {
+    coberturaEl.innerHTML = '';
+    listaContactos.innerHTML = '<p class="empty">Todavía no hay contactos importados.</p>';
+    return;
+  }
+
+  const contactados = contactos.filter(c => c.veces_llamado > 0).length;
+  const pct = Math.round((contactados / contactos.length) * 100);
+  coberturaEl.innerHTML = `
+    <div class="cobertura-texto">${contactados} de ${contactos.length} contactados (${pct}%)</div>
+    <div class="cobertura-barra"><div class="cobertura-relleno" style="width:${pct}%"></div></div>`;
+
+  const filtro = filtroTemperatura.value;
+  const filtrados = filtro ? contactos.filter(c => c.temperatura === filtro) : contactos;
+
+  if (!filtrados.length) {
+    listaContactos.innerHTML = '<p class="empty">Nada en esta categoría.</p>';
+    return;
+  }
+
+  listaContactos.innerHTML = filtrados.map(c => {
+    const t = TEMP_INFO[c.temperatura];
+    return `
+      <div class="contacto-item">
+        <div>
+          <div class="contacto-nombre">${c.empresa || c.telefono}</div>
+          <div class="contacto-meta">${c.contacto || ''}${c.cargo ? ' · ' + c.cargo : ''} · ${c.telefono}</div>
+          <div class="contacto-meta">${c.veces_llamado > 0 ? `${t.texto} · último: ${c.ultimo_vendedor} (${c.ultimo_resultado})` : t.texto}</div>
+        </div>
+        <span class="temp-badge" title="${t.texto}">${t.emoji}</span>
+      </div>`;
+  }).join('');
+}
+
+filtroTemperatura.addEventListener('change', cargarContactos);
+cargarContactos();
 </script>
 
 </body>

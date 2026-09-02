@@ -147,8 +147,30 @@ Devuelve SOLO un JSON válido (sin texto antes ni después, sin markdown) con es
   }
 }
 
+// Deriva una "temperatura" del contacto a partir de su historial — no cuesta nada
+// (es lógica pura sobre datos que ya tenemos) y convierte una lista plana en una
+// cola de trabajo priorizada para el vendedor.
+function calcularTemperatura(vecesLlamado, ultimoResultado) {
+  if (!vecesLlamado) return 'nuevo';
+  if (['venta cerrada', 'interesado', 'cotización enviada'].includes(ultimoResultado)) return 'caliente';
+  if (ultimoResultado === 'reagendar') return 'tibio';
+  return 'frio';
+}
+
 async function guardarLlamada(env, { vendedor, telefono, nota, origen }) {
   const estructurado = await estructurarNota(env, { vendedor, telefono, nota });
+
+  // Si el teléfono ya existe en la base de contactos, esos datos son más confiables
+  // que lo que la IA adivinó de la conversación — los usamos para completar/corregir.
+  if (telefono) {
+    const contacto = await env.DB.prepare('SELECT empresa, contacto, cargo FROM contactos WHERE telefono = ?')
+      .bind(telefono).first();
+    if (contacto) {
+      estructurado.empresa = contacto.empresa || estructurado.empresa;
+      estructurado.contacto = contacto.contacto || estructurado.contacto;
+    }
+  }
+
   const createdAt = new Date().toISOString();
 
   const result = await env.DB.prepare(
@@ -327,6 +349,95 @@ export default {
       ]);
     }
 
+    // Importación masiva de la base de contactos (empresa, contacto, cargo por teléfono).
+    // Upsert: si el teléfono ya existía, actualiza los datos en vez de duplicar.
+    if (url.pathname === '/api/contactos/importar' && request.method === 'POST') {
+      const { contactos } = await request.json();
+      if (!Array.isArray(contactos) || !contactos.length) {
+        return json({ error: 'Falta el array de contactos' }, 400);
+      }
+
+      const createdAt = new Date().toISOString();
+      const statements = [];
+      let omitidos = 0;
+
+      for (const c of contactos) {
+        const telefono = normalizarTelefono(c.telefono);
+        if (!telefono) { omitidos++; continue; }
+        statements.push(
+          env.DB.prepare(
+            `INSERT INTO contactos (telefono, empresa, contacto, cargo, notas, created_at)
+             VALUES (?, ?, ?, ?, ?, ?)
+             ON CONFLICT(telefono) DO UPDATE SET
+               empresa = excluded.empresa, contacto = excluded.contacto,
+               cargo = excluded.cargo, notas = excluded.notas`
+          ).bind(telefono, c.empresa || null, c.contacto || null, c.cargo || null, c.notas || null, createdAt)
+        );
+      }
+
+      if (statements.length) await env.DB.batch(statements);
+      return json({ importados: statements.length, omitidos });
+    }
+
+    // Autocompletado al marcar: si el teléfono ya está en la base, muestra quién es
+    // y si algún vendedor ya habló con esa persona antes (evita llamadas a ciegas
+    // o duplicadas sin que nadie se entere).
+    if (url.pathname === '/api/contactos/buscar') {
+      const telefono = normalizarTelefono(url.searchParams.get('telefono'));
+      if (!telefono) return json({ encontrado: false });
+
+      const contacto = await env.DB.prepare('SELECT * FROM contactos WHERE telefono = ?').bind(telefono).first();
+      const historial = await env.DB.prepare(
+        `SELECT COUNT(*) as veces, MAX(created_at) as ultima,
+           (SELECT vendedor FROM llamadas WHERE telefono = ? ORDER BY created_at DESC LIMIT 1) as ultimo_vendedor,
+           (SELECT resultado FROM llamadas WHERE telefono = ? ORDER BY created_at DESC LIMIT 1) as ultimo_resultado
+         FROM llamadas WHERE telefono = ?`
+      ).bind(telefono, telefono, telefono).first();
+
+      return json({
+        encontrado: !!contacto,
+        empresa: contacto?.empresa || null,
+        contacto: contacto?.contacto || null,
+        cargo: contacto?.cargo || null,
+        notas: contacto?.notas || null,
+        veces_llamado: historial.veces,
+        ultima_llamada: historial.ultima,
+        ultimo_vendedor: historial.ultimo_vendedor,
+        ultimo_resultado: historial.ultimo_resultado,
+      });
+    }
+
+    // Panel de contactos: cruza la base maestra con el historial de llamadas y ordena
+    // como una cola de trabajo — seguimientos pendientes y nunca contactados primero.
+    if (url.pathname === '/api/contactos') {
+      const { results } = await env.DB.prepare(
+        `SELECT c.telefono, c.empresa, c.contacto, c.cargo, c.notas,
+           COUNT(l.id) as veces_llamado,
+           MAX(l.created_at) as ultima_llamada,
+           (SELECT vendedor FROM llamadas WHERE telefono = c.telefono ORDER BY created_at DESC LIMIT 1) as ultimo_vendedor,
+           (SELECT resultado FROM llamadas WHERE telefono = c.telefono ORDER BY created_at DESC LIMIT 1) as ultimo_resultado,
+           (SELECT resumen FROM llamadas WHERE telefono = c.telefono ORDER BY created_at DESC LIMIT 1) as ultimo_resumen
+         FROM contactos c
+         LEFT JOIN llamadas l ON l.telefono = c.telefono
+         GROUP BY c.telefono`
+      ).all();
+
+      const conTemperatura = results.map((c) => ({
+        ...c,
+        temperatura: calcularTemperatura(c.veces_llamado, c.ultimo_resultado),
+      }));
+
+      // Orden de prioridad: seguimientos primero, luego nunca contactados, luego el resto por fecha.
+      const prioridad = { tibio: 0, nuevo: 1, caliente: 2, frio: 3 };
+      conTemperatura.sort((a, b) => {
+        const p = prioridad[a.temperatura] - prioridad[b.temperatura];
+        if (p !== 0) return p;
+        return (b.ultima_llamada || '').localeCompare(a.ultima_llamada || '');
+      });
+
+      return json(conTemperatura);
+    }
+
     if (url.pathname === '/api/voice/token' && request.method === 'POST') {
       const { vendedor } = await request.json();
       const token = await generarAccessToken(env, toIdentity(vendedor));
@@ -337,7 +448,7 @@ export default {
       if (request.method === 'POST') {
         const body = await request.json();
         const vendedor = (body.vendedor || '').trim();
-        const telefono = (body.telefono || '').trim();
+        const telefono = normalizarTelefono(body.telefono);
         const nota = (body.nota || '').trim();
 
         if (!vendedor || !nota) {
