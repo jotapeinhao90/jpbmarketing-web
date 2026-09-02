@@ -50,17 +50,19 @@
     max-width: 1180px;
     margin: 0 auto;
   }
-  .header-top { display: flex; align-items: center; gap: 16px; }
-  .logo-conflex-fondo {
-    background: #fff;
-    border-radius: 16px;
-    padding: 8px 14px;
-    display: flex;
-    align-items: center;
-    flex-shrink: 0;
-    box-shadow: 0 6px 18px -6px rgba(0,0,0,0.4);
+  .header-top { display: flex; align-items: center; gap: 18px; }
+  /* Halo blanco suave en vez de una caja dura: el logo tiene texto navy que se
+     pierde contra el fondo oscuro, pero una caja blanca solida se ve como una
+     etiqueta pegada. El drop-shadow repetido da un borde de luz difuminado. */
+  .logo-conflex {
+    height: 58px;
+    width: auto;
+    display: block;
+    filter:
+      drop-shadow(0 0 1px #fff)
+      drop-shadow(0 0 2px #fff)
+      drop-shadow(0 0 10px rgba(255,255,255,0.5));
   }
-  .logo-conflex { height: 64px; width: auto; display: block; }
   header h1 {
     margin: 0;
     font-size: 1.3rem;
@@ -72,12 +74,18 @@
   .credito {
     display: flex;
     align-items: center;
-    gap: 6px;
-    margin: 10px 0 0;
-    font-size: 0.76rem;
+    gap: 7px;
+    margin: 14px 0 0;
+    font-size: 0.78rem;
     color: var(--muted);
   }
-  .logo-jpb { height: 16px; width: auto; opacity: 0.85; }
+  .logo-jpb {
+    height: 22px;
+    width: auto;
+    filter:
+      drop-shadow(0 0 1px #fff)
+      drop-shadow(0 0 6px rgba(255,255,255,0.35));
+  }
   main {
     max-width: 1180px;
     margin: 0 auto;
@@ -745,7 +753,7 @@
 
 <header>
   <div class="header-top">
-    <div class="logo-conflex-fondo"><img src="/logos/conflex.png" alt="Conflex" class="logo-conflex"></div>
+    <img src="/logos/conflex.png" alt="Conflex" class="logo-conflex">
     <h1>Sistema de Llamado con Transcripción</h1>
   </div>
   <p class="credito">Desarrollado por <img src="/logos/jpb.png" alt="JPB Marketing" class="logo-jpb"> JPB Marketing</p>
