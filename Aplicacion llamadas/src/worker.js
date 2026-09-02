@@ -538,6 +538,19 @@ export default {
       return json({ importados: statements.length, omitidos });
     }
 
+    // Buscador de contactos por nombre o empresa (al revés del de abajo: acá se busca
+    // por texto y se obtiene el teléfono, para no tener que saberlo de memoria).
+    if (url.pathname === '/api/contactos/buscar-nombre') {
+      const q = (url.searchParams.get('q') || '').trim();
+      if (q.length < 2) return json([]);
+      const { results } = await env.DB.prepare(
+        `SELECT telefono, empresa, contacto, cargo FROM contactos
+         WHERE contacto LIKE ? OR empresa LIKE ?
+         ORDER BY contacto LIMIT 8`
+      ).bind(`%${q}%`, `%${q}%`).all();
+      return json(results);
+    }
+
     // Autocompletado al marcar: si el teléfono ya está en la base, muestra quién es
     // y si algún vendedor ya habló con esa persona antes (evita llamadas a ciegas
     // o duplicadas sin que nadie se entere).

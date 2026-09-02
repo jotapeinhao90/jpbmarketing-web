@@ -50,8 +50,17 @@
     max-width: 1180px;
     margin: 0 auto;
   }
-  .header-top { display: flex; align-items: center; gap: 14px; }
-  .logo-conflex { height: 40px; width: auto; flex-shrink: 0; }
+  .header-top { display: flex; align-items: center; gap: 16px; }
+  .logo-conflex-fondo {
+    background: #fff;
+    border-radius: 16px;
+    padding: 8px 14px;
+    display: flex;
+    align-items: center;
+    flex-shrink: 0;
+    box-shadow: 0 6px 18px -6px rgba(0,0,0,0.4);
+  }
+  .logo-conflex { height: 64px; width: auto; display: block; }
   header h1 {
     margin: 0;
     font-size: 1.3rem;
@@ -267,6 +276,30 @@
   .empty { color: var(--muted); font-size: 0.9rem; text-align: center; padding: 24px 0; }
   .loading { color: var(--muted); font-size: 0.85rem; }
 
+  /* --- Buscador de contactos por nombre/empresa --- */
+  .campo-buscar { position: relative; }
+  .sugerencias {
+    position: absolute;
+    top: calc(100% + 2px);
+    left: 0; right: 0;
+    background: #22242f;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    overflow: hidden;
+    z-index: 10;
+    box-shadow: 0 12px 28px -8px rgba(0,0,0,0.6);
+  }
+  .sugerencias:empty { display: none; }
+  .sugerencia {
+    padding: 10px 14px;
+    cursor: pointer;
+    border-bottom: 1px solid var(--border);
+  }
+  .sugerencia:last-child { border-bottom: none; }
+  .sugerencia:hover, .sugerencia:active { background: rgba(186,255,61,0.1); }
+  .sugerencia .sug-nombre { font-size: 0.9rem; font-weight: 600; color: var(--text); }
+  .sugerencia .sug-detalle { font-size: 0.76rem; color: var(--muted); margin-top: 1px; }
+
   /* --- Ficha de contacto (autocompletado al marcar) --- */
   #ficha-contacto:empty { display: none; }
   .ficha {
@@ -335,14 +368,23 @@
     margin-left: 6px;
   }
 
-  /* --- Layout de "Llamar ahora": teléfono a la izquierda, formulario a la derecha --- */
-  .llamar-layout { display: flex; flex-direction: column; align-items: center; gap: 22px; }
-  .llamar-form { width: 100%; }
+  /* --- Layout de "Llamar ahora": teléfono a la izquierda, formulario a la derecha,
+     cada uno en su propio bloque separado (no comparten el mismo fondo). --- */
+  .llamar-layout { display: flex; flex-direction: column; align-items: stretch; gap: 22px; }
+  .llamar-form { width: 100%; display: flex; }
+  .panel-formulario {
+    width: 100%;
+    background: rgba(255,255,255,0.045);
+    border: 1px solid var(--card-border);
+    border-radius: 24px;
+    padding: 24px;
+  }
   .llamar-form .btn-llamar-circular, .llamar-form .btn-colgar-redondo { margin-left: auto; margin-right: auto; }
   @media (min-width: 640px) {
-    .llamar-layout { flex-direction: row; align-items: flex-start; }
-    .iphone-mock { flex-shrink: 0; margin: 0 !important; }
-    .llamar-form { flex: 1; max-width: 460px; padding-top: 4px; }
+    .llamar-layout { flex-direction: row; align-items: stretch; justify-content: center; }
+    .iphone-mock { flex-shrink: 0; margin: 0 !important; align-self: center; }
+    .llamar-form { flex: 1; max-width: 440px; }
+    .panel-formulario { display: flex; flex-direction: column; justify-content: center; }
   }
 
   /* --- Mock de iPhone: número + isla dinámica + teclado --- */
@@ -703,7 +745,7 @@
 
 <header>
   <div class="header-top">
-    <img src="/logos/conflex.png" alt="Conflex" class="logo-conflex">
+    <div class="logo-conflex-fondo"><img src="/logos/conflex.png" alt="Conflex" class="logo-conflex"></div>
     <h1>Sistema de Llamado con Transcripción</h1>
   </div>
   <p class="credito">Desarrollado por <img src="/logos/jpb.png" alt="JPB Marketing" class="logo-jpb"> JPB Marketing</p>
@@ -750,16 +792,25 @@
       </div>
 
       <div class="llamar-form">
-        <p class="hola-vendedor" id="hola-vendedor"></p>
-        <div class="field">
-          <input type="tel" id="numero-cliente" placeholder=" ">
-          <label for="numero-cliente">Teléfono del cliente</label>
+        <div class="panel-formulario">
+          <p class="hola-vendedor" id="hola-vendedor"></p>
+
+          <div class="field campo-buscar">
+            <input type="text" id="buscar-contacto" placeholder=" " autocomplete="off">
+            <label for="buscar-contacto">Buscar cliente (nombre o empresa)</label>
+            <div id="sugerencias-contacto" class="sugerencias"></div>
+          </div>
+
+          <div class="field">
+            <input type="tel" id="numero-cliente" placeholder=" ">
+            <label for="numero-cliente">Teléfono del cliente</label>
+          </div>
+          <div id="ficha-contacto"></div>
+          <button id="btn-llamar" class="btn-llamar-circular" disabled>📞</button>
+          <button id="btn-colgar" class="btn-colgar-redondo" style="display:none">📞</button>
+          <div id="mensaje-post-llamada"></div>
+          <p class="hint">La llamada sale por el navegador (necesitas internet estable) y se graba, transcribe y resume automáticamente — no hace falta escribir nada después.</p>
         </div>
-        <div id="ficha-contacto"></div>
-        <button id="btn-llamar" class="btn-llamar-circular" disabled>📞</button>
-        <button id="btn-colgar" class="btn-colgar-redondo" style="display:none">📞</button>
-        <div id="mensaje-post-llamada"></div>
-        <p class="hint">La llamada sale por el navegador (necesitas internet estable) y se graba, transcribe y resume automáticamente — no hace falta escribir nada después.</p>
       </div>
     </div>
   </div>
@@ -1170,6 +1221,7 @@ function volverAlFormulario() {
   pantallaLlamada.style.display = 'none';
   iphoneIdle.style.display = 'block';
   numeroClienteEl.value = '';
+  document.getElementById('buscar-contacto').value = '';
   actualizarDisplayNumero();
   mensajePostLlamada.innerHTML = '';
   callTimer.textContent = '';
@@ -1274,6 +1326,45 @@ btnLlamar.addEventListener('click', async () => {
 
 btnColgar.addEventListener('click', () => {
   if (activeCall) activeCall.disconnect();
+});
+
+// --- Buscador de contactos por nombre/empresa ---
+const buscarContactoEl = document.getElementById('buscar-contacto');
+const sugerenciasEl = document.getElementById('sugerencias-contacto');
+let debounceBusqueda = null;
+
+buscarContactoEl.addEventListener('input', () => {
+  clearTimeout(debounceBusqueda);
+  const q = buscarContactoEl.value.trim();
+  if (q.length < 2) { sugerenciasEl.innerHTML = ''; return; }
+
+  debounceBusqueda = setTimeout(async () => {
+    try {
+      const res = await fetch('/api/contactos/buscar-nombre?q=' + encodeURIComponent(q));
+      const resultados = await res.json();
+      if (!resultados.length) { sugerenciasEl.innerHTML = ''; return; }
+
+      sugerenciasEl.innerHTML = resultados.map((r, i) => `
+        <div class="sugerencia" data-i="${i}">
+          <div class="sug-nombre">${r.contacto || 'Sin nombre'}</div>
+          <div class="sug-detalle">${r.empresa || ''}${r.cargo ? ' · ' + r.cargo : ''} · ${r.telefono}</div>
+        </div>`).join('');
+
+      sugerenciasEl.querySelectorAll('.sugerencia').forEach(el => {
+        el.addEventListener('click', () => {
+          const r = resultados[el.dataset.i];
+          buscarContactoEl.value = r.contacto || r.empresa || '';
+          numeroClienteEl.value = r.telefono;
+          numeroClienteEl.dispatchEvent(new Event('input'));
+          sugerenciasEl.innerHTML = '';
+        });
+      });
+    } catch (err) { /* silencioso */ }
+  }, 350);
+});
+
+document.addEventListener('click', (e) => {
+  if (!buscarContactoEl.contains(e.target) && !sugerenciasEl.contains(e.target)) sugerenciasEl.innerHTML = '';
 });
 
 // --- Ficha de contacto: autocompletado al marcar ---
