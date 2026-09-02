@@ -332,74 +332,88 @@
   @media (min-width: 640px) {
     .llamar-layout { flex-direction: row; align-items: flex-start; }
     .iphone-mock { flex-shrink: 0; margin: 0 !important; }
-    .llamar-form { flex: 1; padding-top: 4px; }
+    .llamar-form { flex: 1; max-width: 460px; padding-top: 4px; }
   }
 
   /* --- Mock de iPhone: número + isla dinámica + teclado --- */
   .hola-vendedor { color: var(--muted); font-size: 0.85rem; margin: 0 0 18px; }
   .iphone-mock {
-    width: 240px;
+    width: 258px;
     max-width: 100%;
     margin: 0 auto 20px;
     aspect-ratio: 9 / 18.3;
-    background: linear-gradient(160deg, #2a2c38, #0e0f14);
-    border-radius: 42px;
-    padding: 8px;
-    box-shadow: 0 20px 44px -18px rgba(0,0,0,0.7), inset 0 0 0 1px rgba(255,255,255,0.06);
+    background: linear-gradient(160deg, #3a3d4d, #0c0d12);
+    border-radius: 46px;
+    padding: 10px;
+    box-shadow: 0 24px 50px -18px rgba(0,0,0,0.75), inset 0 0 0 1.5px rgba(255,255,255,0.08);
     position: relative;
   }
   .isla-dinamica {
     position: absolute;
-    top: 16px; left: 50%; transform: translateX(-50%);
-    width: 86px; height: 24px;
+    top: 18px; left: 50%; transform: translateX(-50%);
+    width: 84px; height: 24px;
     background: #000;
     border-radius: 999px;
     z-index: 5;
+    box-shadow: inset 0 0 0 1px rgba(255,255,255,0.05);
   }
   .iphone-pantalla {
-    background: #0a0a10;
-    border-radius: 34px;
+    background: radial-gradient(120% 90% at 50% 0%, #16171f, #08080c 70%);
+    border-radius: 36px;
     height: 100%;
-    padding: 46px 14px 16px;
+    padding: 54px 16px 20px;
     display: flex;
     flex-direction: column;
     align-items: center;
+    justify-content: flex-start;
     overflow: hidden;
   }
   .iphone-numero {
     font-family: 'JetBrains Mono', monospace;
-    font-size: 1.15rem;
-    letter-spacing: 0.03em;
-    min-height: 1.6em;
-    color: var(--text);
-    margin-bottom: 10px;
+    font-size: 1.55rem;
+    font-weight: 500;
+    letter-spacing: 0.04em;
+    font-variant-numeric: tabular-nums;
+    min-height: 1.3em;
+    color: #fff;
+    text-align: center;
+    text-shadow: 0 0 18px rgba(186,255,61,0.25);
+    margin-bottom: 22px;
+    word-break: break-all;
   }
   .teclado {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
-    gap: 8px;
+    gap: 13px;
     width: 100%;
   }
   .tecla {
     aspect-ratio: 1;
     border-radius: 50%;
     border: none;
-    background: rgba(255,255,255,0.07);
+    background: linear-gradient(160deg, rgba(255,255,255,0.13), rgba(255,255,255,0.04));
     color: #fff;
     font-family: 'Inter', sans-serif;
-    font-size: 1.15rem;
+    font-size: 1.2rem;
     font-weight: 600;
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
     cursor: pointer;
-    box-shadow: none;
-    transition: background 0.1s;
+    box-shadow: inset 0 1px 0 rgba(255,255,255,0.15), 0 2px 5px rgba(0,0,0,0.35);
+    transition: transform 0.08s, background 0.08s;
   }
-  .tecla:active { background: rgba(255,255,255,0.18); transform: none; }
-  .tecla .sub { font-size: 0.48rem; letter-spacing: 0.1em; color: #9199b0; font-weight: 500; margin-top: 1px; }
-  .tecla.borrar { background: none; color: #9199b0; font-size: 1.3rem; box-shadow: none; }
+  .tecla:active { background: rgba(186,255,61,0.22); transform: scale(0.94); }
+  .tecla .sub { font-size: 0.44rem; letter-spacing: 0.14em; color: #a3abc0; font-weight: 600; margin-top: 2px; }
+  .tecla.borrar {
+    background: none;
+    border: 1.5px solid rgba(255,255,255,0.14);
+    color: #a3abc0;
+    font-size: 1.1rem;
+    box-shadow: none;
+  }
+  .tecla.borrar:active { background: rgba(255,92,114,0.15); color: #ff5c72; }
 
   /* --- Pantalla de llamada (dentro del mock) --- */
   #pantalla-llamada {
@@ -585,7 +599,7 @@
   /* En pantallas anchas, usar el espacio de verdad: tarjetas lado a lado en vez de
      una sola columna angosta estirada en el medio. */
   @media (min-width: 900px) {
-    #panel-llamadas.activo, #panel-analisis.activo {
+    #panel-analisis.activo {
       display: grid;
       grid-template-columns: minmax(320px, 420px) 1fr;
       gap: 20px;
