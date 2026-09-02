@@ -9,15 +9,15 @@
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
 <style>
   :root {
-    --bg: #06070c;
-    --card: rgba(255,255,255,0.035);
-    --card-border: rgba(255,255,255,0.09);
+    --bg: #1b1d27;
+    --card: rgba(255,255,255,0.05);
+    --card-border: rgba(255,255,255,0.1);
     --text: #f2f4fa;
-    --muted: #8891a7;
+    --muted: #9199b0;
     --accent: #baff3d;
     --accent-ink: #0a1200;
     --accent-2: #8b7bff;
-    --border: rgba(255,255,255,0.1);
+    --border: rgba(255,255,255,0.14);
     --green: #3ee08a;
     --red: #ff5c72;
     --amber: #ffc255;
@@ -27,8 +27,8 @@
   body {
     margin: 0;
     background:
-      radial-gradient(1100px 600px at 85% -8%, rgba(139,123,255,0.22), transparent 60%),
-      radial-gradient(900px 500px at 5% 0%, rgba(186,255,61,0.14), transparent 55%),
+      radial-gradient(1100px 600px at 85% -8%, rgba(139,123,255,0.18), transparent 60%),
+      radial-gradient(900px 500px at 5% 0%, rgba(186,255,61,0.10), transparent 55%),
       var(--bg);
     color: var(--text);
     font-family: 'Space Grotesk', -apple-system, sans-serif;
@@ -78,44 +78,77 @@
     align-items: center;
     gap: 8px;
   }
-  label {
-    display: block;
-    font-size: 0.72rem;
+  /* Campo con etiqueta flotante: sin caja, solo una línea inferior. La etiqueta vive
+     dentro del campo y sube cuando hay foco o contenido (truco de :placeholder-shown,
+     sin JS). El input SIEMPRE necesita placeholder=" " para que el truco funcione. */
+  .field {
+    position: relative;
+    margin-bottom: 26px;
+  }
+  .field input, .field textarea {
+    width: 100%;
+    padding: 8px 2px 10px;
+    border: none;
+    border-bottom: 2px solid var(--border);
+    background: transparent;
+    border-radius: 0;
+    font-size: 1.05rem;
+    font-family: 'Space Grotesk', sans-serif;
+    color: var(--text);
+    transition: border-color 0.18s;
+  }
+  .field textarea { min-height: 100px; resize: vertical; }
+  .field input::placeholder, .field textarea::placeholder { color: transparent; }
+  .field input:focus, .field textarea:focus { outline: none; border-bottom-color: var(--accent); }
+  .field label {
+    position: absolute;
+    left: 2px;
+    top: 8px;
+    color: var(--muted);
+    font-size: 1.05rem;
+    font-weight: 400;
+    text-transform: none;
+    letter-spacing: 0;
+    pointer-events: none;
+    transition: all 0.16s ease;
+  }
+  .field input:focus + label,
+  .field input:not(:placeholder-shown) + label,
+  .field textarea:focus + label,
+  .field textarea:not(:placeholder-shown) + label,
+  .field.field-fijo label {
+    top: -14px;
+    font-size: 0.68rem;
     font-weight: 700;
     text-transform: uppercase;
     letter-spacing: 0.08em;
-    margin-bottom: 8px;
+    color: var(--accent);
+  }
+
+  /* Selector de número en píldoras, en vez de un <select> */
+  .chips { display: flex; flex-wrap: wrap; gap: 8px; }
+  .chip {
+    padding: 9px 16px;
+    border-radius: 999px;
+    border: 1.5px solid var(--border);
+    background: rgba(255,255,255,0.03);
     color: var(--muted);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.85rem;
+    cursor: pointer;
+    transition: all 0.15s;
   }
-  input, textarea, select {
-    width: 100%;
-    padding: 14px 16px;
-    border: 1px solid var(--border);
-    background: rgba(255,255,255,0.04);
-    border-radius: 14px;
-    font-size: 1rem;
-    margin-bottom: 16px;
-    font-family: 'Space Grotesk', sans-serif;
-    color: var(--text);
-    transition: border-color 0.15s, box-shadow 0.15s, background 0.15s;
-  }
-  input::placeholder, textarea::placeholder { color: #565f77; }
-  select { color-scheme: dark; }
-  input:focus, textarea:focus, select:focus {
-    outline: none;
+  .chip.activo {
     border-color: var(--accent);
-    background: rgba(186,255,61,0.06);
-    box-shadow: 0 0 0 4px rgba(186,255,61,0.12);
+    background: rgba(186,255,61,0.12);
+    color: var(--accent);
+    font-weight: 700;
   }
-  textarea {
-    min-height: 110px;
-    resize: vertical;
-  }
+
   .hint {
     font-size: 0.78rem;
     color: var(--muted);
-    margin-top: -10px;
-    margin-bottom: 14px;
+    margin-top: 18px;
     line-height: 1.5;
   }
   button {
@@ -130,12 +163,26 @@
     letter-spacing: -0.01em;
     font-family: 'Space Grotesk', sans-serif;
     cursor: pointer;
-    box-shadow: 0 0 0 1px rgba(186,255,61,0.4), 0 12px 30px -10px rgba(186,255,61,0.55);
+    box-shadow: 0 8px 20px -10px rgba(186,255,61,0.6);
     transition: transform 0.12s, box-shadow 0.12s, opacity 0.12s;
   }
-  button:hover { transform: translateY(-1px); box-shadow: 0 0 0 1px rgba(186,255,61,0.5), 0 16px 34px -8px rgba(186,255,61,0.65); }
+  button:hover { transform: translateY(-1px); }
   button:active { transform: translateY(0); }
   button:disabled { opacity: 0.4; box-shadow: none; transform: none; }
+
+  /* Botón circular de "Llamar", como el botón verde real de un teléfono */
+  .btn-llamar-circular {
+    width: 84px;
+    height: 84px;
+    border-radius: 50%;
+    padding: 0;
+    margin: 6px auto 0;
+    font-size: 1.7rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 0 0 1px rgba(186,255,61,0.5), 0 0 34px rgba(186,255,61,0.5);
+  }
 
   .resultado-badge {
     display: inline-block;
@@ -163,13 +210,16 @@
     font-size: 0.9rem;
   }
 
-  .filtros {
-    display: flex;
-    gap: 8px;
-    margin-bottom: 14px;
-  }
-  .filtros select, .filtros input {
-    margin-bottom: 0;
+  .filtros { margin-bottom: 18px; }
+  .filtros select {
+    width: 100%;
+    padding: 10px 14px;
+    border: 1.5px solid var(--border);
+    background: rgba(255,255,255,0.04);
+    border-radius: 12px;
+    color: var(--text);
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 0.92rem;
   }
 
   .llamada-item {
@@ -358,17 +408,21 @@
     <h2>📲 Llamar ahora</h2>
 
     <div id="form-llamar-container">
-      <label for="vendedor-llamar">Vendedor</label>
-      <input type="text" id="vendedor-llamar" placeholder="Tu nombre">
+      <div class="field">
+        <input type="text" id="vendedor-llamar" placeholder=" ">
+        <label for="vendedor-llamar">Vendedor</label>
+      </div>
 
-      <label for="mi-numero">Número que verá el cliente</label>
-      <select id="mi-numero"><option value="">Cargando números...</option></select>
+      <div class="field">
+        <input type="tel" id="numero-cliente" placeholder=" ">
+        <label for="numero-cliente">Teléfono del cliente</label>
+      </div>
 
-      <label for="numero-cliente">Teléfono del cliente</label>
-      <input type="tel" id="numero-cliente" placeholder="+56 9 1234 5678">
+      <label style="display:block; font-size:0.68rem; font-weight:700; text-transform:uppercase; letter-spacing:0.08em; color:var(--muted); margin-bottom:10px;">Número que verá el cliente</label>
+      <div class="chips" id="chips-numeros"></div>
 
-      <button id="btn-llamar">📞 Llamar</button>
-      <p class="hint">La llamada sale por el navegador (necesitas internet estable) y se graba, transcribe y resume automáticamente — no hace falta escribir nada después.</p>
+      <button id="btn-llamar" class="btn-llamar-circular">📞</button>
+      <p class="hint" style="text-align:center">La llamada sale por el navegador (necesitas internet estable) y se graba, transcribe y resume automáticamente — no hace falta escribir nada después.</p>
     </div>
 
     <div id="pantalla-llamada">
@@ -391,15 +445,21 @@
     <h2>✍️ Registrar llamada manual</h2>
     <div id="confirmacion"></div>
     <form id="form-llamada">
-      <label for="vendedor">Vendedor</label>
-      <input type="text" id="vendedor" name="vendedor" placeholder="Tu nombre" required autocomplete="name">
+      <div class="field">
+        <input type="text" id="vendedor" name="vendedor" placeholder=" " required autocomplete="name">
+        <label for="vendedor">Vendedor</label>
+      </div>
 
-      <label for="telefono">Teléfono del cliente (opcional)</label>
-      <input type="tel" id="telefono" name="telefono" placeholder="+56 9 1234 5678">
+      <div class="field">
+        <input type="tel" id="telefono" name="telefono" placeholder=" ">
+        <label for="telefono">Teléfono del cliente (opcional)</label>
+      </div>
 
-      <label for="nota">¿Qué pasó en la llamada?</label>
-      <textarea id="nota" name="nota" placeholder="Toca el micrófono del teclado y dicta: con quién hablaste, de qué empresa, qué cotizó, y el próximo paso." required></textarea>
-      <p class="hint">Tip: usa el micrófono del teclado de tu celular para dictar en vez de escribir.</p>
+      <div class="field">
+        <textarea id="nota" name="nota" placeholder=" " required></textarea>
+        <label for="nota">¿Qué pasó en la llamada?</label>
+      </div>
+      <p class="hint">Toca el micrófono del teclado y dicta: con quién hablaste, de qué empresa, qué cotizó, y el próximo paso.</p>
 
       <button type="submit" id="btn-guardar">Guardar llamada</button>
     </form>
@@ -527,8 +587,9 @@ const mensajePostLlamada = document.getElementById('mensaje-post-llamada');
 const btnLlamar = document.getElementById('btn-llamar');
 const btnColgar = document.getElementById('btn-colgar');
 const vendedorLlamarEl = document.getElementById('vendedor-llamar');
-const miNumeroEl = document.getElementById('mi-numero');
+const chipsNumeros = document.getElementById('chips-numeros');
 const numeroClienteEl = document.getElementById('numero-cliente');
+let numeroSeleccionado = '';
 
 vendedorLlamarEl.value = localStorage.getItem('ultimo_vendedor') || '';
 
@@ -537,15 +598,24 @@ async function cargarNumeros() {
     const res = await fetch('/api/voice/numeros');
     const numeros = await res.json();
     if (!numeros.length) {
-      miNumeroEl.innerHTML = '<option value="">No hay números verificados en Twilio</option>';
+      chipsNumeros.innerHTML = '<span class="hint">No hay números verificados en Twilio</span>';
       return;
     }
-    miNumeroEl.innerHTML = numeros
-      .map(n => `<option value="${n.numero}">${n.etiqueta}</option>`).join('');
     const guardado = localStorage.getItem('ultimo_callerid');
-    if (guardado && numeros.some(n => n.numero === guardado)) miNumeroEl.value = guardado;
+    numeroSeleccionado = (guardado && numeros.some(n => n.numero === guardado)) ? guardado : numeros[0].numero;
+
+    chipsNumeros.innerHTML = numeros
+      .map(n => `<button type="button" class="chip${n.numero === numeroSeleccionado ? ' activo' : ''}" data-numero="${n.numero}">${n.numero}</button>`)
+      .join('');
+
+    chipsNumeros.querySelectorAll('.chip').forEach(chip => {
+      chip.addEventListener('click', () => {
+        numeroSeleccionado = chip.dataset.numero;
+        chipsNumeros.querySelectorAll('.chip').forEach(c => c.classList.toggle('activo', c === chip));
+      });
+    });
   } catch (err) {
-    miNumeroEl.innerHTML = '<option value="">Error al cargar los números</option>';
+    chipsNumeros.innerHTML = '<span class="hint">Error al cargar los números</span>';
   }
 }
 cargarNumeros();
@@ -640,7 +710,7 @@ function finalizarLlamadaUI(hubo_error, mensajeError) {
 
 btnLlamar.addEventListener('click', async () => {
   const vendedor = vendedorLlamarEl.value.trim();
-  const miNumero = miNumeroEl.value.trim();
+  const miNumero = numeroSeleccionado;
   const numeroCliente = numeroClienteEl.value.trim();
 
   if (!vendedor || !miNumero || !numeroCliente) {
