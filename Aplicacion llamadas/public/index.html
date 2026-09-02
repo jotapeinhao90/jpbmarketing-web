@@ -51,18 +51,19 @@
     margin: 0 auto;
   }
   .header-top { display: flex; align-items: center; gap: 18px; }
-  /* Halo blanco suave en vez de una caja dura: el logo tiene texto navy que se
-     pierde contra el fondo oscuro, pero una caja blanca solida se ve como una
-     etiqueta pegada. El drop-shadow repetido da un borde de luz difuminado. */
-  .logo-conflex {
-    height: 58px;
-    width: auto;
-    display: block;
-    filter:
-      drop-shadow(0 0 1px #fff)
-      drop-shadow(0 0 2px #fff)
-      drop-shadow(0 0 10px rgba(255,255,255,0.5));
+  /* El halo difuminado le agarraba un tono naranja feo del ícono. Con el margen ya
+     recortado del PNG, una tarjeta blanca ajustada sí queda bien (antes se veía
+     enorme y vacía porque el archivo original traía mucho espacio en blanco). */
+  .logo-conflex-fondo {
+    background: #fff;
+    border-radius: 14px;
+    padding: 8px 14px;
+    display: flex;
+    align-items: center;
+    flex-shrink: 0;
+    box-shadow: 0 6px 16px -6px rgba(0,0,0,0.45);
   }
+  .logo-conflex { height: 50px; width: auto; display: block; }
   header h1 {
     margin: 0;
     font-size: 1.3rem;
@@ -74,13 +75,13 @@
   .credito {
     display: flex;
     align-items: center;
-    gap: 7px;
+    gap: 8px;
     margin: 14px 0 0;
     font-size: 0.78rem;
     color: var(--muted);
   }
   .logo-jpb {
-    height: 22px;
+    height: 34px;
     width: auto;
     filter:
       drop-shadow(0 0 1px #fff)
@@ -753,7 +754,7 @@
 
 <header>
   <div class="header-top">
-    <img src="/logos/conflex.png" alt="Conflex" class="logo-conflex">
+    <div class="logo-conflex-fondo"><img src="/logos/conflex.png" alt="Conflex" class="logo-conflex"></div>
     <h1>Sistema de Llamado con Transcripción</h1>
   </div>
   <p class="credito">Desarrollado por <img src="/logos/jpb.png" alt="JPB Marketing" class="logo-jpb"> JPB Marketing</p>
