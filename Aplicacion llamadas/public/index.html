@@ -4,6 +4,14 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Llamadas B2B</title>
+<link rel="manifest" href="/manifest.json">
+<meta name="theme-color" content="#1b1d27">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Llamadas">
+<link rel="apple-touch-icon" href="/icons/apple-touch-icon.png">
+<link rel="icon" href="/icons/icon-192.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
@@ -125,8 +133,12 @@
     color: var(--accent);
   }
 
-  /* Selector de número en píldoras, en vez de un <select> */
-  .chips { display: flex; flex-wrap: wrap; gap: 8px; }
+  .label-suelta {
+    display: block; font-size: 0.68rem; font-weight: 700; text-transform: uppercase;
+    letter-spacing: 0.08em; color: var(--muted); margin-bottom: 10px;
+  }
+  /* Selector de número/vendedor en píldoras, en vez de un <select> */
+  .chips { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 20px; }
   .chip {
     padding: 9px 16px;
     border-radius: 999px;
@@ -293,6 +305,18 @@
   .contacto-meta { font-size: 0.76rem; color: var(--muted); margin-top: 2px; }
   .temp-badge { font-size: 1.1rem; flex-shrink: 0; }
 
+  .usuario-item {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 10px 2px; border-bottom: 1px solid var(--border);
+  }
+  .usuario-item:last-child { border-bottom: none; }
+  .usuario-item .nombre { font-weight: 600; }
+  .usuario-item .telefono { font-family: 'JetBrains Mono', monospace; font-size: 0.8rem; color: var(--muted); }
+  .btn-borrar {
+    width: auto; padding: 4px 10px; border-radius: 8px; font-size: 0.75rem;
+    background: rgba(255,92,114,0.12); color: var(--red); box-shadow: none;
+  }
+
   .origen-tag {
     font-size: 0.65rem;
     color: var(--muted);
@@ -455,19 +479,14 @@
     <h2>📲 Llamar ahora</h2>
 
     <div id="form-llamar-container">
-      <div class="field">
-        <input type="text" id="vendedor-llamar" placeholder=" ">
-        <label for="vendedor-llamar">Vendedor</label>
-      </div>
+      <label class="label-suelta">¿Quién llama?</label>
+      <div class="chips" id="chips-vendedores"></div>
 
       <div class="field">
         <input type="tel" id="numero-cliente" placeholder=" ">
         <label for="numero-cliente">Teléfono del cliente</label>
       </div>
       <div id="ficha-contacto"></div>
-
-      <label style="display:block; font-size:0.68rem; font-weight:700; text-transform:uppercase; letter-spacing:0.08em; color:var(--muted); margin-bottom:10px;">Número que verá el cliente</label>
-      <div class="chips" id="chips-numeros"></div>
 
       <button id="btn-llamar" class="btn-llamar-circular">📞</button>
       <p class="hint" style="text-align:center">La llamada sale por el navegador (necesitas internet estable) y se graba, transcribe y resume automáticamente — no hace falta escribir nada después.</p>
@@ -493,10 +512,8 @@
     <h2>✍️ Registrar llamada manual</h2>
     <div id="confirmacion"></div>
     <form id="form-llamada">
-      <div class="field">
-        <input type="text" id="vendedor" name="vendedor" placeholder=" " required autocomplete="name">
-        <label for="vendedor">Vendedor</label>
-      </div>
+      <label class="label-suelta">Vendedor</label>
+      <div class="chips" id="chips-vendedores-manual"></div>
 
       <div class="field">
         <input type="tel" id="telefono" name="telefono" placeholder=" ">
@@ -534,6 +551,21 @@
       </select>
     </div>
     <div id="lista-contactos"><p class="loading">Cargando...</p></div>
+  </div>
+
+  <div class="card">
+    <h2>⚙️ Configuración · Vendedores</h2>
+    <div id="lista-usuarios"></div>
+    <div class="field" style="margin-top:18px;">
+      <input type="text" id="nuevo-usuario-nombre" placeholder=" ">
+      <label for="nuevo-usuario-nombre">Nombre del vendedor</label>
+    </div>
+    <div class="field">
+      <input type="tel" id="nuevo-usuario-telefono" placeholder=" ">
+      <label for="nuevo-usuario-telefono">Su número (debe estar verificado en Twilio)</label>
+    </div>
+    <button id="btn-agregar-usuario">Agregar vendedor</button>
+    <div id="estado-usuario"></div>
   </div>
 
   <div class="card">
@@ -605,11 +637,12 @@ filtroVendedor.addEventListener('change', cargarLlamadas);
 
 form.addEventListener('submit', async (e) => {
   e.preventDefault();
+  if (!vendedorSeleccionado) { alert('Elige quién registra la llamada.'); return; }
   btnGuardar.disabled = true;
   btnGuardar.textContent = 'Guardando...';
   confirmacion.style.display = 'none';
 
-  const vendedor = document.getElementById('vendedor').value.trim();
+  const vendedor = vendedorSeleccionado.nombre;
   const telefono = document.getElementById('telefono').value.trim();
   const nota = document.getElementById('nota').value.trim();
 
@@ -627,7 +660,6 @@ form.addEventListener('submit', async (e) => {
 
     document.getElementById('telefono').value = '';
     document.getElementById('nota').value = '';
-    localStorage.setItem('ultimo_vendedor', vendedor);
 
     cargarLlamadas();
   } catch (err) {
@@ -640,9 +672,6 @@ form.addEventListener('submit', async (e) => {
     btnGuardar.textContent = 'Guardar llamada';
   }
 });
-
-const ultimoVendedor = localStorage.getItem('ultimo_vendedor');
-if (ultimoVendedor) document.getElementById('vendedor').value = ultimoVendedor;
 
 cargarLlamadas();
 
@@ -657,39 +686,96 @@ const callTimer = document.getElementById('call-timer');
 const mensajePostLlamada = document.getElementById('mensaje-post-llamada');
 const btnLlamar = document.getElementById('btn-llamar');
 const btnColgar = document.getElementById('btn-colgar');
-const vendedorLlamarEl = document.getElementById('vendedor-llamar');
-const chipsNumeros = document.getElementById('chips-numeros');
+const chipsVendedores = document.getElementById('chips-vendedores');
+const chipsVendedoresManual = document.getElementById('chips-vendedores-manual');
 const numeroClienteEl = document.getElementById('numero-cliente');
-let numeroSeleccionado = '';
 
-vendedorLlamarEl.value = localStorage.getItem('ultimo_vendedor') || '';
+// --- Usuarios (vendedores guardados) ---
+let vendedorSeleccionado = null;       // usado por "Registrar llamada manual"
+let vendedorLlamarSeleccionado = null; // usado por "Llamar ahora" (trae su propio teléfono)
 
-async function cargarNumeros() {
-  try {
-    const res = await fetch('/api/voice/numeros');
-    const numeros = await res.json();
-    if (!numeros.length) {
-      chipsNumeros.innerHTML = '<span class="hint">No hay números verificados en Twilio</span>';
-      return;
-    }
-    const guardado = localStorage.getItem('ultimo_callerid');
-    numeroSeleccionado = (guardado && numeros.some(n => n.numero === guardado)) ? guardado : numeros[0].numero;
-
-    chipsNumeros.innerHTML = numeros
-      .map(n => `<button type="button" class="chip${n.numero === numeroSeleccionado ? ' activo' : ''}" data-numero="${n.numero}">${n.numero}</button>`)
-      .join('');
-
-    chipsNumeros.querySelectorAll('.chip').forEach(chip => {
-      chip.addEventListener('click', () => {
-        numeroSeleccionado = chip.dataset.numero;
-        chipsNumeros.querySelectorAll('.chip').forEach(c => c.classList.toggle('activo', c === chip));
-      });
-    });
-  } catch (err) {
-    chipsNumeros.innerHTML = '<span class="hint">Error al cargar los números</span>';
+function renderChipsVendedores(contenedor, usuarios, onElegir) {
+  if (!usuarios.length) {
+    contenedor.innerHTML = '<span class="hint">Agrega vendedores en Configuración, abajo.</span>';
+    return;
   }
+  contenedor.innerHTML = usuarios
+    .map(u => `<button type="button" class="chip" data-id="${u.id}">${u.nombre}</button>`)
+    .join('');
+  contenedor.querySelectorAll('.chip').forEach(chip => {
+    chip.addEventListener('click', () => {
+      const u = usuarios.find(x => String(x.id) === chip.dataset.id);
+      onElegir(u);
+      contenedor.querySelectorAll('.chip').forEach(c => c.classList.toggle('activo', c === chip));
+    });
+  });
 }
-cargarNumeros();
+
+async function cargarUsuarios() {
+  const res = await fetch('/api/usuarios');
+  const usuarios = await res.json();
+
+  const guardadoId = localStorage.getItem('ultimo_usuario_id');
+
+  renderChipsVendedores(chipsVendedores, usuarios, (u) => {
+    vendedorLlamarSeleccionado = u;
+    localStorage.setItem('ultimo_usuario_id', u.id);
+  });
+  renderChipsVendedores(chipsVendedoresManual, usuarios, (u) => {
+    vendedorSeleccionado = u;
+    localStorage.setItem('ultimo_usuario_id', u.id);
+  });
+
+  const preseleccionado = usuarios.find(u => String(u.id) === guardadoId) || usuarios[0];
+  if (preseleccionado) {
+    vendedorLlamarSeleccionado = preseleccionado;
+    vendedorSeleccionado = preseleccionado;
+    [chipsVendedores, chipsVendedoresManual].forEach(c => {
+      const chip = c.querySelector(`[data-id="${preseleccionado.id}"]`);
+      if (chip) chip.classList.add('activo');
+    });
+  }
+
+  // Lista editable en Configuración
+  const listaUsuarios = document.getElementById('lista-usuarios');
+  listaUsuarios.innerHTML = usuarios.length
+    ? usuarios.map(u => `
+        <div class="usuario-item">
+          <div><div class="nombre">${u.nombre}</div><div class="telefono">${u.telefono}</div></div>
+          <button type="button" class="btn-borrar" data-id="${u.id}">Quitar</button>
+        </div>`).join('')
+    : '<p class="empty">Todavía no hay vendedores guardados.</p>';
+
+  listaUsuarios.querySelectorAll('.btn-borrar').forEach(btn => {
+    btn.addEventListener('click', async () => {
+      if (!confirm('¿Quitar este vendedor?')) return;
+      await fetch('/api/usuarios/' + btn.dataset.id, { method: 'DELETE' });
+      cargarUsuarios();
+    });
+  });
+}
+cargarUsuarios();
+
+document.getElementById('btn-agregar-usuario').addEventListener('click', async () => {
+  const nombreEl = document.getElementById('nuevo-usuario-nombre');
+  const telefonoEl = document.getElementById('nuevo-usuario-telefono');
+  const estadoUsuario = document.getElementById('estado-usuario');
+  const nombre = nombreEl.value.trim();
+  const telefono = telefonoEl.value.trim();
+  if (!nombre || !telefono) { estadoUsuario.innerHTML = '<p class="mensaje-error">Completa nombre y teléfono.</p>'; return; }
+
+  const res = await fetch('/api/usuarios', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ nombre, telefono }),
+  });
+  if (!res.ok) { estadoUsuario.innerHTML = '<p class="mensaje-error">No se pudo agregar.</p>'; return; }
+
+  nombreEl.value = '';
+  telefonoEl.value = '';
+  estadoUsuario.innerHTML = '<p class="mensaje-final" style="text-align:left">✅ Vendedor agregado. Si su número no estaba verificado en Twilio, hazlo antes de que pueda llamar.</p>';
+  cargarUsuarios();
+});
 
 let activeCall = null;
 let timerInterval = null;
@@ -780,17 +866,14 @@ function finalizarLlamadaUI(hubo_error, mensajeError) {
 }
 
 btnLlamar.addEventListener('click', async () => {
-  const vendedor = vendedorLlamarEl.value.trim();
-  const miNumero = numeroSeleccionado;
   const numeroCliente = numeroClienteEl.value.trim();
 
-  if (!vendedor || !miNumero || !numeroCliente) {
-    alert('Completa vendedor, tu número y el teléfono del cliente.');
+  if (!vendedorLlamarSeleccionado || !numeroCliente) {
+    alert('Elige quién llama y escribe el teléfono del cliente.');
     return;
   }
-
-  localStorage.setItem('ultimo_vendedor', vendedor);
-  localStorage.setItem('ultimo_callerid', miNumero);
+  const vendedor = vendedorLlamarSeleccionado.nombre;
+  const miNumero = vendedorLlamarSeleccionado.telefono;
 
   btnLlamar.disabled = true;
   formLlamarContainer.style.display = 'none';

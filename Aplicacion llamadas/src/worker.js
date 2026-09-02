@@ -13,10 +13,10 @@ const RESULTADOS_VALIDOS = [
   'otro',
 ];
 
-function json(data, status = 200) {
+function json(data, status = 200, extraHeaders = {}) {
   return new Response(JSON.stringify(data), {
     status,
-    headers: { 'Content-Type': 'application/json' },
+    headers: { 'Content-Type': 'application/json', ...extraHeaders },
   });
 }
 
@@ -44,6 +44,70 @@ function normalizarTelefono(valor) {
   if (limpio.length === 8) return '+569' + limpio;
   return '+' + limpio;
 }
+
+// Sesión persistente: en vez de Basic Auth (que en modo standalone de PWA en iOS no
+// siempre se recuerda entre aperturas), usamos una cookie firmada con HMAC. No necesita
+// tabla de sesiones — el valor esperado se recalcula cada vez, así que no hay estado que
+// pueda "vencer" ni que haya que limpiar.
+async function firmarSesion(env) {
+  const key = await crypto.subtle.importKey(
+    'raw', new TextEncoder().encode(env.SESSION_SECRET),
+    { name: 'HMAC', hash: 'SHA-256' }, false, ['sign']
+  );
+  const sig = await crypto.subtle.sign('HMAC', key, new TextEncoder().encode('llamadas-b2b-session'));
+  return base64url(sig);
+}
+
+function leerCookie(request, nombre) {
+  const cookie = request.headers.get('Cookie') || '';
+  const match = cookie.match(new RegExp('(?:^|;\\s*)' + nombre + '=([^;]+)'));
+  return match ? match[1] : null;
+}
+
+async function sesionValida(request, env) {
+  const valor = leerCookie(request, 'sesion');
+  return !!valor && valor === (await firmarSesion(env));
+}
+
+const PAGINA_LOGIN = `<!DOCTYPE html>
+<html lang="es-CL"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Llamadas B2B</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
+<style>
+  * { box-sizing: border-box; }
+  body { margin:0; min-height:100vh; display:flex; align-items:center; justify-content:center;
+    background: radial-gradient(900px 500px at 80% -10%, rgba(139,123,255,0.2), transparent 60%),
+                radial-gradient(700px 400px at 10% 100%, rgba(186,255,61,0.12), transparent 55%), #1b1d27;
+    color:#f2f4fa; font-family:'Space Grotesk',sans-serif; }
+  .box { width:min(340px, 88vw); text-align:center; }
+  h1 { font-size:1.6rem; margin:0 0 6px; background:linear-gradient(100deg,#baff3d,#8b7bff);
+    -webkit-background-clip:text; background-clip:text; color:transparent; }
+  p { color:#9199b0; font-size:0.85rem; margin:0 0 26px; }
+  input { width:100%; padding:14px 16px; border:1px solid rgba(255,255,255,0.14); background:rgba(255,255,255,0.05);
+    border-radius:14px; color:#fff; font-size:1rem; margin-bottom:14px; font-family:inherit; }
+  input:focus { outline:none; border-color:#baff3d; }
+  button { width:100%; padding:15px; border:none; border-radius:14px; background:#baff3d; color:#0a1200;
+    font-weight:700; font-size:1rem; font-family:inherit; cursor:pointer; }
+  #error { color:#ff5c72; font-size:0.85rem; margin-top:12px; min-height:1em; }
+</style></head>
+<body>
+  <form class="box" id="f">
+    <h1>Llamadas B2B</h1>
+    <p>Ingresa la contraseña del equipo</p>
+    <input type="password" id="pw" autofocus placeholder="Contraseña">
+    <button type="submit">Entrar</button>
+    <div id="error"></div>
+  </form>
+  <script>
+    document.getElementById('f').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const res = await fetch('/api/login', { method: 'POST', headers: {'Content-Type':'application/json'},
+        body: JSON.stringify({ password: document.getElementById('pw').value }) });
+      if (res.ok) location.reload();
+      else document.getElementById('error').textContent = 'Contraseña incorrecta';
+    });
+  </script>
+</body></html>`;
 
 // Twilio exige que el "identity" de un Access Token sea solo alfanumérico y guion bajo.
 function toIdentity(nombre) {
@@ -274,14 +338,31 @@ export default {
       return new Response('ok');
     }
 
-    // Todo lo demás (el dashboard y su API) requiere el Basic Auth normal.
-    const auth = request.headers.get('Authorization');
-    const expected = 'Basic ' + btoa('jpb:' + env.DASHBOARD_PASSWORD);
-    if (auth !== expected) {
-      return new Response('Autenticación requerida', {
-        status: 401,
-        headers: { 'WWW-Authenticate': 'Basic realm="Llamadas B2B"' },
-      });
+    // Assets públicos: el manifest, íconos y el SDK de Twilio los tiene que poder pedir
+    // el sistema operativo (al agregar a inicio) o el navegador sin sesión iniciada.
+    if (/^\/(manifest\.json|icons\/|twilio-voice-sdk\.min\.js)/.test(url.pathname)) {
+      return env.ASSETS.fetch(request);
+    }
+
+    if (url.pathname === '/api/login' && request.method === 'POST') {
+      const { password } = await request.json();
+      if (password !== env.DASHBOARD_PASSWORD) return json({ error: 'incorrecta' }, 401);
+      const valor = await firmarSesion(env);
+      return json(
+        { ok: true },
+        200,
+        { 'Set-Cookie': `sesion=${valor}; Path=/; Max-Age=31536000; HttpOnly; Secure; SameSite=Lax` }
+      );
+    }
+
+    // Sesión persistente por cookie en vez de Basic Auth (ver [[firmarSesion]] arriba):
+    // en la PWA instalada en el celular, Basic Auth no siempre sobrevive a cerrar y
+    // reabrir la app — la cookie sí, porque el navegador la guarda igual que en Safari.
+    if (!(await sesionValida(request, env))) {
+      if (request.method === 'GET' && !url.pathname.startsWith('/api/')) {
+        return new Response(PAGINA_LOGIN, { headers: { 'Content-Type': 'text/html' } });
+      }
+      return json({ error: 'Sesión requerida' }, 401);
     }
 
     // Diagnóstico: muestra qué dijo Twilio de las últimas llamadas y qué números
@@ -324,6 +405,31 @@ export default {
           error: c.error_code ? `${c.error_code}: ${c.error_message}` : null,
         })),
       });
+    }
+
+    // Vendedores guardados (nombre + su número verificado). Reemplaza el tener que
+    // escribir el nombre a mano cada vez y elegir el número por separado.
+    if (url.pathname === '/api/usuarios') {
+      if (request.method === 'GET') {
+        const { results } = await env.DB.prepare('SELECT * FROM usuarios ORDER BY nombre').all();
+        return json(results);
+      }
+      if (request.method === 'POST') {
+        const { nombre, telefono } = await request.json();
+        const tel = normalizarTelefono(telefono);
+        if (!nombre || !tel) return json({ error: 'Falta nombre o teléfono' }, 400);
+
+        const createdAt = new Date().toISOString();
+        const result = await env.DB.prepare('INSERT INTO usuarios (nombre, telefono, created_at) VALUES (?, ?, ?)')
+          .bind(nombre, tel, createdAt).run();
+        return json({ id: result.meta.last_row_id, nombre, telefono: tel, created_at: createdAt });
+      }
+    }
+
+    const usuarioMatch = url.pathname.match(/^\/api\/usuarios\/(\d+)$/);
+    if (usuarioMatch && request.method === 'DELETE') {
+      await env.DB.prepare('DELETE FROM usuarios WHERE id = ?').bind(usuarioMatch[1]).run();
+      return json({ ok: true });
     }
 
     if (url.pathname === '/api/voice/numeros') {
