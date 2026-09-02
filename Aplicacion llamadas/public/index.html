@@ -325,10 +325,20 @@
     margin-left: 6px;
   }
 
+  /* --- Layout de "Llamar ahora": teléfono a la izquierda, formulario a la derecha --- */
+  .llamar-layout { display: flex; flex-direction: column; align-items: center; gap: 22px; }
+  .llamar-form { width: 100%; }
+  .llamar-form .btn-llamar-circular, .llamar-form .btn-colgar-redondo { margin-left: auto; margin-right: auto; }
+  @media (min-width: 640px) {
+    .llamar-layout { flex-direction: row; align-items: flex-start; }
+    .iphone-mock { flex-shrink: 0; margin: 0 !important; }
+    .llamar-form { flex: 1; padding-top: 4px; }
+  }
+
   /* --- Mock de iPhone: número + isla dinámica + teclado --- */
-  .hola-vendedor { color: var(--muted); font-size: 0.85rem; margin: -12px 0 18px; }
+  .hola-vendedor { color: var(--muted); font-size: 0.85rem; margin: 0 0 18px; }
   .iphone-mock {
-    width: 260px;
+    width: 240px;
     max-width: 100%;
     margin: 0 auto 20px;
     aspect-ratio: 9 / 18.3;
@@ -684,39 +694,46 @@
 <section class="tab-panel" id="panel-llamadas">
   <div class="card card-llamar">
     <h2>📲 Llamar ahora</h2>
-    <p class="hola-vendedor" id="hola-vendedor"></p>
 
-    <div class="iphone-mock">
-      <div class="isla-dinamica"></div>
-      <div class="iphone-pantalla">
+    <div class="llamar-layout">
+      <div class="iphone-mock">
+        <div class="isla-dinamica"></div>
+        <div class="iphone-pantalla">
 
-        <div id="iphone-idle">
-          <div class="iphone-numero" id="iphone-numero-display">&nbsp;</div>
-          <div id="ficha-contacto"></div>
-          <div class="teclado" id="teclado"></div>
-        </div>
-
-        <div id="pantalla-llamada" style="display:none">
-          <div class="telefono-visual" id="telefono-visual">
-            <div class="anillo"></div>
-            <div class="anillo"></div>
-            <div class="anillo"></div>
-            <div class="icono-telefono">📞</div>
+          <div id="iphone-idle">
+            <div class="iphone-numero" id="iphone-numero-display">&nbsp;</div>
+            <div class="teclado" id="teclado"></div>
           </div>
-          <div id="numero-llamando"></div>
-          <div id="call-estado-texto">Conectando...</div>
-          <div class="onda-audio" id="onda-audio"><span></span><span></span><span></span><span></span><span></span></div>
-          <div id="call-timer"></div>
-        </div>
 
+          <div id="pantalla-llamada" style="display:none">
+            <div class="telefono-visual" id="telefono-visual">
+              <div class="anillo"></div>
+              <div class="anillo"></div>
+              <div class="anillo"></div>
+              <div class="icono-telefono">📞</div>
+            </div>
+            <div id="numero-llamando"></div>
+            <div id="call-estado-texto">Conectando...</div>
+            <div class="onda-audio" id="onda-audio"><span></span><span></span><span></span><span></span><span></span></div>
+            <div id="call-timer"></div>
+          </div>
+
+        </div>
+      </div>
+
+      <div class="llamar-form">
+        <p class="hola-vendedor" id="hola-vendedor"></p>
+        <div class="field">
+          <input type="tel" id="numero-cliente" placeholder=" ">
+          <label for="numero-cliente">Teléfono del cliente</label>
+        </div>
+        <div id="ficha-contacto"></div>
+        <button id="btn-llamar" class="btn-llamar-circular" disabled>📞</button>
+        <button id="btn-colgar" class="btn-colgar-redondo" style="display:none">📞</button>
+        <div id="mensaje-post-llamada"></div>
+        <p class="hint">La llamada sale por el navegador (necesitas internet estable) y se graba, transcribe y resume automáticamente — no hace falta escribir nada después.</p>
       </div>
     </div>
-
-    <input type="tel" id="numero-cliente" style="display:none">
-    <button id="btn-llamar" class="btn-llamar-circular" disabled>📞</button>
-    <button id="btn-colgar" class="btn-colgar-redondo" style="display:none">📞</button>
-    <div id="mensaje-post-llamada"></div>
-    <p class="hint" style="text-align:center">La llamada sale por el navegador (necesitas internet estable) y se graba, transcribe y resume automáticamente — no hace falta escribir nada después.</p>
   </div>
 
   <div class="card">
@@ -1236,6 +1253,7 @@ const fichaContacto = document.getElementById('ficha-contacto');
 let debounceLookup = null;
 
 numeroClienteEl.addEventListener('input', () => {
+  numeroDisplay.textContent = numeroClienteEl.value || ' ';
   clearTimeout(debounceLookup);
   const digitos = numeroClienteEl.value.replace(/\D/g, '');
   if (digitos.length < 8) { fichaContacto.innerHTML = ''; return; }
