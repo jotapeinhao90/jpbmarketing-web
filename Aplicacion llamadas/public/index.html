@@ -29,6 +29,7 @@
     --green: #3ee08a;
     --red: #ff5c72;
     --amber: #ffc255;
+    --amarillo: #ffcc33;
   }
   * { box-sizing: border-box; }
   html { color-scheme: dark; }
@@ -51,12 +52,14 @@
   }
   header h1 {
     margin: 0;
-    font-size: 1.9rem;
+    font-size: 1.25rem;
     font-weight: 700;
-    letter-spacing: -0.03em;
-    background: linear-gradient(100deg, var(--accent), var(--accent-2));
-    -webkit-background-clip: text;
-    background-clip: text;
+    letter-spacing: -0.01em;
+    line-height: 1.3;
+    color: var(--text);
+    background: none;
+    -webkit-background-clip: initial;
+    background-clip: initial;
     color: transparent;
   }
   header p { margin: 6px 0 0; font-size: 0.88rem; color: var(--muted); }
@@ -465,16 +468,131 @@
     margin-top: 4px;
     max-width: 280px;
   }
+
+  /* --- Marca / header --- */
+  .marca { color: var(--accent); -webkit-text-fill-color: var(--accent); }
+
+  /* --- Pestañas de escritorio --- */
+  .tabs-desktop {
+    display: flex;
+    gap: 6px;
+    max-width: 720px;
+    margin: 0 auto;
+    padding: 0 16px 14px;
+    position: sticky;
+    top: 0;
+    z-index: 20;
+    background: var(--bg);
+  }
+  .tab-btn {
+    flex: 1;
+    padding: 10px 8px;
+    border: 1px solid var(--card-border);
+    background: rgba(255,255,255,0.04);
+    color: var(--muted);
+    border-radius: 12px;
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 0.82rem;
+    font-weight: 600;
+    cursor: pointer;
+    box-shadow: none;
+    transition: all 0.15s;
+  }
+  .tab-btn:hover { transform: none; color: var(--text); }
+  .tab-btn.activo { background: rgba(255,255,255,0.09); color: var(--text); border-color: var(--border); }
+  .tab-btn.tab-principal { background: var(--amarillo, #ffcc33); color: #241d00; border-color: transparent; font-weight: 700; }
+  .tab-btn.tab-principal.activo { background: #ffd75e; }
+
+  /* --- Pestañas móviles (barra inferior fija + botón central elevado) --- */
+  .tabs-mobile { display: none; }
+
+  /* --- Paneles --- */
+  .tab-panel { display: none; }
+  .tab-panel.activo { display: block; }
+
+  /* --- KPIs (Análisis) --- */
+  .kpi-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+    margin-bottom: 22px;
+  }
+  .kpi {
+    background: rgba(255,255,255,0.04);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 16px;
+  }
+  .kpi .kpi-valor {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 1.6rem;
+    font-weight: 700;
+    color: var(--accent);
+  }
+  .kpi .kpi-etiqueta { font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.06em; color: var(--muted); margin-top: 4px; }
+
+  .barra-fila { margin-bottom: 12px; }
+  .barra-fila .barra-cabecera { display: flex; justify-content: space-between; font-size: 0.82rem; margin-bottom: 5px; }
+  .barra-fila .barra-cabecera .valor { font-family: 'JetBrains Mono', monospace; color: var(--muted); }
+  .barra-pista { height: 10px; border-radius: 999px; background: rgba(255,255,255,0.06); overflow: hidden; }
+  .barra-relleno { height: 100%; border-radius: 999px; }
+
+  /* --- Instructivo --- */
+  .instructivo h3 { font-size: 0.95rem; margin: 20px 0 6px; color: var(--text); }
+  .instructivo h3:first-child { margin-top: 0; }
+  .instructivo p { font-size: 0.88rem; color: #c3c8db; line-height: 1.55; margin: 0; }
+
+  @media (max-width: 680px) {
+    .tabs-desktop { display: none; }
+    body { padding-bottom: 100px; }
+    .tabs-mobile {
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-around;
+      position: fixed;
+      left: 0; right: 0; bottom: 0;
+      padding: 10px 6px calc(10px + env(safe-area-inset-bottom));
+      background: rgba(20,21,28,0.85);
+      backdrop-filter: blur(16px);
+      border-top: 1px solid var(--border);
+      z-index: 30;
+    }
+    .tab-btn-mv {
+      background: none; border: none; box-shadow: none; width: auto;
+      display: flex; flex-direction: column; align-items: center; gap: 3px;
+      color: var(--muted); font-family: 'Space Grotesk', sans-serif; font-size: 0.65rem;
+      padding: 4px 6px; cursor: pointer;
+    }
+    .tab-btn-mv .icono { font-size: 1.25rem; }
+    .tab-btn-mv.activo { color: var(--accent); }
+    .tab-fab {
+      width: 60px; height: 60px; border-radius: 50%; border: none;
+      background: var(--amarillo, #ffcc33); font-size: 1.6rem;
+      display: flex; align-items: center; justify-content: center;
+      margin-top: -34px;
+      box-shadow: 0 0 0 5px var(--bg), 0 8px 20px -4px rgba(255,204,51,0.7);
+      cursor: pointer;
+    }
+  }
 </style>
 </head>
 <body>
 
 <header>
-  <h1>Llamadas B2B</h1>
-  <p>Registro y resumen automático de llamadas de venta</p>
+  <h1>Sistema de Llamado con Transcripción <span class="marca">JPB</span></h1>
 </header>
 
+<nav class="tabs-desktop">
+  <button class="tab-btn" data-tab="clientes">📇 Clientes</button>
+  <button class="tab-btn" data-tab="analisis">📊 Análisis</button>
+  <button class="tab-btn tab-principal" data-tab="llamadas">📞 Llamadas</button>
+  <button class="tab-btn" data-tab="configuracion">⚙️ Configuración</button>
+  <button class="tab-btn" data-tab="ayuda">❓ Ayuda</button>
+</nav>
+
 <main>
+
+<section class="tab-panel" id="panel-llamadas">
   <div class="card">
     <h2>📲 Llamar ahora</h2>
 
@@ -529,7 +647,9 @@
       <button type="submit" id="btn-guardar">Guardar llamada</button>
     </form>
   </div>
+</section>
 
+<section class="tab-panel" id="panel-clientes">
   <div class="card">
     <h2>📇 Contactos</h2>
     <div id="cobertura" class="cobertura"></div>
@@ -552,7 +672,9 @@
     </div>
     <div id="lista-contactos"><p class="loading">Cargando...</p></div>
   </div>
+</section>
 
+<section class="tab-panel" id="panel-configuracion">
   <div class="card">
     <h2>⚙️ Configuración · Vendedores</h2>
     <div id="lista-usuarios"></div>
@@ -567,6 +689,14 @@
     <button id="btn-agregar-usuario">Agregar vendedor</button>
     <div id="estado-usuario"></div>
   </div>
+</section>
+
+<section class="tab-panel" id="panel-analisis">
+  <div class="card">
+    <h2>📊 Resumen</h2>
+    <div class="kpi-grid" id="kpi-grid"><p class="loading">Cargando...</p></div>
+    <div id="barras-resultado"></div>
+  </div>
 
   <div class="card">
     <h2>🗂️ Historial</h2>
@@ -577,10 +707,56 @@
     </div>
     <div id="lista-llamadas"><p class="loading">Cargando...</p></div>
   </div>
+</section>
+
+<section class="tab-panel" id="panel-ayuda">
+  <div class="card">
+    <h2>❓ Cómo usar la app</h2>
+    <div class="instructivo">
+      <h3>📞 Hacer una llamada</h3>
+      <p>Entra a <strong>Llamadas</strong>, toca tu nombre en "¿Quién llama?", escribe el teléfono del cliente y toca el botón verde circular. La llamada sale por tu navegador — necesitas internet estable. Se graba, transcribe y resume solo, no hace falta escribir nada después.</p>
+
+      <h3>✍️ Registrar una llamada hecha por fuera</h3>
+      <p>Si llamaste desde tu celular normal (no desde la app), usa "Registrar llamada manual": elige tu nombre, y dicta con el micrófono del teclado qué pasó. La IA arma el resumen igual.</p>
+
+      <h3>📇 Base de contactos</h3>
+      <p>En <strong>Clientes</strong> puedes importar un CSV con columnas <span class="mono">telefono,empresa,contacto,cargo,notas</span>. Al escribir el teléfono de un contacto que ya está en la base, la app te muestra quién es automáticamente antes de llamar.</p>
+
+      <h3>📊 Análisis</h3>
+      <p>Muestra el total de llamadas, cómo van resultando (interesados, ventas cerradas, etc.) y el historial completo, filtrable por vendedor.</p>
+
+      <h3>⚙️ Agregar un vendedor nuevo</h3>
+      <p>Primero verifica su número en la consola de Twilio (Verified Caller IDs) — sin eso no puede llamar mostrando su propio número. Después agrégalo en <strong>Configuración</strong> con su nombre y teléfono.</p>
+
+      <h3>📲 Instalar la app en el celular</h3>
+      <p><strong>iPhone:</strong> abre este link en Safari → botón Compartir → "Agregar a pantalla de inicio".<br>
+      <strong>Android:</strong> abre en Chrome → menú (⋮) → "Instalar app". La contraseña solo se pide una vez.</p>
+    </div>
+  </div>
+</section>
+
 </main>
+
+<nav class="tabs-mobile">
+  <button class="tab-btn-mv" data-tab="clientes"><span class="icono">📇</span><span class="etiqueta">Clientes</span></button>
+  <button class="tab-btn-mv" data-tab="analisis"><span class="icono">📊</span><span class="etiqueta">Análisis</span></button>
+  <button class="tab-fab" data-tab="llamadas">📞</button>
+  <button class="tab-btn-mv" data-tab="configuracion"><span class="icono">⚙️</span><span class="etiqueta">Config</span></button>
+  <button class="tab-btn-mv" data-tab="ayuda"><span class="icono">❓</span><span class="etiqueta">Ayuda</span></button>
+</nav>
 
 <script src="/twilio-voice-sdk.min.js"></script>
 <script>
+// --- Sistema de pestañas ---
+function activarTab(nombre) {
+  document.querySelectorAll('.tab-panel').forEach(p => p.classList.toggle('activo', p.id === 'panel-' + nombre));
+  document.querySelectorAll('[data-tab]').forEach(b => b.classList.toggle('activo', b.dataset.tab === nombre));
+  localStorage.setItem('tab_activa', nombre);
+  window.scrollTo(0, 0);
+}
+document.querySelectorAll('[data-tab]').forEach(b => b.addEventListener('click', () => activarTab(b.dataset.tab)));
+activarTab(localStorage.getItem('tab_activa') || 'llamadas');
+
 const RESULTADO_CLASE = {
   'venta cerrada': 'r-venta',
   'interesado': 'r-interes',
@@ -1072,6 +1248,45 @@ async function cargarContactos() {
 
 filtroTemperatura.addEventListener('change', cargarContactos);
 cargarContactos();
+
+// --- Análisis ---
+const RESULTADO_COLOR = {
+  'venta cerrada': '#3ee08a',
+  'interesado': '#8b7bff',
+  'cotización enviada': '#8b7bff',
+  'reagendar': '#ffc255',
+  'no contesta': '#ff5c72',
+  'rechazado': '#ff5c72',
+  'otro': '#8891a7',
+};
+
+async function cargarEstadisticas() {
+  const kpiGrid = document.getElementById('kpi-grid');
+  const barrasResultado = document.getElementById('barras-resultado');
+  try {
+    const res = await fetch('/api/estadisticas');
+    const e = await res.json();
+
+    const topVendedor = e.por_vendedor[0];
+    const pctContactados = e.total_contactos ? Math.round((e.contactados / e.total_contactos) * 100) : 0;
+
+    kpiGrid.innerHTML = `
+      <div class="kpi"><div class="kpi-valor">${e.total_llamadas}</div><div class="kpi-etiqueta">Llamadas totales</div></div>
+      <div class="kpi"><div class="kpi-valor">${pctContactados}%</div><div class="kpi-etiqueta">Base contactada</div></div>
+      <div class="kpi"><div class="kpi-valor">${topVendedor ? topVendedor.n : 0}</div><div class="kpi-etiqueta">${topVendedor ? topVendedor.vendedor : 'Top vendedor'}</div></div>
+      <div class="kpi"><div class="kpi-valor">${e.total_contactos}</div><div class="kpi-etiqueta">Contactos en base</div></div>`;
+
+    const max = Math.max(...e.por_resultado.map(r => r.n), 1);
+    barrasResultado.innerHTML = e.por_resultado.map(r => `
+      <div class="barra-fila">
+        <div class="barra-cabecera"><span>${r.resultado || 'otro'}</span><span class="valor">${r.n}</span></div>
+        <div class="barra-pista"><div class="barra-relleno" style="width:${(r.n / max) * 100}%; background:${RESULTADO_COLOR[r.resultado] || '#8891a7'}"></div></div>
+      </div>`).join('');
+  } catch (err) {
+    kpiGrid.innerHTML = '<p class="mensaje-error">No se pudieron cargar las estadísticas.</p>';
+  }
+}
+cargarEstadisticas();
 </script>
 
 </body>

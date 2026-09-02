@@ -544,6 +544,23 @@ export default {
       return json(conTemperatura);
     }
 
+    if (url.pathname === '/api/estadisticas') {
+      const [total, porResultado, porVendedor, totalContactos, contactados] = await Promise.all([
+        env.DB.prepare('SELECT COUNT(*) as n FROM llamadas').first(),
+        env.DB.prepare('SELECT resultado, COUNT(*) as n FROM llamadas GROUP BY resultado ORDER BY n DESC').all(),
+        env.DB.prepare('SELECT vendedor, COUNT(*) as n FROM llamadas GROUP BY vendedor ORDER BY n DESC LIMIT 5').all(),
+        env.DB.prepare('SELECT COUNT(*) as n FROM contactos').first(),
+        env.DB.prepare('SELECT COUNT(DISTINCT telefono) as n FROM llamadas WHERE telefono IS NOT NULL').first(),
+      ]);
+      return json({
+        total_llamadas: total.n,
+        por_resultado: porResultado.results,
+        por_vendedor: porVendedor.results,
+        total_contactos: totalContactos.n,
+        contactados: contactados.n,
+      });
+    }
+
     if (url.pathname === '/api/voice/token' && request.method === 'POST') {
       const { vendedor } = await request.json();
       const token = await generarAccessToken(env, toIdentity(vendedor));
