@@ -146,6 +146,28 @@
   }
   .empty { color: var(--muted); font-size: 0.9rem; text-align: center; padding: 24px 0; }
   .loading { color: var(--muted); font-size: 0.85rem; }
+
+  .btn-colgar { background: var(--red); }
+  .btn-colgar:active { background: #b91c1c; }
+  #estado-llamada {
+    display: none;
+    text-align: center;
+    padding: 14px;
+    border-radius: 10px;
+    background: #eff6ff;
+    border: 1px solid #bfdbfe;
+    font-size: 0.9rem;
+    margin-bottom: 14px;
+  }
+  #estado-llamada .timer { font-size: 1.4rem; font-weight: 700; display: block; margin-top: 4px; }
+  .origen-tag {
+    font-size: 0.68rem;
+    color: var(--muted);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 1px 6px;
+    margin-left: 6px;
+  }
 </style>
 </head>
 <body>
@@ -157,7 +179,25 @@
 
 <main>
   <div class="card">
-    <h2>Registrar llamada</h2>
+    <h2>Llamar ahora</h2>
+    <div id="estado-llamada"><span id="estado-texto">Conectando...</span><span class="timer" id="estado-timer"></span></div>
+
+    <label for="vendedor-llamar">Vendedor</label>
+    <input type="text" id="vendedor-llamar" placeholder="Tu nombre">
+
+    <label for="mi-numero">Tu número (verificado en Twilio)</label>
+    <input type="tel" id="mi-numero" placeholder="+56 9 1234 5678">
+
+    <label for="numero-cliente">Teléfono del cliente</label>
+    <input type="tel" id="numero-cliente" placeholder="+56 9 1234 5678">
+
+    <button id="btn-llamar">Llamar</button>
+    <button id="btn-colgar" class="btn-colgar" style="display:none">Colgar</button>
+    <p class="hint">La llamada sale por el navegador (necesitas internet estable) y se graba, transcribe y resume automáticamente — no hace falta escribir nada después.</p>
+  </div>
+
+  <div class="card">
+    <h2>Registrar llamada manual</h2>
     <div id="confirmacion"></div>
     <form id="form-llamada">
       <label for="vendedor">Vendedor</label>
@@ -185,6 +225,7 @@
   </div>
 </main>
 
+<script src="/twilio-voice-sdk.min.js"></script>
 <script>
 const RESULTADO_CLASE = {
   'venta cerrada': 'r-venta',
@@ -228,7 +269,7 @@ async function cargarLlamadas() {
   listaEl.innerHTML = llamadas.map(l => `
     <div class="llamada-item">
       <div class="llamada-top">
-        <span class="llamada-empresa">${l.empresa || 'Empresa no indicada'}</span>
+        <span class="llamada-empresa">${l.empresa || 'Empresa no indicada'}${l.origen === 'llamada' ? '<span class="origen-tag">📞 llamada</span>' : ''}</span>
         <span class="resultado-badge ${RESULTADO_CLASE[l.resultado] || 'r-otro'}">${l.resultado || 'otro'}</span>
       </div>
       <div class="llamada-meta">${fmtFecha(l.created_at)} · ${l.vendedor}${l.contacto ? ' · ' + l.contacto : ''}${l.telefono ? ' · ' + l.telefono : ''}</div>
@@ -282,6 +323,116 @@ const ultimoVendedor = localStorage.getItem('ultimo_vendedor');
 if (ultimoVendedor) document.getElementById('vendedor').value = ultimoVendedor;
 
 cargarLlamadas();
+
+// --- Llamar ahora (Twilio Voice SDK) ---
+const btnLlamar = document.getElementById('btn-llamar');
+const btnColgar = document.getElementById('btn-colgar');
+const estadoLlamada = document.getElementById('estado-llamada');
+const estadoTexto = document.getElementById('estado-texto');
+const estadoTimer = document.getElementById('estado-timer');
+const vendedorLlamarEl = document.getElementById('vendedor-llamar');
+const miNumeroEl = document.getElementById('mi-numero');
+const numeroClienteEl = document.getElementById('numero-cliente');
+
+vendedorLlamarEl.value = localStorage.getItem('ultimo_vendedor') || '';
+miNumeroEl.value = localStorage.getItem('ultimo_callerid') || '';
+
+let activeCall = null;
+let timerInterval = null;
+
+function mostrarEstado(texto) {
+  estadoLlamada.style.display = 'block';
+  estadoTexto.textContent = texto;
+}
+
+function iniciarTimer() {
+  const inicio = Date.now();
+  estadoTimer.style.display = 'block';
+  timerInterval = setInterval(() => {
+    const s = Math.floor((Date.now() - inicio) / 1000);
+    const mm = String(Math.floor(s / 60)).padStart(2, '0');
+    const ss = String(s % 60).padStart(2, '0');
+    estadoTimer.textContent = `${mm}:${ss}`;
+  }, 1000);
+}
+
+function finalizarLlamadaUI() {
+  clearInterval(timerInterval);
+  btnLlamar.style.display = 'block';
+  btnLlamar.disabled = false;
+  btnLlamar.textContent = 'Llamar';
+  btnColgar.style.display = 'none';
+  mostrarEstado('Llamada finalizada. Generando resumen automático...');
+  estadoTimer.textContent = '';
+  activeCall = null;
+  // La transcripción llega vía webhook de Twilio unos segundos después de colgar.
+  setTimeout(cargarLlamadas, 8000);
+  setTimeout(cargarLlamadas, 16000);
+  setTimeout(() => { estadoLlamada.style.display = 'none'; }, 6000);
+}
+
+btnLlamar.addEventListener('click', async () => {
+  const vendedor = vendedorLlamarEl.value.trim();
+  const miNumero = miNumeroEl.value.trim();
+  const numeroCliente = numeroClienteEl.value.trim();
+
+  if (!vendedor || !miNumero || !numeroCliente) {
+    alert('Completa vendedor, tu número y el teléfono del cliente.');
+    return;
+  }
+
+  localStorage.setItem('ultimo_vendedor', vendedor);
+  localStorage.setItem('ultimo_callerid', miNumero);
+
+  btnLlamar.disabled = true;
+  btnLlamar.textContent = 'Conectando...';
+  mostrarEstado('Solicitando permiso de micrófono y conectando...');
+
+  try {
+    const tokenRes = await fetch('/api/voice/token', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ vendedor }),
+    });
+    if (!tokenRes.ok) throw new Error('No se pudo obtener el token de Twilio');
+    const { token } = await tokenRes.json();
+
+    const device = new Twilio.Device(token);
+
+    activeCall = await device.connect({
+      params: {
+        To: numeroCliente,
+        MiNumero: miNumero,
+        Vendedor: vendedor,
+        Telefono: numeroCliente,
+      },
+    });
+
+    btnLlamar.style.display = 'none';
+    btnColgar.style.display = 'block';
+    mostrarEstado('Timbrando...');
+
+    activeCall.on('accept', () => {
+      mostrarEstado('En llamada');
+      iniciarTimer();
+    });
+    activeCall.on('disconnect', finalizarLlamadaUI);
+    activeCall.on('cancel', finalizarLlamadaUI);
+    activeCall.on('error', (err) => {
+      mostrarEstado('Error en la llamada: ' + err.message);
+      finalizarLlamadaUI();
+    });
+  } catch (err) {
+    mostrarEstado('No se pudo iniciar la llamada: ' + err.message);
+    btnLlamar.disabled = false;
+    btnLlamar.textContent = 'Llamar';
+    setTimeout(() => { estadoLlamada.style.display = 'none'; }, 4000);
+  }
+});
+
+btnColgar.addEventListener('click', () => {
+  if (activeCall) activeCall.disconnect();
+});
 </script>
 
 </body>

@@ -21,5 +21,12 @@ directory = "public"
 binding = "ASSETS"
 run_worker_first = true
 
-# Secrets (NO van acá, se configuran con `wrangler secret put`):
-#   DASHBOARD_PASSWORD -> password del Basic Auth (usuario fijo "jpb")
+# Secrets (NO van acá, se configuran con `wrangler secret put`).
+# Los SIDs de Twilio tampoco van en el repo: aunque no son credenciales por sí solos,
+# GitHub bloquea el push al detectar el patrón `SK...` de Twilio (secret scanning).
+#   DASHBOARD_PASSWORD    -> password del Basic Auth (usuario fijo "jpb")
+#   TWILIO_ACCOUNT_SID    -> cuenta de Twilio (AC...)
+#   TWILIO_API_KEY_SID    -> API key de Twilio (SK...)
+#   TWILIO_API_KEY_SECRET -> secret de esa API key
+#   TWILIO_TWIML_APP_SID  -> TwiML App que apunta a /api/voice/outgoing (AP...)
+#   TWILIO_WEBHOOK_KEY    -> valida que las llamadas a /api/voice/* vengan de Twilio

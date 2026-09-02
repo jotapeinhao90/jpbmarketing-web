@@ -1,4 +1,5 @@
 const AI_MODEL = '@cf/meta/llama-3.3-70b-instruct-fp8-fast';
+const WHISPER_MODEL = '@cf/openai/whisper-large-v3-turbo';
 
 const RESULTADOS_VALIDOS = [
   'cotización enviada',
@@ -17,9 +18,87 @@ function json(data, status = 200) {
   });
 }
 
+function xml(text, status = 200) {
+  return new Response(text, {
+    status,
+    headers: { 'Content-Type': 'text/xml' },
+  });
+}
+
+function escapeXml(str) {
+  return String(str || '').replace(/[<>&'"]/g, (c) => ({
+    '<': '&lt;', '>': '&gt;', '&': '&amp;', "'": '&apos;', '"': '&quot;',
+  }[c]));
+}
+
+// Los vendedores escriben el número como les acomoda ("9 1234 5678", "56912345678").
+// Twilio exige formato E.164, así que normalizamos asumiendo Chile por defecto.
+function normalizarTelefono(valor) {
+  const limpio = String(valor || '').replace(/[^\d+]/g, '');
+  if (!limpio) return '';
+  if (limpio.startsWith('+')) return limpio;
+  if (limpio.startsWith('56')) return '+' + limpio;
+  if (limpio.length === 9 && limpio.startsWith('9')) return '+56' + limpio;
+  if (limpio.length === 8) return '+569' + limpio;
+  return '+' + limpio;
+}
+
+// Twilio exige que el "identity" de un Access Token sea solo alfanumérico y guion bajo.
+function toIdentity(nombre) {
+  return String(nombre || 'vendedor')
+    .normalize('NFD').replace(/[\u0300-\u036f]/g, '')
+    .replace(/[^a-zA-Z0-9_]/g, '_')
+    .slice(0, 100) || 'vendedor';
+}
+
+function base64url(input) {
+  let bytes;
+  if (typeof input === 'string') {
+    bytes = new TextEncoder().encode(input);
+  } else {
+    bytes = new Uint8Array(input);
+  }
+  let bin = '';
+  bytes.forEach((b) => { bin += String.fromCharCode(b); });
+  return btoa(bin).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
+}
+
+// Construye a mano un Access Token JWT de Twilio (formato "twilio-fpa;v=1") firmado con
+// la API Key, para que el navegador del vendedor pueda usar el Voice SDK sin exponer
+// nunca el API Key Secret al cliente.
+async function generarAccessToken(env, identity) {
+  const now = Math.floor(Date.now() / 1000);
+  const header = { typ: 'JWT', alg: 'HS256', cty: 'twilio-fpa;v=1' };
+  const payload = {
+    jti: `${env.TWILIO_API_KEY_SID}-${now}`,
+    iss: env.TWILIO_API_KEY_SID,
+    sub: env.TWILIO_ACCOUNT_SID,
+    iat: now,
+    exp: now + 3600,
+    grants: {
+      identity,
+      voice: {
+        incoming: { allow: false },
+        outgoing: { application_sid: env.TWILIO_TWIML_APP_SID },
+      },
+    },
+  };
+
+  const unsigned = `${base64url(JSON.stringify(header))}.${base64url(JSON.stringify(payload))}`;
+  const key = await crypto.subtle.importKey(
+    'raw',
+    new TextEncoder().encode(env.TWILIO_API_KEY_SECRET),
+    { name: 'HMAC', hash: 'SHA-256' },
+    false,
+    ['sign']
+  );
+  const signature = await crypto.subtle.sign('HMAC', key, new TextEncoder().encode(unsigned));
+  return `${unsigned}.${base64url(signature)}`;
+}
+
 async function estructurarNota(env, { vendedor, telefono, nota }) {
   const prompt = `Eres un asistente que estructura notas de llamadas de venta B2B en Chile.
-Un vendedor acaba de terminar una llamada y dictó esta nota de voz sobre lo que pasó:
+Esta es la transcripción o nota de una llamada que un vendedor tuvo con un cliente:
 
 "${nota}"
 
@@ -66,10 +145,112 @@ Devuelve SOLO un JSON válido (sin texto antes ni después, sin markdown) con es
   }
 }
 
+async function guardarLlamada(env, { vendedor, telefono, nota, origen }) {
+  const estructurado = await estructurarNota(env, { vendedor, telefono, nota });
+  const createdAt = new Date().toISOString();
+
+  const result = await env.DB.prepare(
+    `INSERT INTO llamadas (vendedor, telefono, empresa, contacto, resultado, proximo_paso, fecha_seguimiento, resumen, nota_original, created_at, origen)
+     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`
+  )
+    .bind(
+      vendedor,
+      telefono || null,
+      estructurado.empresa || null,
+      estructurado.contacto || null,
+      estructurado.resultado || 'otro',
+      estructurado.proximo_paso || null,
+      estructurado.fecha_seguimiento || null,
+      estructurado.resumen || nota,
+      nota,
+      createdAt,
+      origen
+    )
+    .run();
+
+  return { id: result.meta.last_row_id, vendedor, telefono, created_at: createdAt, ...estructurado };
+}
+
+// Descarga la grabación desde Twilio (autenticado con la API Key, igual que la REST API
+// normal), la transcribe con Whisper (Cloudflare Workers AI) y genera el resumen.
+async function transcribirYGuardar(env, { vendedor, telefono, recordingUrl }) {
+  const authHeader = 'Basic ' + btoa(`${env.TWILIO_API_KEY_SID}:${env.TWILIO_API_KEY_SECRET}`);
+  const audioRes = await fetch(`${recordingUrl}.mp3`, { headers: { Authorization: authHeader } });
+  if (!audioRes.ok) throw new Error(`No se pudo descargar la grabación: ${audioRes.status}`);
+  const audioBuffer = await audioRes.arrayBuffer();
+
+  const transcripcion = await env.AI.run(WHISPER_MODEL, {
+    audio: [...new Uint8Array(audioBuffer)],
+    language: 'es',
+  });
+  const texto = transcripcion.text || transcripcion.transcription_info?.text || '';
+
+  if (!texto.trim()) {
+    await guardarLlamada(env, { vendedor, telefono, nota: '(llamada sin audio transcribible)', origen: 'llamada' });
+    return;
+  }
+
+  await guardarLlamada(env, { vendedor, telefono, nota: texto, origen: 'llamada' });
+}
+
 export default {
   async fetch(request, env) {
     const url = new URL(request.url);
 
+    // Rutas que llama Twilio directamente (no el navegador del dashboard) — se protegen
+    // con una clave propia en la URL, nunca con el Basic Auth del dashboard.
+    if (url.pathname === '/api/voice/outgoing' && request.method === 'POST') {
+      if (url.searchParams.get('key') !== env.TWILIO_WEBHOOK_KEY) {
+        return new Response('forbidden', { status: 403 });
+      }
+      const form = await request.formData();
+      // "MiNumero" y no "CallerId" para no chocar con los parámetros reservados que
+      // Twilio agrega por su cuenta al POST del TwiML App.
+      const to = normalizarTelefono(form.get('To'));
+      const callerId = normalizarTelefono(form.get('MiNumero'));
+      const vendedor = form.get('Vendedor') || 'Vendedor';
+      const telefono = normalizarTelefono(form.get('Telefono')) || to;
+
+      if (!to || !callerId) {
+        return xml('<Response><Say language="es-MX">Falta el número a marcar.</Say></Response>', 400);
+      }
+
+      const callbackUrl = `https://llamadas.jpbmarketing.cl/api/voice/recording?key=${encodeURIComponent(env.TWILIO_WEBHOOK_KEY)}&vendedor=${encodeURIComponent(vendedor)}&telefono=${encodeURIComponent(telefono)}`;
+
+      return xml(`<?xml version="1.0" encoding="UTF-8"?>
+<Response>
+  <Dial callerId="${escapeXml(callerId)}" record="record-from-answer-dual" recordingStatusCallback="${escapeXml(callbackUrl)}" recordingStatusCallbackEvent="completed" recordingStatusCallbackMethod="POST">
+    ${escapeXml(to)}
+  </Dial>
+</Response>`);
+    }
+
+    if (url.pathname === '/api/voice/recording' && request.method === 'POST') {
+      if (url.searchParams.get('key') !== env.TWILIO_WEBHOOK_KEY) {
+        return new Response('forbidden', { status: 403 });
+      }
+      const vendedor = url.searchParams.get('vendedor') || 'Vendedor';
+      const telefono = url.searchParams.get('telefono') || '';
+      const form = await request.formData();
+      const recordingUrl = form.get('RecordingUrl');
+      const status = form.get('RecordingStatus');
+
+      if (status === 'completed' && recordingUrl) {
+        try {
+          await transcribirYGuardar(env, { vendedor, telefono, recordingUrl });
+        } catch (err) {
+          await guardarLlamada(env, {
+            vendedor,
+            telefono,
+            nota: `(no se pudo transcribir la grabación automáticamente: ${err.message})`,
+            origen: 'llamada',
+          });
+        }
+      }
+      return new Response('ok');
+    }
+
+    // Todo lo demás (el dashboard y su API) requiere el Basic Auth normal.
     const auth = request.headers.get('Authorization');
     const expected = 'Basic ' + btoa('jpb:' + env.DASHBOARD_PASSWORD);
     if (auth !== expected) {
@@ -77,6 +258,12 @@ export default {
         status: 401,
         headers: { 'WWW-Authenticate': 'Basic realm="Llamadas B2B"' },
       });
+    }
+
+    if (url.pathname === '/api/voice/token' && request.method === 'POST') {
+      const { vendedor } = await request.json();
+      const token = await generarAccessToken(env, toIdentity(vendedor));
+      return json({ token });
     }
 
     if (url.pathname === '/api/llamadas') {
@@ -90,34 +277,8 @@ export default {
           return json({ error: 'Falta vendedor o nota' }, 400);
         }
 
-        const estructurado = await estructurarNota(env, { vendedor, telefono, nota });
-        const createdAt = new Date().toISOString();
-
-        const result = await env.DB.prepare(
-          `INSERT INTO llamadas (vendedor, telefono, empresa, contacto, resultado, proximo_paso, fecha_seguimiento, resumen, nota_original, created_at)
-           VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`
-        )
-          .bind(
-            vendedor,
-            telefono || null,
-            estructurado.empresa || null,
-            estructurado.contacto || null,
-            estructurado.resultado || 'otro',
-            estructurado.proximo_paso || null,
-            estructurado.fecha_seguimiento || null,
-            estructurado.resumen || nota,
-            nota,
-            createdAt
-          )
-          .run();
-
-        return json({
-          id: result.meta.last_row_id,
-          vendedor,
-          telefono,
-          created_at: createdAt,
-          ...estructurado,
-        });
+        const guardado = await guardarLlamada(env, { vendedor, telefono, nota, origen: 'manual' });
+        return json(guardado);
       }
 
       if (request.method === 'GET') {
