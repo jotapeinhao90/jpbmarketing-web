@@ -20,6 +20,9 @@ binding = "AI"
 directory = "public"
 binding = "ASSETS"
 run_worker_first = true
+# Sin esto, pedir /index.html devuelve un redirect 307 a "/" en vez de servir el
+# archivo — rompe el truco de server la app en /conflex reescribiendo la request.
+html_handling = "none"
 
 # Secrets (NO van acá, se configuran con `wrangler secret put`).
 # Los SIDs de Twilio tampoco van en el repo: aunque no son credenciales por sí solos,

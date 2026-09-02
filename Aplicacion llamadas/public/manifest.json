@@ -1,7 +1,8 @@
 {
-  "name": "Llamadas B2B",
-  "short_name": "Llamadas",
-  "start_url": "/",
+  "name": "Conflex - Llamadas B2B",
+  "short_name": "Conflex",
+  "start_url": "/conflex",
+  "scope": "/conflex",
   "display": "standalone",
   "background_color": "#1b1d27",
   "theme_color": "#1b1d27",

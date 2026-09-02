@@ -304,9 +304,18 @@ async function transcribirYGuardar(env, { vendedor, telefono, recordingUrl, dura
   await guardarLlamada(env, { vendedor, telefono, nota: texto, origen: 'llamada', duracionSeg });
 }
 
+// Esta instancia es exclusiva de Conflex. Vive en /conflex (no en la raíz) porque
+// el mismo Worker va a alojar otros clientes más adelante, cada uno en su propia ruta.
+const RUTA_APP = '/conflex';
+
 export default {
   async fetch(request, env) {
     const url = new URL(request.url);
+
+    if (url.pathname === '/') {
+      return Response.redirect(`${url.origin}${RUTA_APP}`, 302);
+    }
+    const esRutaApp = url.pathname === RUTA_APP || url.pathname === `${RUTA_APP}/`;
 
     // Rutas que llama Twilio directamente (no el navegador del dashboard) — se protegen
     // con una clave propia en la URL, nunca con el Basic Auth del dashboard.
@@ -362,9 +371,9 @@ export default {
       return new Response('ok');
     }
 
-    // Assets públicos: el manifest, íconos y el SDK de Twilio los tiene que poder pedir
-    // el sistema operativo (al agregar a inicio) o el navegador sin sesión iniciada.
-    if (/^\/(manifest\.json|icons\/|twilio-voice-sdk\.min\.js)/.test(url.pathname)) {
+    // Assets públicos: el manifest, íconos, logos y el SDK de Twilio los tiene que poder
+    // pedir el sistema operativo (al agregar a inicio) o el navegador sin sesión iniciada.
+    if (/^\/(manifest\.json|icons\/|logos\/|twilio-voice-sdk\.min\.js)/.test(url.pathname)) {
       return env.ASSETS.fetch(request);
     }
 
@@ -396,7 +405,7 @@ export default {
     // (para restringir Configuración a administradores).
     const sesion = await obtenerSesion(request, env);
     if (!sesion) {
-      if (request.method === 'GET' && !url.pathname.startsWith('/api/')) {
+      if (request.method === 'GET' && esRutaApp) {
         return new Response(PAGINA_LOGIN, { headers: { 'Content-Type': 'text/html' } });
       }
       return json({ error: 'Sesión requerida' }, 401);
@@ -675,6 +684,9 @@ export default {
       }
     }
 
+    if (esRutaApp) {
+      return env.ASSETS.fetch(new Request(new URL('/index.html', request.url), request));
+    }
     return env.ASSETS.fetch(request);
   },
 };
