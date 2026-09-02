@@ -6,13 +6,14 @@
 <title>Llamadas B2B</title>
 <style>
   :root {
-    --bg: #f4f5f7;
+    --bg: #eef0fb;
     --card: #ffffff;
-    --text: #1a1d23;
+    --text: #171923;
     --muted: #6b7280;
-    --accent: #2563eb;
-    --accent-dark: #1d4ed8;
-    --border: #e5e7eb;
+    --accent: #4f46e5;
+    --accent-2: #7c3aed;
+    --accent-dark: #4338ca;
+    --border: #e7e8f2;
     --green: #16a34a;
     --red: #dc2626;
     --amber: #d97706;
@@ -20,52 +21,83 @@
   * { box-sizing: border-box; }
   body {
     margin: 0;
-    background: var(--bg);
+    background:
+      radial-gradient(900px 400px at 100% -10%, rgba(124,58,237,0.10), transparent),
+      radial-gradient(700px 350px at -10% 10%, rgba(79,70,229,0.08), transparent),
+      var(--bg);
     color: var(--text);
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-    padding-bottom: 40px;
+    -webkit-font-smoothing: antialiased;
+    padding-bottom: 48px;
   }
   header {
-    background: var(--accent);
+    background: linear-gradient(120deg, var(--accent), var(--accent-2));
     color: #fff;
-    padding: 18px 16px;
+    padding: 26px 20px 30px;
     position: sticky;
     top: 0;
     z-index: 10;
+    box-shadow: 0 8px 24px rgba(79,70,229,0.25);
   }
-  header h1 { margin: 0; font-size: 1.2rem; }
-  header p { margin: 4px 0 0; font-size: 0.8rem; opacity: 0.9; }
+  header h1 {
+    margin: 0;
+    font-size: 1.4rem;
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  header p { margin: 5px 0 0; font-size: 0.85rem; opacity: 0.88; }
   main {
     max-width: 720px;
-    margin: 0 auto;
-    padding: 16px;
+    margin: -14px auto 0;
+    padding: 0 16px;
+    position: relative;
   }
   .card {
     background: var(--card);
-    border-radius: 12px;
-    padding: 16px;
-    margin-bottom: 20px;
-    box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 24px;
+    margin-bottom: 22px;
+    box-shadow: 0 1px 2px rgba(23,25,35,0.04), 0 12px 28px -12px rgba(23,25,35,0.12);
   }
   .card h2 {
-    font-size: 1rem;
-    margin: 0 0 14px;
+    font-size: 1.05rem;
+    font-weight: 800;
+    letter-spacing: -0.01em;
+    margin: 0 0 18px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
   }
   label {
     display: block;
-    font-size: 0.85rem;
-    font-weight: 600;
-    margin-bottom: 6px;
+    font-size: 0.78rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    margin-bottom: 7px;
     color: var(--muted);
   }
   input, textarea, select {
     width: 100%;
-    padding: 12px;
-    border: 1px solid var(--border);
-    border-radius: 8px;
+    padding: 13px 14px;
+    border: 1.5px solid var(--border);
+    background: #fafaff;
+    border-radius: 12px;
     font-size: 1rem;
-    margin-bottom: 14px;
+    margin-bottom: 16px;
     font-family: inherit;
+    color: var(--text);
+    transition: border-color 0.15s, box-shadow 0.15s, background 0.15s;
+  }
+  input:focus, textarea:focus, select:focus {
+    outline: none;
+    border-color: var(--accent);
+    background: #fff;
+    box-shadow: 0 0 0 4px rgba(79,70,229,0.12);
   }
   textarea {
     min-height: 110px;
@@ -76,28 +108,35 @@
     color: var(--muted);
     margin-top: -10px;
     margin-bottom: 14px;
+    line-height: 1.5;
   }
   button {
     width: 100%;
-    padding: 14px;
+    padding: 15px;
     border: none;
-    border-radius: 8px;
-    background: var(--accent);
+    border-radius: 12px;
+    background: linear-gradient(120deg, var(--accent), var(--accent-2));
     color: #fff;
     font-size: 1rem;
-    font-weight: 600;
+    font-weight: 700;
+    letter-spacing: -0.01em;
     cursor: pointer;
+    box-shadow: 0 8px 20px -6px rgba(79,70,229,0.55);
+    transition: transform 0.12s, box-shadow 0.12s, opacity 0.12s;
   }
-  button:active { background: var(--accent-dark); }
-  button:disabled { opacity: 0.6; }
+  button:hover { transform: translateY(-1px); box-shadow: 0 10px 24px -6px rgba(79,70,229,0.6); }
+  button:active { transform: translateY(0); }
+  button:disabled { opacity: 0.55; box-shadow: none; transform: none; }
 
   .resultado-badge {
     display: inline-block;
-    padding: 3px 10px;
+    padding: 4px 11px;
     border-radius: 999px;
-    font-size: 0.72rem;
-    font-weight: 600;
+    font-size: 0.7rem;
+    font-weight: 700;
+    letter-spacing: 0.01em;
     color: #fff;
+    white-space: nowrap;
   }
   .r-venta { background: var(--green); }
   .r-interes, .r-cotiz { background: var(--accent); }
@@ -126,9 +165,10 @@
 
   .llamada-item {
     border-bottom: 1px solid var(--border);
-    padding: 12px 0;
+    padding: 14px 2px;
   }
-  .llamada-item:last-child { border-bottom: none; }
+  .llamada-item:last-child { border-bottom: none; padding-bottom: 2px; }
+  .llamada-item:first-child { padding-top: 2px; }
   .llamada-top {
     display: flex;
     justify-content: space-between;
@@ -294,13 +334,13 @@
 <body>
 
 <header>
-  <h1>Llamadas B2B</h1>
+  <h1>📞 Llamadas B2B</h1>
   <p>Registro y resumen automático de llamadas de venta</p>
 </header>
 
 <main>
   <div class="card">
-    <h2>Llamar ahora</h2>
+    <h2>📲 Llamar ahora</h2>
 
     <div id="form-llamar-container">
       <label for="vendedor-llamar">Vendedor</label>
@@ -333,7 +373,7 @@
   </div>
 
   <div class="card">
-    <h2>Registrar llamada manual</h2>
+    <h2>✍️ Registrar llamada manual</h2>
     <div id="confirmacion"></div>
     <form id="form-llamada">
       <label for="vendedor">Vendedor</label>
@@ -351,7 +391,7 @@
   </div>
 
   <div class="card">
-    <h2>Historial</h2>
+    <h2>🗂️ Historial</h2>
     <div class="filtros">
       <select id="filtro-vendedor">
         <option value="">Todos los vendedores</option>
