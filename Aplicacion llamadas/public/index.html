@@ -185,8 +185,8 @@
     <label for="vendedor-llamar">Vendedor</label>
     <input type="text" id="vendedor-llamar" placeholder="Tu nombre">
 
-    <label for="mi-numero">Tu número (verificado en Twilio)</label>
-    <input type="tel" id="mi-numero" placeholder="+56 9 1234 5678">
+    <label for="mi-numero">Número que verá el cliente</label>
+    <select id="mi-numero"><option value="">Cargando números...</option></select>
 
     <label for="numero-cliente">Teléfono del cliente</label>
     <input type="tel" id="numero-cliente" placeholder="+56 9 1234 5678">
@@ -335,10 +335,62 @@ const miNumeroEl = document.getElementById('mi-numero');
 const numeroClienteEl = document.getElementById('numero-cliente');
 
 vendedorLlamarEl.value = localStorage.getItem('ultimo_vendedor') || '';
-miNumeroEl.value = localStorage.getItem('ultimo_callerid') || '';
+
+async function cargarNumeros() {
+  try {
+    const res = await fetch('/api/voice/numeros');
+    const numeros = await res.json();
+    if (!numeros.length) {
+      miNumeroEl.innerHTML = '<option value="">No hay números verificados en Twilio</option>';
+      return;
+    }
+    miNumeroEl.innerHTML = numeros
+      .map(n => `<option value="${n.numero}">${n.etiqueta}</option>`).join('');
+    const guardado = localStorage.getItem('ultimo_callerid');
+    if (guardado && numeros.some(n => n.numero === guardado)) miNumeroEl.value = guardado;
+  } catch (err) {
+    miNumeroEl.innerHTML = '<option value="">Error al cargar los números</option>';
+  }
+}
+cargarNumeros();
 
 let activeCall = null;
 let timerInterval = null;
+let audioCtx = null;
+let ringbackNodes = null;
+
+// Tono de "llamando" sintetizado (no depende de ningún archivo de audio externo).
+// Se usa solo si la operadora no manda su propio tono de timbrado (hasEarlyMedia=false).
+function iniciarRingback() {
+  audioCtx = audioCtx || new (window.AudioContext || window.webkitAudioContext)();
+  const gain = audioCtx.createGain();
+  gain.gain.value = 0;
+  gain.connect(audioCtx.destination);
+  const osc1 = audioCtx.createOscillator();
+  const osc2 = audioCtx.createOscillator();
+  osc1.frequency.value = 440;
+  osc2.frequency.value = 480;
+  osc1.connect(gain);
+  osc2.connect(gain);
+  osc1.start();
+  osc2.start();
+
+  let encendido = false;
+  const ciclo = setInterval(() => {
+    encendido = !encendido;
+    gain.gain.value = encendido ? 0.08 : 0;
+  }, 1000);
+
+  ringbackNodes = { osc1, osc2, ciclo };
+}
+
+function detenerRingback() {
+  if (!ringbackNodes) return;
+  clearInterval(ringbackNodes.ciclo);
+  ringbackNodes.osc1.stop();
+  ringbackNodes.osc2.stop();
+  ringbackNodes = null;
+}
 
 function mostrarEstado(texto) {
   estadoLlamada.style.display = 'block';
@@ -356,15 +408,20 @@ function iniciarTimer() {
   }, 1000);
 }
 
-function finalizarLlamadaUI() {
+// hubo Error = no pisar el mensaje de error con el de "generando resumen".
+function finalizarLlamadaUI(hubo_error) {
+  detenerRingback();
   clearInterval(timerInterval);
   btnLlamar.style.display = 'block';
   btnLlamar.disabled = false;
   btnLlamar.textContent = 'Llamar';
   btnColgar.style.display = 'none';
-  mostrarEstado('Llamada finalizada. Generando resumen automático...');
   estadoTimer.textContent = '';
   activeCall = null;
+
+  if (hubo_error) return; // el mensaje de error se queda en pantalla
+
+  mostrarEstado('Llamada finalizada. Generando resumen automático...');
   // La transcripción llega vía webhook de Twilio unos segundos después de colgar.
   setTimeout(cargarLlamadas, 8000);
   setTimeout(cargarLlamadas, 16000);
@@ -386,9 +443,18 @@ btnLlamar.addEventListener('click', async () => {
 
   btnLlamar.disabled = true;
   btnLlamar.textContent = 'Conectando...';
-  mostrarEstado('Solicitando permiso de micrófono y conectando...');
+  mostrarEstado('Solicitando permiso de micrófono...');
 
   try {
+    // iOS Safari solo concede el micrófono si se pide en el mismo gesto del toque:
+    // si primero hacemos el fetch del token, Safari ya perdió el gesto y lo bloquea.
+    try {
+      await navigator.mediaDevices.getUserMedia({ audio: true });
+    } catch (micErr) {
+      throw new Error('No se pudo acceder al micrófono. Revisa los permisos del navegador (Ajustes → Safari → Micrófono).');
+    }
+
+    mostrarEstado('Conectando con Twilio...');
     const tokenRes = await fetch('/api/voice/token', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -410,17 +476,25 @@ btnLlamar.addEventListener('click', async () => {
 
     btnLlamar.style.display = 'none';
     btnColgar.style.display = 'block';
-    mostrarEstado('Timbrando...');
+    mostrarEstado('Llamando...');
 
+    activeCall.on('ringing', (hasEarlyMedia) => {
+      mostrarEstado('Llamando...');
+      // Si la operadora no manda su propio tono, ponemos uno nosotros.
+      if (!hasEarlyMedia) iniciarRingback();
+    });
     activeCall.on('accept', () => {
+      detenerRingback();
       mostrarEstado('En llamada');
       iniciarTimer();
     });
-    activeCall.on('disconnect', finalizarLlamadaUI);
-    activeCall.on('cancel', finalizarLlamadaUI);
+    activeCall.on('disconnect', () => finalizarLlamadaUI(false));
+    activeCall.on('cancel', () => finalizarLlamadaUI(false));
     activeCall.on('error', (err) => {
-      mostrarEstado('Error en la llamada: ' + err.message);
-      finalizarLlamadaUI();
+      const detalle = [err.message, err.code, err.causes && err.causes.join(', ')]
+        .filter(Boolean).join(' — ');
+      mostrarEstado('Error en la llamada: ' + detalle);
+      finalizarLlamadaUI(true);
     });
   } catch (err) {
     mostrarEstado('No se pudo iniciar la llamada: ' + err.message);

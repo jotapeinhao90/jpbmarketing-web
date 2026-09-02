@@ -1,5 +1,7 @@
 const AI_MODEL = '@cf/meta/llama-3.3-70b-instruct-fp8-fast';
-const WHISPER_MODEL = '@cf/openai/whisper-large-v3-turbo';
+// El large-v3-turbo rechaza el audio como array (solo acepta otro formato); el modelo
+// base sí funciona con `audio: [...bytes]`. Comprobado empíricamente contra grabaciones reales.
+const WHISPER_MODEL = '@cf/openai/whisper';
 
 const RESULTADOS_VALIDOS = [
   'cotización enviada',
@@ -219,7 +221,7 @@ export default {
 
       return xml(`<?xml version="1.0" encoding="UTF-8"?>
 <Response>
-  <Dial callerId="${escapeXml(callerId)}" record="record-from-answer-dual" recordingStatusCallback="${escapeXml(callbackUrl)}" recordingStatusCallbackEvent="completed" recordingStatusCallbackMethod="POST">
+  <Dial callerId="${escapeXml(callerId)}" answerOnBridge="true" record="record-from-answer-dual" recordingStatusCallback="${escapeXml(callbackUrl)}" recordingStatusCallbackEvent="completed" recordingStatusCallbackMethod="POST">
     ${escapeXml(to)}
   </Dial>
 </Response>`);
@@ -258,6 +260,71 @@ export default {
         status: 401,
         headers: { 'WWW-Authenticate': 'Basic realm="Llamadas B2B"' },
       });
+    }
+
+    // Diagnóstico: muestra qué dijo Twilio de las últimas llamadas y qué números
+    // están verificados. Sirve para depurar sin tener que mirar la consola de Twilio.
+    if (url.pathname === '/api/voice/debug') {
+      const authHeader = 'Basic ' + btoa(`${env.TWILIO_API_KEY_SID}:${env.TWILIO_API_KEY_SECRET}`);
+      const base = `https://api.twilio.com/2010-04-01/Accounts/${env.TWILIO_ACCOUNT_SID}`;
+
+      const [llamadasRes, callerIdsRes, appRes, alertasRes] = await Promise.all([
+        fetch(`${base}/Calls.json?PageSize=5`, { headers: { Authorization: authHeader } }),
+        fetch(`${base}/OutgoingCallerIds.json`, { headers: { Authorization: authHeader } }),
+        fetch(`${base}/Applications/${env.TWILIO_TWIML_APP_SID}.json`, { headers: { Authorization: authHeader } }),
+        fetch('https://monitor.twilio.com/v1/Alerts?PageSize=10', { headers: { Authorization: authHeader } }),
+      ]);
+
+      const llamadasData = await llamadasRes.json();
+      const callerIdsData = await callerIdsRes.json();
+      const appData = await appRes.json();
+      const alertasData = await alertasRes.json();
+
+      return json({
+        alertas: (alertasData.alerts || []).map((a) => ({
+          fecha: a.date_created,
+          codigo: a.error_code,
+          nivel: a.log_level,
+          texto: (a.alert_text || '').slice(0, 300),
+        })),
+        twiml_app: {
+          nombre: appData.friendly_name,
+          voice_url: appData.voice_url || '(VACÍA — hay que configurarla)',
+          voice_method: appData.voice_method,
+        },
+        numeros_verificados: (callerIdsData.outgoing_caller_ids || []).map((c) => c.phone_number),
+        ultimas_llamadas: (llamadasData.calls || []).map((c) => ({
+          fecha: c.date_created,
+          de: c.from,
+          para: c.to,
+          estado: c.status,
+          duracion: c.duration,
+          error: c.error_code ? `${c.error_code}: ${c.error_message}` : null,
+        })),
+      });
+    }
+
+    if (url.pathname === '/api/voice/numeros') {
+      const authHeader = 'Basic ' + btoa(`${env.TWILIO_API_KEY_SID}:${env.TWILIO_API_KEY_SECRET}`);
+      const base = `https://api.twilio.com/2010-04-01/Accounts/${env.TWILIO_ACCOUNT_SID}`;
+
+      const [verificadosRes, propiosRes] = await Promise.all([
+        fetch(`${base}/OutgoingCallerIds.json`, { headers: { Authorization: authHeader } }),
+        fetch(`${base}/IncomingPhoneNumbers.json`, { headers: { Authorization: authHeader } }),
+      ]);
+      const verificados = await verificadosRes.json();
+      const propios = await propiosRes.json();
+
+      return json([
+        ...(verificados.outgoing_caller_ids || []).map((c) => ({
+          numero: c.phone_number,
+          etiqueta: `${c.phone_number} (tu número)`,
+        })),
+        ...(propios.incoming_phone_numbers || []).map((n) => ({
+          numero: n.phone_number,
+          etiqueta: `${n.phone_number} (número Twilio)`,
+        })),
+      ]);
     }
 
     if (url.pathname === '/api/voice/token' && request.method === 'POST') {
