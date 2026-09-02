@@ -14,7 +14,7 @@
 <link rel="icon" href="/icons/icon-192.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
 <style>
   :root {
     --bg: #1b1d27;
@@ -40,31 +40,27 @@
       radial-gradient(900px 500px at 5% 0%, rgba(186,255,61,0.10), transparent 55%),
       var(--bg);
     color: var(--text);
-    font-family: 'Space Grotesk', -apple-system, sans-serif;
+    font-family: 'Inter', -apple-system, sans-serif;
     -webkit-font-smoothing: antialiased;
     padding-bottom: 56px;
   }
   .mono { font-family: 'JetBrains Mono', monospace; }
   header {
     padding: 34px 20px 18px;
-    max-width: 720px;
+    max-width: 1180px;
     margin: 0 auto;
   }
   header h1 {
     margin: 0;
-    font-size: 1.25rem;
-    font-weight: 700;
+    font-size: 1.4rem;
+    font-weight: 800;
     letter-spacing: -0.01em;
     line-height: 1.3;
     color: var(--text);
-    background: none;
-    -webkit-background-clip: initial;
-    background-clip: initial;
-    color: transparent;
   }
   header p { margin: 6px 0 0; font-size: 0.88rem; color: var(--muted); }
   main {
-    max-width: 720px;
+    max-width: 1180px;
     margin: 0 auto;
     padding: 8px 16px;
     position: relative;
@@ -104,7 +100,7 @@
     background: transparent;
     border-radius: 0;
     font-size: 1.05rem;
-    font-family: 'Space Grotesk', sans-serif;
+    font-family: 'Inter', sans-serif;
     color: var(--text);
     transition: border-color 0.18s;
   }
@@ -176,7 +172,7 @@
     font-size: 1rem;
     font-weight: 700;
     letter-spacing: -0.01em;
-    font-family: 'Space Grotesk', sans-serif;
+    font-family: 'Inter', sans-serif;
     cursor: pointer;
     box-shadow: 0 8px 20px -10px rgba(186,255,61,0.6);
     transition: transform 0.12s, box-shadow 0.12s, opacity 0.12s;
@@ -233,7 +229,7 @@
     background: rgba(255,255,255,0.04);
     border-radius: 12px;
     color: var(--text);
-    font-family: 'Space Grotesk', sans-serif;
+    font-family: 'Inter', sans-serif;
     font-size: 0.92rem;
   }
 
@@ -329,7 +325,73 @@
     margin-left: 6px;
   }
 
-  /* --- Pantalla de llamada --- */
+  /* --- Mock de iPhone: número + isla dinámica + teclado --- */
+  .hola-vendedor { color: var(--muted); font-size: 0.85rem; margin: -12px 0 18px; }
+  .iphone-mock {
+    width: 260px;
+    max-width: 100%;
+    margin: 0 auto 20px;
+    aspect-ratio: 9 / 18.3;
+    background: linear-gradient(160deg, #2a2c38, #0e0f14);
+    border-radius: 42px;
+    padding: 8px;
+    box-shadow: 0 20px 44px -18px rgba(0,0,0,0.7), inset 0 0 0 1px rgba(255,255,255,0.06);
+    position: relative;
+  }
+  .isla-dinamica {
+    position: absolute;
+    top: 16px; left: 50%; transform: translateX(-50%);
+    width: 86px; height: 24px;
+    background: #000;
+    border-radius: 999px;
+    z-index: 5;
+  }
+  .iphone-pantalla {
+    background: #0a0a10;
+    border-radius: 34px;
+    height: 100%;
+    padding: 46px 14px 16px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    overflow: hidden;
+  }
+  .iphone-numero {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 1.15rem;
+    letter-spacing: 0.03em;
+    min-height: 1.6em;
+    color: var(--text);
+    margin-bottom: 10px;
+  }
+  .teclado {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
+    width: 100%;
+  }
+  .tecla {
+    aspect-ratio: 1;
+    border-radius: 50%;
+    border: none;
+    background: rgba(255,255,255,0.07);
+    color: #fff;
+    font-family: 'Inter', sans-serif;
+    font-size: 1.15rem;
+    font-weight: 600;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    box-shadow: none;
+    transition: background 0.1s;
+  }
+  .tecla:active { background: rgba(255,255,255,0.18); transform: none; }
+  .tecla .sub { font-size: 0.48rem; letter-spacing: 0.1em; color: #9199b0; font-weight: 500; margin-top: 1px; }
+  .tecla.borrar { background: none; color: #9199b0; font-size: 1.3rem; box-shadow: none; }
+
+  /* --- Pantalla de llamada (dentro del mock) --- */
   #pantalla-llamada {
     display: none;
     flex-direction: column;
@@ -476,7 +538,7 @@
   .tabs-desktop {
     display: flex;
     gap: 6px;
-    max-width: 720px;
+    max-width: 1180px;
     margin: 0 auto;
     padding: 0 16px 14px;
     position: sticky;
@@ -491,7 +553,7 @@
     background: rgba(255,255,255,0.04);
     color: var(--muted);
     border-radius: 12px;
-    font-family: 'Space Grotesk', sans-serif;
+    font-family: 'Inter', sans-serif;
     font-size: 0.82rem;
     font-weight: 600;
     cursor: pointer;
@@ -509,6 +571,22 @@
   /* --- Paneles --- */
   .tab-panel { display: none; }
   .tab-panel.activo { display: block; }
+
+  /* En pantallas anchas, usar el espacio de verdad: tarjetas lado a lado en vez de
+     una sola columna angosta estirada en el medio. */
+  @media (min-width: 900px) {
+    #panel-llamadas.activo, #panel-analisis.activo {
+      display: grid;
+      grid-template-columns: minmax(320px, 420px) 1fr;
+      gap: 20px;
+      align-items: start;
+    }
+    #panel-clientes.activo, #panel-configuracion.activo {
+      display: grid;
+      grid-template-columns: 1fr;
+      max-width: 760px;
+    }
+  }
 
   /* --- KPIs (Análisis) --- */
   .kpi-grid {
@@ -534,8 +612,19 @@
   .barra-fila { margin-bottom: 12px; }
   .barra-fila .barra-cabecera { display: flex; justify-content: space-between; font-size: 0.82rem; margin-bottom: 5px; }
   .barra-fila .barra-cabecera .valor { font-family: 'JetBrains Mono', monospace; color: var(--muted); }
+  .barra-cabecera { display: flex; justify-content: space-between; font-size: 0.78rem; text-transform: uppercase; letter-spacing: 0.06em; color: var(--muted); font-weight: 700; margin-bottom: 10px; }
   .barra-pista { height: 10px; border-radius: 999px; background: rgba(255,255,255,0.06); overflow: hidden; }
   .barra-relleno { height: 100%; border-radius: 999px; }
+
+  .dias-barras { display: flex; align-items: flex-end; gap: 4px; height: 90px; }
+  .dia-col { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: flex-end; height: 100%; }
+  .dia-barra { width: 100%; max-width: 16px; background: var(--accent-2); border-radius: 4px 4px 0 0; min-height: 2px; }
+  .dia-etiqueta { font-size: 0.55rem; color: var(--muted); margin-top: 4px; writing-mode: vertical-rl; text-orientation: mixed; }
+
+  .ranking-fila { display: flex; justify-content: space-between; padding: 10px 2px; border-bottom: 1px solid var(--border); font-size: 0.88rem; }
+  .ranking-fila:last-child { border-bottom: none; }
+  .ranking-datos { color: var(--muted); font-size: 0.82rem; }
+  .ranking-datos b { color: var(--text); font-family: 'JetBrains Mono', monospace; }
 
   /* --- Instructivo --- */
   .instructivo h3 { font-size: 0.95rem; margin: 20px 0 6px; color: var(--text); }
@@ -560,7 +649,7 @@
     .tab-btn-mv {
       background: none; border: none; box-shadow: none; width: auto;
       display: flex; flex-direction: column; align-items: center; gap: 3px;
-      color: var(--muted); font-family: 'Space Grotesk', sans-serif; font-size: 0.65rem;
+      color: var(--muted); font-family: 'Inter', sans-serif; font-size: 0.65rem;
       padding: 4px 6px; cursor: pointer;
     }
     .tab-btn-mv .icono { font-size: 1.25rem; }
@@ -593,46 +682,47 @@
 <main>
 
 <section class="tab-panel" id="panel-llamadas">
-  <div class="card">
+  <div class="card card-llamar">
     <h2>📲 Llamar ahora</h2>
+    <p class="hola-vendedor" id="hola-vendedor"></p>
 
-    <div id="form-llamar-container">
-      <label class="label-suelta">¿Quién llama?</label>
-      <div class="chips" id="chips-vendedores"></div>
+    <div class="iphone-mock">
+      <div class="isla-dinamica"></div>
+      <div class="iphone-pantalla">
 
-      <div class="field">
-        <input type="tel" id="numero-cliente" placeholder=" ">
-        <label for="numero-cliente">Teléfono del cliente</label>
+        <div id="iphone-idle">
+          <div class="iphone-numero" id="iphone-numero-display">&nbsp;</div>
+          <div id="ficha-contacto"></div>
+          <div class="teclado" id="teclado"></div>
+        </div>
+
+        <div id="pantalla-llamada" style="display:none">
+          <div class="telefono-visual" id="telefono-visual">
+            <div class="anillo"></div>
+            <div class="anillo"></div>
+            <div class="anillo"></div>
+            <div class="icono-telefono">📞</div>
+          </div>
+          <div id="numero-llamando"></div>
+          <div id="call-estado-texto">Conectando...</div>
+          <div class="onda-audio" id="onda-audio"><span></span><span></span><span></span><span></span><span></span></div>
+          <div id="call-timer"></div>
+        </div>
+
       </div>
-      <div id="ficha-contacto"></div>
-
-      <button id="btn-llamar" class="btn-llamar-circular">📞</button>
-      <p class="hint" style="text-align:center">La llamada sale por el navegador (necesitas internet estable) y se graba, transcribe y resume automáticamente — no hace falta escribir nada después.</p>
     </div>
 
-    <div id="pantalla-llamada">
-      <div class="telefono-visual" id="telefono-visual">
-        <div class="anillo"></div>
-        <div class="anillo"></div>
-        <div class="anillo"></div>
-        <div class="icono-telefono">📞</div>
-      </div>
-      <div id="numero-llamando"></div>
-      <div id="call-estado-texto">Conectando...</div>
-      <div class="onda-audio" id="onda-audio"><span></span><span></span><span></span><span></span><span></span></div>
-      <div id="call-timer"></div>
-      <button id="btn-colgar" class="btn-colgar-redondo" style="display:none">📞</button>
-      <div id="mensaje-post-llamada"></div>
-    </div>
+    <input type="tel" id="numero-cliente" style="display:none">
+    <button id="btn-llamar" class="btn-llamar-circular" disabled>📞</button>
+    <button id="btn-colgar" class="btn-colgar-redondo" style="display:none">📞</button>
+    <div id="mensaje-post-llamada"></div>
+    <p class="hint" style="text-align:center">La llamada sale por el navegador (necesitas internet estable) y se graba, transcribe y resume automáticamente — no hace falta escribir nada después.</p>
   </div>
 
   <div class="card">
     <h2>✍️ Registrar llamada manual</h2>
     <div id="confirmacion"></div>
     <form id="form-llamada">
-      <label class="label-suelta">Vendedor</label>
-      <div class="chips" id="chips-vendedores-manual"></div>
-
       <div class="field">
         <input type="tel" id="telefono" name="telefono" placeholder=" ">
         <label for="telefono">Teléfono del cliente (opcional)</label>
@@ -694,8 +784,12 @@
 <section class="tab-panel" id="panel-analisis">
   <div class="card">
     <h2>📊 Resumen</h2>
+    <select id="filtro-vendedor-analisis" style="display:none; margin-bottom:18px;"></select>
     <div class="kpi-grid" id="kpi-grid"><p class="loading">Cargando...</p></div>
+    <div class="barra-fila" style="margin-top:22px;"><div class="barra-cabecera"><span>Por resultado</span></div></div>
     <div id="barras-resultado"></div>
+    <div id="dia-grafico"></div>
+    <div id="ranking-vendedores"></div>
   </div>
 
   <div class="card">
@@ -714,7 +808,7 @@
     <h2>❓ Cómo usar la app</h2>
     <div class="instructivo">
       <h3>📞 Hacer una llamada</h3>
-      <p>Entra a <strong>Llamadas</strong>, toca tu nombre en "¿Quién llama?", escribe el teléfono del cliente y toca el botón verde circular. La llamada sale por tu navegador — necesitas internet estable. Se graba, transcribe y resume solo, no hace falta escribir nada después.</p>
+      <p>Entra a <strong>Llamadas</strong>, marca el número del cliente con el teclado y toca el botón verde circular. La app ya sabe quién eres (entraste con tu nombre). La llamada sale por tu navegador — necesitas internet estable. Se graba, transcribe y resume sola, no hace falta escribir nada después.</p>
 
       <h3>✍️ Registrar una llamada hecha por fuera</h3>
       <p>Si llamaste desde tu celular normal (no desde la app), usa "Registrar llamada manual": elige tu nombre, y dicta con el micrófono del teclado qué pasó. La IA arma el resumen igual.</p>
@@ -726,7 +820,10 @@
       <p>Muestra el total de llamadas, cómo van resultando (interesados, ventas cerradas, etc.) y el historial completo, filtrable por vendedor.</p>
 
       <h3>⚙️ Agregar un vendedor nuevo</h3>
-      <p>Primero verifica su número en la consola de Twilio (Verified Caller IDs) — sin eso no puede llamar mostrando su propio número. Después agrégalo en <strong>Configuración</strong> con su nombre y teléfono.</p>
+      <p>Solo el administrador ve la pestaña Configuración. Primero verifica el número del nuevo vendedor en la consola de Twilio (Verified Caller IDs) — sin eso no puede llamar mostrando su propio número. Después agrégalo con su nombre y teléfono; él/ella va a poder entrar eligiendo su nombre en la pantalla de inicio de sesión, con la misma contraseña del equipo.</p>
+
+      <h3>👑 Administrador vs. vendedor</h3>
+      <p>El administrador ve el análisis de todo el equipo (con filtro por persona) y puede agregar o quitar vendedores. Un vendedor normal solo ve sus propias llamadas y estadísticas.</p>
 
       <h3>📲 Instalar la app en el celular</h3>
       <p><strong>iPhone:</strong> abre este link en Safari → botón Compartir → "Agregar a pantalla de inicio".<br>
@@ -813,12 +910,10 @@ filtroVendedor.addEventListener('change', cargarLlamadas);
 
 form.addEventListener('submit', async (e) => {
   e.preventDefault();
-  if (!vendedorSeleccionado) { alert('Elige quién registra la llamada.'); return; }
   btnGuardar.disabled = true;
   btnGuardar.textContent = 'Guardando...';
   confirmacion.style.display = 'none';
 
-  const vendedor = vendedorSeleccionado.nombre;
   const telefono = document.getElementById('telefono').value.trim();
   const nota = document.getElementById('nota').value.trim();
 
@@ -826,7 +921,7 @@ form.addEventListener('submit', async (e) => {
     const res = await fetch('/api/llamadas', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ vendedor, telefono, nota }),
+      body: JSON.stringify({ telefono, nota }),
     });
     if (!res.ok) throw new Error('Error al guardar');
     const data = await res.json();
@@ -852,7 +947,7 @@ form.addEventListener('submit', async (e) => {
 cargarLlamadas();
 
 // --- Llamar ahora (Twilio Voice SDK) ---
-const formLlamarContainer = document.getElementById('form-llamar-container');
+const iphoneIdle = document.getElementById('iphone-idle');
 const pantallaLlamada = document.getElementById('pantalla-llamada');
 const telefonoVisual = document.getElementById('telefono-visual');
 const numeroLlamando = document.getElementById('numero-llamando');
@@ -862,63 +957,77 @@ const callTimer = document.getElementById('call-timer');
 const mensajePostLlamada = document.getElementById('mensaje-post-llamada');
 const btnLlamar = document.getElementById('btn-llamar');
 const btnColgar = document.getElementById('btn-colgar');
-const chipsVendedores = document.getElementById('chips-vendedores');
-const chipsVendedoresManual = document.getElementById('chips-vendedores-manual');
 const numeroClienteEl = document.getElementById('numero-cliente');
+const numeroDisplay = document.getElementById('iphone-numero-display');
 
-// --- Usuarios (vendedores guardados) ---
-let vendedorSeleccionado = null;       // usado por "Registrar llamada manual"
-let vendedorLlamarSeleccionado = null; // usado por "Llamar ahora" (trae su propio teléfono)
+// --- Sesión: quién soy, y qué puedo ver/hacer ---
+let miSesion = null;
 
-function renderChipsVendedores(contenedor, usuarios, onElegir) {
-  if (!usuarios.length) {
-    contenedor.innerHTML = '<span class="hint">Agrega vendedores en Configuración, abajo.</span>';
-    return;
+async function cargarSesion() {
+  const res = await fetch('/api/sesion');
+  miSesion = await res.json();
+
+  document.getElementById('hola-vendedor').textContent = `Conectado como ${miSesion.nombre}`;
+  btnLlamar.disabled = false;
+
+  const esAdmin = miSesion.rol === 'admin';
+  document.querySelectorAll('[data-tab="configuracion"]').forEach(el => { el.style.display = esAdmin ? '' : 'none'; });
+  if (!esAdmin && (localStorage.getItem('tab_activa') === 'configuracion')) activarTab('llamadas');
+
+  const filtroVendedorAnalisis = document.getElementById('filtro-vendedor-analisis');
+  if (esAdmin) {
+    filtroVendedorAnalisis.style.display = '';
+    const usuariosRes = await fetch('/api/usuarios');
+    const usuarios = await usuariosRes.json();
+    filtroVendedorAnalisis.innerHTML = '<option value="">Todo el equipo</option>' +
+      usuarios.map(u => `<option value="${u.nombre}">${u.nombre}</option>`).join('');
+  } else {
+    filtroVendedorAnalisis.style.display = 'none';
   }
-  contenedor.innerHTML = usuarios
-    .map(u => `<button type="button" class="chip" data-id="${u.id}">${u.nombre}</button>`)
-    .join('');
-  contenedor.querySelectorAll('.chip').forEach(chip => {
-    chip.addEventListener('click', () => {
-      const u = usuarios.find(x => String(x.id) === chip.dataset.id);
-      onElegir(u);
-      contenedor.querySelectorAll('.chip').forEach(c => c.classList.toggle('activo', c === chip));
-    });
-  });
+
+  cargarUsuarios();
+  cargarEstadisticas();
 }
+
+// --- Teclado numérico estilo iPhone ---
+const TECLAS = [
+  ['1',''], ['2','ABC'], ['3','DEF'],
+  ['4','GHI'], ['5','JKL'], ['6','MNO'],
+  ['7','PQRS'], ['8','TUV'], ['9','WXYZ'],
+  ['*',''], ['0','+'], ['#',''],
+];
+const teclado = document.getElementById('teclado');
+teclado.innerHTML = TECLAS.map(([d, sub]) =>
+  `<button type="button" class="tecla" data-d="${d}">${d}${sub ? `<span class="sub">${sub}</span>` : ''}</button>`
+).join('') + '<button type="button" class="tecla borrar" id="tecla-borrar" style="grid-column:3">⌫</button>';
+
+function actualizarDisplayNumero() {
+  numeroDisplay.textContent = numeroClienteEl.value || ' ';
+  numeroClienteEl.dispatchEvent(new Event('input'));
+}
+teclado.querySelectorAll('.tecla[data-d]').forEach(t => {
+  t.addEventListener('click', () => {
+    numeroClienteEl.value += t.dataset.d;
+    actualizarDisplayNumero();
+  });
+});
+document.getElementById('tecla-borrar').addEventListener('click', () => {
+  numeroClienteEl.value = numeroClienteEl.value.slice(0, -1);
+  actualizarDisplayNumero();
+});
 
 async function cargarUsuarios() {
   const res = await fetch('/api/usuarios');
   const usuarios = await res.json();
 
-  const guardadoId = localStorage.getItem('ultimo_usuario_id');
-
-  renderChipsVendedores(chipsVendedores, usuarios, (u) => {
-    vendedorLlamarSeleccionado = u;
-    localStorage.setItem('ultimo_usuario_id', u.id);
-  });
-  renderChipsVendedores(chipsVendedoresManual, usuarios, (u) => {
-    vendedorSeleccionado = u;
-    localStorage.setItem('ultimo_usuario_id', u.id);
-  });
-
-  const preseleccionado = usuarios.find(u => String(u.id) === guardadoId) || usuarios[0];
-  if (preseleccionado) {
-    vendedorLlamarSeleccionado = preseleccionado;
-    vendedorSeleccionado = preseleccionado;
-    [chipsVendedores, chipsVendedoresManual].forEach(c => {
-      const chip = c.querySelector(`[data-id="${preseleccionado.id}"]`);
-      if (chip) chip.classList.add('activo');
-    });
-  }
-
-  // Lista editable en Configuración
+  // Lista editable en Configuración (solo la ve el admin, pero por si acaso no truena)
   const listaUsuarios = document.getElementById('lista-usuarios');
+  if (!listaUsuarios) return;
   listaUsuarios.innerHTML = usuarios.length
     ? usuarios.map(u => `
         <div class="usuario-item">
-          <div><div class="nombre">${u.nombre}</div><div class="telefono">${u.telefono}</div></div>
-          <button type="button" class="btn-borrar" data-id="${u.id}">Quitar</button>
+          <div><div class="nombre">${u.nombre} ${u.rol === 'admin' ? '👑' : ''}</div><div class="telefono">${u.telefono}</div></div>
+          ${u.rol !== 'admin' ? `<button type="button" class="btn-borrar" data-id="${u.id}">Quitar</button>` : ''}
         </div>`).join('')
     : '<p class="empty">Todavía no hay vendedores guardados.</p>';
 
@@ -930,7 +1039,8 @@ async function cargarUsuarios() {
     });
   });
 }
-cargarUsuarios();
+
+cargarSesion();
 
 document.getElementById('btn-agregar-usuario').addEventListener('click', async () => {
   const nombreEl = document.getElementById('nuevo-usuario-nombre');
@@ -1013,7 +1123,9 @@ function iniciarTimer() {
 
 function volverAlFormulario() {
   pantallaLlamada.style.display = 'none';
-  formLlamarContainer.style.display = 'block';
+  iphoneIdle.style.display = 'block';
+  numeroClienteEl.value = '';
+  actualizarDisplayNumero();
   mensajePostLlamada.innerHTML = '';
   callTimer.textContent = '';
   ponerVisual('');
@@ -1044,15 +1156,15 @@ function finalizarLlamadaUI(hubo_error, mensajeError) {
 btnLlamar.addEventListener('click', async () => {
   const numeroCliente = numeroClienteEl.value.trim();
 
-  if (!vendedorLlamarSeleccionado || !numeroCliente) {
-    alert('Elige quién llama y escribe el teléfono del cliente.');
+  if (!numeroCliente) {
+    alert('Escribe el teléfono del cliente en el teclado.');
     return;
   }
-  const vendedor = vendedorLlamarSeleccionado.nombre;
-  const miNumero = vendedorLlamarSeleccionado.telefono;
+  const vendedor = miSesion.nombre;
+  const miNumero = miSesion.telefono;
 
   btnLlamar.disabled = true;
-  formLlamarContainer.style.display = 'none';
+  iphoneIdle.style.display = 'none';
   pantallaLlamada.style.display = 'flex';
   numeroLlamando.textContent = numeroCliente;
   mostrarEstado('Solicitando permiso de micrófono...');
@@ -1260,33 +1372,75 @@ const RESULTADO_COLOR = {
   'otro': '#8891a7',
 };
 
+function fmtDuracion(seg) {
+  if (!seg) return '—';
+  const m = Math.floor(seg / 60), s = seg % 60;
+  return `${m}:${String(s).padStart(2, '0')}`;
+}
+function fmtDia(iso) {
+  const d = new Date(iso + 'T00:00:00');
+  return d.toLocaleDateString('es-CL', { day: '2-digit', month: 'short' });
+}
+
 async function cargarEstadisticas() {
   const kpiGrid = document.getElementById('kpi-grid');
   const barrasResultado = document.getElementById('barras-resultado');
+  const diaGrafico = document.getElementById('dia-grafico');
+  const rankingEl = document.getElementById('ranking-vendedores');
   try {
-    const res = await fetch('/api/estadisticas');
+    const filtro = document.getElementById('filtro-vendedor-analisis').value;
+    const qs = filtro ? '?vendedor=' + encodeURIComponent(filtro) : '';
+    const res = await fetch('/api/estadisticas' + qs);
     const e = await res.json();
 
-    const topVendedor = e.por_vendedor[0];
-    const pctContactados = e.total_contactos ? Math.round((e.contactados / e.total_contactos) * 100) : 0;
-
-    kpiGrid.innerHTML = `
+    let kpis = `
       <div class="kpi"><div class="kpi-valor">${e.total_llamadas}</div><div class="kpi-etiqueta">Llamadas totales</div></div>
-      <div class="kpi"><div class="kpi-valor">${pctContactados}%</div><div class="kpi-etiqueta">Base contactada</div></div>
-      <div class="kpi"><div class="kpi-valor">${topVendedor ? topVendedor.n : 0}</div><div class="kpi-etiqueta">${topVendedor ? topVendedor.vendedor : 'Top vendedor'}</div></div>
-      <div class="kpi"><div class="kpi-valor">${e.total_contactos}</div><div class="kpi-etiqueta">Contactos en base</div></div>`;
+      <div class="kpi"><div class="kpi-valor">${e.tasa_conversion}%</div><div class="kpi-etiqueta">Tasa de conversión</div></div>
+      <div class="kpi"><div class="kpi-valor">${fmtDuracion(e.duracion_promedio_seg)}</div><div class="kpi-etiqueta">Duración promedio</div></div>`;
+    if (e.total_contactos !== undefined) {
+      const pct = e.total_contactos ? Math.round((e.contactados / e.total_contactos) * 100) : 0;
+      kpis += `<div class="kpi"><div class="kpi-valor">${pct}%</div><div class="kpi-etiqueta">Base contactada</div></div>`;
+    }
+    kpiGrid.innerHTML = kpis;
 
     const max = Math.max(...e.por_resultado.map(r => r.n), 1);
-    barrasResultado.innerHTML = e.por_resultado.map(r => `
+    barrasResultado.innerHTML = e.por_resultado.length ? e.por_resultado.map(r => `
       <div class="barra-fila">
         <div class="barra-cabecera"><span>${r.resultado || 'otro'}</span><span class="valor">${r.n}</span></div>
         <div class="barra-pista"><div class="barra-relleno" style="width:${(r.n / max) * 100}%; background:${RESULTADO_COLOR[r.resultado] || '#8891a7'}"></div></div>
-      </div>`).join('');
+      </div>`).join('') : '<p class="empty">Todavía no hay llamadas.</p>';
+
+    if (e.por_dia && e.por_dia.length) {
+      const maxDia = Math.max(...e.por_dia.map(d => d.n), 1);
+      diaGrafico.innerHTML = `
+        <div class="barra-cabecera" style="margin-top:20px;"><span>Últimos 14 días</span></div>
+        <div class="dias-barras">
+          ${e.por_dia.map(d => `
+            <div class="dia-col" title="${fmtDia(d.dia)}: ${d.n}">
+              <div class="dia-barra" style="height:${(d.n / maxDia) * 100}%"></div>
+              <span class="dia-etiqueta">${fmtDia(d.dia)}</span>
+            </div>`).join('')}
+        </div>`;
+    } else {
+      diaGrafico.innerHTML = '';
+    }
+
+    if (e.ranking_vendedores) {
+      rankingEl.innerHTML = `
+        <div class="barra-cabecera" style="margin-top:22px;"><span>Ranking del equipo</span></div>
+        ${e.ranking_vendedores.map(v => `
+          <div class="ranking-fila">
+            <span>${v.vendedor}</span>
+            <span class="ranking-datos"><b>${v.llamadas}</b> llamadas · <b>${v.ventas}</b> ventas</span>
+          </div>`).join('')}`;
+    } else {
+      rankingEl.innerHTML = '';
+    }
   } catch (err) {
     kpiGrid.innerHTML = '<p class="mensaje-error">No se pudieron cargar las estadísticas.</p>';
   }
 }
-cargarEstadisticas();
+document.getElementById('filtro-vendedor-analisis').addEventListener('change', cargarEstadisticas);
 </script>
 
 </body>

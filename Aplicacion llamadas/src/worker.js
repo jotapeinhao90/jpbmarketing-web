@@ -46,16 +46,18 @@ function normalizarTelefono(valor) {
 }
 
 // Sesión persistente: en vez de Basic Auth (que en modo standalone de PWA en iOS no
-// siempre se recuerda entre aperturas), usamos una cookie firmada con HMAC. No necesita
-// tabla de sesiones — el valor esperado se recalcula cada vez, así que no hay estado que
-// pueda "vencer" ni que haya que limpiar.
-async function firmarSesion(env) {
+// siempre se recuerda entre aperturas), usamos una cookie firmada con HMAC que guarda
+// QUIÉN entró (id, nombre, rol) — no solo "autenticado sí/no". Al ir firmada, un
+// vendedor no puede editar la cookie a mano para hacerse pasar por admin: la firma
+// no calzaría y se rechaza.
+async function firmarPayload(env, payload) {
+  const texto = JSON.stringify(payload);
   const key = await crypto.subtle.importKey(
     'raw', new TextEncoder().encode(env.SESSION_SECRET),
     { name: 'HMAC', hash: 'SHA-256' }, false, ['sign']
   );
-  const sig = await crypto.subtle.sign('HMAC', key, new TextEncoder().encode('llamadas-b2b-session'));
-  return base64url(sig);
+  const sig = await crypto.subtle.sign('HMAC', key, new TextEncoder().encode(texto));
+  return `${base64url(texto)}.${base64url(sig)}`;
 }
 
 function leerCookie(request, nombre) {
@@ -64,45 +66,65 @@ function leerCookie(request, nombre) {
   return match ? match[1] : null;
 }
 
-async function sesionValida(request, env) {
+async function obtenerSesion(request, env) {
   const valor = leerCookie(request, 'sesion');
-  return !!valor && valor === (await firmarSesion(env));
+  if (!valor) return null;
+  const [payloadB64, sigB64] = valor.split('.');
+  if (!payloadB64 || !sigB64) return null;
+  try {
+    let b64 = payloadB64.replace(/-/g, '+').replace(/_/g, '/');
+    while (b64.length % 4) b64 += '=';
+    const texto = atob(b64);
+    const esperado = await firmarPayload(env, JSON.parse(texto));
+    return esperado === valor ? JSON.parse(texto) : null;
+  } catch {
+    return null;
+  }
 }
 
 const PAGINA_LOGIN = `<!DOCTYPE html>
 <html lang="es-CL"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Llamadas B2B</title>
-<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
+<title>Sistema de Llamado JPB</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@500;600;700&display=swap" rel="stylesheet">
 <style>
   * { box-sizing: border-box; }
   body { margin:0; min-height:100vh; display:flex; align-items:center; justify-content:center;
     background: radial-gradient(900px 500px at 80% -10%, rgba(139,123,255,0.2), transparent 60%),
                 radial-gradient(700px 400px at 10% 100%, rgba(186,255,61,0.12), transparent 55%), #1b1d27;
-    color:#f2f4fa; font-family:'Space Grotesk',sans-serif; }
-  .box { width:min(340px, 88vw); text-align:center; }
-  h1 { font-size:1.6rem; margin:0 0 6px; background:linear-gradient(100deg,#baff3d,#8b7bff);
-    -webkit-background-clip:text; background-clip:text; color:transparent; }
+    color:#f2f4fa; font-family:'Inter',sans-serif; }
+  .box { width:min(360px, 88vw); text-align:center; }
+  h1 { font-size:1.5rem; margin:0 0 6px; }
   p { color:#9199b0; font-size:0.85rem; margin:0 0 26px; }
-  input { width:100%; padding:14px 16px; border:1px solid rgba(255,255,255,0.14); background:rgba(255,255,255,0.05);
-    border-radius:14px; color:#fff; font-size:1rem; margin-bottom:14px; font-family:inherit; }
-  input:focus { outline:none; border-color:#baff3d; }
+  label { display:block; text-align:left; font-size:0.72rem; font-weight:700; text-transform:uppercase;
+    letter-spacing:0.06em; color:#9199b0; margin:0 0 8px; }
+  select, input { width:100%; padding:14px 16px; border:1px solid rgba(255,255,255,0.14); background:rgba(255,255,255,0.05);
+    border-radius:14px; color:#fff; font-size:1rem; margin-bottom:16px; font-family:inherit; }
+  select:focus, input:focus { outline:none; border-color:#baff3d; }
   button { width:100%; padding:15px; border:none; border-radius:14px; background:#baff3d; color:#0a1200;
     font-weight:700; font-size:1rem; font-family:inherit; cursor:pointer; }
   #error { color:#ff5c72; font-size:0.85rem; margin-top:12px; min-height:1em; }
 </style></head>
 <body>
   <form class="box" id="f">
-    <h1>Llamadas B2B</h1>
-    <p>Ingresa la contraseña del equipo</p>
-    <input type="password" id="pw" autofocus placeholder="Contraseña">
+    <h1>Sistema de Llamado JPB</h1>
+    <p>Elige tu nombre e ingresa la contraseña del equipo</p>
+    <label for="uid">Vendedor</label>
+    <select id="uid"><option value="">Cargando...</option></select>
+    <label for="pw">Contraseña</label>
+    <input type="password" id="pw" placeholder="Contraseña">
     <button type="submit">Entrar</button>
     <div id="error"></div>
   </form>
   <script>
+    fetch('/api/login/opciones').then(r => r.json()).then(usuarios => {
+      document.getElementById('uid').innerHTML = usuarios.length
+        ? usuarios.map(u => '<option value="' + u.id + '">' + u.nombre + '</option>').join('')
+        : '<option value="">Sin vendedores registrados</option>';
+    });
     document.getElementById('f').addEventListener('submit', async (e) => {
       e.preventDefault();
       const res = await fetch('/api/login', { method: 'POST', headers: {'Content-Type':'application/json'},
-        body: JSON.stringify({ password: document.getElementById('pw').value }) });
+        body: JSON.stringify({ usuario_id: document.getElementById('uid').value, password: document.getElementById('pw').value }) });
       if (res.ok) location.reload();
       else document.getElementById('error').textContent = 'Contraseña incorrecta';
     });
@@ -221,7 +243,7 @@ function calcularTemperatura(vecesLlamado, ultimoResultado) {
   return 'frio';
 }
 
-async function guardarLlamada(env, { vendedor, telefono, nota, origen }) {
+async function guardarLlamada(env, { vendedor, telefono, nota, origen, duracionSeg }) {
   const estructurado = await estructurarNota(env, { vendedor, telefono, nota });
 
   // Si el teléfono ya existe en la base de contactos, esos datos son más confiables
@@ -238,8 +260,8 @@ async function guardarLlamada(env, { vendedor, telefono, nota, origen }) {
   const createdAt = new Date().toISOString();
 
   const result = await env.DB.prepare(
-    `INSERT INTO llamadas (vendedor, telefono, empresa, contacto, resultado, proximo_paso, fecha_seguimiento, resumen, nota_original, created_at, origen)
-     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`
+    `INSERT INTO llamadas (vendedor, telefono, empresa, contacto, resultado, proximo_paso, fecha_seguimiento, resumen, nota_original, created_at, origen, duracion_seg)
+     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`
   )
     .bind(
       vendedor,
@@ -252,7 +274,8 @@ async function guardarLlamada(env, { vendedor, telefono, nota, origen }) {
       estructurado.resumen || nota,
       nota,
       createdAt,
-      origen
+      origen,
+      duracionSeg || null
     )
     .run();
 
@@ -261,7 +284,7 @@ async function guardarLlamada(env, { vendedor, telefono, nota, origen }) {
 
 // Descarga la grabación desde Twilio (autenticado con la API Key, igual que la REST API
 // normal), la transcribe con Whisper (Cloudflare Workers AI) y genera el resumen.
-async function transcribirYGuardar(env, { vendedor, telefono, recordingUrl }) {
+async function transcribirYGuardar(env, { vendedor, telefono, recordingUrl, duracionSeg }) {
   const authHeader = 'Basic ' + btoa(`${env.TWILIO_API_KEY_SID}:${env.TWILIO_API_KEY_SECRET}`);
   const audioRes = await fetch(`${recordingUrl}.mp3`, { headers: { Authorization: authHeader } });
   if (!audioRes.ok) throw new Error(`No se pudo descargar la grabación: ${audioRes.status}`);
@@ -274,11 +297,11 @@ async function transcribirYGuardar(env, { vendedor, telefono, recordingUrl }) {
   const texto = transcripcion.text || transcripcion.transcription_info?.text || '';
 
   if (!texto.trim()) {
-    await guardarLlamada(env, { vendedor, telefono, nota: '(llamada sin audio transcribible)', origen: 'llamada' });
+    await guardarLlamada(env, { vendedor, telefono, nota: '(llamada sin audio transcribible)', origen: 'llamada', duracionSeg });
     return;
   }
 
-  await guardarLlamada(env, { vendedor, telefono, nota: texto, origen: 'llamada' });
+  await guardarLlamada(env, { vendedor, telefono, nota: texto, origen: 'llamada', duracionSeg });
 }
 
 export default {
@@ -322,10 +345,11 @@ export default {
       const form = await request.formData();
       const recordingUrl = form.get('RecordingUrl');
       const status = form.get('RecordingStatus');
+      const duracionSeg = parseInt(form.get('RecordingDuration'), 10) || null;
 
       if (status === 'completed' && recordingUrl) {
         try {
-          await transcribirYGuardar(env, { vendedor, telefono, recordingUrl });
+          await transcribirYGuardar(env, { vendedor, telefono, recordingUrl, duracionSeg });
         } catch (err) {
           await guardarLlamada(env, {
             vendedor,
@@ -344,10 +368,21 @@ export default {
       return env.ASSETS.fetch(request);
     }
 
+    // Público: la pantalla de login necesita saber qué vendedores existen ANTES de
+    // que haya sesión. Solo expone id+nombre, nunca el teléfono.
+    if (url.pathname === '/api/login/opciones') {
+      const { results } = await env.DB.prepare('SELECT id, nombre FROM usuarios ORDER BY nombre').all();
+      return json(results);
+    }
+
     if (url.pathname === '/api/login' && request.method === 'POST') {
-      const { password } = await request.json();
+      const { usuario_id, password } = await request.json();
       if (password !== env.DASHBOARD_PASSWORD) return json({ error: 'incorrecta' }, 401);
-      const valor = await firmarSesion(env);
+      const usuario = await env.DB.prepare('SELECT id, nombre, telefono, rol FROM usuarios WHERE id = ?')
+        .bind(usuario_id).first();
+      if (!usuario) return json({ error: 'usuario inválido' }, 401);
+
+      const valor = await firmarPayload(env, { id: usuario.id, nombre: usuario.nombre, telefono: usuario.telefono, rol: usuario.rol });
       return json(
         { ok: true },
         200,
@@ -355,15 +390,19 @@ export default {
       );
     }
 
-    // Sesión persistente por cookie en vez de Basic Auth (ver [[firmarSesion]] arriba):
-    // en la PWA instalada en el celular, Basic Auth no siempre sobrevive a cerrar y
-    // reabrir la app — la cookie sí, porque el navegador la guarda igual que en Safari.
-    if (!(await sesionValida(request, env))) {
+    // Sesión persistente por cookie en vez de Basic Auth: en la PWA instalada en el
+    // celular, Basic Auth no siempre sobrevive a cerrar y reabrir la app — la cookie
+    // sí. Además ahora identifica QUIÉN entró (para filtrar Análisis) y con qué ROL
+    // (para restringir Configuración a administradores).
+    const sesion = await obtenerSesion(request, env);
+    if (!sesion) {
       if (request.method === 'GET' && !url.pathname.startsWith('/api/')) {
         return new Response(PAGINA_LOGIN, { headers: { 'Content-Type': 'text/html' } });
       }
       return json({ error: 'Sesión requerida' }, 401);
     }
+
+    if (url.pathname === '/api/sesion') return json(sesion);
 
     // Diagnóstico: muestra qué dijo Twilio de las últimas llamadas y qué números
     // están verificados. Sirve para depurar sin tener que mirar la consola de Twilio.
@@ -411,23 +450,28 @@ export default {
     // escribir el nombre a mano cada vez y elegir el número por separado.
     if (url.pathname === '/api/usuarios') {
       if (request.method === 'GET') {
+        // Cualquier sesión puede ver nombres (los usa el filtro de Análisis del admin),
+        // pero solo el admin necesita el listado completo con teléfonos — igual se
+        // filtra en el frontend, y el teléfono de cada uno solo lo usa su propia sesión.
         const { results } = await env.DB.prepare('SELECT * FROM usuarios ORDER BY nombre').all();
         return json(results);
       }
       if (request.method === 'POST') {
+        if (sesion.rol !== 'admin') return json({ error: 'Solo un administrador puede agregar vendedores' }, 403);
         const { nombre, telefono } = await request.json();
         const tel = normalizarTelefono(telefono);
         if (!nombre || !tel) return json({ error: 'Falta nombre o teléfono' }, 400);
 
         const createdAt = new Date().toISOString();
-        const result = await env.DB.prepare('INSERT INTO usuarios (nombre, telefono, created_at) VALUES (?, ?, ?)')
-          .bind(nombre, tel, createdAt).run();
-        return json({ id: result.meta.last_row_id, nombre, telefono: tel, created_at: createdAt });
+        const result = await env.DB.prepare('INSERT INTO usuarios (nombre, telefono, rol, created_at) VALUES (?, ?, ?, ?)')
+          .bind(nombre, tel, 'vendedor', createdAt).run();
+        return json({ id: result.meta.last_row_id, nombre, telefono: tel, rol: 'vendedor', created_at: createdAt });
       }
     }
 
     const usuarioMatch = url.pathname.match(/^\/api\/usuarios\/(\d+)$/);
     if (usuarioMatch && request.method === 'DELETE') {
+      if (sesion.rol !== 'admin') return json({ error: 'Solo un administrador puede quitar vendedores' }, 403);
       await env.DB.prepare('DELETE FROM usuarios WHERE id = ?').bind(usuarioMatch[1]).run();
       return json({ ok: true });
     }
@@ -545,45 +589,78 @@ export default {
     }
 
     if (url.pathname === '/api/estadisticas') {
-      const [total, porResultado, porVendedor, totalContactos, contactados] = await Promise.all([
-        env.DB.prepare('SELECT COUNT(*) as n FROM llamadas').first(),
-        env.DB.prepare('SELECT resultado, COUNT(*) as n FROM llamadas GROUP BY resultado ORDER BY n DESC').all(),
-        env.DB.prepare('SELECT vendedor, COUNT(*) as n FROM llamadas GROUP BY vendedor ORDER BY n DESC LIMIT 5').all(),
-        env.DB.prepare('SELECT COUNT(*) as n FROM contactos').first(),
-        env.DB.prepare('SELECT COUNT(DISTINCT telefono) as n FROM llamadas WHERE telefono IS NOT NULL').first(),
+      // Un vendedor solo ve sus propias métricas; el admin ve todo, y puede acotar
+      // a un vendedor puntual con ?vendedor= igual que el admin de cualquier CRM.
+      const filtro = sesion.rol === 'admin' ? url.searchParams.get('vendedor') : sesion.nombre;
+      const w = filtro ? 'WHERE vendedor = ?' : '';
+      const b = filtro ? [filtro] : [];
+
+      const [total, porResultado, porDia, duracion] = await Promise.all([
+        env.DB.prepare(`SELECT COUNT(*) as n FROM llamadas ${w}`).bind(...b).first(),
+        env.DB.prepare(`SELECT resultado, COUNT(*) as n FROM llamadas ${w} GROUP BY resultado ORDER BY n DESC`).bind(...b).all(),
+        env.DB.prepare(
+          `SELECT date(created_at) as dia, COUNT(*) as n FROM llamadas
+           ${w} ${w ? 'AND' : 'WHERE'} created_at >= date('now','-13 days')
+           GROUP BY dia ORDER BY dia`
+        ).bind(...b).all(),
+        env.DB.prepare(`SELECT AVG(duracion_seg) as promedio, COUNT(duracion_seg) as n FROM llamadas ${w} ${w ? 'AND' : 'WHERE'} duracion_seg IS NOT NULL`).bind(...b).first(),
       ]);
-      return json({
+
+      const ventasCerradas = (porResultado.results.find(r => r.resultado === 'venta cerrada') || {}).n || 0;
+      const tasaConversion = total.n ? Math.round((ventasCerradas / total.n) * 100) : 0;
+
+      const respuesta = {
         total_llamadas: total.n,
+        tasa_conversion: tasaConversion,
+        duracion_promedio_seg: duracion.n ? Math.round(duracion.promedio) : null,
         por_resultado: porResultado.results,
-        por_vendedor: porVendedor.results,
-        total_contactos: totalContactos.n,
-        contactados: contactados.n,
-      });
+        por_dia: porDia.results,
+      };
+
+      // El ranking entre vendedores solo lo ve el admin — a un vendedor no le sirve
+      // (ya está viendo solo sus propios números) y es información sensible del equipo.
+      if (sesion.rol === 'admin') {
+        const ranking = await env.DB.prepare(
+          `SELECT vendedor,
+             COUNT(*) as llamadas,
+             SUM(CASE WHEN resultado = 'venta cerrada' THEN 1 ELSE 0 END) as ventas
+           FROM llamadas GROUP BY vendedor ORDER BY llamadas DESC`
+        ).all();
+        respuesta.ranking_vendedores = ranking.results;
+
+        const totalContactos = await env.DB.prepare('SELECT COUNT(*) as n FROM contactos').first();
+        const contactados = await env.DB.prepare('SELECT COUNT(DISTINCT telefono) as n FROM llamadas WHERE telefono IS NOT NULL').first();
+        respuesta.total_contactos = totalContactos.n;
+        respuesta.contactados = contactados.n;
+      }
+
+      return json(respuesta);
     }
 
     if (url.pathname === '/api/voice/token' && request.method === 'POST') {
-      const { vendedor } = await request.json();
-      const token = await generarAccessToken(env, toIdentity(vendedor));
-      return json({ token });
+      // La identidad y el número de caller ID salen de la sesión, no de lo que mande
+      // el navegador — así un vendedor no puede llamar mostrando el número de otro.
+      const token = await generarAccessToken(env, toIdentity(sesion.nombre));
+      return json({ token, telefono: sesion.telefono, nombre: sesion.nombre });
     }
 
     if (url.pathname === '/api/llamadas') {
       if (request.method === 'POST') {
         const body = await request.json();
-        const vendedor = (body.vendedor || '').trim();
+        const vendedor = sesion.nombre;
         const telefono = normalizarTelefono(body.telefono);
         const nota = (body.nota || '').trim();
 
-        if (!vendedor || !nota) {
-          return json({ error: 'Falta vendedor o nota' }, 400);
-        }
+        if (!nota) return json({ error: 'Falta la nota' }, 400);
 
         const guardado = await guardarLlamada(env, { vendedor, telefono, nota, origen: 'manual' });
         return json(guardado);
       }
 
       if (request.method === 'GET') {
-        const vendedorFiltro = url.searchParams.get('vendedor');
+        // Mismo criterio que en estadísticas: cada vendedor solo ve lo suyo, el admin
+        // ve todo o filtra por quien quiera.
+        const vendedorFiltro = sesion.rol === 'admin' ? url.searchParams.get('vendedor') : sesion.nombre;
         let query = 'SELECT * FROM llamadas';
         const binds = [];
         if (vendedorFiltro) {
