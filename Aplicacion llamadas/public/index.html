@@ -147,19 +147,6 @@
   .empty { color: var(--muted); font-size: 0.9rem; text-align: center; padding: 24px 0; }
   .loading { color: var(--muted); font-size: 0.85rem; }
 
-  .btn-colgar { background: var(--red); }
-  .btn-colgar:active { background: #b91c1c; }
-  #estado-llamada {
-    display: none;
-    text-align: center;
-    padding: 14px;
-    border-radius: 10px;
-    background: #eff6ff;
-    border: 1px solid #bfdbfe;
-    font-size: 0.9rem;
-    margin-bottom: 14px;
-  }
-  #estado-llamada .timer { font-size: 1.4rem; font-weight: 700; display: block; margin-top: 4px; }
   .origen-tag {
     font-size: 0.68rem;
     color: var(--muted);
@@ -167,6 +154,140 @@
     border-radius: 4px;
     padding: 1px 6px;
     margin-left: 6px;
+  }
+
+  /* --- Pantalla de llamada --- */
+  #pantalla-llamada {
+    display: none;
+    flex-direction: column;
+    align-items: center;
+    padding: 12px 0 4px;
+  }
+  .telefono-visual {
+    position: relative;
+    width: 110px;
+    height: 110px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 18px;
+  }
+  .anillo {
+    position: absolute;
+    inset: 0;
+    border-radius: 50%;
+    border: 2px solid var(--accent);
+    opacity: 0;
+  }
+  .telefono-visual.sonando .anillo {
+    animation: expandir-anillo 1.8s ease-out infinite;
+  }
+  .telefono-visual.sonando .anillo:nth-child(2) { animation-delay: 0.5s; }
+  .telefono-visual.sonando .anillo:nth-child(3) { animation-delay: 1s; }
+  @keyframes expandir-anillo {
+    0%   { transform: scale(0.7); opacity: 0.6; }
+    100% { transform: scale(1.7); opacity: 0; }
+  }
+  .icono-telefono {
+    position: relative;
+    z-index: 1;
+    width: 74px;
+    height: 74px;
+    border-radius: 50%;
+    background: var(--accent);
+    color: #fff;
+    font-size: 1.9rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 14px rgba(37,99,235,0.35);
+    transition: background 0.3s;
+  }
+  .telefono-visual.sonando .icono-telefono {
+    animation: bamboleo 0.9s ease-in-out infinite;
+  }
+  @keyframes bamboleo {
+    0%, 100% { transform: rotate(0deg); }
+    25%      { transform: rotate(-12deg); }
+    75%      { transform: rotate(12deg); }
+  }
+  .telefono-visual.conectado .icono-telefono {
+    background: var(--green);
+    box-shadow: 0 4px 14px rgba(22,163,74,0.35);
+    animation: latido 1.6s ease-in-out infinite;
+  }
+  @keyframes latido {
+    0%, 100% { transform: scale(1); }
+    50%      { transform: scale(1.06); }
+  }
+  #numero-llamando {
+    font-size: 1.15rem;
+    font-weight: 700;
+    margin-bottom: 2px;
+  }
+  #call-estado-texto {
+    color: var(--muted);
+    font-size: 0.9rem;
+    margin-bottom: 10px;
+  }
+  .onda-audio {
+    display: none;
+    align-items: flex-end;
+    gap: 4px;
+    height: 28px;
+    margin-bottom: 14px;
+  }
+  .onda-audio.activa { display: flex; }
+  .onda-audio span {
+    width: 4px;
+    background: var(--green);
+    border-radius: 2px;
+    animation: onda 1s ease-in-out infinite;
+  }
+  .onda-audio span:nth-child(1) { animation-delay: 0s; }
+  .onda-audio span:nth-child(2) { animation-delay: 0.15s; }
+  .onda-audio span:nth-child(3) { animation-delay: 0.3s; }
+  .onda-audio span:nth-child(4) { animation-delay: 0.15s; }
+  .onda-audio span:nth-child(5) { animation-delay: 0s; }
+  @keyframes onda {
+    0%, 100% { height: 6px; }
+    50%      { height: 26px; }
+  }
+  #call-timer {
+    font-size: 1.6rem;
+    font-weight: 700;
+    font-variant-numeric: tabular-nums;
+    margin-bottom: 20px;
+    min-height: 1.6rem;
+  }
+  .btn-colgar-redondo {
+    width: 62px;
+    height: 62px;
+    border-radius: 50%;
+    background: var(--red);
+    color: #fff;
+    border: none;
+    font-size: 1.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    box-shadow: 0 4px 14px rgba(220,38,38,0.4);
+    transform: rotate(135deg);
+  }
+  .btn-colgar-redondo:active { background: #b91c1c; }
+  .mensaje-final {
+    text-align: center;
+    color: var(--muted);
+    font-size: 0.85rem;
+    margin-top: 4px;
+  }
+  .mensaje-error {
+    text-align: center;
+    color: var(--red);
+    font-size: 0.85rem;
+    margin-top: 4px;
+    max-width: 280px;
   }
 </style>
 </head>
@@ -180,20 +301,35 @@
 <main>
   <div class="card">
     <h2>Llamar ahora</h2>
-    <div id="estado-llamada"><span id="estado-texto">Conectando...</span><span class="timer" id="estado-timer"></span></div>
 
-    <label for="vendedor-llamar">Vendedor</label>
-    <input type="text" id="vendedor-llamar" placeholder="Tu nombre">
+    <div id="form-llamar-container">
+      <label for="vendedor-llamar">Vendedor</label>
+      <input type="text" id="vendedor-llamar" placeholder="Tu nombre">
 
-    <label for="mi-numero">Número que verá el cliente</label>
-    <select id="mi-numero"><option value="">Cargando números...</option></select>
+      <label for="mi-numero">Número que verá el cliente</label>
+      <select id="mi-numero"><option value="">Cargando números...</option></select>
 
-    <label for="numero-cliente">Teléfono del cliente</label>
-    <input type="tel" id="numero-cliente" placeholder="+56 9 1234 5678">
+      <label for="numero-cliente">Teléfono del cliente</label>
+      <input type="tel" id="numero-cliente" placeholder="+56 9 1234 5678">
 
-    <button id="btn-llamar">Llamar</button>
-    <button id="btn-colgar" class="btn-colgar" style="display:none">Colgar</button>
-    <p class="hint">La llamada sale por el navegador (necesitas internet estable) y se graba, transcribe y resume automáticamente — no hace falta escribir nada después.</p>
+      <button id="btn-llamar">📞 Llamar</button>
+      <p class="hint">La llamada sale por el navegador (necesitas internet estable) y se graba, transcribe y resume automáticamente — no hace falta escribir nada después.</p>
+    </div>
+
+    <div id="pantalla-llamada">
+      <div class="telefono-visual" id="telefono-visual">
+        <div class="anillo"></div>
+        <div class="anillo"></div>
+        <div class="anillo"></div>
+        <div class="icono-telefono">📞</div>
+      </div>
+      <div id="numero-llamando"></div>
+      <div id="call-estado-texto">Conectando...</div>
+      <div class="onda-audio" id="onda-audio"><span></span><span></span><span></span><span></span><span></span></div>
+      <div id="call-timer"></div>
+      <button id="btn-colgar" class="btn-colgar-redondo" style="display:none">📞</button>
+      <div id="mensaje-post-llamada"></div>
+    </div>
   </div>
 
   <div class="card">
@@ -325,11 +461,16 @@ if (ultimoVendedor) document.getElementById('vendedor').value = ultimoVendedor;
 cargarLlamadas();
 
 // --- Llamar ahora (Twilio Voice SDK) ---
+const formLlamarContainer = document.getElementById('form-llamar-container');
+const pantallaLlamada = document.getElementById('pantalla-llamada');
+const telefonoVisual = document.getElementById('telefono-visual');
+const numeroLlamando = document.getElementById('numero-llamando');
+const callEstadoTexto = document.getElementById('call-estado-texto');
+const ondaAudio = document.getElementById('onda-audio');
+const callTimer = document.getElementById('call-timer');
+const mensajePostLlamada = document.getElementById('mensaje-post-llamada');
 const btnLlamar = document.getElementById('btn-llamar');
 const btnColgar = document.getElementById('btn-colgar');
-const estadoLlamada = document.getElementById('estado-llamada');
-const estadoTexto = document.getElementById('estado-texto');
-const estadoTimer = document.getElementById('estado-timer');
 const vendedorLlamarEl = document.getElementById('vendedor-llamar');
 const miNumeroEl = document.getElementById('mi-numero');
 const numeroClienteEl = document.getElementById('numero-cliente');
@@ -393,39 +534,53 @@ function detenerRingback() {
 }
 
 function mostrarEstado(texto) {
-  estadoLlamada.style.display = 'block';
-  estadoTexto.textContent = texto;
+  callEstadoTexto.textContent = texto;
+}
+
+function ponerVisual(estado) {
+  // estado: 'sonando' | 'conectado' | ''
+  telefonoVisual.className = 'telefono-visual' + (estado ? ' ' + estado : '');
+  ondaAudio.classList.toggle('activa', estado === 'conectado');
 }
 
 function iniciarTimer() {
   const inicio = Date.now();
-  estadoTimer.style.display = 'block';
   timerInterval = setInterval(() => {
     const s = Math.floor((Date.now() - inicio) / 1000);
     const mm = String(Math.floor(s / 60)).padStart(2, '0');
     const ss = String(s % 60).padStart(2, '0');
-    estadoTimer.textContent = `${mm}:${ss}`;
+    callTimer.textContent = `${mm}:${ss}`;
   }, 1000);
 }
 
-// hubo Error = no pisar el mensaje de error con el de "generando resumen".
-function finalizarLlamadaUI(hubo_error) {
+function volverAlFormulario() {
+  pantallaLlamada.style.display = 'none';
+  formLlamarContainer.style.display = 'block';
+  mensajePostLlamada.innerHTML = '';
+  callTimer.textContent = '';
+  ponerVisual('');
+}
+
+// hubo_error = deja el mensaje visible en vez de volver solo al formulario.
+function finalizarLlamadaUI(hubo_error, mensajeError) {
   detenerRingback();
   clearInterval(timerInterval);
-  btnLlamar.style.display = 'block';
-  btnLlamar.disabled = false;
-  btnLlamar.textContent = 'Llamar';
   btnColgar.style.display = 'none';
-  estadoTimer.textContent = '';
+  ponerVisual('');
   activeCall = null;
 
-  if (hubo_error) return; // el mensaje de error se queda en pantalla
+  if (hubo_error) {
+    mensajePostLlamada.innerHTML = `<div class="mensaje-error">${mensajeError}</div>`;
+    setTimeout(volverAlFormulario, 5000);
+    return;
+  }
 
-  mostrarEstado('Llamada finalizada. Generando resumen automático...');
+  mostrarEstado('Llamada finalizada');
+  mensajePostLlamada.innerHTML = '<div class="mensaje-final">Generando resumen automático con IA...</div>';
   // La transcripción llega vía webhook de Twilio unos segundos después de colgar.
   setTimeout(cargarLlamadas, 8000);
   setTimeout(cargarLlamadas, 16000);
-  setTimeout(() => { estadoLlamada.style.display = 'none'; }, 6000);
+  setTimeout(volverAlFormulario, 6000);
 }
 
 btnLlamar.addEventListener('click', async () => {
@@ -442,7 +597,9 @@ btnLlamar.addEventListener('click', async () => {
   localStorage.setItem('ultimo_callerid', miNumero);
 
   btnLlamar.disabled = true;
-  btnLlamar.textContent = 'Conectando...';
+  formLlamarContainer.style.display = 'none';
+  pantallaLlamada.style.display = 'flex';
+  numeroLlamando.textContent = numeroCliente;
   mostrarEstado('Solicitando permiso de micrófono...');
 
   try {
@@ -474,17 +631,18 @@ btnLlamar.addEventListener('click', async () => {
       },
     });
 
-    btnLlamar.style.display = 'none';
-    btnColgar.style.display = 'block';
+    btnColgar.style.display = 'flex';
+    ponerVisual('sonando');
     mostrarEstado('Llamando...');
 
     activeCall.on('ringing', (hasEarlyMedia) => {
+      ponerVisual('sonando');
       mostrarEstado('Llamando...');
-      // Si la operadora no manda su propio tono, ponemos uno nosotros.
       if (!hasEarlyMedia) iniciarRingback();
     });
     activeCall.on('accept', () => {
       detenerRingback();
+      ponerVisual('conectado');
       mostrarEstado('En llamada');
       iniciarTimer();
     });
@@ -493,14 +651,12 @@ btnLlamar.addEventListener('click', async () => {
     activeCall.on('error', (err) => {
       const detalle = [err.message, err.code, err.causes && err.causes.join(', ')]
         .filter(Boolean).join(' — ');
-      mostrarEstado('Error en la llamada: ' + detalle);
-      finalizarLlamadaUI(true);
+      finalizarLlamadaUI(true, 'Error en la llamada: ' + detalle);
     });
   } catch (err) {
-    mostrarEstado('No se pudo iniciar la llamada: ' + err.message);
+    finalizarLlamadaUI(true, 'No se pudo iniciar la llamada: ' + err.message);
+  } finally {
     btnLlamar.disabled = false;
-    btnLlamar.textContent = 'Llamar';
-    setTimeout(() => { estadoLlamada.style.display = 'none'; }, 4000);
   }
 });
 
