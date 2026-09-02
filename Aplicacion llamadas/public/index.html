@@ -625,22 +625,29 @@
   .marca { color: var(--accent); -webkit-text-fill-color: var(--accent); }
 
   /* --- Pestañas de escritorio --- */
-  .tabs-desktop {
-    display: flex;
-    gap: 6px;
-    max-width: 1180px;
-    margin: 0 auto;
-    padding: 0 16px 14px;
+  /* Barra de vidrio esmerilado en vez de un rectángulo de color plano — así no se
+     nota como una caja aparte pegada sobre el degradado del fondo. */
+  .tabs-desktop-wrap {
     position: sticky;
     top: 0;
     z-index: 20;
-    background: var(--bg);
+    background: rgba(21,23,31,0.72);
+    backdrop-filter: blur(18px);
+    -webkit-backdrop-filter: blur(18px);
+    border-bottom: 1px solid var(--border);
+  }
+  .tabs-desktop {
+    display: flex;
+    gap: 8px;
+    max-width: 1180px;
+    margin: 0 auto;
+    padding: 12px 16px;
   }
   .tab-btn {
     flex: 1;
-    padding: 10px 8px;
-    border: 1px solid var(--card-border);
-    background: rgba(255,255,255,0.04);
+    padding: 11px 8px;
+    border: 1px solid transparent;
+    background: transparent;
     color: var(--muted);
     border-radius: 12px;
     font-family: 'Inter', sans-serif;
@@ -650,9 +657,10 @@
     box-shadow: none;
     transition: all 0.15s;
   }
-  .tab-btn:hover { transform: none; color: var(--text); }
+  .tab-btn:hover { transform: none; color: var(--text); background: rgba(255,255,255,0.05); }
   .tab-btn.activo { background: rgba(255,255,255,0.09); color: var(--text); border-color: var(--border); }
   .tab-btn.tab-principal { background: var(--amarillo, #ffcc33); color: #241d00; border-color: transparent; font-weight: 700; }
+  .tab-btn.tab-principal:hover { background: var(--amarillo, #ffcc33); }
   .tab-btn.tab-principal.activo { background: #ffd75e; }
 
   /* --- Pestañas móviles (barra inferior fija + botón central elevado) --- */
@@ -722,7 +730,7 @@
   .instructivo p { font-size: 0.88rem; color: #c3c8db; line-height: 1.55; margin: 0; }
 
   @media (max-width: 680px) {
-    .tabs-desktop { display: none; }
+    .tabs-desktop-wrap { display: none; }
     body { padding-bottom: 100px; }
     .tabs-mobile {
       display: flex;
@@ -770,12 +778,14 @@
   </div>
 </header>
 
-<nav class="tabs-desktop">
-  <button class="tab-btn" data-tab="clientes">📇 Clientes</button>
-  <button class="tab-btn" data-tab="analisis">📊 Análisis</button>
-  <button class="tab-btn tab-principal" data-tab="llamadas">📞 Llamadas</button>
-  <button class="tab-btn" data-tab="configuracion">⚙️ Configuración</button>
-  <button class="tab-btn" data-tab="ayuda">❓ Ayuda</button>
+<nav class="tabs-desktop-wrap">
+  <div class="tabs-desktop">
+    <button class="tab-btn" data-tab="clientes">📇 Clientes</button>
+    <button class="tab-btn" data-tab="analisis">📊 Análisis</button>
+    <button class="tab-btn tab-principal" data-tab="llamadas">📞 Llamadas</button>
+    <button class="tab-btn" data-tab="configuracion">⚙️ Configuración</button>
+    <button class="tab-btn" data-tab="ayuda">❓ Ayuda</button>
+  </div>
 </nav>
 
 <main>
