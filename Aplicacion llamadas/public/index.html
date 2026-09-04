@@ -369,6 +369,13 @@
   .contacto-item:last-child { border-bottom: none; }
   .contacto-nombre { font-weight: 600; font-size: 0.92rem; }
   .contacto-meta { font-size: 0.76rem; color: var(--muted); margin-top: 2px; }
+  .contacto-resumen {
+    font-size: 0.82rem;
+    color: #c3c8db;
+    font-style: italic;
+    margin-top: 6px;
+    line-height: 1.4;
+  }
   .temp-badge { font-size: 1.1rem; flex-shrink: 0; }
 
   .usuario-item {
@@ -1540,6 +1547,7 @@ async function cargarContactos() {
           <div class="contacto-nombre">${c.empresa || c.telefono}</div>
           <div class="contacto-meta">${c.contacto || ''}${c.cargo ? ' · ' + c.cargo : ''} · ${c.telefono}</div>
           <div class="contacto-meta">${c.veces_llamado > 0 ? `${t.texto} · último: ${c.ultimo_vendedor} (${c.ultimo_resultado})` : t.texto}</div>
+          ${c.ultimo_resumen ? `<div class="contacto-resumen">"${c.ultimo_resumen}"</div>` : ''}
         </div>
         <span class="temp-badge" title="${t.texto}">${t.emoji}</span>
       </div>`;
