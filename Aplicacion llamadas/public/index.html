@@ -43,6 +43,16 @@
     font-family: 'Inter', -apple-system, sans-serif;
     -webkit-font-smoothing: antialiased;
     padding-bottom: 56px;
+    /* Sin esto, tocar dos veces rápido (ej. marcando) hace zoom en vez de solo
+       registrar los toques — típico problema de apps web usadas como app real. */
+    touch-action: manipulation;
+    -webkit-tap-highlight-color: transparent;
+  }
+  button, .chip, .sugerencia, .tab-btn, .tab-btn-mv, .tab-fab, .contacto-item, .usuario-item, a {
+    touch-action: manipulation;
+    -webkit-tap-highlight-color: transparent;
+    user-select: none;
+    -webkit-user-select: none;
   }
   .mono { font-family: 'JetBrains Mono', monospace; }
   /* El logo de Conflex es texto navy — sobre el fondo oscuro de la app nunca iba a
@@ -263,7 +273,7 @@
     border-radius: 12px;
     color: var(--text);
     font-family: 'Inter', sans-serif;
-    font-size: 0.92rem;
+    font-size: 1rem; /* <16px hace que iOS Safari haga zoom solo al enfocar el campo */
   }
 
   .llamada-item {
@@ -394,7 +404,7 @@
     padding: 24px;
   }
   .llamar-form .btn-llamar-circular, .llamar-form .btn-colgar-redondo { margin-left: auto; margin-right: auto; }
-  @media (min-width: 640px) {
+  @media (min-width: 681px) {
     .llamar-layout { flex-direction: row; align-items: stretch; justify-content: center; }
     .iphone-mock { flex-shrink: 0; margin: 0 !important; align-self: center; }
     .llamar-form { flex: 1; max-width: 440px; }
@@ -732,6 +742,10 @@
   @media (max-width: 680px) {
     .tabs-desktop-wrap { display: none; }
     body { padding-bottom: 100px; }
+    /* En celular el mock de iPhone (teclado táctil, isla dinámica) era incómodo para
+       marcar rápido — se saca y queda solo el campo de teléfono con el teclado
+       nativo del celular, que es lo que la gente ya sabe usar. */
+    .iphone-mock { display: none; }
     .tabs-mobile {
       display: flex;
       align-items: flex-end;
@@ -798,10 +812,30 @@
       <div class="iphone-mock">
         <div class="isla-dinamica"></div>
         <div class="iphone-pantalla">
-
           <div id="iphone-idle">
             <div class="iphone-numero" id="iphone-numero-display">&nbsp;</div>
             <div class="teclado" id="teclado"></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="llamar-form">
+        <div class="panel-formulario">
+
+          <div id="form-llamar-campos">
+            <p class="hola-vendedor" id="hola-vendedor"></p>
+
+            <div class="field campo-buscar">
+              <input type="text" id="buscar-contacto" placeholder=" " autocomplete="off">
+              <label for="buscar-contacto">Buscar cliente (nombre o empresa)</label>
+              <div id="sugerencias-contacto" class="sugerencias"></div>
+            </div>
+
+            <div class="field">
+              <input type="tel" id="numero-cliente" placeholder=" " inputmode="tel">
+              <label for="numero-cliente">Teléfono del cliente</label>
+            </div>
+            <div id="ficha-contacto"></div>
           </div>
 
           <div id="pantalla-llamada" style="display:none">
@@ -817,28 +851,10 @@
             <div id="call-timer"></div>
           </div>
 
-        </div>
-      </div>
-
-      <div class="llamar-form">
-        <div class="panel-formulario">
-          <p class="hola-vendedor" id="hola-vendedor"></p>
-
-          <div class="field campo-buscar">
-            <input type="text" id="buscar-contacto" placeholder=" " autocomplete="off">
-            <label for="buscar-contacto">Buscar cliente (nombre o empresa)</label>
-            <div id="sugerencias-contacto" class="sugerencias"></div>
-          </div>
-
-          <div class="field">
-            <input type="tel" id="numero-cliente" placeholder=" ">
-            <label for="numero-cliente">Teléfono del cliente</label>
-          </div>
-          <div id="ficha-contacto"></div>
           <button id="btn-llamar" class="btn-llamar-circular" disabled>📞</button>
           <button id="btn-colgar" class="btn-colgar-redondo" style="display:none">📞</button>
           <div id="mensaje-post-llamada"></div>
-          <p class="hint">La llamada sale por el navegador (necesitas internet estable) y se graba, transcribe y resume automáticamente — no hace falta escribir nada después.</p>
+          <p class="hint" id="hint-llamar">La llamada sale por el navegador (necesitas internet estable) y se graba, transcribe y resume automáticamente — no hace falta escribir nada después.</p>
         </div>
       </div>
     </div>
@@ -909,7 +925,9 @@
 <section class="tab-panel" id="panel-analisis">
   <div class="card">
     <h2>📊 Resumen</h2>
-    <select id="filtro-vendedor-analisis" style="display:none; margin-bottom:18px;"></select>
+    <div class="filtros" id="filtro-vendedor-analisis-wrap" style="display:none;">
+      <select id="filtro-vendedor-analisis"></select>
+    </div>
     <div class="kpi-grid" id="kpi-grid"><p class="loading">Cargando...</p></div>
     <div class="barra-fila" style="margin-top:22px;"><div class="barra-cabecera"><span>Por resultado</span></div></div>
     <div id="barras-resultado"></div>
@@ -1073,6 +1091,7 @@ cargarLlamadas();
 
 // --- Llamar ahora (Twilio Voice SDK) ---
 const iphoneIdle = document.getElementById('iphone-idle');
+const formLlamarCampos = document.getElementById('form-llamar-campos');
 const pantallaLlamada = document.getElementById('pantalla-llamada');
 const telefonoVisual = document.getElementById('telefono-visual');
 const numeroLlamando = document.getElementById('numero-llamando');
@@ -1100,14 +1119,15 @@ async function cargarSesion() {
   if (!esAdmin && (localStorage.getItem('tab_activa') === 'configuracion')) activarTab('llamadas');
 
   const filtroVendedorAnalisis = document.getElementById('filtro-vendedor-analisis');
+  const filtroVendedorAnalisisWrap = document.getElementById('filtro-vendedor-analisis-wrap');
   if (esAdmin) {
-    filtroVendedorAnalisis.style.display = '';
+    filtroVendedorAnalisisWrap.style.display = '';
     const usuariosRes = await fetch('/api/usuarios');
     const usuarios = await usuariosRes.json();
     filtroVendedorAnalisis.innerHTML = '<option value="">Todo el equipo</option>' +
       usuarios.map(u => `<option value="${u.nombre}">${u.nombre}</option>`).join('');
   } else {
-    filtroVendedorAnalisis.style.display = 'none';
+    filtroVendedorAnalisisWrap.style.display = 'none';
   }
 
   cargarUsuarios();
@@ -1249,6 +1269,7 @@ function iniciarTimer() {
 function volverAlFormulario() {
   pantallaLlamada.style.display = 'none';
   iphoneIdle.style.display = 'block';
+  formLlamarCampos.style.display = 'block';
   numeroClienteEl.value = '';
   document.getElementById('buscar-contacto').value = '';
   actualizarDisplayNumero();
@@ -1291,6 +1312,7 @@ btnLlamar.addEventListener('click', async () => {
 
   btnLlamar.disabled = true;
   iphoneIdle.style.display = 'none';
+  formLlamarCampos.style.display = 'none';
   pantallaLlamada.style.display = 'flex';
   numeroLlamando.textContent = numeroCliente;
   mostrarEstado('Solicitando permiso de micrófono...');
