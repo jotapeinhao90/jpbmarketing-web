@@ -250,12 +250,18 @@ async function guardarLlamada(env, { vendedor, telefono, nota, origen, duracionS
 
   // Si el teléfono ya existe en la base de contactos, esos datos son más confiables
   // que lo que la IA adivinó de la conversación — los usamos para completar/corregir.
+  // Si NO existe, se crea igual (aunque sea sin nombre) para que todo número llamado
+  // quede visible en Clientes — se puede editar después con el nombre real.
   if (telefono) {
     const contacto = await env.DB.prepare('SELECT empresa, contacto, cargo FROM contactos WHERE telefono = ?')
       .bind(telefono).first();
     if (contacto) {
       estructurado.empresa = contacto.empresa || estructurado.empresa;
       estructurado.contacto = contacto.contacto || estructurado.contacto;
+    } else {
+      await env.DB.prepare(
+        'INSERT INTO contactos (telefono, empresa, contacto, cargo, notas, created_at) VALUES (?, ?, ?, ?, ?, ?)'
+      ).bind(telefono, estructurado.empresa || null, estructurado.contacto || null, null, null, new Date().toISOString()).run();
     }
   }
 

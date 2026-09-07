@@ -297,6 +297,22 @@
     color: var(--accent);
     margin-top: 4px;
   }
+  .btn-ver-transcripcion {
+    width: auto; padding: 0; margin-top: 8px; background: none; box-shadow: none;
+    color: var(--accent-2); font-size: 0.76rem; font-weight: 700; text-decoration: underline;
+  }
+  .transcripcion-completa {
+    margin-top: 8px;
+    padding: 12px;
+    background: rgba(0,0,0,0.2);
+    border-radius: 10px;
+    font-size: 0.82rem;
+    color: #c3c8db;
+    line-height: 1.5;
+    max-height: 220px;
+    overflow-y: auto;
+    white-space: pre-wrap;
+  }
   .empty { color: var(--muted); font-size: 0.9rem; text-align: center; padding: 24px 0; }
   .loading { color: var(--muted); font-size: 0.85rem; }
 
@@ -361,12 +377,24 @@
   .contacto-item {
     display: flex;
     justify-content: space-between;
-    align-items: center;
+    align-items: flex-start;
     gap: 10px;
     border-bottom: 1px solid var(--border);
     padding: 12px 2px;
   }
   .contacto-item:last-child { border-bottom: none; }
+  .contacto-acciones { display: flex; flex-direction: column; align-items: center; gap: 10px; flex-shrink: 0; }
+  .btn-editar-contacto {
+    width: auto; padding: 4px 8px; border-radius: 8px; font-size: 0.85rem;
+    background: rgba(255,255,255,0.06); box-shadow: none;
+  }
+  .contacto-editar {
+    margin-top: 12px;
+    padding-top: 12px;
+    border-top: 1px dashed var(--border);
+  }
+  .contacto-editar .field { margin-bottom: 16px; }
+  .contacto-editar .btn-guardar-contacto { margin-top: 2px; }
   .contacto-nombre { font-weight: 600; font-size: 0.92rem; }
   .contacto-meta { font-size: 0.76rem; color: var(--muted); margin-top: 2px; }
   .contacto-resumen {
@@ -1052,8 +1080,21 @@ async function cargarLlamadas() {
       <div class="llamada-meta">${fmtFecha(l.created_at)} · ${l.vendedor}${l.contacto ? ' · ' + l.contacto : ''}${l.telefono ? ' · ' + l.telefono : ''}</div>
       <div class="llamada-resumen">${l.resumen || ''}</div>
       ${l.proximo_paso ? `<div class="llamada-proximo">➜ ${l.proximo_paso}${l.fecha_seguimiento ? ' (' + l.fecha_seguimiento + ')' : ''}</div>` : ''}
+      ${l.nota_original ? `
+        <button type="button" class="btn-ver-transcripcion" data-id="${l.id}">Ver transcripción completa ▾</button>
+        <div class="transcripcion-completa" id="transcripcion-${l.id}" style="display:none">${l.nota_original}</div>
+      ` : ''}
     </div>
   `).join('');
+
+  listaEl.querySelectorAll('.btn-ver-transcripcion').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const bloque = document.getElementById('transcripcion-' + btn.dataset.id);
+      const abierto = bloque.style.display !== 'none';
+      bloque.style.display = abierto ? 'none' : 'block';
+      btn.textContent = abierto ? 'Ver transcripción completa ▾' : 'Ocultar transcripción ▴';
+    });
+  });
 }
 
 filtroVendedor.addEventListener('change', cargarLlamadas);
@@ -1539,19 +1580,58 @@ async function cargarContactos() {
     return;
   }
 
+  const escAttr = (s) => String(s || '').replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;');
+
   listaContactos.innerHTML = filtrados.map(c => {
     const t = TEMP_INFO[c.temperatura];
     return `
-      <div class="contacto-item">
-        <div>
+      <div class="contacto-item" data-tel="${escAttr(c.telefono)}">
+        <div style="flex:1; min-width:0;">
           <div class="contacto-nombre">${c.empresa || c.telefono}</div>
           <div class="contacto-meta">${c.contacto || ''}${c.cargo ? ' · ' + c.cargo : ''} · ${c.telefono}</div>
           <div class="contacto-meta">${c.veces_llamado > 0 ? `${t.texto} · último: ${c.ultimo_vendedor} (${c.ultimo_resultado})` : t.texto}</div>
           ${c.ultimo_resumen ? `<div class="contacto-resumen">"${c.ultimo_resumen}"</div>` : ''}
+
+          <div class="contacto-editar" style="display:none">
+            <div class="field"><input type="text" class="ed-empresa" placeholder=" " value="${escAttr(c.empresa)}"><label>Empresa</label></div>
+            <div class="field"><input type="text" class="ed-contacto" placeholder=" " value="${escAttr(c.contacto)}"><label>Contacto</label></div>
+            <div class="field"><input type="text" class="ed-cargo" placeholder=" " value="${escAttr(c.cargo)}"><label>Cargo</label></div>
+            <div class="field"><input type="text" class="ed-notas" placeholder=" " value="${escAttr(c.notas)}"><label>Notas</label></div>
+            <button type="button" class="btn-guardar-contacto">Guardar</button>
+          </div>
         </div>
-        <span class="temp-badge" title="${t.texto}">${t.emoji}</span>
+        <div class="contacto-acciones">
+          <span class="temp-badge" title="${t.texto}">${t.emoji}</span>
+          <button type="button" class="btn-editar-contacto" title="Editar">✏️</button>
+        </div>
       </div>`;
   }).join('');
+
+  listaContactos.querySelectorAll('.btn-editar-contacto').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const form = btn.closest('.contacto-item').querySelector('.contacto-editar');
+      form.style.display = form.style.display === 'none' ? 'block' : 'none';
+    });
+  });
+
+  listaContactos.querySelectorAll('.btn-guardar-contacto').forEach(btn => {
+    btn.addEventListener('click', async () => {
+      const item = btn.closest('.contacto-item');
+      const telefono = item.dataset.tel;
+      const empresa = item.querySelector('.ed-empresa').value.trim();
+      const contacto = item.querySelector('.ed-contacto').value.trim();
+      const cargo = item.querySelector('.ed-cargo').value.trim();
+      const notas = item.querySelector('.ed-notas').value.trim();
+      btn.disabled = true;
+      btn.textContent = 'Guardando...';
+      await fetch('/api/contactos/importar', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ contactos: [{ telefono, empresa, contacto, cargo, notas }] }),
+      });
+      cargarContactos();
+    });
+  });
 }
 
 filtroTemperatura.addEventListener('change', cargarContactos);
