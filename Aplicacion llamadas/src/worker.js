@@ -1,7 +1,9 @@
 const AI_MODEL = '@cf/meta/llama-3.3-70b-instruct-fp8-fast';
-// El large-v3-turbo rechaza el audio como array (solo acepta otro formato); el modelo
-// base sí funciona con `audio: [...bytes]`. Comprobado empíricamente contra grabaciones reales.
-const WHISPER_MODEL = '@cf/openai/whisper';
+// El modelo base (@cf/openai/whisper) caía en bucles de repetición sin sentido
+// ("nos vemos en el video, nos vemos en el video...") en tramos con silencio o audio
+// ruidoso — alucinación típica de Whisper. large-v3-turbo con el audio en base64
+// (no como array de bytes) transcribe limpio, con detección de silencio real.
+const WHISPER_MODEL = '@cf/openai/whisper-large-v3-turbo';
 
 const RESULTADOS_VALIDOS = [
   'cotización enviada',
@@ -289,9 +291,12 @@ async function transcribirYGuardar(env, { vendedor, telefono, recordingUrl, dura
   const audioRes = await fetch(`${recordingUrl}.mp3`, { headers: { Authorization: authHeader } });
   if (!audioRes.ok) throw new Error(`No se pudo descargar la grabación: ${audioRes.status}`);
   const audioBuffer = await audioRes.arrayBuffer();
+  let binario = '';
+  new Uint8Array(audioBuffer).forEach((b) => { binario += String.fromCharCode(b); });
+  const audioBase64 = btoa(binario);
 
   const transcripcion = await env.AI.run(WHISPER_MODEL, {
-    audio: [...new Uint8Array(audioBuffer)],
+    audio: audioBase64,
     language: 'es',
   });
   const texto = transcripcion.text || transcripcion.transcription_info?.text || '';
