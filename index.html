@@ -264,28 +264,34 @@
           <div class="ncm-body"><span class="ncm-tag">Caso de éxito</span><h4>The Kem Barbershop</h4></div>
         </a>
 
-        <!-- duplicado para loop continuo -->
-        <a href="/nosotros#polimer" class="ncm" aria-hidden="true" tabindex="-1">
-          <div class="ncm-photo"><img src="Clientes/Foto_con_polimer.webp" alt="" loading="lazy"></div>
-          <div class="ncm-body"><span class="ncm-tag">Caso de éxito</span><h4>ETP Polimer</h4></div>
-        </a>
-        <a href="/nosotros#fierros-idini" class="ncm" aria-hidden="true" tabindex="-1">
-          <div class="ncm-photo"><img src="Clientes/Fierros_idini_foto.webp" alt="" loading="lazy"></div>
-          <div class="ncm-body"><span class="ncm-tag">Caso de éxito</span><h4>Fierros Idini</h4></div>
-        </a>
-        <a href="/nosotros#plastiservi-conflex" class="ncm" aria-hidden="true" tabindex="-1">
-          <div class="ncm-photo"><img src="Clientes/4413EF69-A08E-4B0B-96FA-4A9EE240617A.webp" alt="" loading="lazy"></div>
-          <div class="ncm-body"><span class="ncm-tag">Caso de éxito</span><h4>Plastiservi + Conflex</h4></div>
-        </a>
-        <a href="/nosotros#kem-barbershop" class="ncm" aria-hidden="true" tabindex="-1">
-          <div class="ncm-photo"><img src="Clientes/kem_barbershop_foto.webp" alt="" loading="lazy"></div>
-          <div class="ncm-body"><span class="ncm-tag">Caso de éxito</span><h4>The Kem Barbershop</h4></div>
-        </a>
-
       </div>
+    </div>
+    <div class="news-ticker-arrows">
+      <button type="button" class="news-ticker-arrow" id="newsTickerPrev" aria-label="Caso anterior">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+      </button>
+      <button type="button" class="news-ticker-arrow" id="newsTickerNext" aria-label="Siguiente caso">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+      </button>
     </div>
   </div>
 </div>
+<script>
+(function () {
+  var track = document.getElementById('newsTickerTrack');
+  var prev = document.getElementById('newsTickerPrev');
+  var next = document.getElementById('newsTickerNext');
+  if (!track || !prev || !next) return;
+  function step() {
+    var card = track.querySelector('.ncm');
+    if (!card) return 400;
+    var style = getComputedStyle(track);
+    return card.offsetWidth + parseFloat(style.gap || style.columnGap || 28);
+  }
+  prev.addEventListener('click', function () { track.scrollBy({ left: -step(), behavior: 'smooth' }); });
+  next.addEventListener('click', function () { track.scrollBy({ left: step(), behavior: 'smooth' }); });
+})();
+</script>
 
 <div style="display:none"><!-- BASE DATOS B2B — guardada en herramientas/secciones_ocultas/prospector-offer.html --></div>
 
@@ -458,6 +464,13 @@
           <a href="/panel-jpb-demo" target="_blank" rel="noopener" class="btn btn-outline-white">Abrir demo a pantalla completa ↗</a>
         </div>
         <p class="panel-app-hint">👆 La app del teléfono es una demo interactiva real — con datos de ejemplo de una empresa ficticia.</p>
+
+        <div class="panel-app-features">
+          <span>Controla tu agente de WhatsApp en tiempo real</span>
+          <span>Pipeline de cotizaciones clasificado solo, todos los días</span>
+          <span>Gasto, clicks y conversiones de Google Ads en vivo</span>
+          <span>Notificaciones push cuando llega un lead nuevo</span>
+        </div>
       </div>
 
       <div class="panel-app-visual reveal reveal-delay-1">
@@ -475,13 +488,6 @@
               <iframe src="/panel-jpb-demo" title="Demo interactiva de Panel JPB"></iframe>
             </div>
           </div>
-        </div>
-
-        <div class="panel-app-features">
-          <span>Controla tu agente de WhatsApp en tiempo real</span>
-          <span>Pipeline de cotizaciones clasificado solo, todos los días</span>
-          <span>Gasto, clicks y conversiones de Google Ads en vivo</span>
-          <span>Notificaciones push cuando llega un lead nuevo</span>
         </div>
       </div>
 

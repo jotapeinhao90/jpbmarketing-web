@@ -1798,12 +1798,29 @@ select { cursor: pointer; }
 }
 .news-ticker-label span { transition: transform .2s; }
 .news-ticker-label:hover span { transform: translateX(3px); }
-.news-ticker-viewport { flex: 1; overflow: hidden; mask-image: linear-gradient(90deg, transparent, #000 3%, #000 97%, transparent); -webkit-mask-image: linear-gradient(90deg, transparent, #000 3%, #000 97%, transparent); }
+.news-ticker-viewport { flex: 1; min-width: 0; overflow: hidden; mask-image: linear-gradient(90deg, transparent, #000 3%, #000 97%, transparent); -webkit-mask-image: linear-gradient(90deg, transparent, #000 3%, #000 97%, transparent); }
 .news-ticker-track {
-  display: flex; align-items: stretch; gap: 28px; width: max-content;
-  animation: news-ticker-scroll 30s linear infinite;
+  display: flex; align-items: stretch; gap: 28px;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  scroll-behavior: smooth;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+  padding: 4px 2px;
 }
-.news-ticker:hover .news-ticker-track { animation-play-state: paused; }
+.news-ticker-track::-webkit-scrollbar { display: none; }
+.news-ticker-arrows { flex-shrink: 0; display: flex; gap: 8px; }
+.news-ticker-arrow {
+  width: 38px; height: 38px;
+  display: flex; align-items: center; justify-content: center;
+  background: var(--card-bg);
+  border: 1px solid var(--card-border);
+  border-radius: 50%;
+  color: var(--heading);
+  cursor: pointer;
+  transition: background var(--ease), border-color var(--ease), color var(--ease);
+}
+.news-ticker-arrow:hover { background: var(--primary); border-color: var(--primary); color: #fff; }
 
 .ncm {
   flex-shrink: 0;
@@ -3218,8 +3235,8 @@ select { cursor: pointer; }
   flex-direction: column;
   gap: 12px;
   width: 100%;
-  max-width: 300px;
-  margin: 26px auto 0;
+  max-width: 380px;
+  margin: 26px 0 0;
 }
 .panel-app-features span {
   display: flex;
@@ -3356,7 +3373,7 @@ select { cursor: pointer; }
   .panel-app-grid { grid-template-columns: minmax(0, 1fr); gap: 48px; }
   .panel-app-content h2 { font-size: clamp(1.6rem, 3vw, 2.2rem); }
   .panel-app-content { text-align: center; }
-  .panel-app-features { align-items: center; }
+  .panel-app-features { align-items: center; margin-left: auto; margin-right: auto; }
   .panel-app-actions { justify-content: center; }
 }
 @media (max-width: 500px) {
