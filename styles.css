@@ -486,7 +486,7 @@ h4 { font-size: 1.125rem; font-weight: 600; }
 .hero h1 { margin-bottom: 24px; font-size: clamp(2.2rem, 4.2vw, 3.8rem); letter-spacing: -0.02em; }
 .hero-sub {
   font-size: 1.125rem;
-  color: var(--body);
+  color: rgba(255,255,255,0.82);
   line-height: 1.8;
   max-width: 660px;
   margin-bottom: 40px;
