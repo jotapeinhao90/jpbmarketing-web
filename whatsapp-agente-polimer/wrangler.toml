@@ -1,0 +1,52 @@
+name = "whatsapp-agente-polimer"
+main = "worker.js"
+compatibility_date = "2026-09-01"
+compatibility_flags = ["nodejs_compat"]
+
+# El prompt del bot vive en PROMPT.md y se importa como texto — una sola fuente de
+# verdad, editable sin tocar el código (redesplegar para que tome el cambio).
+rules = [
+  { type = "Text", globs = ["**/*.md"], fallthrough = true }
+]
+
+# Índice de teléfonos que han escrito: los Durable Objects no se pueden listar por
+# nombre, así que /admin/pedidos necesita saber a quién preguntarle.
+kv_namespaces = [
+  { binding = "DATOS", id = "cb704c7786e249d180464d722de86ca0" }
+]
+
+# Una instancia por número de teléfono: guarda historial y pedido cerrado. Cloudflare
+# serializa los requests de una misma instancia, así dos mensajes seguidos no se pisan.
+[[durable_objects.bindings]]
+name = "CONVERSACION"
+class_name = "Conversacion"
+
+[[migrations]]
+tag = "v1"
+new_sqlite_classes = ["Conversacion"]
+
+# Workers AI: transcribe las notas de voz con Whisper, dentro de la misma cuenta de
+# Cloudflare, sin API key externa.
+[ai]
+binding = "AI"
+
+# Corre ejecutarAnalisisDiario() todos los días a las 4am hora Chile (07:00 UTC con
+# horario de verano vigente desde sept 2026 — ajustar a "0 8 * * *" si Chile vuelve a
+# UTC-4). Analiza cada conversación activa y sube el resultado a control.jpbmarketing.cl.
+[triggers]
+crons = ["0 7 * * *"]
+
+# Logs persistidos (Cloudflare Workers Logs) — mismo fix que se aplicó en whatsapp-agente
+# (Conflex): sin esto un error solo se ve si se está corriendo `wrangler tail` en vivo
+# justo cuando pasa.
+[observability]
+enabled = true
+
+# Secrets (NO van acá, se cargan con `wrangler secret put --config wrangler.toml`):
+#   WHATSAPP_TOKEN            -> token permanente de la app "Polimer" (System User)
+#   WHATSAPP_VERIFY_TOKEN     -> polimer-verify-2026 (lo elegimos nosotros, va también en el webhook de Meta)
+#   WHATSAPP_PHONE_NUMBER_ID  -> 1315374774991012 (+56 9 2183 4867)
+#   OPENAI_API_KEY            -> API key de OpenAI
+#   PANEL_KEY                 -> autentica las llamadas a /admin/*
+#   SHEETS_WEBHOOK_URL        -> opcional, Apps Script que registra los pedidos cerrados
+#   SHEETS_SECRET             -> opcional, valida que el POST a Sheets viene de este Worker

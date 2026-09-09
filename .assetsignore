@@ -11,6 +11,13 @@ node_modules
 *.pdf
 *.pptx
 *.py
+*.db
+*.db-shm
+*.db-wal
+*.csv
+*.xlsx
+credentials.json
+**/credentials.json
 cine-hoyts/
 polimer-etp/
 polimer-etp-cl/
@@ -23,7 +30,18 @@ conflex/
 plastiservi/
 juego3d/
 jpbmarketing/
+SISTEMA\ DE\ PROSPECCION/
+whatsapp-agente/
+Titulo/
+Builderbot/
+Clientes\ gravity/
+g-ads/
 _worker.js
+worker.js
+**/worker.js
+*.toml
 wrangler.jsonc
 .assetsignore
 .gitignore
+whatsapp-agente-polimer/
+jpb-panel/
