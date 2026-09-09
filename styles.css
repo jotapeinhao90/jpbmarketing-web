@@ -1765,7 +1765,19 @@ select { cursor: pointer; }
   .caso3-grid { grid-template-columns: 1fr 1fr; }
 }
 @media (max-width: 560px) {
-  .caso3-grid { grid-template-columns: 1fr; }
+  .caso3-grid {
+    display: flex;
+    grid-template-columns: unset;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+  }
+  .caso3-grid::-webkit-scrollbar { display: none; }
+  .caso3-card {
+    flex: 0 0 86%;
+    scroll-snap-align: center;
+  }
 }
 
 /* ── Noticias (ticker mini, debajo del hero) ────────────── */
@@ -3224,7 +3236,7 @@ select { cursor: pointer; }
 }
 .panel-app-actions { display: flex; gap: 14px; flex-wrap: wrap; align-items: center; }
 .panel-app-hint {
-  margin-top: 14px; font-size: var(--tx-xs); color: rgba(255,255,255,0.45);
+  margin-top: 14px; font-size: var(--tx-xs); color: rgba(255,255,255,0.8); font-weight: 600;
 }
 
 /* iPhone mockup */
@@ -3245,6 +3257,30 @@ select { cursor: pointer; }
 @keyframes phone-glow-pulse {
   0%, 100% { opacity: 0.55; transform: scale(1); }
   50% { opacity: 1; transform: scale(1.1); }
+}
+.iphone-tap-badge {
+  position: absolute;
+  top: -16px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: #ec7a33;
+  color: #fff;
+  font-size: 12px;
+  font-weight: 700;
+  padding: 7px 14px;
+  border-radius: 100px;
+  box-shadow: 0 8px 20px rgba(236,122,51,0.5);
+  white-space: nowrap;
+  z-index: 3;
+  animation: tap-badge-pulse 2s ease-in-out infinite;
+}
+.iphone-tap-badge .tbd-dot { width: 6px; height: 6px; border-radius: 50%; background: #fff; flex-shrink: 0; }
+@keyframes tap-badge-pulse {
+  0%, 100% { box-shadow: 0 8px 20px rgba(236,122,51,.5); }
+  50% { box-shadow: 0 8px 28px rgba(236,122,51,.9); }
 }
 .iphone-frame {
   position: relative;
