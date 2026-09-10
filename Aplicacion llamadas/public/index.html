@@ -962,7 +962,7 @@
       ⬆️ Importar base de contactos (.csv)
       <input type="file" id="input-csv" accept=".csv" style="display:none">
     </label>
-    <p class="hint">Columnas: <span class="mono">telefono,empresa,contacto,cargo,notas</span> (con encabezado en la primera fila). "notas" es opcional — sirve para el rubro o qué vende la empresa.</p>
+    <p class="hint">Formato estándar: export de Prospeo (Full name, Company name, Job title, Mobile, etc.) — se reconoce solo. También acepta el formato simple <span class="mono">telefono,empresa,contacto,cargo,notas</span>.</p>
     <div id="estado-importacion"></div>
 
     <div class="filtros" style="margin-top:16px;">
@@ -1627,22 +1627,78 @@ const TEMP_INFO = {
   frio:     { emoji: '🧊', texto: 'Frío' },
 };
 
+// Parser CSV real (no un split(',') ingenuo): respeta comillas, comas y saltos de
+// línea dentro de campos, y comillas escapadas ("") — necesario para exports como
+// los de Prospeo, que traen direcciones y descripciones con comas adentro.
+function parseCsvRaw(texto) {
+  const filas = [];
+  let fila = [];
+  let campo = '';
+  let dentroComillas = false;
+  for (let i = 0; i < texto.length; i++) {
+    const c = texto[i];
+    if (dentroComillas) {
+      if (c === '"') {
+        if (texto[i + 1] === '"') { campo += '"'; i++; }
+        else dentroComillas = false;
+      } else campo += c;
+    } else if (c === '"') {
+      dentroComillas = true;
+    } else if (c === ',') {
+      fila.push(campo); campo = '';
+    } else if (c === '\n' || c === '\r') {
+      if (c === '\r' && texto[i + 1] === '\n') i++;
+      fila.push(campo); campo = '';
+      if (fila.some(v => v !== '')) filas.push(fila);
+      fila = [];
+    } else {
+      campo += c;
+    }
+  }
+  if (campo !== '' || fila.length) { fila.push(campo); filas.push(fila); }
+  return filas;
+}
+
 function parseCsv(texto) {
-  const lineas = texto.split(/\r?\n/).filter(l => l.trim());
-  const encabezado = lineas[0].split(',').map(h => h.trim().toLowerCase());
-  return lineas.slice(1).map(linea => {
-    const valores = linea.split(',').map(v => v.trim().replace(/^"|"$/g, ''));
+  const filas = parseCsvRaw(texto);
+  if (!filas.length) return [];
+  const encabezado = filas[0].map(h => h.trim().toLowerCase());
+  return filas.slice(1).map(valores => {
     const obj = {};
-    encabezado.forEach((h, i) => { obj[h] = valores[i] || ''; });
+    encabezado.forEach((h, i) => { obj[h] = (valores[i] || '').trim(); });
     return obj;
   });
+}
+
+// El formato estándar ahora es el export de Prospeo (muchas columnas: Full name,
+// Company name, Job title, Mobile, etc.). Si no calzan esas columnas, se cae al
+// formato simple viejo (telefono,empresa,contacto,cargo,notas) por compatibilidad.
+function mapearFilaCsv(f) {
+  if (f['full name'] !== undefined || f['company name'] !== undefined) {
+    const notas = [f['company industry'], f['ai one-liner'] || f['value proposition']]
+      .filter(Boolean).join(' — ');
+    return {
+      telefono: f['mobile'] || f['mobile international format'] || '',
+      empresa: f['company name'] || '',
+      contacto: f['full name'] || '',
+      cargo: f['job title'] || '',
+      notas,
+    };
+  }
+  return {
+    telefono: f.telefono || '',
+    empresa: f.empresa || '',
+    contacto: f.contacto || '',
+    cargo: f.cargo || '',
+    notas: f.notas || '',
+  };
 }
 
 inputCsv.addEventListener('change', async () => {
   const file = inputCsv.files[0];
   if (!file) return;
   const texto = await file.text();
-  const filas = parseCsv(texto).filter(f => f.telefono);
+  const filas = parseCsv(texto).map(mapearFilaCsv).filter(f => f.telefono);
 
   if (!filas.length) {
     estadoImportacion.innerHTML = '<p class="mensaje-error">No se encontraron filas con teléfono en el archivo.</p>';
