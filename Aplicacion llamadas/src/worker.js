@@ -569,14 +569,20 @@ export default {
       for (const c of contactos) {
         const telefono = normalizarTelefono(c.telefono);
         if (!telefono) { omitidos++; continue; }
+        // datos_extra guarda lo rico del export (sitio web, email, LinkedIn, dirección,
+        // etc.) como JSON — evita tener que agregar una columna por cada dato que traiga
+        // un futuro export distinto.
+        const datosExtra = c.datos_extra && Object.keys(c.datos_extra).length
+          ? JSON.stringify(c.datos_extra) : null;
         statements.push(
           env.DB.prepare(
-            `INSERT INTO contactos (telefono, empresa, contacto, cargo, notas, created_at)
-             VALUES (?, ?, ?, ?, ?, ?)
+            `INSERT INTO contactos (telefono, empresa, contacto, cargo, notas, datos_extra, created_at)
+             VALUES (?, ?, ?, ?, ?, ?, ?)
              ON CONFLICT(telefono) DO UPDATE SET
                empresa = excluded.empresa, contacto = excluded.contacto,
-               cargo = excluded.cargo, notas = excluded.notas`
-          ).bind(telefono, c.empresa || null, c.contacto || null, c.cargo || null, c.notas || null, createdAt)
+               cargo = excluded.cargo, notas = excluded.notas,
+               datos_extra = COALESCE(excluded.datos_extra, contactos.datos_extra)`
+          ).bind(telefono, c.empresa || null, c.contacto || null, c.cargo || null, c.notas || null, datosExtra, createdAt)
         );
       }
 
@@ -590,11 +596,20 @@ export default {
       const q = (url.searchParams.get('q') || '').trim();
       if (q.length < 2) return json([]);
       const { results } = await env.DB.prepare(
-        `SELECT telefono, empresa, contacto, cargo FROM contactos
-         WHERE contacto LIKE ? OR empresa LIKE ?
-         ORDER BY contacto LIMIT 8`
+        `SELECT c.telefono, c.empresa, c.contacto, c.cargo,
+           (SELECT vendedor FROM llamadas WHERE telefono = c.telefono ORDER BY created_at DESC LIMIT 1) as ultimo_vendedor
+         FROM contactos c
+         WHERE c.contacto LIKE ? OR c.empresa LIKE ?
+         ORDER BY c.contacto LIMIT 20`
       ).bind(`%${q}%`, `%${q}%`).all();
-      return json(results);
+
+      // Mismo criterio que en Clientes: un vendedor normal no ve los contactos que ya
+      // son de un compañero.
+      const filtrados = sesion.rol === 'admin'
+        ? results
+        : results.filter((r) => !r.ultimo_vendedor || r.ultimo_vendedor === sesion.nombre);
+
+      return json(filtrados.slice(0, 8));
     }
 
     // Autocompletado al marcar: si el teléfono ya está en la base, muestra quién es
@@ -640,10 +655,19 @@ export default {
          GROUP BY c.telefono`
       ).all();
 
-      const conTemperatura = results.map((c) => ({
+      let conTemperatura = results.map((c) => ({
         ...c,
         temperatura: calcularTemperatura(c.veces_llamado, c.ultimo_resultado),
       }));
+
+      // Un vendedor normal solo ve los contactos que él mismo llamó, más los que
+      // todavía nadie ha llamado (para poder tomarlos) — no ve los que ya son de un
+      // compañero. El admin ve la base completa, igual que en Análisis.
+      if (sesion.rol !== 'admin') {
+        conTemperatura = conTemperatura.filter(
+          (c) => !c.veces_llamado || c.ultimo_vendedor === sesion.nombre
+        );
+      }
 
       // Orden de prioridad: seguimientos primero, luego nunca contactados, luego el resto por fecha.
       const prioridad = { tibio: 0, nuevo: 1, caliente: 2, frio: 3 };
