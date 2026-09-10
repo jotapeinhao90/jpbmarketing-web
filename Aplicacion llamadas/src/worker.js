@@ -644,7 +644,7 @@ export default {
     // como una cola de trabajo — seguimientos pendientes y nunca contactados primero.
     if (url.pathname === '/api/contactos') {
       const { results } = await env.DB.prepare(
-        `SELECT c.telefono, c.empresa, c.contacto, c.cargo, c.notas,
+        `SELECT c.telefono, c.empresa, c.contacto, c.cargo, c.notas, c.datos_extra,
            COUNT(l.id) as veces_llamado,
            MAX(l.created_at) as ultima_llamada,
            (SELECT vendedor FROM llamadas WHERE telefono = c.telefono ORDER BY created_at DESC LIMIT 1) as ultimo_vendedor,

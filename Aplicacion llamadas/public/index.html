@@ -404,6 +404,26 @@
     margin-top: 6px;
     line-height: 1.4;
   }
+  .ficha-tag {
+    font-size: 0.62rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em;
+    color: var(--accent-2); border: 1px solid rgba(139,123,255,0.35); background: rgba(139,123,255,0.1);
+    padding: 1px 6px; border-radius: 4px; vertical-align: middle;
+  }
+  .btn-ver-mas {
+    width: auto; padding: 0; margin-top: 8px; background: none; box-shadow: none;
+    color: var(--accent-2); font-size: 0.76rem; font-weight: 700; text-decoration: underline;
+  }
+  .ficha-extra {
+    margin-top: 8px; padding: 12px; background: rgba(0,0,0,0.18); border-radius: 10px;
+  }
+  .ficha-extra-fila {
+    display: flex; justify-content: space-between; gap: 10px; font-size: 0.8rem;
+    padding: 5px 0; border-bottom: 1px solid rgba(255,255,255,0.06);
+  }
+  .ficha-extra-fila:last-child { border-bottom: none; }
+  .ficha-extra-fila span:first-child { color: var(--muted); flex-shrink: 0; }
+  .ficha-extra-fila span:last-child { text-align: right; color: #c3c8db; word-break: break-word; }
+  .ficha-extra-fila a { color: var(--accent-2); }
   .temp-badge { font-size: 1.1rem; flex-shrink: 0; }
 
   .usuario-item {
@@ -1677,12 +1697,25 @@ function mapearFilaCsv(f) {
   if (f['full name'] !== undefined || f['company name'] !== undefined) {
     const notas = [f['company industry'], f['ai one-liner'] || f['value proposition']]
       .filter(Boolean).join(' — ');
+    const datos_extra = {};
+    const set = (clave, valor) => { if (valor) datos_extra[clave] = valor; };
+    set('sitio_web', f['company website']);
+    set('email', f['email']);
+    set('linkedin', f['person linkedin url']);
+    set('linkedin_empresa', f['company linkedin url']);
+    set('direccion', f['company raw address']);
+    set('ciudad', f['company city']);
+    set('empleados', f['company employee range']);
+    set('ingresos', f['company revenue range']);
+    set('fundacion', f['company founded']);
+    set('descripcion', f['company description'] || f['ai description']);
     return {
       telefono: f['mobile'] || f['mobile international format'] || '',
       empresa: f['company name'] || '',
       contacto: f['full name'] || '',
       cargo: f['job title'] || '',
       notas,
+      datos_extra,
     };
   }
   return {
@@ -1753,15 +1786,39 @@ async function cargarContactos() {
 
   const escAttr = (s) => String(s || '').replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;');
 
+  const ETIQUETAS_EXTRA = {
+    sitio_web: '🌐 Sitio web', email: '✉️ Email', linkedin: '💼 LinkedIn (persona)',
+    linkedin_empresa: '💼 LinkedIn (empresa)', direccion: '📍 Dirección', ciudad: '🏙️ Ciudad',
+    empleados: '👥 Empleados', ingresos: '💰 Ingresos', fundacion: '📅 Fundada', descripcion: '📝 Descripción',
+  };
+
   listaContactos.innerHTML = filtrados.map(c => {
     const t = TEMP_INFO[c.temperatura];
+    let extra = {};
+    try { extra = c.datos_extra ? JSON.parse(c.datos_extra) : {}; } catch (e) {}
+    const hayExtra = Object.keys(extra).length > 0;
+
     return `
       <div class="contacto-item" data-tel="${escAttr(c.telefono)}">
         <div style="flex:1; min-width:0;">
-          <div class="contacto-nombre">${c.empresa || c.telefono}</div>
+          <div class="contacto-nombre">${c.empresa || c.telefono}${hayExtra ? ' <span class="ficha-tag">ficha completa</span>' : ''}</div>
           <div class="contacto-meta">${c.contacto || ''}${c.cargo ? ' · ' + c.cargo : ''} · ${c.telefono}</div>
           <div class="contacto-meta">${c.veces_llamado > 0 ? `${t.texto} · último: ${c.ultimo_vendedor} (${c.ultimo_resultado})` : t.texto}</div>
           ${c.ultimo_resumen ? `<div class="contacto-resumen">"${c.ultimo_resumen}"</div>` : ''}
+
+          ${hayExtra ? `
+            <button type="button" class="btn-ver-mas">Ver más ▾</button>
+            <div class="ficha-extra" style="display:none">
+              ${Object.entries(extra).map(([k, v]) => {
+                const etiqueta = ETIQUETAS_EXTRA[k] || k;
+                const esLink = k === 'sitio_web' || k.startsWith('linkedin');
+                const valorHtml = esLink
+                  ? `<a href="${v.startsWith('http') ? v : 'https://' + v}" target="_blank" rel="noopener">${v}</a>`
+                  : v;
+                return `<div class="ficha-extra-fila"><span>${etiqueta}</span><span>${valorHtml}</span></div>`;
+              }).join('')}
+            </div>
+          ` : ''}
 
           <div class="contacto-editar" style="display:none">
             <div class="field"><input type="text" class="ed-empresa" placeholder=" " value="${escAttr(c.empresa)}"><label>Empresa</label></div>
@@ -1777,6 +1834,15 @@ async function cargarContactos() {
         </div>
       </div>`;
   }).join('');
+
+  listaContactos.querySelectorAll('.btn-ver-mas').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const bloque = btn.nextElementSibling;
+      const abierto = bloque.style.display !== 'none';
+      bloque.style.display = abierto ? 'none' : 'block';
+      btn.textContent = abierto ? 'Ver más ▾' : 'Ocultar ▴';
+    });
+  });
 
   listaContactos.querySelectorAll('.btn-editar-contacto').forEach(btn => {
     btn.addEventListener('click', () => {
