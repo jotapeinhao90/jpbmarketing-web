@@ -496,6 +496,41 @@ export default {
       return json({ ok: true });
     }
 
+    // Metas semanales/mensuales por vendedor — solo el admin las fija.
+    const metasMatch = url.pathname.match(/^\/api\/usuarios\/(\d+)\/metas$/);
+    if (metasMatch && request.method === 'POST') {
+      if (sesion.rol !== 'admin') return json({ error: 'Solo un administrador puede fijar metas' }, 403);
+      const { meta_semanal, meta_mensual } = await request.json();
+      await env.DB.prepare('UPDATE usuarios SET meta_semanal = ?, meta_mensual = ? WHERE id = ?')
+        .bind(parseInt(meta_semanal, 10) || 0, parseInt(meta_mensual, 10) || 0, metasMatch[1]).run();
+      return json({ ok: true });
+    }
+
+    // Progreso del vendedor logueado (o el que el admin elija) hacia sus metas — se usa
+    // como el "empujón" motivacional que se ve apenas se abre la pestaña de Llamadas.
+    if (url.pathname === '/api/metas') {
+      const nombreObjetivo = (sesion.rol === 'admin' && url.searchParams.get('vendedor')) || sesion.nombre;
+      const usuario = await env.DB.prepare('SELECT meta_semanal, meta_mensual FROM usuarios WHERE nombre = ?')
+        .bind(nombreObjetivo).first();
+
+      const [semana, mes] = await Promise.all([
+        env.DB.prepare(
+          `SELECT COUNT(*) as n FROM llamadas WHERE vendedor = ? AND strftime('%Y-%W', created_at) = strftime('%Y-%W','now')`
+        ).bind(nombreObjetivo).first(),
+        env.DB.prepare(
+          `SELECT COUNT(*) as n FROM llamadas WHERE vendedor = ? AND strftime('%Y-%m', created_at) = strftime('%Y-%m','now')`
+        ).bind(nombreObjetivo).first(),
+      ]);
+
+      return json({
+        vendedor: nombreObjetivo,
+        meta_semanal: usuario?.meta_semanal || 0,
+        meta_mensual: usuario?.meta_mensual || 0,
+        llamadas_semana: semana.n,
+        llamadas_mes: mes.n,
+      });
+    }
+
     if (url.pathname === '/api/voice/numeros') {
       const authHeader = 'Basic ' + btoa(`${env.TWILIO_API_KEY_SID}:${env.TWILIO_API_KEY_SECRET}`);
       const base = `https://api.twilio.com/2010-04-01/Accounts/${env.TWILIO_ACCOUNT_SID}`;

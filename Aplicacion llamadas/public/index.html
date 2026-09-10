@@ -413,6 +413,16 @@
   .usuario-item:last-child { border-bottom: none; }
   .usuario-item .nombre { font-weight: 600; }
   .usuario-item .telefono { font-family: 'JetBrains Mono', monospace; font-size: 0.8rem; color: var(--muted); }
+  .usuario-item-metas { display: block; }
+  .usuario-fila { display: flex; justify-content: space-between; align-items: center; }
+  .metas-fila { display: flex; align-items: flex-end; gap: 14px; margin-top: 12px; flex-wrap: wrap; }
+  .metas-fila label { font-size: 0.68rem; text-transform: uppercase; letter-spacing: 0.06em; color: var(--muted); font-weight: 700; }
+  .input-meta {
+    display: block; width: 90px; margin-top: 6px; padding: 8px 10px;
+    border: 1px solid var(--border); background: rgba(255,255,255,0.04);
+    border-radius: 10px; color: var(--text); font-family: 'JetBrains Mono', monospace; font-size: 0.95rem;
+  }
+  .btn-guardar-meta { width: auto; padding: 9px 16px; font-size: 0.82rem; }
   .btn-borrar {
     width: auto; padding: 4px 10px; border-radius: 8px; font-size: 0.75rem;
     background: rgba(255,92,114,0.12); color: var(--red); box-shadow: none;
@@ -448,6 +458,32 @@
 
   /* --- Mock de iPhone: número + isla dinámica + teclado --- */
   .hola-vendedor { color: var(--muted); font-size: 0.85rem; margin: 0 0 18px; }
+
+  /* --- Widget de metas (motivación) --- */
+  #metas-widget:empty { display: none; }
+  .metas-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 14px;
+    margin-bottom: 24px;
+  }
+  .meta-card {
+    background: rgba(255,255,255,0.04);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 16px;
+  }
+  .meta-card .meta-titulo {
+    display: flex; justify-content: space-between; align-items: baseline;
+    font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.06em;
+    color: var(--muted); font-weight: 700; margin-bottom: 10px;
+  }
+  .meta-card .meta-numeros { font-family: 'JetBrains Mono', monospace; color: var(--text); font-weight: 700; }
+  .meta-barra { height: 10px; border-radius: 999px; background: rgba(255,255,255,0.08); overflow: hidden; }
+  .meta-relleno { height: 100%; border-radius: 999px; background: linear-gradient(90deg, var(--accent-2), var(--accent)); transition: width 0.4s; }
+  .meta-relleno.cumplida { background: var(--accent); }
+  .meta-mensaje { font-size: 0.78rem; color: var(--muted); margin-top: 8px; }
+  .meta-sin-fijar { font-size: 0.82rem; color: var(--muted); text-align: center; padding: 10px; }
   .iphone-mock {
     width: 258px;
     max-width: 100%;
@@ -843,6 +879,8 @@
   <div class="card card-llamar">
     <h2>📲 Llamar ahora</h2>
 
+    <div id="metas-widget"></div>
+
     <div class="llamar-layout">
       <div class="iphone-mock">
         <div class="isla-dinamica"></div>
@@ -1124,6 +1162,7 @@ form.addEventListener('submit', async (e) => {
     document.getElementById('nota').value = '';
 
     cargarLlamadas();
+    cargarMetas();
   } catch (err) {
     confirmacion.style.display = 'block';
     confirmacion.style.background = '#fef2f2';
@@ -1180,6 +1219,53 @@ async function cargarSesion() {
 
   cargarUsuarios();
   cargarEstadisticas();
+  cargarMetas();
+}
+
+function fraseMotivacion(pct) {
+  if (pct >= 100) return '🎉 ¡Meta cumplida! Vas increíble.';
+  if (pct >= 75) return '🔥 Ya casi, te falta poco.';
+  if (pct >= 40) return '💪 Vas bien, sigue así.';
+  if (pct > 0) return '👋 Buen inicio, a seguir llamando.';
+  return 'Todavía no registras llamadas en este período.';
+}
+
+async function cargarMetas() {
+  const widget = document.getElementById('metas-widget');
+  try {
+    const res = await fetch('/api/metas');
+    const m = await res.json();
+
+    if (!m.meta_semanal && !m.meta_mensual) {
+      widget.innerHTML = miSesion.rol === 'admin'
+        ? '<div class="meta-sin-fijar">Aún no tienes metas fijadas — puedes asignarte una en Configuración.</div>'
+        : '<div class="meta-sin-fijar">Tu administrador todavía no te fijó metas de llamadas.</div>';
+      return;
+    }
+
+    const filas = [];
+    if (m.meta_semanal) {
+      const pct = Math.min(100, Math.round((m.llamadas_semana / m.meta_semanal) * 100));
+      filas.push(`
+        <div class="meta-card">
+          <div class="meta-titulo"><span>🎯 Meta semanal</span><span class="meta-numeros">${m.llamadas_semana}/${m.meta_semanal}</span></div>
+          <div class="meta-barra"><div class="meta-relleno ${pct >= 100 ? 'cumplida' : ''}" style="width:${pct}%"></div></div>
+          <div class="meta-mensaje">${fraseMotivacion(pct)}</div>
+        </div>`);
+    }
+    if (m.meta_mensual) {
+      const pct = Math.min(100, Math.round((m.llamadas_mes / m.meta_mensual) * 100));
+      filas.push(`
+        <div class="meta-card">
+          <div class="meta-titulo"><span>📅 Meta mensual</span><span class="meta-numeros">${m.llamadas_mes}/${m.meta_mensual}</span></div>
+          <div class="meta-barra"><div class="meta-relleno ${pct >= 100 ? 'cumplida' : ''}" style="width:${pct}%"></div></div>
+          <div class="meta-mensaje">${fraseMotivacion(pct)}</div>
+        </div>`);
+    }
+    widget.innerHTML = `<div class="metas-grid">${filas.join('')}</div>`;
+  } catch (err) {
+    widget.innerHTML = '';
+  }
 }
 
 // --- Teclado numérico estilo iPhone ---
@@ -1218,11 +1304,40 @@ async function cargarUsuarios() {
   if (!listaUsuarios) return;
   listaUsuarios.innerHTML = usuarios.length
     ? usuarios.map(u => `
-        <div class="usuario-item">
-          <div><div class="nombre">${u.nombre} ${u.rol === 'admin' ? '👑' : ''}</div><div class="telefono">${u.telefono}</div></div>
-          ${u.rol !== 'admin' ? `<button type="button" class="btn-borrar" data-id="${u.id}">Quitar</button>` : ''}
+        <div class="usuario-item usuario-item-metas">
+          <div class="usuario-fila">
+            <div><div class="nombre">${u.nombre} ${u.rol === 'admin' ? '👑' : ''}</div><div class="telefono">${u.telefono}</div></div>
+            ${u.rol !== 'admin' ? `<button type="button" class="btn-borrar" data-id="${u.id}">Quitar</button>` : ''}
+          </div>
+          <div class="metas-fila">
+            <label>Meta semanal
+              <input type="number" min="0" class="input-meta ed-meta-semanal" value="${u.meta_semanal || 0}">
+            </label>
+            <label>Meta mensual
+              <input type="number" min="0" class="input-meta ed-meta-mensual" value="${u.meta_mensual || 0}">
+            </label>
+            <button type="button" class="btn-guardar-meta" data-id="${u.id}">Guardar metas</button>
+          </div>
         </div>`).join('')
     : '<p class="empty">Todavía no hay vendedores guardados.</p>';
+
+  listaUsuarios.querySelectorAll('.btn-guardar-meta').forEach(btn => {
+    btn.addEventListener('click', async () => {
+      const item = btn.closest('.usuario-item-metas');
+      const meta_semanal = item.querySelector('.ed-meta-semanal').value;
+      const meta_mensual = item.querySelector('.ed-meta-mensual').value;
+      btn.disabled = true;
+      btn.textContent = 'Guardando...';
+      await fetch('/api/usuarios/' + btn.dataset.id + '/metas', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ meta_semanal, meta_mensual }),
+      });
+      btn.disabled = false;
+      btn.textContent = '✅ Guardado';
+      setTimeout(() => { btn.textContent = 'Guardar metas'; }, 1800);
+    });
+  });
 
   listaUsuarios.querySelectorAll('.btn-borrar').forEach(btn => {
     btn.addEventListener('click', async () => {
@@ -1343,8 +1458,8 @@ function finalizarLlamadaUI(hubo_error, mensajeError) {
   mostrarEstado('Llamada finalizada');
   mensajePostLlamada.innerHTML = '<div class="mensaje-final">Generando resumen automático con IA...</div>';
   // La transcripción llega vía webhook de Twilio unos segundos después de colgar.
-  setTimeout(cargarLlamadas, 8000);
-  setTimeout(cargarLlamadas, 16000);
+  setTimeout(() => { cargarLlamadas(); cargarMetas(); }, 8000);
+  setTimeout(() => { cargarLlamadas(); cargarMetas(); }, 16000);
   setTimeout(volverAlFormulario, 6000);
 }
 
