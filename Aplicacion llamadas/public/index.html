@@ -456,6 +456,11 @@
     padding: 1px 6px;
     margin-left: 6px;
   }
+  .origen-tag.origen-propio {
+    color: var(--amarillo, #ffcc33);
+    border-color: rgba(255,204,51,0.4);
+    background: rgba(255,204,51,0.1);
+  }
 
   /* --- Layout de "Llamar ahora": teléfono a la izquierda, formulario a la derecha,
      cada uno en su propio bloque separado (no comparten el mismo fondo). --- */
@@ -985,13 +990,18 @@
     <p class="hint">Formato estándar: export de Prospeo (Full name, Company name, Job title, Mobile, etc.) — se reconoce solo. También acepta el formato simple <span class="mono">telefono,empresa,contacto,cargo,notas</span>.</p>
     <div id="estado-importacion"></div>
 
-    <div class="filtros" style="margin-top:16px;">
-      <select id="filtro-temperatura">
+    <div class="filtros" style="margin-top:16px; display:flex; gap:10px; flex-wrap:wrap;">
+      <select id="filtro-temperatura" style="flex:1; min-width:160px;">
         <option value="">Todas las prioridades</option>
         <option value="tibio">🟡 Seguimiento pendiente</option>
         <option value="nuevo">⚪ Nunca contactados</option>
         <option value="caliente">🔥 Calientes</option>
         <option value="frio">🧊 Fríos</option>
+      </select>
+      <select id="filtro-origen" style="flex:1; min-width:160px;">
+        <option value="">Todos los orígenes</option>
+        <option value="propio">⭐ Mis clientes propios</option>
+        <option value="frio">📋 Llamadas en frío (base subida)</option>
       </select>
     </div>
     <div id="lista-contactos"><p class="loading">Cargando...</p></div>
@@ -1759,9 +1769,12 @@ inputCsv.addEventListener('change', async () => {
   cargarContactos();
 });
 
+const filtroOrigen = document.getElementById('filtro-origen');
+
 async function cargarContactos() {
   listaContactos.innerHTML = '<p class="loading">Cargando...</p>';
-  const res = await fetch('/api/contactos');
+  const qs = filtroOrigen.value ? '?origen=' + encodeURIComponent(filtroOrigen.value) : '';
+  const res = await fetch('/api/contactos' + qs);
   const contactos = await res.json();
 
   if (!contactos.length) {
@@ -1801,7 +1814,7 @@ async function cargarContactos() {
     return `
       <div class="contacto-item" data-tel="${escAttr(c.telefono)}">
         <div style="flex:1; min-width:0;">
-          <div class="contacto-nombre">${c.empresa || c.telefono}${hayExtra ? ' <span class="ficha-tag">ficha completa</span>' : ''}</div>
+          <div class="contacto-nombre">${c.empresa || c.telefono}${c.origen === 'propio' ? ' <span class="origen-tag origen-propio">⭐ propio</span>' : ''}${hayExtra ? ' <span class="ficha-tag">ficha completa</span>' : ''}</div>
           <div class="contacto-meta">${c.contacto || ''}${c.cargo ? ' · ' + c.cargo : ''} · ${c.telefono}</div>
           <div class="contacto-meta">${c.veces_llamado > 0 ? `${t.texto} · último: ${c.ultimo_vendedor} (${c.ultimo_resultado})` : t.texto}</div>
           ${c.ultimo_resumen ? `<div class="contacto-resumen">"${c.ultimo_resumen}"</div>` : ''}
@@ -1872,6 +1885,7 @@ async function cargarContactos() {
 }
 
 filtroTemperatura.addEventListener('change', cargarContactos);
+filtroOrigen.addEventListener('change', cargarContactos);
 cargarContactos();
 
 // --- Análisis ---

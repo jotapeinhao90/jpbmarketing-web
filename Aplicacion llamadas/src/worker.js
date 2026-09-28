@@ -259,9 +259,11 @@ async function guardarLlamada(env, { vendedor, telefono, nota, origen, duracionS
       estructurado.empresa = contacto.empresa || estructurado.empresa;
       estructurado.contacto = contacto.contacto || estructurado.contacto;
     } else {
+      // origen='propio': lo trajo el vendedor por su cuenta (llamando a alguien con
+      // quien ya trabaja), a diferencia de 'frio' (subido por CSV desde marketing).
       await env.DB.prepare(
-        'INSERT INTO contactos (telefono, empresa, contacto, cargo, notas, created_at) VALUES (?, ?, ?, ?, ?, ?)'
-      ).bind(telefono, estructurado.empresa || null, estructurado.contacto || null, null, null, new Date().toISOString()).run();
+        'INSERT INTO contactos (telefono, empresa, contacto, cargo, notas, origen, created_at) VALUES (?, ?, ?, ?, ?, ?, ?)'
+      ).bind(telefono, estructurado.empresa || null, estructurado.contacto || null, null, null, 'propio', new Date().toISOString()).run();
     }
   }
 
@@ -644,7 +646,7 @@ export default {
     // como una cola de trabajo — seguimientos pendientes y nunca contactados primero.
     if (url.pathname === '/api/contactos') {
       const { results } = await env.DB.prepare(
-        `SELECT c.telefono, c.empresa, c.contacto, c.cargo, c.notas, c.datos_extra,
+        `SELECT c.telefono, c.empresa, c.contacto, c.cargo, c.notas, c.datos_extra, c.origen,
            COUNT(l.id) as veces_llamado,
            MAX(l.created_at) as ultima_llamada,
            (SELECT vendedor FROM llamadas WHERE telefono = c.telefono ORDER BY created_at DESC LIMIT 1) as ultimo_vendedor,
@@ -667,6 +669,13 @@ export default {
         conTemperatura = conTemperatura.filter(
           (c) => !c.veces_llamado || c.ultimo_vendedor === sesion.nombre
         );
+      }
+
+      // Filtro opcional: "propio" = clientes que el vendedor ya trae por su cuenta,
+      // "frio" = base subida por CSV para prospección.
+      const origenFiltro = url.searchParams.get('origen');
+      if (origenFiltro) {
+        conTemperatura = conTemperatura.filter((c) => (c.origen || 'frio') === origenFiltro);
       }
 
       // Orden de prioridad: seguimientos primero, luego nunca contactados, luego el resto por fecha.
