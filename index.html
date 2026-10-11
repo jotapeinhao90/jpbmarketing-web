@@ -32,10 +32,10 @@
 <!-- ANNOUNCEMENT BAR -->
 <div class="announce-bar" id="announce-bar">
   <div class="announce-inner">
-    <span class="announce-tag">OFERTA AGOSTO</span>
+    <span class="announce-tag">OFERTA OCTUBRE</span>
     <span class="announce-text">Agente IA $119.000/mes · Precio bloqueado hasta el 31 ago</span>
     <span class="announce-count" id="ann-count"></span>
-    <a href="/agente-ia#oferta-agosto" class="announce-cta">Ver oferta →</a>
+    <a href="/agente-ia#oferta-octubre" class="announce-cta">Ver oferta →</a>
     <button class="announce-close" id="announce-close" aria-label="Cerrar">✕</button>
   </div>
 </div>
@@ -204,7 +204,7 @@
           <div class="hero-slide active" id="hslide-1">
             <div class="hslide-title">Agente IA Vendedor en WhatsApp</div>
             <div class="hero-offer-card">
-            <div class="hoc-tag">OFERTA AGOSTO · hasta 31 ago</div>
+            <div class="hoc-tag">OFERTA OCTUBRE · hasta 31 ago</div>
             <div class="hoc-price-row">
               <span class="hoc-old">$290.000<em>/mes</em></span>
               <div class="hoc-new">$119.000<span>/mes<br>de por vida</span></div>
@@ -229,7 +229,7 @@
               <div class="hoc-sep">:</div>
               <div class="hoc-unit hoc-unit-sec"><span id="hoc-s">--</span><em>seg</em></div>
             </div>
-            <a href="/agente-ia#oferta-agosto" class="hoc-cta">Ver oferta completa →</a>
+            <a href="/agente-ia#oferta-octubre" class="hoc-cta">Ver oferta completa →</a>
             <div class="hoc-cupos">⚠ Solo 7 cupos disponibles</div>
           </div>
           </div><!-- /hslide-1 -->
@@ -366,14 +366,14 @@
   </div>
 </section>
 
-<!-- OFERTA AGOSTO -->
-<section class="oferta-section" id="oferta-agosto">
+<!-- OFERTA OCTUBRE -->
+<section class="oferta-section" id="oferta-octubre">
   <div class="oferta-glow"></div>
   <div class="container">
 
     <div class="oferta-badge-row">
-      <span class="oferta-fire-badge">OFERTA AGOSTO</span>
-      <span class="oferta-deadline">Precio bloqueado solo hasta el <strong>31 de agosto</strong></span>
+      <span class="oferta-fire-badge">OFERTA OCTUBRE</span>
+      <span class="oferta-deadline">Precio bloqueado solo hasta el <strong>31 de octubre</strong></span>
     </div>
 
     <div class="oferta-grid">
@@ -791,7 +791,7 @@
 
 /* Hero card countdown */
 (function () {
-  var end = new Date('2026-08-31T23:59:59-04:00').getTime();
+  var end = new Date('2026-10-31T23:59:59-04:00').getTime();
   var hd = document.getElementById('hoc-d');
   var hh = document.getElementById('hoc-h');
   var hm = document.getElementById('hoc-m');
@@ -822,7 +822,7 @@
     document.body.classList.remove('body-announce');
     sessionStorage.setItem('ann-closed', '1');
   });
-  var end = new Date('2026-08-31T23:59:59-04:00').getTime();
+  var end = new Date('2026-10-31T23:59:59-04:00').getTime();
   function tickAnn() {
     var d = end - Date.now();
     if (d <= 0 || !count) return;
@@ -835,7 +835,7 @@
 
 /* Countdown oferta */
 (function () {
-  var end = new Date('2026-08-31T23:59:59-04:00').getTime();
+  var end = new Date('2026-10-31T23:59:59-04:00').getTime();
   var days = document.getElementById('ot-days');
   var hrs  = document.getElementById('ot-hrs');
   var min  = document.getElementById('ot-min');

@@ -29,10 +29,10 @@
 <!-- ANNOUNCEMENT BAR -->
 <div class="announce-bar" id="announce-bar">
   <div class="announce-inner">
-    <span class="announce-tag">OFERTA AGOSTO</span>
+    <span class="announce-tag">OFERTA OCTUBRE</span>
     <span class="announce-text">Agente IA $119.000/mes · Precio bloqueado hasta el 31 ago</span>
     <span class="announce-count" id="ann-count"></span>
-    <a href="#oferta-agosto" class="announce-cta">Ver oferta →</a>
+    <a href="#oferta-octubre" class="announce-cta">Ver oferta →</a>
     <button class="announce-close" id="announce-close" aria-label="Cerrar">✕</button>
   </div>
 </div>
@@ -167,14 +167,14 @@
   </div>
 </section>
 
-<!-- OFERTA AGOSTO -->
-<section class="oferta-section" id="oferta-agosto">
+<!-- OFERTA OCTUBRE -->
+<section class="oferta-section" id="oferta-octubre">
   <div class="oferta-glow"></div>
   <div class="container">
 
     <div class="oferta-badge-row">
-      <span class="oferta-fire-badge">OFERTA AGOSTO</span>
-      <span class="oferta-deadline">Precio bloqueado solo hasta el <strong>31 de agosto</strong></span>
+      <span class="oferta-fire-badge">OFERTA OCTUBRE</span>
+      <span class="oferta-deadline">Precio bloqueado solo hasta el <strong>31 de octubre</strong></span>
     </div>
 
     <div class="oferta-grid">
@@ -677,7 +677,7 @@
     document.body.classList.remove('body-announce');
     sessionStorage.setItem('ann-closed', '1');
   });
-  var end = new Date('2026-08-31T23:59:59-04:00').getTime();
+  var end = new Date('2026-10-31T23:59:59-04:00').getTime();
   function tickAnn() {
     var d = end - Date.now();
     if (d <= 0 || !count) return;
@@ -688,7 +688,7 @@
 
 /* Countdown oferta agente-ia */
 (function () {
-  var end  = new Date('2026-08-31T23:59:59-04:00').getTime();
+  var end  = new Date('2026-10-31T23:59:59-04:00').getTime();
   var days = document.getElementById('ot2-days');
   var hrs  = document.getElementById('ot2-hrs');
   var min  = document.getElementById('ot2-min');
