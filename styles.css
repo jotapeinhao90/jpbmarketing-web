@@ -3460,3 +3460,37 @@ select { cursor: pointer; }
 .method-step p { color: var(--body); font-size: var(--tx-sm); line-height: 1.6; }
 @media (max-width: 900px) { .method-steps { grid-template-columns: repeat(2, 1fr); } }
 @media (max-width: 560px) { .method-steps { grid-template-columns: 1fr; } .clients-strip-logos { gap: 20px 32px; } .clients-strip-logos img { height: 30px; } }
+
+
+/* ── Navegación simplificada + acento (v2) ───────────────── */
+.nav-links { gap: 2px; }
+.nav-links a { font-weight: 600; color: var(--heading); }
+.nav-links a:hover, .nav-links a.active { color: var(--primary); background: rgba(37,99,235,0.07); }
+.nav-links .btn-nav-cta, .nav-mobile .btn-nav-cta {
+  background: var(--cta); color: var(--cta-ink) !important; margin-left: 10px;
+  box-shadow: 0 4px 14px rgba(245,184,0,0.35); font-weight: 700;
+}
+.nav-links .btn-nav-cta:hover, .nav-mobile .btn-nav-cta:hover {
+  background: var(--cta-hover) !important; color: var(--cta-ink) !important;
+  box-shadow: 0 8px 22px rgba(245,184,0,0.45);
+}
+.nav-mobile .btn-nav-cta { margin-left: 0; }
+
+/* Barra de oferta más discreta */
+.announce-bar { background: #0b1220; border-bottom: 1px solid rgba(255,255,255,.08); }
+.announce-tag { background: rgba(245,184,0,.16); color: var(--cta); }
+
+/* Accesos en el pie */
+.footer-access {
+  display: flex; flex-wrap: wrap; gap: 8px 22px; align-items: center;
+  padding: 22px 0; border-bottom: 1px solid rgba(255,255,255,0.07);
+  font-size: var(--tx-sm);
+}
+.footer-access span { color: rgba(255,255,255,0.35); text-transform: uppercase; letter-spacing: .1em; font-size: var(--tx-xs); font-weight: 700; }
+.footer-access a { color: rgba(255,255,255,0.65); transition: color var(--ease); }
+.footer-access a:hover { color: var(--cta); }
+
+/* Tipografía y detalle general */
+body { -webkit-font-smoothing: antialiased; text-rendering: optimizeLegibility; }
+::selection { background: var(--cta); color: var(--cta-ink); }
+a:focus-visible, button:focus-visible { outline: 2px solid var(--cta); outline-offset: 3px; border-radius: 6px; }
