@@ -1,11 +1,12 @@
 /* JPB Marketing — main.js */
 
 // ── Preloader ──────────────────────────────────────────────
-window.addEventListener('load', () => {
-  const preloader = document.getElementById('preloader');
-  if (!preloader) return;
-  setTimeout(() => preloader.classList.add('hidden'), 1500);
-});
+(function () {
+  const hide = () => document.getElementById('preloader')?.classList.add('hidden');
+  if (document.readyState !== 'loading') hide();
+  else document.addEventListener('DOMContentLoaded', hide);
+  window.addEventListener('load', hide);
+})();
 
 document.addEventListener('DOMContentLoaded', () => {
 

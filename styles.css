@@ -1,3 +1,37 @@
+/* Fuentes autoalojadas (Inter para texto, Plus Jakarta Sans para títulos) */
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 300 900;
+  font-display: swap;
+  src: url(/assets/fonts/Inter-latin-ext.woff2) format('woff2');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C4, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 300 900;
+  font-display: swap;
+  src: url(/assets/fonts/Inter-latin.woff2) format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+@font-face {
+  font-family: 'Plus Jakarta Sans';
+  font-style: normal;
+  font-weight: 500 800;
+  font-display: swap;
+  src: url(/assets/fonts/PlusJakartaSans-latin-ext.woff2) format('woff2');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C4, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+@font-face {
+  font-family: 'Plus Jakarta Sans';
+  font-style: normal;
+  font-weight: 500 800;
+  font-display: swap;
+  src: url(/assets/fonts/PlusJakartaSans-latin.woff2) format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
 /* ============================================================
    JPB Marketing — Global Styles
    ============================================================ */
@@ -141,8 +175,8 @@ button { cursor: pointer; border: none; background: none; font-family: inherit; 
 section { padding: 80px 0; }
 
 /* ── Typography ─────────────────────────────────────────── */
-h1, h2, h3, h4 { color: var(--heading); line-height: 1.2; }
-h1 { font-size: clamp(2rem, 5vw, 3.5rem); font-weight: 800; }
+h1, h2, h3, h4 { color: var(--heading); line-height: 1.2; font-family: 'Plus Jakarta Sans', 'Inter', system-ui, sans-serif; letter-spacing: -0.02em; }
+h1 { font-size: clamp(2rem, 5vw, 3.5rem); font-weight: 800; letter-spacing: -0.03em; }
 h2 { font-size: clamp(1.75rem, 4vw, 2.75rem); font-weight: 700; }
 h3 { font-size: clamp(1.1rem, 2vw, 1.5rem); font-weight: 600; }
 h4 { font-size: 1.125rem; font-weight: 600; }
@@ -3379,3 +3413,50 @@ select { cursor: pointer; }
 @media (max-width: 500px) {
   .panel-app-section { padding: 70px 0; }
 }
+
+
+/* ── Accesibilidad y rendimiento de animaciones ───────────── */
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  *, *::before, *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+  .reveal { opacity: 1 !important; transform: none !important; }
+}
+/* En móvil se apagan los brillos y pulsos decorativos infinitos */
+@media (max-width: 768px) {
+  .hero *, .waia-featured *, .oferta-section *, .panel-app-section * { animation-iteration-count: 1; }
+  .waia-dot-online, .waia-dots, .waia-chat-scroll { animation-iteration-count: infinite; }
+}
+
+
+/* ── Acento cálido para CTAs principales ─────────────────── */
+:root { --cta: #f5b800; --cta-hover: #ffc933; --cta-ink: #1e2a3a; }
+.hero-actions .btn-primary, .cta-section .btn-primary {
+  background: var(--cta); color: var(--cta-ink); border-color: var(--cta);
+  box-shadow: 0 6px 22px rgba(245,184,0,0.35);
+}
+.hero-actions .btn-primary:hover, .cta-section .btn-primary:hover {
+  background: var(--cta-hover); box-shadow: 0 10px 30px rgba(245,184,0,0.45);
+}
+
+/* ── Franja de clientes ──────────────────────────────────── */
+.clients-strip { padding: 36px 0; background: var(--white); border-bottom: 1px solid var(--card-border); }
+.clients-strip-label { text-align: center; font-size: var(--tx-sm); color: var(--light); text-transform: uppercase; letter-spacing: .08em; font-weight: 600; margin-bottom: 20px; }
+.clients-strip-logos { display: flex; flex-wrap: wrap; justify-content: center; align-items: center; gap: 28px 48px; }
+.clients-strip-logos img { height: 52px; width: auto; max-width: 140px; object-fit: contain; filter: grayscale(1); opacity: .6; transition: filter .3s ease, opacity .3s ease; }
+.clients-strip-logos a:hover img { filter: none; opacity: 1; }
+
+/* ── Método en 4 pasos ───────────────────────────────────── */
+.method-section { padding: 88px 0; background: var(--section-alt); }
+.method-steps { list-style: none; display: grid; grid-template-columns: repeat(4, 1fr); gap: 24px; counter-reset: none; }
+.method-step { background: var(--card-bg); border: 1px solid var(--card-border); border-radius: var(--radius-lg); padding: 28px 24px; transition: transform .3s ease, box-shadow .3s ease; }
+.method-step:hover { transform: translateY(-4px); box-shadow: var(--shadow-md); }
+.method-num { display: inline-flex; align-items: center; justify-content: center; width: 40px; height: 40px; border-radius: 50%; background: var(--gradient); color: #fff; font-weight: 800; margin-bottom: 16px; }
+.method-step h3 { font-size: 1.15rem; margin-bottom: 8px; }
+.method-step p { color: var(--body); font-size: var(--tx-sm); line-height: 1.6; }
+@media (max-width: 900px) { .method-steps { grid-template-columns: repeat(2, 1fr); } }
+@media (max-width: 560px) { .method-steps { grid-template-columns: 1fr; } .clients-strip-logos { gap: 20px 32px; } .clients-strip-logos img { height: 30px; } }
