@@ -2,9 +2,11 @@
 <html lang="es">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, maximum-scale=1.0, user-scalable=no">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, maximum-scale=1.0">
 <title>Panel JPB — Demo interactiva</title>
 <meta name="robots" content="noindex, nofollow">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="theme-color" content="#16324f">
 <style>
   :root {
@@ -21,8 +23,9 @@
     --danger-bg: #fdeaea; --danger-fg: #c23c34;
     --r-sm: 10px; --r-md: 14px; --r-lg: 20px;
     --shadow-sm: 0 1px 2px rgba(16,24,32,.06), 0 1px 1px rgba(16,24,32,.04);
-    --header-h: 90px;
-    --nav-h: 58px;
+    --shadow-md: 0 10px 30px rgba(16,24,32,.12);
+    --header-h: 60px;
+    --nav-h: calc(58px + env(safe-area-inset-bottom));
   }
   * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
   html, body { height: 100%; }
@@ -31,475 +34,1292 @@
     font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Helvetica Neue", Arial, sans-serif;
     -webkit-font-smoothing: antialiased;
     overscroll-behavior-y: none;
-    overflow: hidden;
   }
-  button { cursor: pointer; border: none; font-weight: 700; font-family: inherit; }
+  select, input, textarea, button { font-family: inherit; }
+  svg.icon { display: inline-block; vertical-align: middle; flex-shrink: 0; }
+
+  /* Efecto "tap": al presionar cualquier botón/ícono/tarjeta, se agranda un poco y
+     vuelve a su tamaño — se aplica por JS (ver TAP_SELECTOR) agregando esta clase. */
+  @keyframes tap-pop {
+    0% { transform: scale(1); }
+    35% { transform: scale(1.14); }
+    100% { transform: scale(1); }
+  }
+  .tap-pop { animation: tap-pop .32s cubic-bezier(.34, 1.56, .64, 1); }
+  @keyframes tap-pop-suave {
+    0% { transform: scale(1); }
+    40% { transform: scale(1.012); }
+    100% { transform: scale(1); }
+  }
+  .topbar-titulo { display: none; }
+  input, textarea {
+    font-size: 15px; border: 1px solid var(--border); border-radius: var(--r-sm);
+    padding: 11px 12px; background: #fff; color: var(--text); width: 100%;
+  }
+  input:focus, textarea:focus { outline: 2px solid var(--orange); outline-offset: -1px; }
+  button { cursor: pointer; border: none; font-weight: 700; }
 
   .btn {
     display: inline-flex; align-items: center; justify-content: center; gap: 6px;
     border-radius: 999px; padding: 12px 20px; font-size: 14px; min-height: 44px;
+    transition: background-color .15s ease, box-shadow .15s ease, opacity .15s ease;
   }
+  .icon-btn, .nav-btn, .client-roster-card, .client-row, .inbox-item, .analisis-card,
+  .pipeline-card, .campaign-head, .stat, .panel { transition: background-color .15s ease, box-shadow .15s ease, transform .15s ease; }
+  .btn-primary { background: var(--orange); color: #fff; }
+  .btn-primary:active { background: var(--orange-dark); }
+  .btn-navy { background: var(--navy); color: #fff; }
   .btn-outline { background: #fff; border: 1px solid var(--border); color: var(--navy); }
   .btn-block { width: 100%; }
+  .btn-sm { padding: 7px 14px; min-height: 32px; font-size: 12.5px; border-radius: 999px; }
 
   .icon-btn {
-    width: 34px; height: 34px; border-radius: 50%; background: rgba(255,255,255,0.14); color: #fff;
-    display: flex; align-items: center; justify-content: center; font-size: 15px; flex-shrink: 0;
+    width: 40px; height: 40px; border-radius: 50%; background: rgba(255,255,255,0.14); color: #fff;
+    display: flex; align-items: center; justify-content: center; font-size: 17px; flex-shrink: 0;
   }
+  .icon-btn:active { background: rgba(255,255,255,0.24); }
+  .icon-btn-accent { background: var(--orange); font-size: 22px; font-weight: 800; }
 
-  /* ---- App shell ---- */
-  .app { position: relative; height: 100%; display: flex; flex-direction: column; }
-
+  /* ---- Topbar ---- */
   .topbar {
-    position: relative; z-index: 20; flex-shrink: 0;
+    position: sticky; top: 0; z-index: 20;
     background: linear-gradient(155deg, var(--navy), var(--navy-2));
-    padding: 44px 14px 10px;
-    min-height: var(--header-h);
+    padding: calc(10px + env(safe-area-inset-top)) 14px 10px;
+    height: calc(var(--header-h) + env(safe-area-inset-top));
     display: flex; align-items: center; justify-content: space-between; gap: 10px;
   }
   .client-pill {
-    display: flex; align-items: center; gap: 9px; background: rgba(255,255,255,0.1);
-    border-radius: 999px; padding: 5px 12px 5px 5px; color: #fff; min-height: 36px;
+    display: flex; align-items: center; gap: 10px; background: rgba(255,255,255,0.1);
+    border-radius: 999px; padding: 6px 12px 6px 6px; color: #fff; max-width: 62%; min-height: 40px;
   }
+  .client-pill:active { background: rgba(255,255,255,0.18); }
   .client-avatar {
-    width: 27px; height: 27px; border-radius: 50%; background: var(--orange); color: #fff;
-    display: flex; align-items: center; justify-content: center; font-size: 11.5px; font-weight: 800; flex-shrink: 0;
+    width: 30px; height: 30px; border-radius: 50%; background: var(--orange); color: #fff;
+    display: flex; align-items: center; justify-content: center; font-size: 12.5px; font-weight: 800; flex-shrink: 0;
   }
   .client-info { display: flex; flex-direction: column; align-items: flex-start; min-width: 0; }
-  .client-label { font-size: 9px; text-transform: uppercase; letter-spacing: .5px; color: rgba(255,255,255,0.55); line-height: 1.25; }
-  .client-name { font-size: 13px; font-weight: 700; line-height: 1.25; white-space: nowrap; }
-  .demo-tag {
-    font-size: 9px; font-weight: 800; letter-spacing: .4px; color: #fff; background: var(--orange);
-    padding: 4px 9px; border-radius: 999px; flex-shrink: 0;
-  }
+  .client-label { font-size: 9.5px; text-transform: uppercase; letter-spacing: .5px; color: rgba(255,255,255,0.55); line-height: 1.3; }
+  .client-name { font-size: 14px; font-weight: 700; line-height: 1.3; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 150px; }
+  .chevron { opacity: .6; flex-shrink: 0; }
+  .topbar-actions { display: flex; gap: 8px; flex-shrink: 0; }
 
-  #cliente-content { flex: 1; min-height: 0; display: flex; flex-direction: column; }
-  .content { flex: 1; min-height: 0; overflow-y: auto; -webkit-overflow-scrolling: touch; max-width: 720px; width: 100%; margin: 0 auto; padding: 14px 12px calc(var(--nav-h) + 14px); }
+  /* ---- Empty state ---- */
+  .empty-state { text-align: center; padding: 22vh 24px 40px; color: var(--text2); }
+  .empty-icon { font-size: 40px; margin-bottom: 10px; }
+  .empty-state h2 { color: var(--navy); font-size: 18px; margin: 0 0 6px; }
+  .empty-state p { margin: 0 0 20px; font-size: 13.5px; }
+
+  /* ---- Layout ---- */
+  #cliente-content { min-height: 100%; }
+  .content { max-width: 720px; margin: 0 auto; padding: 16px 14px calc(var(--nav-h) + 16px); }
   .view { display: none; }
-  .view.active { display: block; height: 100%; }
+  .view.active { display: block; }
 
   .bottom-nav {
-    position: relative; z-index: 20; flex-shrink: 0;
+    position: fixed; left: 0; right: 0; bottom: 0; z-index: 20;
     display: flex; background: #fff; border-top: 1px solid var(--border);
+    padding-bottom: env(safe-area-inset-bottom);
     box-shadow: 0 -2px 12px rgba(16,24,32,.05);
   }
   .nav-btn {
     flex: 1; background: none; display: flex; flex-direction: column; align-items: center; gap: 2px;
-    padding: 8px 0 10px; color: var(--text2); font-size: 9.5px; font-weight: 700;
+    padding: 9px 0 8px; color: var(--text2); font-size: 10.5px; font-weight: 700;
   }
-  .nav-btn .nav-icon { font-size: 18px; }
+  .nav-btn .nav-icon { display: flex; }
   .nav-btn.active { color: var(--orange); }
 
+  /* ---- No config ---- */
+  .no-config { text-align: center; padding: 60px 24px; color: var(--text2); }
+  .no-config-icon { font-size: 34px; margin-bottom: 10px; opacity: .8; }
+  .no-config p { font-size: 13.5px; margin: 0 0 16px; }
+
   /* ---- Stats ---- */
-  .stats { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 12px; }
+  .stats { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 16px; }
   .stat {
     background: var(--card); border: 1px solid var(--border); border-radius: var(--r-md);
-    padding: 10px 11px; display: flex; align-items: center; gap: 9px; box-shadow: var(--shadow-sm);
+    padding: 13px 14px; display: flex; align-items: center; gap: 11px; box-shadow: var(--shadow-sm);
   }
   .stat-icon {
-    width: 30px; height: 30px; border-radius: 9px; background: #f0f3f7; flex-shrink: 0;
-    display: flex; align-items: center; justify-content: center; font-size: 14px;
+    width: 34px; height: 34px; border-radius: 10px; background: #f0f3f7; flex-shrink: 0;
+    display: flex; align-items: center; justify-content: center; font-size: 16px;
   }
   .stat-body { min-width: 0; }
-  .stat .label { font-size: 9.5px; text-transform: uppercase; letter-spacing: .3px; color: var(--text2); margin-bottom: 1px; }
-  .stat .value { font-size: 14.5px; font-weight: 800; color: var(--navy); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .stat .label { font-size: 10.5px; text-transform: uppercase; letter-spacing: .4px; color: var(--text2); margin-bottom: 2px; }
+  .stat .value { font-size: 17px; font-weight: 800; color: var(--navy); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
   .stat .value.orange { color: var(--orange-dark); }
 
   .panel { background: var(--card); border: 1px solid var(--border); border-radius: var(--r-md); overflow: hidden; box-shadow: var(--shadow-sm); }
   .panel-title {
-    padding: 11px 14px; font-size: 11px; font-weight: 800; color: var(--navy);
-    text-transform: uppercase; letter-spacing: .3px; border-bottom: 1px solid var(--border);
+    padding: 13px 16px; font-size: 12px; font-weight: 800; color: var(--navy);
+    text-transform: uppercase; letter-spacing: .4px; border-bottom: 1px solid var(--border);
     display: flex; justify-content: space-between; align-items: center;
   }
+  .gasto-row {
+    display: flex; align-items: center; gap: 10px; padding: 14px 16px;
+    border-bottom: 1px solid var(--border);
+  }
+  .gasto-row:last-child { border-bottom: none; }
+  .gasto-row-label { flex: 1; font-size: 13.5px; }
+  .gasto-row-valor { font-weight: 700; font-size: 14px; }
+  .gasto-detalle-head { display: flex; align-items: center; gap: 10px; margin-bottom: 14px; }
+  .gasto-detalle-head .back-btn { display: flex; }
+  .gasto-detalle-head-titulo { font-weight: 800; color: var(--navy); font-size: 15px; }
+
+  /* ---- Selector de mes (Google Ads) ---- */
+  .ads-mes-selector {
+    display: flex; align-items: center; justify-content: center; gap: 14px;
+    background: var(--card); border: 1px solid var(--border); border-radius: 999px;
+    padding: 8px 10px; margin-bottom: 14px;
+  }
+  .ads-mes-nav {
+    width: 30px; height: 30px; border-radius: 50%; background: #f0f3f7; color: var(--navy);
+    display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+  }
+  .ads-mes-nav:disabled { opacity: .35; }
+  .ads-mes-label { font-weight: 800; color: var(--navy); font-size: 14px; min-width: 150px; text-align: center; text-transform: capitalize; }
+  .stat-destacado { grid-column: 1 / -1; }
+  .ads-comparacion { display: inline-flex; align-items: center; gap: 3px; font-size: 11px; font-weight: 800; margin-top: 3px; }
+  .ads-comparacion.sube { color: var(--danger-fg); }
+  .ads-comparacion.baja { color: var(--success-fg); }
+
+  /* ---- Facturación por ciclo ---- */
+  .factura-item { border-bottom: 1px solid var(--border); }
+  .factura-item:last-child { border-bottom: none; }
+  .factura-row { display: flex; justify-content: space-between; align-items: center; gap: 12px; padding: 13px 16px; }
+  .factura-label { font-weight: 700; font-size: 13.5px; color: var(--navy); }
+  .factura-sub { font-size: 11.5px; color: var(--text2); margin-top: 2px; }
+  .factura-monto { font-weight: 800; font-size: 16px; text-align: right; }
+  .factura-vigente .factura-monto { color: var(--text2); }
+  .factura-pendiente .factura-monto { color: var(--danger-fg); }
+  .factura-pagada .factura-monto { color: var(--success-fg); }
+  .factura-empty { padding: 16px; color: var(--text2); font-size: 12.5px; text-align: center; }
+  .factura-desglose-wrap { padding: 0 16px 14px; }
+  .factura-desglose { background: #fafbfd; border: 1px solid var(--border); border-radius: 10px; padding: 4px 13px; font-size: 12.5px; }
+  .factura-desglose-item { display: flex; justify-content: space-between; align-items: flex-start; gap: 14px; padding: 8px 0; color: var(--text); border-bottom: 1px solid #eef0f3; }
+  .factura-desglose-item:last-child { border-bottom: none; }
+  .factura-desglose-label { min-width: 0; }
+  .factura-desglose-valor { text-align: right; font-weight: 700; white-space: nowrap; flex-shrink: 0; }
+  .factura-desglose-sub { font-size: 10.5px; font-weight: 500; color: var(--text2); margin-top: 2px; white-space: normal; }
+  .factura-desglose-divider { border-top: 1px dashed var(--border); margin: 2px 0; }
+  .factura-desglose-visitas { padding: 8px 0; color: var(--text2); font-size: 11.5px; line-height: 1.7; border-bottom: 1px solid #eef0f3; }
+  .table-scroll { overflow-x: auto; }
+  table { width: 100%; border-collapse: collapse; font-size: 12.5px; min-width: 480px; }
+  thead th {
+    text-align: left; background: #fafbfd; color: var(--text2); font-size: 10px;
+    text-transform: uppercase; letter-spacing: .4px; padding: 9px 14px; border-bottom: 1px solid var(--border);
+  }
+  tbody td { padding: 11px 14px; border-bottom: 1px solid var(--border); }
+  tbody tr:last-child td { border-bottom: none; }
 
   /* ---- Inbox ---- */
+  .inbox { position: relative; }
   .inbox-list { background: var(--card); border: 1px solid var(--border); border-radius: var(--r-md); overflow: hidden; box-shadow: var(--shadow-sm); }
-  .inbox-item { display: flex; gap: 10px; padding: 11px 12px; border-bottom: 1px solid var(--border); }
+  .inbox-item { display: flex; gap: 11px; padding: 13px 14px; border-bottom: 1px solid var(--border); }
   .inbox-item:last-child { border-bottom: none; }
   .inbox-item:active { background: #f6f7f9; }
   .inbox-item.selected { background: #fdf1e8; }
   .inbox-avatar {
-    width: 34px; height: 34px; border-radius: 50%; background: var(--navy); color: #fff;
-    display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 800; flex-shrink: 0;
+    width: 38px; height: 38px; border-radius: 50%; background: var(--navy); color: #fff;
+    display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 800; flex-shrink: 0;
   }
   .inbox-item-body { min-width: 0; flex: 1; }
   .inbox-item-top { display: flex; justify-content: space-between; gap: 6px; }
-  .inbox-item-name { font-weight: 700; font-size: 13px; color: var(--navy); }
-  .inbox-item-time { font-size: 10px; color: var(--text2); white-space: nowrap; }
-  .inbox-item-preview { font-size: 11.5px; color: var(--text2); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; margin-top: 2px; }
-  .inbox-item-badges { display: flex; gap: 5px; margin-top: 5px; }
-  .badge { display: inline-block; font-size: 9px; font-weight: 800; padding: 2px 7px; border-radius: 999px; text-transform: uppercase; letter-spacing: .2px; }
+  .inbox-item-name { font-weight: 700; font-size: 14px; color: var(--navy); }
+  .inbox-item-time { font-size: 10.5px; color: var(--text2); white-space: nowrap; }
+  .inbox-item-preview { font-size: 12.5px; color: var(--text2); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; margin-top: 3px; }
+  .inbox-item-badges { display: flex; gap: 5px; margin-top: 6px; }
+  .badge { display: inline-flex; align-items: center; gap: 3px; font-size: 9.5px; font-weight: 800; padding: 3px 8px; border-radius: 999px; text-transform: uppercase; letter-spacing: .3px; }
+  .tag, .analisis-badge { display: inline-flex; align-items: center; gap: 3px; }
   .badge.pausado { background: var(--danger-bg); color: var(--danger-fg); }
   .badge.activo { background: var(--success-bg); color: var(--success-fg); }
+  .badge.canal-web { background: #eef1f6; color: var(--navy); }
+  .badge.canal-whatsapp { background: #e5f6ec; color: #17874a; }
+  .inbox-empty-msg { padding: 30px 16px; color: var(--text2); font-size: 13px; text-align: center; }
 
-  .inbox-chat {
-    display: none; flex-direction: column; background: var(--bg);
-    position: fixed; left: 0; right: 0; top: var(--header-h); bottom: var(--nav-h); z-index: 15;
-  }
-  .inbox.chat-open .inbox-list { display: none; }
-  .inbox.chat-open .inbox-chat { display: flex; }
+  .inbox-chat { display: none; flex-direction: column; background: var(--bg); }
   .back-btn {
-    width: 30px; height: 30px; border-radius: 50%; background: #f0f3f7; color: var(--navy);
-    display: flex; align-items: center; justify-content: center; font-size: 19px; font-weight: 800; flex-shrink: 0;
+    display: none; width: 32px; height: 32px; border-radius: 50%; background: #f0f3f7; color: var(--navy);
+    align-items: center; justify-content: center; font-size: 22px; font-weight: 800; flex-shrink: 0;
   }
   .inbox-chat-head {
-    padding: 10px 12px; background: var(--card); border-bottom: 1px solid var(--border);
-    display: flex; align-items: center; gap: 9px;
+    padding: 11px 14px; background: var(--card); border-bottom: 1px solid var(--border);
+    display: flex; align-items: center; gap: 8px;
   }
-  .inbox-chat-head .num { font-weight: 800; color: var(--navy); font-size: 13.5px; flex: 1; }
-  .inbox-reanudar { background: #eef1f6; color: var(--navy); padding: 6px 12px; font-size: 10.5px; border-radius: 999px; }
-  .inbox-chat-body { flex: 1; overflow-y: auto; padding: 14px; display: flex; flex-direction: column; gap: 8px; -webkit-overflow-scrolling: touch; }
-  .bubble { max-width: 82%; padding: 8px 12px; border-radius: 15px; font-size: 13px; line-height: 1.4; white-space: pre-wrap; box-shadow: var(--shadow-sm); }
-  .bubble.cliente { align-self: flex-start; background: #fff; border-bottom-left-radius: 4px; }
-  .bubble.bot { align-self: flex-end; background: var(--navy); color: #fff; border-bottom-right-radius: 4px; }
-  .inbox-input-row { display: flex; gap: 7px; padding: 9px 11px; background: var(--card); border-top: 1px solid var(--border); }
-  .inbox-input-row input {
-    flex: 1; border-radius: 999px; font-size: 13.5px; border: 1px solid var(--border);
-    padding: 10px 13px; background: #fff; color: var(--text);
+  .inbox-chat-head .num { font-weight: 800; color: var(--navy); font-size: 14.5px; flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .inbox-chat-acciones { display: flex; gap: 6px; flex-shrink: 0; }
+  .inbox-reanudar {
+    display: inline-flex; align-items: center; gap: 5px; white-space: nowrap;
+    background: #eef1f6; color: var(--navy); padding: 7px 13px; font-size: 11px; border-radius: 999px;
   }
+  /* En celular, con el PDF + Pausar/Reactivar juntos no entraba el texto y se veía
+     cortado — abajo de cierto ancho quedan solo los íconos. */
+  .head-break { display: none; }
+  @media (max-width: 480px) {
+    /* Con 2 etiquetas (estado + Respondido) y 3 botones, la cabecera no cabía en una fila y
+       el nombre/número quedaba aplastado a 0 px: nombre + botones arriba, etiquetas abajo. */
+    .inbox-chat-head { flex-wrap: wrap; row-gap: 6px; }
+    .inbox-chat-head .back-btn { order: 0; }
+    .inbox-chat-head .num { order: 1; flex: 1 1 90px; }
+    .inbox-chat-head .inbox-chat-acciones { order: 2; }
+    .inbox-chat-head .head-break { display: block; order: 3; flex-basis: 100%; height: 0; }
+    .inbox-chat-head #chat-estado, .inbox-chat-head #chat-respondido { order: 4; }
+    .inbox-reanudar .btn-label { display: none; }
+    .inbox-reanudar { width: 34px; height: 34px; padding: 0; justify-content: center; border-radius: 50%; }
+  }
+
+  /* Fondo tipo WhatsApp: papel tostado + patrón de garabatos tenue, igual al de la
+     app real en tema claro (en vez del gris plano genérico del resto del panel). */
+  .inbox-chat-body {
+    flex: 1; overflow-y: auto; overflow-x: hidden; padding: 14px 16px; display: flex; flex-direction: column; gap: 2px;
+    -webkit-overflow-scrolling: touch; overscroll-behavior: contain;
+    background-color: #e5ddd5;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='110' height='110' viewBox='0 0 110 110'%3E%3Cg fill='none' stroke='%23d3c7b8' stroke-width='1.3' opacity='0.6'%3E%3Ccircle cx='16' cy='18' r='6'/%3E%3Cpath d='M46 10 q11 11 0 22 q-11 -11 0 -22z'/%3E%3Cpath d='M80 55 l9 9 -9 9 -9 -9z'/%3E%3Ccircle cx='95' cy='16' r='4'/%3E%3Cpath d='M20 78 q9 -9 18 0 q-9 9 -18 0z'/%3E%3Ccircle cx='60' cy='92' r='5.5'/%3E%3Cpath d='M8 60 q10 6 4 16'/%3E%3Cpath d='M92 82 q-10 4 -6 15'/%3E%3C/g%3E%3C/svg%3E");
+    background-size: 110px 110px;
+  }
+  .inbox-chat-aviso { background: var(--danger-bg); color: var(--danger-fg); font-size: 12px; font-weight: 600; padding: 10px 12px; border-radius: 10px; margin: 0 0 8px; }
+  .inbox-chat-empty { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; color: var(--text2); font-size: 13px; gap: 8px; }
+  .inbox-chat-empty-icon { font-size: 30px; opacity: .5; }
+
+  /* Burbujas estilo WhatsApp: blanco/verde con "colita" recortada en la esquina
+     inferior, en vez del recuadro genérico con una sola esquina achatada. */
+  .bubble {
+    position: relative; max-width: 78%; margin: 3px 0; padding: 7px 8px 8px 9px; border-radius: 7.5px;
+    font-size: 14.3px; line-height: 1.4; white-space: pre-wrap; word-break: break-word;
+    box-shadow: 0 1px 0.5px rgba(0,0,0,0.13);
+  }
+  .bubble.cliente { align-self: flex-start; background: #fff; color: #111b21; margin-left: 8px; }
+  .bubble.bot { align-self: flex-end; background: #d9fdd3; color: #111b21; margin-right: 8px; }
+  .bubble.cliente::before {
+    content: ""; position: absolute; left: -7px; bottom: 0; width: 12px; height: 13px;
+    background: #fff; clip-path: polygon(100% 0, 100% 100%, 0 100%);
+  }
+  .bubble.bot::before {
+    content: ""; position: absolute; right: -7px; bottom: 0; width: 12px; height: 13px;
+    background: #d9fdd3; clip-path: polygon(0 0, 100% 100%, 0 100%);
+  }
+  .bubble-audio { display: block; width: 240px; max-width: 100%; height: 32px; margin-bottom: 4px; }
+  .bubble-imagen { display: block; max-width: 240px; max-height: 240px; border-radius: 6px; margin-bottom: 4px; cursor: pointer; }
+  .bubble-meta { display: flex; justify-content: flex-end; align-items: center; gap: 3px; margin-top: 2px; font-size: 10.5px; opacity: .6; white-space: nowrap; }
+  .bubble-tick { display: flex; }
+  .tick-sent, .tick-delivered { color: rgba(0, 0, 0, .45); }
+  .tick-read { color: #53bdeb; }
+  .tick-failed { color: var(--danger-fg); }
+
+  .inbox-input-row { display: flex; gap: 8px; padding: 10px 12px; background: var(--card); border-top: 1px solid var(--border); }
+  .inbox-input-row input { flex: 1; border-radius: 999px; }
   .send-btn {
-    width: 38px; height: 38px; border-radius: 50%; background: var(--orange); color: #fff; font-size: 15px;
+    width: 44px; height: 44px; border-radius: 50%; background: var(--orange); color: #fff; font-size: 17px;
     display: flex; align-items: center; justify-content: center; flex-shrink: 0;
   }
 
+
+  /* Color del chat según el estado del pedido: verde cumplió, rojo no cumplió, ámbar parcial.
+     Toda la fila va teñida (antes era solo una franja fina y casi no se notaba). */
+  .inbox-item { border-left: 6px solid transparent; }
+  .inbox-item.estado-cumple { border-left-color: #17874a; background: #e3f5ea; }
+  .inbox-item.estado-no_cumple { border-left-color: #c23c34; background: #fde4e3; }
+  .inbox-item.estado-parcial { border-left-color: #e0a11b; background: #fff3d1; }
+  .inbox-item.estado-cumple .inbox-avatar { background: #17874a; }
+  .inbox-item.estado-no_cumple .inbox-avatar { background: #c23c34; }
+  .inbox-item.estado-parcial .inbox-avatar { background: #e0a11b; }
+  .inbox-item.selected.estado-cumple, .inbox-item.selected.estado-no_cumple, .inbox-item.selected.estado-parcial { box-shadow: inset 0 0 0 2px rgba(22,50,79,.35); }
+  .badge.est-cumple { background: #17874a; color: #fff; }
+  .badge.est-no_cumple { background: #c23c34; color: #fff; }
+  .badge.est-parcial { background: #e0a11b; color: #fff; }
+  .inbox-chat-head.estado-cumple { background: #e3f5ea; box-shadow: inset 0 -4px 0 #17874a; }
+  .inbox-chat-head.estado-no_cumple { background: #fde4e3; box-shadow: inset 0 -4px 0 #c23c34; }
+  .inbox-chat-head.estado-parcial { background: #fff3d1; box-shadow: inset 0 -4px 0 #e0a11b; }
+  .inbox-item-badges { flex-wrap: wrap; }
+  .badge { white-space: nowrap; }
+  .badge.est-respondido { background: #e3ecfb; color: #1f4fa8; }
+  .badge.est-ninguna { background: #eef1f6; color: var(--text2); }
+  .badge.est-cumple { background: var(--success-bg); color: var(--success-fg); }
+  .badge.est-no_cumple { background: var(--danger-bg); color: var(--danger-fg); }
+  .badge.est-parcial { background: #fdf1d6; color: #9a6b00; }
+  .inbox-chat-head.estado-cumple { box-shadow: inset 0 -3px 0 #17874a; }
+  .inbox-chat-head.estado-no_cumple { box-shadow: inset 0 -3px 0 #c23c34; }
+  .inbox-chat-head.estado-parcial { box-shadow: inset 0 -3px 0 #e0a11b; }
+
+  /* Chips para filtrar la lista de chats por si el pedido cumple el mínimo (Polimer) —
+     mismos colores que las franjas/badges de arriba para que se reconozcan de un vistazo. */
+  .inbox-item.sin-leer .inbox-item-name, .inbox-item.sin-leer .inbox-item-preview { font-weight: 800; color: var(--navy); }
+  .badge-nuevo { background: var(--orange); color: #fff; }
+  .nav-btn { position: relative; }
+  .nav-badge { position: absolute; top: 4px; left: calc(50% + 6px); min-width: 17px; height: 17px; padding: 0 4px; border-radius: 999px; background: var(--orange); color: #fff; font-size: 10px; font-weight: 800; display: none; align-items: center; justify-content: center; line-height: 17px; text-align: center; }
+  @media (min-width: 1024px) { .nav-badge { top: 7px; left: 33px; } }
+  .metricas-kpis { display: flex; gap: 10px; margin-bottom: 14px; }
+  .metrica-kpi { flex: 1; text-align: center; background: var(--bg); border-radius: var(--r-sm); padding: 10px 4px; }
+  .metrica-kpi .v { font-size: 22px; font-weight: 800; }
+  .metrica-kpi .l { font-size: 11px; color: var(--text2); margin-top: 2px; }
+  .metricas-semanas { display: flex; align-items: flex-end; gap: 6px; height: 130px; }
+  .metrica-col { flex: 1; display: flex; flex-direction: column; align-items: center; height: 100%; min-width: 0; }
+  .metrica-barra { flex: 1; width: 100%; display: flex; flex-direction: column; justify-content: flex-end; border-radius: 4px; overflow: hidden; background: #eef1f6; }
+  .metrica-num { font-size: 11px; font-weight: 700; color: var(--navy); height: 14px; }
+  .metrica-sem { font-size: 9.5px; color: var(--text2); margin-top: 4px; white-space: nowrap; }
+  #chat-estado { cursor: pointer; }
+  .client-roster-edit { display: inline-flex; margin-top: 5px; margin-right: 6px; color: #9aa3b0; background: none; padding: 2px; }
+  .client-roster-nota { font-size: 11.5px; color: var(--text2); margin-top: 3px; font-style: italic; }
+  .estado-opt { margin-bottom: 8px; text-align: left; border-left: 6px solid var(--border); }
+  .estado-opt[data-estado="cumple"] { border-left-color: #17874a; }
+  .estado-opt[data-estado="parcial"] { border-left-color: #e0a11b; }
+  .estado-opt[data-estado="no_cumple"] { border-left-color: #c23c34; }
+  #chats-herramientas { display: none; gap: 8px; margin-bottom: 8px; }
+  #chats-herramientas input { flex: 1; min-width: 0; padding: 9px 12px; border: 1px solid var(--border); border-radius: 999px; background: var(--card); font-size: 14px; }
+  #chats-herramientas select { padding: 9px 10px; border: 1px solid var(--border); border-radius: 999px; background: var(--card); font-size: 13px; color: var(--navy); }
+  #chats-filtro-estado { display: none; flex-wrap: wrap; gap: 6px; margin-bottom: 8px; }
+  .filtro-chip, .filtro-accion {
+    border: 1px solid var(--border); background: var(--card); color: var(--text2);
+    font-size: 12px; font-weight: 700; padding: 6px 12px; border-radius: 999px; cursor: pointer;
+  }
+  .filtro-chip.activo { color: #fff; border-color: transparent; }
+  .filtro-chip[data-estado="todos"].activo { background: var(--navy); }
+  .filtro-chip[data-estado="cumple"].activo { background: #17874a; }
+  .filtro-chip[data-estado="parcial"].activo { background: #e0a11b; }
+  .filtro-chip[data-estado="no_cumple"].activo { background: #c23c34; }
+
+  @media (max-width: 759px) {
+    .inbox-chat {
+      position: fixed; left: 0; right: 0; top: calc(var(--header-h) + env(safe-area-inset-top));
+      bottom: var(--nav-h); z-index: 15; display: flex;
+      transform: translateX(100%); transition: transform .32s cubic-bezier(.32,.72,0,1);
+    }
+    /* La lista se queda montada debajo (no display:none) para que el deslizamiento
+       de la conversación, tipo apps nativas/WhatsApp, se vea entrando desde la derecha
+       en vez de aparecer de golpe. */
+    .inbox.chat-open .inbox-chat { transform: translateX(0); }
+    .back-btn { display: flex; }
+  }
+  @media (min-width: 760px) {
+    .content { max-width: 900px; }
+    .stats { grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); }
+    .inbox { display: flex; height: 620px; border: 1px solid var(--border); border-radius: var(--r-lg); overflow: hidden; box-shadow: var(--shadow-sm); }
+    .inbox-list { width: 300px; flex-shrink: 0; border: none; border-right: 1px solid var(--border); border-radius: 0; overflow-y: auto; }
+    .inbox-chat { display: flex; flex: 1; min-width: 0; transform: none !important; transition: none; }
+  }
+
+  /* ---- Sheets (bottom sheet on mobile, centered modal on desktop) ---- */
+  .sheet-overlay { display: none; position: fixed; inset: 0; background: rgba(12,18,26,0.5); z-index: 30; }
+  .sheet-overlay.open { display: block; }
+  .sheet {
+    display: none; position: fixed; z-index: 31; left: 0; right: 0; bottom: 0;
+    background: var(--card); border-radius: 22px 22px 0 0; max-height: 86vh; overflow-y: auto;
+    padding: 10px 20px calc(22px + env(safe-area-inset-bottom));
+    box-shadow: 0 -10px 30px rgba(0,0,0,0.18);
+  }
+  .sheet.open { display: block; }
+  .sheet-handle { width: 38px; height: 4px; background: var(--border); border-radius: 3px; margin: 6px auto 16px; }
+  .sheet-title { font-size: 17px; font-weight: 800; color: var(--navy); margin: 0 0 14px; }
+  .sheet-body { display: flex; flex-direction: column; gap: 14px; }
+  .sheet-foot { display: flex; gap: 10px; margin-top: 18px; }
+  .sheet-foot .btn { flex: 1; }
+
+  @media (min-width: 640px) {
+    .sheet {
+      left: 50%; bottom: auto; top: 50%; transform: translate(-50%,-50%);
+      width: 92%; max-width: 440px; border-radius: 18px; max-height: 88vh;
+    }
+    .sheet-handle { display: none; }
+  }
+
+  .field label { display: block; font-size: 11.5px; font-weight: 800; color: var(--text2); text-transform: uppercase; letter-spacing: .4px; margin-bottom: 6px; }
+  .field small { display: block; color: var(--text2); font-size: 11.5px; margin-top: 5px; }
+  .field-group { border: 1px solid var(--border); border-radius: var(--r-sm); padding: 13px; display: flex; flex-direction: column; gap: 12px; }
+  .field-group h3 { font-size: 12px; margin: 0; color: var(--navy); font-weight: 800; }
+
+  .client-list { display: flex; flex-direction: column; gap: 8px; margin-bottom: 16px; }
+  .client-row { display: flex; align-items: center; gap: 12px; padding: 11px 12px; border-radius: var(--r-sm); background: #fafbfd; border: 1px solid var(--border); }
+  .client-row:active { background: #f0f3f7; }
+  .client-row.active { border-color: var(--orange); background: #fdf1e8; }
+  .client-row-edit { width: 30px; height: 30px; border-radius: 50%; background: #eef1f6; color: var(--navy); display: flex; align-items: center; justify-content: center; font-size: 13px; flex-shrink: 0; }
+  .client-row-edit:active { background: #e2e6ec; }
+
+  /* Rol "cliente": oculta todo lo que sea administración (crear/editar clientes,
+     sincronizar a mano, responder chats) — solo puede ver su propia información. */
+  .rol-cliente .admin-only { display: none !important; }
+  .client-row-avatar {
+    width: 36px; height: 36px; border-radius: 50%; background: var(--navy); color: #fff;
+    display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 800; flex-shrink: 0;
+  }
+  .client-row-name { font-weight: 700; font-size: 14.5px; color: var(--navy); }
+  .client-row-tags { display: flex; gap: 5px; margin-top: 4px; }
+  .tag { font-size: 9.5px; font-weight: 700; padding: 2px 7px; border-radius: 999px; text-transform: uppercase; letter-spacing: .3px; }
+  .tag.on { background: var(--success-bg); color: var(--success-fg); }
+  .tag.off { background: #eef0f3; color: var(--text2); }
+
+  textarea.mono { font-family: ui-monospace, "SF Mono", Menlo, monospace; font-size: 12px; }
+
   /* ---- Pipeline ---- */
-  .pipeline-updated { font-size: 10.5px; color: var(--text2); text-align: center; margin-bottom: 12px; }
-  .pipeline-section { margin-bottom: 16px; }
+  .pipeline-updated { font-size: 11.5px; color: var(--text2); text-align: center; margin-bottom: 14px; }
+  .pipeline-section { margin-bottom: 20px; }
   .pipeline-section-title {
-    display: flex; align-items: center; gap: 6px; font-size: 11px; font-weight: 800; color: var(--navy);
-    text-transform: uppercase; letter-spacing: .3px; margin-bottom: 8px; padding: 0 2px;
+    display: flex; align-items: center; gap: 7px; font-size: 12px; font-weight: 800; color: var(--navy);
+    text-transform: uppercase; letter-spacing: .4px; margin-bottom: 9px; padding: 0 2px;
   }
   .pipeline-section-count {
-    background: #eef1f6; color: var(--text2); font-size: 9.5px; font-weight: 800;
-    border-radius: 999px; padding: 1px 7px;
+    background: #eef1f6; color: var(--text2); font-size: 10.5px; font-weight: 800;
+    border-radius: 999px; padding: 1px 8px;
   }
-  .pipeline-cards { display: flex; flex-direction: column; gap: 7px; }
+  .pipeline-cards { display: flex; flex-direction: column; gap: 8px; }
   .pipeline-card {
     background: var(--card); border: 1px solid var(--border); border-left: 4px solid var(--border);
-    border-radius: var(--r-sm); padding: 10px 12px; box-shadow: var(--shadow-sm); display: flex; gap: 10px; align-items: center;
+    border-radius: var(--r-sm); padding: 11px 13px; box-shadow: var(--shadow-sm); display: flex; gap: 11px; align-items: center;
   }
+  .pipeline-card:active { background: #fafbfd; }
   .pipeline-card.urgente { border-left-color: var(--danger-fg); }
   .pipeline-card.tibio { border-left-color: var(--orange); }
   .pipeline-card.frio { border-left-color: #c7ccd4; }
   .pipeline-card.ganado { border-left-color: var(--success-fg); }
   .pipeline-card-avatar {
-    width: 32px; height: 32px; border-radius: 50%; background: var(--navy); color: #fff; flex-shrink: 0;
-    display: flex; align-items: center; justify-content: center; font-size: 10px; font-weight: 800;
+    width: 34px; height: 34px; border-radius: 50%; background: var(--navy); color: #fff; flex-shrink: 0;
+    display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 800;
   }
   .pipeline-card-body { min-width: 0; flex: 1; }
   .pipeline-card-top { display: flex; justify-content: space-between; gap: 6px; }
-  .pipeline-card-tel { font-weight: 700; font-size: 12.5px; color: var(--navy); }
-  .pipeline-card-time { font-size: 10px; color: var(--text2); white-space: nowrap; }
-  .pipeline-card-resumen { font-size: 11.5px; color: var(--text2); margin-top: 2px; overflow: hidden; text-overflow: ellipsis; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; }
+  .pipeline-card-tel { font-weight: 700; font-size: 13.5px; color: var(--navy); }
+  .pipeline-card-time { font-size: 10.5px; color: var(--text2); white-space: nowrap; }
+  .pipeline-card-resumen { font-size: 12.5px; color: var(--text2); margin-top: 3px; overflow: hidden; text-overflow: ellipsis; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; }
 
-  /* ---- Gráfico ---- */
-  .chart-wrap { padding: 14px 12px 10px; }
-  .chart-bars { display: flex; align-items: flex-end; gap: 3px; height: 90px; }
+  /* ---- Análisis de chats (reemplaza al Pipeline) ---- */
+  .analisis-card { background: var(--card); border: 1px solid var(--border); border-radius: var(--r-md); padding: 14px 16px; box-shadow: var(--shadow-sm); margin-bottom: 10px; }
+  .analisis-card-top { display: flex; justify-content: space-between; align-items: center; gap: 8px; margin-bottom: 9px; }
+  .analisis-card-tel { font-weight: 800; color: var(--navy); font-size: 14.5px; }
+  .analisis-card-time { font-size: 10.5px; color: var(--text2); white-space: nowrap; }
+  .analisis-badges { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 10px; }
+  .analisis-badge { font-size: 10.5px; font-weight: 800; padding: 3px 9px; border-radius: 999px; white-space: nowrap; }
+  .analisis-badge.interes-alto { background: var(--success-bg); color: var(--success-fg); }
+  .analisis-badge.interes-medio { background: #fdf1e0; color: var(--orange-dark); }
+  .analisis-badge.interes-bajo { background: #eef0f3; color: var(--text2); }
+  .analisis-badge.minimo-si { background: var(--success-bg); color: var(--success-fg); }
+  .analisis-badge.minimo-no { background: var(--danger-bg); color: var(--danger-fg); }
+  .analisis-resumen { font-size: 13px; color: var(--text); line-height: 1.5; margin-bottom: 8px; white-space: pre-wrap; }
+  .analisis-nota { display: flex; align-items: flex-start; gap: 5px; font-size: 12px; color: var(--text2); font-style: italic; margin-bottom: 6px; }
+  .analisis-nota svg { margin-top: 1px; }
+  .analisis-alertas { margin: 0 0 8px; padding: 8px 10px 8px 24px; background: var(--danger-bg); border-radius: 8px; }
+  .analisis-alertas li { font-size: 12px; color: var(--danger-fg); font-weight: 600; margin-bottom: 2px; }
+  .analisis-alertas li:last-child { margin-bottom: 0; }
+
+  /* ---- Gráfico de gasto diario ---- */
+  .chart-wrap { padding: 16px 14px 12px; }
+  .chart-bars { display: flex; align-items: flex-end; gap: 3px; height: 110px; }
   .chart-bar { flex: 1; background: var(--orange); border-radius: 3px 3px 0 0; min-width: 3px; min-height: 3px; }
-  .chart-labels { display: flex; justify-content: space-between; font-size: 9.5px; color: var(--text2); margin-top: 7px; }
+  .chart-labels { display: flex; justify-content: space-between; font-size: 10.5px; color: var(--text2); margin-top: 8px; }
 
   /* ---- Calendario ---- */
-  .calendar-wrap { padding: 12px; }
-  .calendar-month-label { text-align: center; font-size: 11.5px; font-weight: 800; color: var(--navy); margin-bottom: 9px; text-transform: capitalize; }
-  .calendar-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 3px; }
-  .calendar-dow { font-size: 8.5px; color: var(--text2); text-align: center; font-weight: 800; text-transform: uppercase; padding-bottom: 2px; }
+  .calendar-wrap { padding: 14px; }
+  .calendar-month-label { text-align: center; font-size: 12.5px; font-weight: 800; color: var(--navy); margin-bottom: 10px; text-transform: capitalize; }
+  .calendar-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; }
+  .calendar-dow { font-size: 9.5px; color: var(--text2); text-align: center; font-weight: 800; text-transform: uppercase; padding-bottom: 2px; }
   .calendar-day {
-    aspect-ratio: 1; border-radius: 7px; display: flex; align-items: center; justify-content: center;
-    font-size: 10.5px; font-weight: 700; color: var(--navy); background: #f3f5f8;
+    aspect-ratio: 1; border-radius: 8px; display: flex; align-items: center; justify-content: center;
+    font-size: 11.5px; font-weight: 700; color: var(--navy); background: #f3f5f8;
   }
   .calendar-day.empty { visibility: hidden; }
   .calendar-day.has-data { cursor: pointer; }
   .calendar-day.selected { box-shadow: inset 0 0 0 2px var(--navy); }
-  .calendar-detail { padding: 0 14px 14px; font-size: 11px; color: var(--text2); text-align: center; min-height: 14px; }
+  .calendar-detail { padding: 0 16px 16px; font-size: 12px; color: var(--text2); text-align: center; min-height: 16px; }
 
-  /* ---- Campañas ---- */
+  /* ---- Campañas (tarjetas expandibles) ---- */
   .campaign-list { display: flex; flex-direction: column; }
   .campaign-card { border-bottom: 1px solid var(--border); }
   .campaign-card:last-child { border-bottom: none; }
-  .campaign-head { padding: 11px 14px; display: flex; align-items: center; gap: 9px; }
+  .campaign-head { padding: 13px 16px; display: flex; align-items: center; gap: 10px; }
   .campaign-head:active { background: #fafbfd; }
   .campaign-head-body { flex: 1; min-width: 0; }
-  .campaign-name { font-weight: 700; font-size: 12.5px; color: var(--navy); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-  .campaign-meta { display: flex; gap: 6px; align-items: center; margin-top: 4px; }
-  .campaign-meta-clicks { font-size: 10px; color: var(--text2); }
-  .campaign-budget-bar { height: 4px; border-radius: 3px; background: #eef1f6; margin-top: 7px; overflow: hidden; }
+  .campaign-name { font-weight: 700; font-size: 13.5px; color: var(--navy); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .campaign-meta { display: flex; gap: 7px; align-items: center; margin-top: 5px; }
+  .campaign-meta-clicks { font-size: 11px; color: var(--text2); }
+  .campaign-budget-bar { height: 5px; border-radius: 3px; background: #eef1f6; margin-top: 8px; overflow: hidden; }
   .campaign-budget-fill { height: 100%; background: var(--orange); border-radius: 3px; }
-  .campaign-gasto { font-weight: 800; font-size: 13px; color: var(--navy); white-space: nowrap; }
+  .campaign-gasto { font-weight: 800; font-size: 14px; color: var(--navy); white-space: nowrap; }
   .campaign-chevron { color: var(--text2); transition: transform .15s ease; flex-shrink: 0; }
   .campaign-card.open .campaign-chevron { transform: rotate(180deg); }
-  .campaign-detail { display: none; padding: 0 14px 14px; }
+  .campaign-detail { display: none; padding: 0 16px 16px; }
   .campaign-card.open .campaign-detail { display: block; }
-  .campaign-detail-stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 7px; margin-bottom: 10px; }
-  .campaign-detail-stat { background: #fafbfd; border: 1px solid var(--border); border-radius: 8px; padding: 8px 3px; text-align: center; }
-  .campaign-detail-stat .v { font-weight: 800; color: var(--navy); font-size: 11.5px; }
-  .campaign-detail-stat .l { font-size: 8.5px; color: var(--text2); text-transform: uppercase; margin-top: 2px; letter-spacing: .2px; }
+  .campaign-detail-stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-bottom: 12px; }
+  .campaign-detail-stat { background: #fafbfd; border: 1px solid var(--border); border-radius: 8px; padding: 9px 4px; text-align: center; }
+  .campaign-detail-stat .v { font-weight: 800; color: var(--navy); font-size: 12.5px; }
+  .campaign-detail-stat .l { font-size: 9px; color: var(--text2); text-transform: uppercase; margin-top: 3px; letter-spacing: .3px; }
 
-  /* ---- Clientes ---- */
-  .client-roster { display: flex; flex-direction: column; gap: 7px; }
+  /* ---- Clientes (cotizaciones + WhatsApp) ---- */
+  .client-roster { display: flex; flex-direction: column; gap: 8px; }
   .client-roster-card {
     background: var(--card); border: 1px solid var(--border); border-radius: var(--r-sm);
-    padding: 11px 13px; box-shadow: var(--shadow-sm); display: flex; gap: 11px; align-items: center;
+    padding: 12px 14px; box-shadow: var(--shadow-sm); display: flex; gap: 12px; align-items: center;
   }
+  .client-roster-card:active { background: #fafbfd; }
   .client-roster-avatar {
-    width: 34px; height: 34px; border-radius: 50%; background: var(--navy); color: #fff; flex-shrink: 0;
-    display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 800;
+    width: 38px; height: 38px; border-radius: 50%; background: var(--navy); color: #fff; flex-shrink: 0;
+    display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 800;
   }
   .client-roster-body { min-width: 0; flex: 1; }
-  .client-roster-name { font-weight: 700; font-size: 12.5px; color: var(--navy); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-  .client-roster-meta { font-size: 10.5px; color: var(--text2); margin-top: 2px; }
-  .client-roster-tags { display: flex; gap: 5px; margin-top: 5px; }
-  .tag { font-size: 9px; font-weight: 700; padding: 2px 6px; border-radius: 999px; text-transform: uppercase; letter-spacing: .2px; }
-  .tag.on { background: var(--success-bg); color: var(--success-fg); }
+  .client-roster-name { font-weight: 700; font-size: 14px; color: var(--navy); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .client-roster-meta { font-size: 11.5px; color: var(--text2); margin-top: 3px; }
+  .client-roster-tags { display: flex; gap: 5px; margin-top: 6px; }
   .client-roster-total { text-align: right; flex-shrink: 0; }
-  .client-roster-total .v { font-weight: 800; font-size: 13px; color: var(--orange-dark); white-space: nowrap; }
-  .client-roster-total .v.sin { color: var(--text2); font-weight: 600; font-size: 11px; }
-  .client-roster-total .n { font-size: 9px; color: var(--text2); margin-top: 2px; }
+  .client-roster-total .v { font-weight: 800; font-size: 14.5px; color: var(--orange-dark); white-space: nowrap; }
+  .client-roster-total .v.sin { color: var(--text2); font-weight: 600; font-size: 12px; }
+  .client-roster-total .n { font-size: 10px; color: var(--text2); margin-top: 2px; }
+  .client-roster-star { display: inline-flex; margin-top: 5px; color: #d5d9df; background: none; padding: 2px; }
+  .client-roster-star.on { color: var(--orange); }
+  .client-roster-star svg { fill: currentColor; }
 
-  .toast {
-    position: fixed; left: 50%; bottom: calc(var(--nav-h) + 14px); transform: translateX(-50%) translateY(20px);
-    background: rgba(22,50,79,0.96); color: #fff; font-size: 11.5px; font-weight: 600;
-    padding: 9px 16px; border-radius: 999px; z-index: 40; opacity: 0; pointer-events: none;
-    transition: opacity .2s ease, transform .2s ease; white-space: nowrap; box-shadow: 0 6px 18px rgba(0,0,0,.25);
+
+  /* ---- Logo de JPB Marketing: recuadro blanco en la barra azul (celular), y arriba del
+     menú lateral blanco en escritorio ---- */
+  .nav-brand { display: none; }
+  .topbar-logo { display: flex; width: 42px; height: 42px; background: #fff; border-radius: 12px; align-items: center; justify-content: center; flex-shrink: 0; }
+  .topbar-logo img { width: 32px; height: auto; display: block; }
+  @media (max-width: 1023px) { .topbar .client-pill { margin-right: auto; } }
+
+  /* ================= ESCRITORIO (>= 1024px) =================
+     La app nació como app de celular (barra de pestañas abajo, columna angosta). En una
+     pantalla grande eso se ve como un celular estirado — acá se convierte en un panel de
+     escritorio de verdad: menú lateral fijo, contenido ancho en columnas, hover en las
+     tarjetas y el chat ocupando todo el alto disponible. El markup y el JS son los mismos
+     que en celular; esto es solo CSS. */
+  @media (min-width: 1024px) {
+    body { font-size: 14.5px; }
+    .topbar-logo { display: none; }
+    .nav-brand {
+      display: flex; align-items: center; gap: 12px; padding: 2px 12px 20px; margin-bottom: 10px;
+      border-bottom: 1px solid var(--border);
+    }
+    .nav-brand img { width: 62px; height: auto; display: block; }
+    .nav-brand span { font-weight: 800; color: var(--navy); font-size: 15px; line-height: 1.25; }
+    .nav-brand small { display: block; font-weight: 600; color: var(--text2); font-size: 11.5px; }
+
+    .topbar { padding: 0 32px; height: 68px; gap: 20px; box-shadow: 0 2px 14px rgba(16,24,32,.18); }
+    .client-pill { max-width: 320px; padding: 7px 16px 7px 7px; }
+    .client-pill:hover { background: rgba(255,255,255,0.18); }
+    .client-name { max-width: 210px; font-size: 15px; }
+    .topbar-titulo {
+      display: block; color: #fff; font-size: 19px; font-weight: 800; letter-spacing: -.2px;
+      padding-left: 20px; border-left: 1px solid rgba(255,255,255,0.22);
+    }
+    .topbar-actions { margin-left: auto; gap: 10px; }
+    .icon-btn:hover { background: rgba(255,255,255,0.24); }
+    .icon-btn-accent:hover { background: var(--orange-dark); }
+
+    #cliente-content { display: flex; align-items: flex-start; }
+
+    /* La barra de pestañas de abajo pasa a ser menú lateral */
+    .bottom-nav {
+      position: sticky; top: 68px; left: auto; right: auto; bottom: auto; order: -1;
+      flex: 0 0 248px; width: 248px; height: calc(100vh - 68px);
+      flex-direction: column; gap: 4px; padding: 22px 14px;
+      background: #fff; border-top: none; border-right: 1px solid var(--border); box-shadow: none;
+    }
+    .nav-btn {
+      flex: none; flex-direction: row; justify-content: flex-start; align-items: center; gap: 13px;
+      padding: 13px 16px; border-radius: 12px; font-size: 14.5px; color: var(--text2);
+    }
+    .nav-btn .nav-icon { width: 22px; justify-content: center; }
+    .nav-btn:hover { background: #f3f5f8; color: var(--navy); }
+    .nav-btn.active { background: #fdf1e8; color: var(--orange-dark); }
+
+    .content { flex: 1; min-width: 0; max-width: 1240px; margin: 0 auto; padding: 32px 40px 48px; }
+
+    /* Tarjetas más amplias */
+    .panel, .stat { border-radius: 16px; }
+    .panel-title { padding: 17px 22px; font-size: 12.5px; }
+    .stat { padding: 16px 18px; }
+    .stat .value { font-size: 19px; }
+    .gasto-row { padding: 16px 22px; }
+    .factura-row { padding: 16px 22px; }
+    .factura-desglose-wrap { padding: 0 22px 18px; }
+    .factura-empty { padding: 22px; }
+    .view > .btn-block { width: auto; }
+
+    /* Vistas en columnas */
+    #view-inicio.active { display: grid; grid-template-columns: repeat(auto-fit, minmax(400px, 1fr)); gap: 24px; align-items: start; }
+    #view-inicio .panel { margin-bottom: 0 !important; }
+    #gastos-resumen { display: grid; grid-template-columns: repeat(auto-fit, minmax(440px, 1fr)); gap: 24px; align-items: start; }
+    #gastos-resumen .panel { margin-bottom: 0 !important; }
+    .client-roster { display: grid; grid-template-columns: repeat(auto-fill, minmax(370px, 1fr)); gap: 14px; }
+    #analisis-content { display: grid; grid-template-columns: repeat(auto-fill, minmax(410px, 1fr)); gap: 16px; align-items: start; }
+    #analisis-content .analisis-card { margin-bottom: 0; }
+    .client-roster-card { padding: 15px 18px; }
+    .analisis-card { padding: 18px 20px; }
+
+    /* Conversaciones: ocupa todo el alto de la pantalla */
+    .inbox { height: calc(100vh - 68px - 64px); min-height: 540px; border-radius: 18px; }
+    .inbox-list { width: 360px; }
+    .inbox-item { padding: 15px 18px; }
+    .inbox-chat-head { padding: 15px 22px; }
+    .inbox-chat-body { padding: 20px 28px; }
+    .inbox-input-row { padding: 14px 20px; }
+    .inbox-list, .inbox-chat-body { scrollbar-width: thin; scrollbar-color: #c9d0da transparent; }
+
+    /* Hover: en celular no existe, en escritorio da la sensación de app de verdad */
+    @media (hover: hover) {
+      .client-roster-card:hover, .analisis-card:hover, .pipeline-card:hover {
+        box-shadow: var(--shadow-md); transform: translateY(-2px); cursor: pointer;
+      }
+      .inbox-item:hover { background: #f6f7f9; cursor: pointer; }
+      .inbox-item.estado-cumple:hover { background: #d3efdd; }
+      .inbox-item.estado-no_cumple:hover { background: #fbd3d1; }
+      .inbox-item.estado-parcial:hover { background: #ffeab3; }
+      .inbox-item.selected:not([class*="estado-"]):hover { background: #fdf1e8; }
+      .gasto-row:hover { background: #fafbfd; }
+      .btn-outline:hover { background: #f6f8fb; }
+      .btn-primary:hover { background: var(--orange-dark); }
+    }
+
+    /* El "pop" de 14% está pensado para botones chicos de celular — en tarjetas grandes
+       y filas del menú se vería como un salto, así que acá es casi imperceptible. */
+    .client-roster-card.tap-pop, .analisis-card.tap-pop, .inbox-item.tap-pop, .client-row.tap-pop,
+    .pipeline-card.tap-pop, .campaign-head.tap-pop, .nav-btn.tap-pop {
+      animation-name: tap-pop-suave;
+    }
+
+    /* Detalles vistos en pantalla real: botones de facturación que se partían en dos
+       líneas, y tarjetas de clientes metidas dentro de un panel (doble borde). */
+    .factura-row { flex-wrap: wrap; }
+    .factura-row .btn, .gasto-row .btn { white-space: nowrap; }
+    #inicio-importantes .client-roster-card {
+      border: none; border-bottom: 1px solid var(--border); border-radius: 0; box-shadow: none;
+    }
+    #inicio-importantes .client-roster-card:last-child { border-bottom: none; }
+    @media (hover: hover) {
+      #inicio-importantes .client-roster-card:hover { transform: none; box-shadow: none; background: #fafbfd; }
+    }
+    .pipeline-updated { text-align: left; }
+
+    /* Ventanas emergentes (formularios) más cómodas */
+    .sheet { max-width: 540px; padding: 26px 30px 28px; }
+    .sheet-title { font-size: 19px; margin-bottom: 18px; }
   }
-  .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
 </style>
+<style>
+#btn-logout{display:none!important}
+/* Incrustado en el teléfono del home: espacio para la isla dinámica y la barra inferior */
+html.embed { --nav-h: 72px; }
+html.embed .topbar { padding-top: 38px; height: calc(var(--header-h) + 28px); }
+html.embed .bottom-nav { padding-bottom: 14px; }
+html.embed .inbox-chat { top: calc(var(--header-h) + 28px); }
+</style>
+<script>try { if (window.self !== window.top) document.documentElement.classList.add('embed'); } catch (e) { document.documentElement.classList.add('embed'); }</script>
 </head>
 <body>
 
-<div class="app">
-  <header class="topbar">
-    <div class="client-pill">
-      <span class="client-avatar">AS</span>
-      <span class="client-info">
-        <span class="client-label">Cliente</span>
-        <span class="client-name">Aceros del Sur</span>
-      </span>
-    </div>
-    <div style="display:flex;align-items:center;gap:8px;">
-      <button class="icon-btn" id="btn-bell" aria-label="Notificaciones">🔔</button>
-      <span class="demo-tag">DEMO</span>
-    </div>
-  </header>
+<header class="topbar">
+  <span class="topbar-logo"><img src="/assets/panel-demo/logo-jpb.png" alt="JPB Marketing"></span>
+  <button class="client-pill" id="client-switch">
+    <span class="client-avatar" id="client-avatar">—</span>
+    <span class="client-info">
+      <span class="client-label">Cliente</span>
+      <span class="client-name" id="client-name">Elegir…</span>
+    </span>
+    <svg class="chevron" width="14" height="14" viewBox="0 0 24 24"><path d="M7 10l5 5 5-5" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+  </button>
+  <span class="topbar-titulo" id="topbar-titulo">Inicio</span>
+  <div class="topbar-actions">
+    <button class="icon-btn" id="btn-notificaciones" aria-label="Notificaciones"><svg class="icon" width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg></button>
+    <button class="icon-btn icon-btn-accent admin-only" id="btn-nuevo-cliente" aria-label="Nuevo cliente"><svg class="icon" width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></button>
+  </div>
+</header>
 
-  <div id="cliente-content">
-    <main class="content">
-      <div class="view active" id="view-chats">
-        <div class="inbox" id="chats-inbox">
-          <div class="inbox-list" id="inbox-list"></div>
-          <div class="inbox-chat" id="inbox-chat">
-            <div class="inbox-chat-head">
-              <button class="back-btn" id="btn-volver-chats" aria-label="Volver">‹</button>
-              <span class="num" id="inbox-chat-telefono"></span>
-              <button class="inbox-reanudar" id="chat-reanudar" style="display:none;">▶ Reactivar</button>
+<div class="empty-state" id="empty-state" style="display:none;">
+  <div class="empty-icon"><svg class="icon" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M8 14s1.5 2 4 2 4-2 4-2"/><line x1="9" y1="9" x2="9.01" y2="9"/><line x1="15" y1="9" x2="15.01" y2="9"/></svg></div>
+  <h2>Todavía no hay clientes</h2>
+  <p>Agrega el primero para ver sus chats de WhatsApp y sus campañas de Ads.</p>
+  <button class="btn btn-primary admin-only" id="btn-nuevo-cliente-empty"><svg class="icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg> Agregar el primer cliente</button>
+</div>
+
+<div id="cliente-content" style="display:none;">
+  <main class="content">
+    <div class="view active" id="view-inicio">
+      <div class="panel" style="margin-bottom:16px;">
+        <div class="panel-title"><span>Esperan seguimiento</span></div>
+        <div id="inicio-seguimiento"></div>
+      </div>
+      <div class="panel" style="margin-bottom:16px;">
+        <div class="panel-title"><span>Seguimiento importante</span></div>
+        <div id="inicio-importantes"></div>
+      </div>
+      <div class="panel">
+        <div class="panel-title"><span>Formularios recibidos</span></div>
+        <div id="inicio-formularios"></div>
+      </div>
+    </div>
+
+    <div class="view" id="view-chats">
+      <div class="no-config" id="chats-no-config" style="display:none;">
+        <div class="no-config-icon"><svg class="icon" width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg></div>
+        <p>WhatsApp no está conectado para este cliente todavía.</p>
+        <button class="btn btn-navy admin-only" id="btn-conectar-whatsapp">Conectar WhatsApp</button>
+      </div>
+      <div id="chats-aviso-bot" style="display:none; background:var(--danger-bg); color:var(--danger-fg); font-size:11.5px; font-weight:700; padding:8px 12px; text-align:center; border-radius:var(--r-sm); margin-bottom:8px;"></div>
+      <div id="chats-filtro-estado">
+        <button class="filtro-chip activo" data-estado="todos">Todos</button>
+        <button class="filtro-chip" data-estado="cumple">Cumple mínimo</button>
+        <button class="filtro-chip" data-estado="parcial">Variable</button>
+        <button class="filtro-chip" data-estado="no_cumple">No cumple</button>
+        <button class="filtro-chip" data-estado="respondidos">Respondidos</button>
+        <button class="filtro-chip" data-estado="archivados">Archivados</button>
+        <button class="filtro-accion" id="btn-archivar-web" style="display:none;"></button>
+      </div>
+      <div id="chats-herramientas">
+        <input type="search" id="chats-buscar" placeholder="Buscar por nombre, teléfono o mensaje…" autocomplete="off">
+        <select id="chats-orden" aria-label="Ordenar chats">
+          <option value="recientes">Más recientes</option>
+          <option value="sin_leer">Sin leer primero</option>
+          <option value="etiqueta">Por etiqueta</option>
+        </select>
+      </div>
+      <div class="inbox" id="chats-inbox" style="display:none;">
+        <div class="inbox-list" id="inbox-list"></div>
+        <div class="inbox-chat" id="inbox-chat">
+          <div class="inbox-chat-head" id="inbox-chat-head" style="display:none;">
+            <button class="back-btn" id="btn-volver-chats" aria-label="Volver"><svg class="icon" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg></button>
+            <span class="num" id="inbox-chat-telefono"></span>
+            <span class="badge" id="chat-estado" style="display:none;"></span>
+            <span class="badge est-respondido" id="chat-respondido" style="display:none;">Respondido</span>
+            <span class="head-break"></span>
+            <div class="inbox-chat-acciones">
+              <button class="inbox-reanudar" id="chat-pdf" aria-label="Generar solicitud de cotización en PDF" title="PDF solicitud"><svg class="icon" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg><span class="btn-label">PDF solicitud</span></button>
+              <button class="inbox-reanudar" id="chat-etiqueta" aria-label="Cambiar la etiqueta de este chat" title="Etiqueta"><svg class="icon" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/></svg><span class="btn-label">Etiqueta</span></button>
+              <button class="inbox-reanudar" id="chat-pausar" aria-label="Pausar al bot en esta conversación" title="Pausar bot"><svg class="icon" width="13" height="13" viewBox="0 0 24 24" fill="currentColor" stroke="none"><rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/></svg><span class="btn-label">Pausar bot</span></button>
+              <button class="inbox-reanudar" id="chat-reanudar" style="display:none;" aria-label="Reactivar al bot en esta conversación" title="Reactivar bot"><svg class="icon" width="13" height="13" viewBox="0 0 24 24" fill="currentColor" stroke="none"><polygon points="6 3 20 12 6 21 6 3"/></svg><span class="btn-label">Reactivar</span></button>
             </div>
-            <div class="inbox-chat-body" id="chat-body"></div>
-            <div class="inbox-input-row">
-              <input type="text" id="chat-input" placeholder="Escribe una respuesta...">
-              <button class="send-btn" id="chat-send" aria-label="Enviar">➤</button>
+          </div>
+          <div class="inbox-chat-body" id="chat-body">
+            <div class="inbox-chat-empty">
+              <div class="inbox-chat-empty-icon"><svg class="icon" width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg></div>
+              <span>Elige una conversación</span>
             </div>
+          </div>
+          <div class="inbox-input-row" id="inbox-input-row" style="display:none;">
+            <input type="text" id="chat-input" placeholder="Escribe una respuesta...">
+            <button class="send-btn" id="chat-send" aria-label="Enviar"><svg class="icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg></button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="view" id="view-analisis">
+      <div class="pipeline-updated" id="analisis-updated"></div>
+      <button class="btn btn-outline btn-block admin-only" id="btn-ejecutar-analisis" style="margin-bottom:16px;"><svg class="icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg> Analizar ahora</button>
+      <div class="no-config" id="analisis-no-config" style="display:none;">
+        <div class="no-config-icon"><svg class="icon" width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg></div>
+        <p>Todavía no hay conversaciones analizadas. Se genera solo una vez al día (4am), o toca "Analizar ahora".</p>
+      </div>
+      <div id="analisis-metricas"></div>
+      <div id="analisis-content"></div>
+    </div>
+
+    <div class="view" id="view-clientes">
+      <div class="pipeline-updated" id="clientes-updated"></div>
+      <button class="btn btn-outline btn-block admin-only" id="btn-sincronizar-clientes" style="margin-bottom:16px;"><svg class="icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg> Actualizar ahora</button>
+      <button class="btn btn-primary btn-block" id="btn-agregar-contacto" style="margin-bottom:16px;"><svg class="icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg> Agregar cliente</button>
+      <div class="no-config" id="clientes-no-config" style="display:none;">
+        <div class="no-config-icon"><svg class="icon" width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg></div>
+        <p>Todavía no hay clientes. Se cruzan solos las cotizaciones subidas con los contactos de WhatsApp.</p>
+      </div>
+      <div class="stats" id="clientes-stats"></div>
+      <div class="client-roster" id="clientes-content"></div>
+    </div>
+
+    <div class="view" id="view-ads">
+      <div id="gastos-resumen">
+        <div class="panel" id="panel-facturacion" style="margin-bottom:16px; display:none;">
+          <div class="panel-title"><span>Facturación con JPB Marketing</span></div>
+          <div id="facturacion-content"></div>
+        </div>
+
+        <div class="panel" style="margin-bottom:16px;">
+          <div class="panel-title"><span>Resumen del mes</span></div>
+          <div class="gasto-row" data-detalle="ads">
+            <span class="gasto-row-label"><svg class="icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11v2a1 1 0 0 0 1 1h2l4 4V6l-4 4H4a1 1 0 0 0-1 1z"/><path d="M14 8a4 4 0 0 1 0 8"/><path d="M17.5 5.5a8 8 0 0 1 0 13"/></svg> Ads</span>
+            <span class="gasto-row-valor" id="resumen-ads-valor">—</span>
+            <button class="btn btn-outline btn-sm gasto-row-btn">Ver detalle</button>
+          </div>
+          <div class="gasto-row" data-detalle="meta">
+            <span class="gasto-row-label"><svg class="icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="6" y="2" width="12" height="20" rx="2"/><line x1="12" y1="18" x2="12.01" y2="18"/></svg> Mensajes de Meta</span>
+            <span class="gasto-row-valor" id="resumen-meta-valor">—</span>
+            <button class="btn btn-outline btn-sm gasto-row-btn">Ver detalle</button>
+          </div>
+          <div class="gasto-row" data-detalle="ia">
+            <span class="gasto-row-label"><svg class="icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="4" width="16" height="16" rx="2"/><rect x="9" y="9" width="6" height="6"/><line x1="9" y1="1" x2="9" y2="4"/><line x1="15" y1="1" x2="15" y2="4"/><line x1="9" y1="20" x2="9" y2="23"/><line x1="15" y1="20" x2="15" y2="23"/><line x1="20" y1="9" x2="23" y2="9"/><line x1="20" y1="14" x2="23" y2="14"/><line x1="1" y1="9" x2="4" y2="9"/><line x1="1" y1="14" x2="4" y2="14"/></svg> OpenAI</span>
+            <span class="gasto-row-valor" id="resumen-ia-valor">—</span>
+            <button class="btn btn-outline btn-sm gasto-row-btn">Ver detalle</button>
+          </div>
+          <div class="gasto-row" data-detalle="desp">
+            <span class="gasto-row-label"><svg class="icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 11l1.6-4.5A2 2 0 0 1 8.5 5h7a2 2 0 0 1 1.9 1.5L19 11"/><rect x="3" y="11" width="18" height="6" rx="2"/><circle cx="7.5" cy="17.5" r="1.5"/><circle cx="16.5" cy="17.5" r="1.5"/></svg> Desplazamiento</span>
+            <span class="gasto-row-valor" id="resumen-desp-valor">—</span>
+            <button class="btn btn-outline btn-sm gasto-row-btn">Ver detalle</button>
+          </div>
+          <div class="gasto-row" style="font-weight:700;">
+            <span class="gasto-row-label">Total</span>
+            <span class="gasto-row-valor" id="resumen-total-valor">—</span>
+            <span style="width:92px;"></span>
           </div>
         </div>
       </div>
 
-      <div class="view" id="view-pipeline">
-        <div class="pipeline-updated" id="pipeline-updated"></div>
-        <button class="btn btn-outline btn-block" id="btn-ejecutar-pipeline" style="margin-bottom:14px;">🔄 Actualizar ahora</button>
-        <div id="pipeline-content"></div>
-      </div>
-
-      <div class="view" id="view-clientes">
-        <div class="pipeline-updated" id="clientes-updated"></div>
-        <button class="btn btn-outline btn-block" id="btn-sincronizar-clientes" style="margin-bottom:14px;">🔄 Actualizar ahora</button>
-        <div class="stats" id="clientes-stats"></div>
-        <div class="client-roster" id="clientes-content"></div>
-      </div>
-
-      <div class="view" id="view-ads">
-        <div class="pipeline-updated" id="ads-updated"></div>
-        <div class="stats" id="ads-stats"></div>
-        <div class="panel" style="margin-bottom:14px;">
-          <div class="panel-title"><span>Gasto diario</span></div>
-          <div class="chart-wrap" id="ads-chart"></div>
+      <div id="gastos-detalle" style="display:none;">
+        <div class="gasto-detalle-head">
+          <button class="back-btn" id="btn-volver-gastos" aria-label="Volver"><svg class="icon" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg></button>
+          <span class="gasto-detalle-head-titulo" id="gastos-detalle-titulo"></span>
         </div>
-        <div class="panel" style="margin-bottom:14px;">
-          <div class="panel-title"><span>Calendario</span></div>
-          <div class="calendar-wrap" id="ads-calendar"></div>
-          <div class="calendar-detail" id="ads-calendar-detail">Toca un día para ver el detalle.</div>
-        </div>
-        <div class="panel">
-          <div class="panel-title">
-            <span>Campañas</span>
-            <button class="btn btn-outline" style="padding:5px 12px;min-height:26px;font-size:10.5px;" id="btn-sincronizar-ads">🔄 Sincronizar</button>
+
+        <div id="detalle-ads" class="gasto-detalle-panel" style="display:none;">
+          <div class="ads-mes-selector">
+            <button class="ads-mes-nav" id="ads-mes-prev" aria-label="Mes anterior"><svg class="icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg></button>
+            <span class="ads-mes-label" id="ads-mes-label">—</span>
+            <button class="ads-mes-nav" id="ads-mes-next" aria-label="Mes siguiente"><svg class="icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg></button>
           </div>
-          <div class="campaign-list" id="ads-campanas"></div>
+          <div class="no-config" id="ads-no-config" style="display:none;">
+            <div class="no-config-icon"><svg class="icon" width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg></div>
+            <p>Todavía no hay datos de Google Ads cargados para este cliente.</p>
+            <button class="btn btn-navy admin-only" id="btn-sincronizar-ads-vacio" style="display:none;"><svg class="icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg> Sincronizar con Google Ads</button>
+            <button class="btn btn-outline admin-only" id="btn-cargar-ads">Pegar datos a mano</button>
+          </div>
+          <div id="ads-content" style="display:none;">
+            <div class="pipeline-updated" id="ads-updated"></div>
+            <div class="stats" id="ads-stats"></div>
+
+            <div class="panel" style="margin-bottom:16px;">
+              <div class="panel-title"><span>Gasto diario</span></div>
+              <div class="chart-wrap" id="ads-chart"></div>
+            </div>
+
+            <div class="panel" style="margin-bottom:16px;">
+              <div class="panel-title"><span>Calendario</span></div>
+              <div class="calendar-wrap" id="ads-calendar"></div>
+              <div class="calendar-detail" id="ads-calendar-detail">Toca un día para ver el detalle.</div>
+            </div>
+
+            <div class="panel">
+              <div class="panel-title">
+                <span>Campañas</span>
+                <span class="admin-only" style="display:flex;gap:8px;">
+                  <button class="btn btn-outline btn-sm" id="btn-sincronizar-ads"><svg class="icon" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg> Sincronizar</button>
+                  <button class="btn btn-outline btn-sm" id="btn-editar-ads">Editar</button>
+                </span>
+              </div>
+              <div class="campaign-list" id="ads-campanas"></div>
+            </div>
+          </div>
+        </div>
+
+        <div id="detalle-meta" class="gasto-detalle-panel" style="display:none;">
+          <div class="pipeline-updated" id="gastos-updated"></div>
+          <div class="panel">
+            <div class="panel-title"><span>Detalle mensajes de WhatsApp</span></div>
+            <div id="gastos-meta-detalle"></div>
+          </div>
+        </div>
+
+        <div id="detalle-ia" class="gasto-detalle-panel" style="display:none;">
+          <div class="panel">
+            <div class="panel-title"><span>Detalle OpenAI</span></div>
+            <div id="gastos-ia-detalle"></div>
+          </div>
+        </div>
+
+        <div id="detalle-desp" class="gasto-detalle-panel" style="display:none;">
+          <div class="panel admin-only" style="margin-bottom:16px;">
+            <div class="panel-title"><span>Registrar visita</span></div>
+            <div style="padding:16px;">
+              <button class="btn btn-primary btn-block" id="btn-asistencia-conflex"><svg class="icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 11l1.6-4.5A2 2 0 0 1 8.5 5h7a2 2 0 0 1 1.9 1.5L19 11"/><rect x="3" y="11" width="18" height="6" rx="2"/><circle cx="7.5" cy="17.5" r="1.5"/><circle cx="16.5" cy="17.5" r="1.5"/></svg> Asistencia</button>
+            </div>
+          </div>
+          <div class="panel">
+            <div class="panel-title"><span>Calendario de visitas</span></div>
+            <div class="calendar-wrap" id="desp-calendar"></div>
+            <div class="calendar-detail" id="desp-calendar-detail">Toca un día para ver el detalle.</div>
+          </div>
         </div>
       </div>
-    </main>
+    </div>
+  </main>
 
-    <nav class="bottom-nav">
-      <button class="nav-btn active" data-view="chats"><span class="nav-icon">💬</span><span>WhatsApp</span></button>
-      <button class="nav-btn" data-view="pipeline"><span class="nav-icon">🗂️</span><span>Pipeline</span></button>
-      <button class="nav-btn" data-view="clientes"><span class="nav-icon">👥</span><span>Clientes</span></button>
-      <button class="nav-btn" data-view="ads"><span class="nav-icon">📈</span><span>Ads</span></button>
-    </nav>
+  <nav class="bottom-nav">
+    <div class="nav-brand"><img src="/assets/panel-demo/logo-jpb.png" alt="JPB Marketing"><span>JPB Marketing<small>Panel de clientes</small></span></div>
+    <button class="nav-btn active" data-view="inicio"><span class="nav-icon"><svg class="icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 10.5 12 3l9 7.5"/><path d="M5 9.5V20a1 1 0 0 0 1 1h4v-6h4v6h4a1 1 0 0 0 1-1V9.5"/></svg></span><span>Inicio</span></button>
+    <button class="nav-btn" data-view="chats"><span class="nav-badge" id="nav-badge-chats"></span><span class="nav-icon"><svg class="icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg></span><span>Conversaciones</span></button>
+    <button class="nav-btn" data-view="analisis"><span class="nav-icon"><svg class="icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg></span><span>Análisis</span></button>
+    <button class="nav-btn" data-view="clientes"><span class="nav-icon"><svg class="icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg></span><span>Clientes</span></button>
+    <button class="nav-btn" data-view="ads"><span class="nav-icon"><svg class="icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg></span><span>Gastos</span></button>
+  </nav>
+</div>
+
+<div class="sheet-overlay" id="overlay"></div>
+
+<!-- Sheet: selector de clientes -->
+<div class="sheet" id="sheet-clientes">
+  <div class="sheet-handle"></div>
+  <h2 class="sheet-title">Clientes</h2>
+  <div class="client-list" id="client-list"></div>
+  <button class="btn btn-outline btn-block" data-close>Cerrar</button>
+  <button class="btn btn-block" id="btn-logout" style="margin-top:10px; background:none; color:var(--text2); font-weight:600; font-size:13px;">Cerrar sesión / entrar con otra cuenta</button>
+</div>
+
+<!-- Sheet: nuevo/editar cliente -->
+<div class="sheet" id="sheet-estado">
+  <div class="sheet-handle"></div>
+  <h2 class="sheet-title">Etiqueta del chat</h2>
+  <div class="sheet-body">
+    <p style="font-size:13px;color:var(--text2);margin:0 0 12px;">Úsalo cuando el bot dejó una etiqueta que ya no corresponde (ej. no llegaba al mínimo y después aceptó cotizarlo).</p>
+    <button class="btn btn-outline btn-block estado-opt" data-estado="cumple">Cumple mínimo</button>
+    <button class="btn btn-outline btn-block estado-opt" data-estado="parcial">Variable (cumple parcial)</button>
+    <button class="btn btn-outline btn-block estado-opt" data-estado="no_cumple">No cumple mínimo</button>
+    <button class="btn btn-outline btn-block estado-opt" data-estado="auto">Automático (lo calcula el bot)</button>
+    <button class="btn btn-outline btn-block" id="estado-respondido" data-respondido="true" style="margin-top:14px;">Marcar como respondido</button>
+    <button class="btn btn-outline btn-block" id="estado-archivar" data-archivar="true" style="margin-top:8px;">Archivar chat</button>
+  </div>
+  <div class="sheet-foot">
+    <button class="btn btn-outline" data-close>Cerrar</button>
   </div>
 </div>
 
-<div class="toast" id="toast"></div>
+<div class="sheet" id="sheet-contacto">
+  <div class="sheet-handle"></div>
+  <h2 class="sheet-title" id="contacto-titulo">Agregar cliente</h2>
+  <div class="sheet-body">
+    <div class="field"><label>Nombre de la persona</label><input type="text" id="ct-nombre" placeholder="Ej: Juan Pérez"></div>
+    <div class="field"><label>Empresa</label><input type="text" id="ct-empresa" placeholder="Ej: Constructora Trebol"></div>
+    <div class="field"><label>Teléfono</label><input type="tel" id="ct-telefono" placeholder="Ej: 56912345678"></div>
+    <div class="field"><label>Email</label><input type="email" id="ct-email" placeholder="correo@empresa.cl"></div>
+    <div class="field"><label>Nota</label><input type="text" id="ct-nota" placeholder="Ej: compra todos los meses, pide factura"></div>
+  </div>
+  <div class="sheet-foot">
+    <button class="btn btn-outline" data-close>Cancelar</button>
+    <button class="btn btn-primary" id="btn-guardar-contacto">Guardar</button>
+  </div>
+</div>
 
+<div class="sheet" id="sheet-cliente">
+  <div class="sheet-handle"></div>
+  <h2 class="sheet-title">Nuevo cliente</h2>
+  <div class="sheet-body">
+    <div class="field">
+      <label>Nombre del cliente</label>
+      <input type="text" id="f-nombre" placeholder="Ej: Polimer">
+    </div>
+    <div class="field">
+      <label>ID interno (se genera solo)</label>
+      <input type="text" id="f-id" placeholder="polimer">
+    </div>
+    <div class="field-group">
+      <h3>WhatsApp (opcional)</h3>
+      <div class="field">
+        <label>URL del Worker del bot</label>
+        <input type="text" id="f-bot-url" placeholder="https://mi-bot.workers.dev">
+      </div>
+      <div class="field">
+        <label>Panel key</label>
+        <input type="text" id="f-panel-key" placeholder="clave secreta del bot">
+        <small>Debe coincidir con el secret PANEL_KEY configurado en ese Worker.</small>
+      </div>
+    </div>
+    <div class="field-group">
+      <h3>Google Ads (opcional)</h3>
+      <div class="field">
+        <label>Customer ID</label>
+        <input type="text" id="f-customer-id" placeholder="1234567890">
+      </div>
+    </div>
+    <div class="field-group">
+      <h3>Facturación por ciclo (opcional)</h3>
+      <div class="field">
+        <label>Día de corte del mes</label>
+        <input type="number" id="f-facturacion-dia" placeholder="Ej: 17" min="1" max="28">
+        <small>Cada mes se cierra un ciclo en ese día y suma todo lo gastado (Ads + Meta + IA + Desplazamiento) desde el corte anterior — aparece como "pago pendiente" hasta que lo marques pagado. Déjalo vacío para no activar esto.</small>
+      </div>
+      <div class="field">
+        <label>Pago fijo mensual (opcional)</label>
+        <input type="number" id="f-facturacion-pago-fijo" placeholder="Ej: 30000" min="0">
+        <small>Se suma automáticamente en cada ciclo, además de los gastos.</small>
+      </div>
+      <div class="field">
+        <label>Comisión sobre ventas, % (opcional)</label>
+        <input type="number" id="f-facturacion-comision" placeholder="Ej: 3" min="0" step="0.1">
+        <small>Se calcula sobre lo que ingreses como "ventas del ciclo" en cada ciclo — no se trackea solo, hay que anotarlo.</small>
+      </div>
+    </div>
+    <div class="field-group">
+      <h3>Acceso del cliente (opcional)</h3>
+      <div class="field">
+        <label>Código de acceso</label>
+        <div style="display:flex;gap:8px;">
+          <input type="text" id="f-codigo-acceso" placeholder="Ej: 7K9QXM3P" style="flex:1;">
+          <button class="btn btn-outline btn-sm" id="btn-generar-codigo" type="button">Generar</button>
+        </div>
+        <small>Se lo entregas a este cliente (ej. Polimer, Conflex) para que entre a su propia vista: solo ve su información, no puede editar nada ni ver a otros clientes. Déjalo vacío para no darle acceso.</small>
+      </div>
+    </div>
+  </div>
+  <div class="sheet-foot">
+    <button class="btn btn-outline" data-close>Cancelar</button>
+    <button class="btn btn-primary" id="btn-guardar-cliente">Guardar</button>
+  </div>
+</div>
+
+<!-- Sheet: pegar JSON de ads -->
+<div class="sheet" id="sheet-ads">
+  <div class="sheet-handle"></div>
+  <h2 class="sheet-title">Datos de Google Ads</h2>
+  <div class="sheet-body">
+    <div class="field">
+      <label>Pega el JSON exportado (mismo formato que ads.json)</label>
+      <textarea class="mono" id="f-ads-json" rows="12"></textarea>
+    </div>
+  </div>
+  <div class="sheet-foot">
+    <button class="btn btn-outline" data-close>Cancelar</button>
+    <button class="btn btn-primary" id="btn-guardar-ads">Guardar</button>
+  </div>
+</div>
+
+<!-- Sheet: PDF de solicitud de cotización (descargar / compartir / ver) -->
+<div class="sheet" id="sheet-pdf">
+  <div class="sheet-handle"></div>
+  <h2 class="sheet-title">Solicitud de cotización</h2>
+  <p id="pdf-estado" style="color:var(--text2); font-size:13px; margin:0 0 16px;">Generando…</p>
+  <div id="pdf-acciones" style="display:none; flex-direction:column; gap:10px;">
+    <button class="btn btn-primary btn-block" id="pdf-descargar">Descargar PDF</button>
+    <button class="btn btn-outline btn-block" id="pdf-compartir" style="display:none;">Compartir / guardar en Archivos</button>
+    <button class="btn btn-outline btn-block" id="pdf-ver">Ver en pantalla</button>
+  </div>
+  <button class="btn btn-outline btn-block" data-close style="margin-top:12px;">Cerrar</button>
+</div>
+
+<!-- Sheet: detalle de un formulario recibido -->
+<div class="sheet" id="sheet-formulario">
+  <div class="sheet-handle"></div>
+  <h2 class="sheet-title">Formulario recibido</h2>
+  <div id="formulario-detalle"></div>
+  <button class="btn btn-outline btn-block" data-close style="margin-top:14px;">Cerrar</button>
+</div>
+
+<script src="/assets/panel-demo/mock.js"></script>
 <script>
+// ---- Efecto "tap" global: se agranda un poco al presionar cualquier botón/tarjeta ----
+const TAP_SELECTOR = 'button, .icon-btn, .nav-btn, .client-roster-card, .client-row, .inbox-item, .analisis-card, .pipeline-card, .campaign-head, .calendar-day.has-data';
+document.addEventListener('click', (e) => {
+  const el = e.target.closest(TAP_SELECTOR);
+  if (!el) return;
+  el.classList.remove('tap-pop');
+  void el.offsetWidth; // fuerza reflow para poder reiniciar la animación en clicks seguidos
+  el.classList.add('tap-pop');
+});
+
+// ---- Íconos (SVG inline, estilo trazo — reemplazan los emojis) ----
+const ICON_PATHS = {
+  bell: '<path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/>',
+  smile: '<circle cx="12" cy="12" r="10"/><path d="M8 14s1.5 2 4 2 4-2 4-2"/><line x1="9" y1="9" x2="9.01" y2="9"/><line x1="15" y1="9" x2="15.01" y2="9"/>',
+  chat: '<path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/>',
+  star: '<polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>',
+  inbox: '<polyline points="22 12 16 12 14 15 10 15 8 12 2 12"/><path d="M5.45 5.11 2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.45-6.89A2 2 0 0 0 16.76 4H7.24a2 2 0 0 0-1.79 1.11z"/>',
+  send: '<line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/>',
+  refresh: '<polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/>',
+  pulse: '<polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/>',
+  users: '<path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/>',
+  wallet: '<path d="M20 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2z"/><path d="M16 7V5a2 2 0 0 0-2-2H8a2 2 0 0 0-2 2v2"/><path d="M18 13h.01"/>',
+  megaphone: '<path d="M3 11v2a1 1 0 0 0 1 1h2l4 4V6l-4 4H4a1 1 0 0 0-1 1z"/><path d="M14 8a4 4 0 0 1 0 8"/><path d="M17.5 5.5a8 8 0 0 1 0 13"/>',
+  smartphone: '<rect x="6" y="2" width="12" height="20" rx="2"/><line x1="12" y1="18" x2="12.01" y2="18"/>',
+  cpu: '<rect x="4" y="4" width="16" height="16" rx="2"/><rect x="9" y="9" width="6" height="6"/><line x1="9" y1="1" x2="9" y2="4"/><line x1="15" y1="1" x2="15" y2="4"/><line x1="9" y1="20" x2="9" y2="23"/><line x1="15" y1="20" x2="15" y2="23"/><line x1="20" y1="9" x2="23" y2="9"/><line x1="20" y1="14" x2="23" y2="14"/><line x1="1" y1="9" x2="4" y2="9"/><line x1="1" y1="14" x2="4" y2="14"/>',
+  car: '<path d="M5 11l1.6-4.5A2 2 0 0 1 8.5 5h7a2 2 0 0 1 1.9 1.5L19 11"/><rect x="3" y="11" width="18" height="6" rx="2"/><circle cx="7.5" cy="17.5" r="1.5"/><circle cx="16.5" cy="17.5" r="1.5"/>',
+  edit: '<path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"/>',
+  clock: '<circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>',
+  plus: '<line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>',
+  tag: '<path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/>',
+  alert: '<path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/>',
+  check: '<path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/>',
+  x: '<circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/>',
+  flame: '<path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 2.5z"/>',
+  thermometer: '<path d="M14 4v10.54a4 4 0 1 1-4 0V4a2 2 0 0 1 4 0Z"/>',
+  snowflake: '<line x1="12" y1="2" x2="12" y2="22"/><line x1="2" y1="12" x2="22" y2="12"/><line x1="4.93" y1="4.93" x2="19.07" y2="19.07"/><line x1="4.93" y1="19.07" x2="19.07" y2="4.93"/>',
+  barChart: '<line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/>',
+  info: '<circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/>',
+  eye: '<path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/>',
+  cursor: '<path d="M3 3l7.07 16.97 2.51-7.39 7.39-2.51L3 3z"/><path d="M13 13l6 6"/>',
+  target: '<circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/>',
+  tickSingle: '<polyline points="20 6 9 17 4 12"/>',
+  tickDouble: '<polyline points="1 13 6 18 15 6"/><polyline points="8 13 13 18 22 6"/>',
+};
+function icon(name, size) {
+  size = size || 18;
+  return `<svg class="icon" width="${size}" height="${size}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">${ICON_PATHS[name] || ''}</svg>`;
+}
+
+let CLIENTES = [];
+let CLIENTE_ACTUAL = null;
+let CHATS_CACHE = [];
+let CHATS_CACHE_CLIENTE = null;
+let CHATS_FIRMA = '';
+let chatAbierto = null;
+let ROL = 'admin';
+let MI_CLIENTE_ID = null;
+
 function clp(n) {
   if (n === null || n === undefined) return '—';
   return '$' + Math.round(n).toLocaleString('es-CL');
 }
+
+// ---- Resumen de gastos (Ads + Meta + IA) ----
+let GASTO_ADS = 0, GASTO_META = 0, GASTO_IA = 0, GASTO_DESP = 0;
+function actualizarResumenTotal() {
+  document.getElementById('resumen-total-valor').textContent = clp(GASTO_ADS + GASTO_META + GASTO_IA + GASTO_DESP);
+}
+const GASTO_TITULOS = { ads: 'Ads', meta: 'Mensajes de Meta', ia: 'OpenAI', desp: 'Desplazamiento' };
+document.querySelectorAll('.gasto-row[data-detalle]').forEach((row) => {
+  row.querySelector('.gasto-row-btn').addEventListener('click', () => {
+    const key = row.dataset.detalle;
+    document.getElementById('gastos-resumen').style.display = 'none';
+    document.getElementById('gastos-detalle').style.display = '';
+    document.getElementById('gastos-detalle-titulo').textContent = GASTO_TITULOS[key];
+    document.querySelectorAll('.gasto-detalle-panel').forEach((p) => { p.style.display = 'none'; });
+    document.getElementById('detalle-' + key).style.display = '';
+  });
+});
+document.getElementById('btn-volver-gastos').addEventListener('click', () => {
+  document.getElementById('gastos-detalle').style.display = 'none';
+  document.getElementById('gastos-resumen').style.display = '';
+});
+function esc(v) {
+  return String(v == null ? '' : v).replace(/[&<>"']/g, (ch) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[ch]));
+}
+
 function iniciales(nombre) {
   return (nombre || '?').trim().slice(0, 2).toUpperCase();
 }
-function tiempoRelativo(ts) {
-  if (!ts) return '';
-  const diffMin = Math.round((Date.now() - ts) / 60000);
-  if (diffMin < 1) return 'ahora';
-  if (diffMin < 60) return `hace ${diffMin} min`;
-  const diffH = Math.round(diffMin / 60);
-  if (diffH < 24) return `hace ${diffH} h`;
-  return `hace ${Math.round(diffH / 24)} d`;
+
+// ---- Sheets ----
+function openModal(id) {
+  document.getElementById('overlay').classList.add('open');
+  document.getElementById(id).classList.add('open');
 }
-let toastTimer = null;
-function toast(msg) {
-  const t = document.getElementById('toast');
-  t.textContent = msg;
-  t.classList.add('show');
-  clearTimeout(toastTimer);
-  toastTimer = setTimeout(() => t.classList.remove('show'), 2200);
+function closeModals() {
+  document.getElementById('overlay').classList.remove('open');
+  document.querySelectorAll('.sheet').forEach((m) => m.classList.remove('open'));
+}
+document.getElementById('overlay').addEventListener('click', closeModals);
+document.querySelectorAll('[data-close]').forEach((b) => b.addEventListener('click', closeModals));
+
+// ---- Cargar / seleccionar clientes ----
+function cargarClientes() {
+  return fetch('api/clients?_=' + Date.now())
+    .then((r) => r.json())
+    .then((clientes) => {
+      CLIENTES = clientes;
+      const empty = document.getElementById('empty-state');
+      const content = document.getElementById('cliente-content');
+      if (!clientes.length) {
+        empty.style.display = '';
+        content.style.display = 'none';
+        return;
+      }
+      empty.style.display = 'none';
+      content.style.display = '';
+      // Deep link desde una notificación push (?cliente=&chat=&vista=, ver sw.js) — si
+      // el cliente de la URL no existe o no hay acceso, se ignora y sigue el
+      // comportamiento normal (último cliente usado o el primero de la lista).
+      const params = new URLSearchParams(location.search);
+      const clienteParam = params.get('cliente');
+      if (clienteParam && clientes.find((c) => c.id === clienteParam)) {
+        CLIENTE_ACTUAL = clienteParam;
+      } else if (!CLIENTE_ACTUAL || !clientes.find((c) => c.id === CLIENTE_ACTUAL)) {
+        CLIENTE_ACTUAL = clientes[0].id;
+      }
+      renderClientList();
+      actualizarCabeceraCliente();
+      seleccionarCliente(CLIENTE_ACTUAL, true);
+      const chatParam = params.get('chat');
+      const vistaParam = params.get('vista');
+      if (chatParam) irAChat(chatParam);
+      else if (vistaParam) irAVista(vistaParam);
+      // Se limpia la URL para que un refresco manual de la página no vuelva a saltar
+      // al mismo chat/vista una y otra vez.
+      if (clienteParam || chatParam || vistaParam) history.replaceState(null, '', location.pathname);
+    });
 }
 
-const now = Date.now();
-const MIN = 60000, H = 3600000, D = 86400000;
+function renderClientList() {
+  const list = document.getElementById('client-list');
+  list.innerHTML = CLIENTES.map((c) => `
+    <div class="client-row ${c.id === CLIENTE_ACTUAL ? 'active' : ''}" data-id="${esc(c.id)}">
+      <div class="client-row-avatar">${iniciales(c.nombre)}</div>
+      <div style="flex:1;min-width:0;">
+        <div class="client-row-name">${esc(c.nombre)}</div>
+        <div class="client-row-tags">
+          <span class="tag ${c.whatsapp.configurado ? 'on' : 'off'}">WhatsApp</span>
+          <span class="tag ${c.ads.configurado ? 'on' : 'off'}">Ads</span>
+        </div>
+      </div>
+      <button class="client-row-edit admin-only" data-edit-id="${esc(c.id)}" aria-label="Editar cliente">${icon('edit', 14)}</button>
+    </div>
+  `).join('');
+  list.querySelectorAll('.client-row').forEach((el) => {
+    el.addEventListener('click', () => {
+      CLIENTE_ACTUAL = el.dataset.id;
+      closeModals();
+      renderClientList();
+      actualizarCabeceraCliente();
+      seleccionarCliente(CLIENTE_ACTUAL, true);
+    });
+  });
+  list.querySelectorAll('.client-row-edit').forEach((btn) => {
+    btn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      const c = CLIENTES.find((x) => x.id === btn.dataset.editId);
+      if (c) abrirModalEditarCliente(c);
+    });
+  });
+}
 
-// ---- Datos de ejemplo: "Aceros del Sur" (distribuidor de acero industrial) ----
-const MENSAJES = {
-  '+56 9 1234 5678': [
-    { rol: 'cliente', texto: 'Hola, necesito cotizar 50 planchas de acero galvanizado de 4x8.' },
-    { rol: 'bot', texto: '¡Hola! Con gusto. ¿En qué espesor las necesitas y para qué comuna sería el despacho?' },
-    { rol: 'cliente', texto: 'Espesor 4mm, despacho a Rancagua.' },
-    { rol: 'bot', texto: 'Perfecto, te preparo la cotización con despacho incluido y te la envío por este mismo medio en unos minutos.' },
-    { rol: 'cliente', texto: '¿Cuándo llega la cotización de las planchas?' },
-  ],
-  '+56 9 4567 8901': [
-    { rol: 'cliente', texto: 'Necesitamos 200 tubos estructurales cuadrados de 50x50.' },
-    { rol: 'bot', texto: 'Claro. ¿Tienes el largo requerido y la comuna de despacho para calcular el flete?' },
-    { rol: 'cliente', texto: '6 metros cada uno, despacho a Puente Alto.' },
-    { rol: 'cliente', texto: 'Perfecto, quedo atento a la OC entonces' },
-  ],
-  '+56 9 7890 1234': [
-    { rol: 'cliente', texto: 'Confirmamos la compra de 80 planchas + despacho a Rancagua.' },
-    { rol: 'bot', texto: '¡Excelente! Te dejo los datos bancarios para la transferencia y coordinamos el despacho.' },
-    { rol: 'cliente', texto: 'Gracias! Ya hicimos la transferencia' },
-  ],
-  '+56 9 5678 9012': [
-    { rol: 'cliente', texto: '¿Tienen stock de planchas antideslizantes?' },
-    { rol: 'bot', texto: 'Por el momento no tenemos stock de ese producto, el próximo ingreso está estimado para octubre. ¿Quieres que te avisemos apenas llegue?' },
-  ],
-  '+56 9 9988 7766': [
-    { rol: 'cliente', texto: '¿Hacen despacho a Rancagua?' },
-    { rol: 'bot', texto: 'Sí, hacemos despacho a Rancagua y alrededores. El costo depende del volumen del pedido — ¿qué necesitas cotizar?' },
-  ],
-  '+56 9 6789 0234': [
-    { rol: 'cliente', texto: '¿Despachan también a Concepción?' },
-    { rol: 'bot', texto: 'Sí, despachamos a todo el sur, incluyendo Concepción. El flete se calcula según el volumen del pedido.' },
-    { rol: 'cliente', texto: 'Perfecto, ¿me pueden cotizar 30 planchas de acero inoxidable?' },
-    { rol: 'bot', texto: 'Claro, dame un momento y te preparo la cotización con el despacho incluido.' },
-  ],
-  '+56 9 8811 2233': [
-    { rol: 'cliente', texto: 'Necesito una cotización urgente de fierro estriado, es para hoy si se puede.' },
-    { rol: 'bot', texto: '¡Hola! Tenemos stock disponible. ¿Cuántos kilos o barras necesitas y para qué comuna es el despacho?' },
-    { rol: 'cliente', texto: '2 toneladas, despacho en Santiago centro.' },
-  ],
-  '+56 9 7722 3344': [
-    { rol: 'cliente', texto: '¿Puedo pagar la mitad ahora y el resto contra entrega?' },
-    { rol: 'bot', texto: 'Sí, aceptamos pago en dos partes para pedidos sobre $1.000.000. Te paso los datos para la primera transferencia.' },
-  ],
-  '+56 9 3344 5566': [
-    { rol: 'cliente', texto: 'Ya llegó el camión, gracias!' },
-    { rol: 'bot', texto: '¡Genial! Cualquier cosa que necesites, aquí estamos.' },
-  ],
-};
+function actualizarCabeceraCliente() {
+  const c = clienteActualObj();
+  if (!c) return;
+  document.getElementById('client-avatar').textContent = iniciales(c.nombre);
+  document.getElementById('client-name').textContent = c.nombre;
+}
 
-const CHATS = [
-  { telefono: '+56 9 9988 7766', ultimoMensaje: '¿Hacen despacho a Rancagua?', ultimoTs: now - 15 * MIN, pausada: false },
-  { telefono: '+56 9 6789 0234', ultimoMensaje: 'Perfecto, ¿me pueden cotizar 30 planchas de acero inoxidable?', ultimoTs: now - 40 * MIN, pausada: false },
-  { telefono: '+56 9 4567 8901', ultimoMensaje: 'Perfecto, quedo atento a la OC entonces', ultimoTs: now - 1 * H, pausada: false },
-  { telefono: '+56 9 8811 2233', ultimoMensaje: '2 toneladas, despacho en Santiago centro.', ultimoTs: now - 2 * H, pausada: false },
-  { telefono: '+56 9 5678 9012', ultimoMensaje: '¿Tienen stock de planchas antideslizantes?', ultimoTs: now - 5 * H, pausada: false },
-  { telefono: '+56 9 7890 1234', ultimoMensaje: 'Gracias! Ya hicimos la transferencia', ultimoTs: now - 6 * H, pausada: true },
-  { telefono: '+56 9 7722 3344', ultimoMensaje: 'Sí, aceptamos pago en dos partes para pedidos sobre $1.000.000.', ultimoTs: now - 10 * H, pausada: false },
-  { telefono: '+56 9 1234 5678', ultimoMensaje: '¿Cuándo llega la cotización de las planchas?', ultimoTs: now - 30 * H, pausada: false },
-  { telefono: '+56 9 3344 5566', ultimoMensaje: 'Ya llegó el camión, gracias!', ultimoTs: now - 2 * D, pausada: true },
-];
+document.getElementById('client-switch').addEventListener('click', () => openModal('sheet-clientes'));
+document.getElementById('btn-logout').addEventListener('click', () => {
+  fetch('api/logout', { method: 'POST' }).finally(() => window.location.reload());
+});
 
-const PIPELINE_ITEMS = [
-  { telefono: '+56 9 1234 5678', etapa: 'enviada', actualizadoTs: now - 30 * H, resumen: 'Cotización de 50 planchas de acero galvanizado enviada, sin respuesta.' },
-  { telefono: '+56 9 2345 6789', etapa: 'enviada', actualizadoTs: now - 40 * H, resumen: 'Perfiles C 100x50 cotizados, cliente pidió descuento por volumen.' },
-  { telefono: '+56 9 3456 7890', etapa: 'enviada', actualizadoTs: now - 3 * H, resumen: 'Cotización de mallas ACMA enviada hace unas horas.' },
-  { telefono: '+56 9 4567 8901', etapa: 'pendiente', actualizadoTs: now - 1 * H, resumen: 'Pidió cotización de 200 tubos estructurales, falta calcular despacho.' },
-  { telefono: '+56 9 5678 9012', etapa: 'sin_stock', actualizadoTs: now - 5 * H, resumen: 'Preguntó por planchas antideslizantes, sin stock hasta octubre.' },
-  { telefono: '+56 9 6789 0123', etapa: 'no_interesado', actualizadoTs: now - 2 * D, resumen: 'Encontró mejor precio con otro proveedor.' },
-  { telefono: '+56 9 7890 1234', etapa: 'ganado', actualizadoTs: now - 6 * H, resumen: 'Cerró compra de 80 planchas + despacho a Rancagua. OC recibida.' },
-  { telefono: '+56 9 8901 2345', etapa: 'ganado', actualizadoTs: now - 1 * D, resumen: 'Compró perfiles y pidió que lo contacten el próximo mes para más.' },
-];
+function seleccionarCliente(id, resetChat) {
+  CLIENTE_ACTUAL = id;
+  ADS_MES_SELECCIONADO = null; // el mes elegido en Ads no debe quedar pegado entre clientes
+  if (resetChat) {
+    chatAbierto = null;
+    document.getElementById('chats-inbox').classList.remove('chat-open');
+    bloquearScrollFondo(false);
+  }
+  cargarInicio();
+  cargarChats();
+  cargarAds();
+  cargarAnalisis();
+  cargarClientesRoster();
+  cargarGastos();
+  cargarFacturacion();
+  cargarDesplazamiento();
+  document.getElementById('gastos-detalle').style.display = 'none';
+  document.getElementById('gastos-resumen').style.display = '';
+}
 
-const CLIENTES_ROSTER = [
-  { nombre: 'Constructora Rivas Ltda.', telefono: '+56 9 1234 5678', totalCotizado: 128000000, cantidadCotizaciones: 4, origenWhatsapp: true, ultimaFecha: '20-08-2026' },
-  { nombre: 'Ferretería El Tornillo', telefono: '+56 9 2345 6789', totalCotizado: 24000000, cantidadCotizaciones: 2, origenWhatsapp: true, ultimaFecha: '19-08-2026' },
-  { nombre: 'Metalúrgica Andina SpA', telefono: '+56 9 3456 7890', totalCotizado: 0, cantidadCotizaciones: 0, origenWhatsapp: true, ultimaFecha: null },
-  { nombre: 'Constructora Los Ríos', telefono: '+56 9 4567 8901', totalCotizado: 62000000, cantidadCotizaciones: 3, origenWhatsapp: true, ultimaFecha: '26-08-2026' },
-  { nombre: 'Bodega Industrial Maipú', telefono: '+56 9 5678 9012', totalCotizado: 0, cantidadCotizaciones: 0, origenWhatsapp: true, ultimaFecha: null },
-  { nombre: 'Transportes del Sur', telefono: '+56 9 7890 1234', totalCotizado: 96000000, cantidadCotizaciones: 5, origenWhatsapp: true, ultimaFecha: '27-08-2026' },
-  { nombre: 'Aceros Rancagua Ltda.', telefono: '+56 9 9988 7766', totalCotizado: 38000000, cantidadCotizaciones: 2, origenWhatsapp: true, ultimaFecha: '27-08-2026' },
-];
+function clienteActualObj() {
+  return CLIENTES.find((c) => c.id === CLIENTE_ACTUAL);
+}
 
-const DIARIO = [
-  { fecha: '2026-08-14', gasto: 52000, clicks: 38, impresiones: 2400, conversiones: 3 },
-  { fecha: '2026-08-15', gasto: 61000, clicks: 44, impresiones: 2700, conversiones: 4 },
-  { fecha: '2026-08-16', gasto: 38000, clicks: 29, impresiones: 1900, conversiones: 2 },
-  { fecha: '2026-08-17', gasto: 12000, clicks: 9, impresiones: 700, conversiones: 0 },
-  { fecha: '2026-08-18', gasto: 67000, clicks: 49, impresiones: 3100, conversiones: 5 },
-  { fecha: '2026-08-19', gasto: 73000, clicks: 52, impresiones: 3400, conversiones: 6 },
-  { fecha: '2026-08-20', gasto: 58000, clicks: 41, impresiones: 2600, conversiones: 3 },
-  { fecha: '2026-08-21', gasto: 64000, clicks: 47, impresiones: 2900, conversiones: 4 },
-  { fecha: '2026-08-22', gasto: 70000, clicks: 53, impresiones: 3300, conversiones: 7 },
-  { fecha: '2026-08-23', gasto: 41000, clicks: 31, impresiones: 2000, conversiones: 2 },
-  { fecha: '2026-08-24', gasto: 15000, clicks: 11, impresiones: 800, conversiones: 0 },
-  { fecha: '2026-08-25', gasto: 69000, clicks: 50, impresiones: 3200, conversiones: 5 },
-  { fecha: '2026-08-26', gasto: 76000, clicks: 56, impresiones: 3600, conversiones: 8 },
-  { fecha: '2026-08-27', gasto: 59000, clicks: 43, impresiones: 2750, conversiones: 4 },
-];
-
-const TOTALES_ADS = {
-  gasto: 755000, clicks: 553, impresiones: 34850, conversiones: 53,
-  cpc_promedio: 1365, costo_por_conversion: 14245,
-};
-
-const CAMPANAS = [
-  {
-    nombre: 'Búsqueda — Perfiles y Planchas de Acero', estado: 'ENABLED',
-    gasto: 424000, clicks: 310, conversiones: 32, ctr: 4.8, cpc_promedio: 1368,
-    valor_conversiones: 9800000, presupuesto_diario: 18000,
-    diario: [29000, 34000, 21000, 7000, 38000, 41000, 32000, 36000, 39000, 23000, 8000, 39000, 43000, 33000],
-  },
-  {
-    nombre: 'Remarketing — Visitantes del sitio', estado: 'ENABLED',
-    gasto: 192000, clicks: 160, conversiones: 14, ctr: 3.1, cpc_promedio: 1200,
-    valor_conversiones: 3200000, presupuesto_diario: 8000,
-    diario: [13000, 15000, 9000, 3000, 16000, 18000, 14000, 15000, 17000, 10000, 3000, 17000, 19000, 14000],
-  },
-  {
-    nombre: 'Búsqueda — Despacho a Regiones', estado: 'PAUSED',
-    gasto: 139000, clicks: 83, conversiones: 7, ctr: 2.4, cpc_promedio: 1675,
-    valor_conversiones: 1450000, presupuesto_diario: 6000,
-    diario: [10000, 12000, 8000, 2000, 13000, 14000, 12000, 13000, 14000, 8000, 4000, 13000, 14000, 12000],
-  },
-];
+// ---- Título de sección en la barra superior (solo se ve en escritorio) ----
+// Se observa el cambio de pestaña activa en vez de tocar cada lugar que navega entre
+// vistas (hay varios: tarjetas que saltan a un chat, el menú, etc.).
+(function () {
+  const nav = document.querySelector('.bottom-nav');
+  const titulo = document.getElementById('topbar-titulo');
+  function actualizar() {
+    const activo = nav.querySelector('.nav-btn.active span:last-child');
+    if (activo) titulo.textContent = activo.textContent;
+  }
+  new MutationObserver(actualizar).observe(nav, { subtree: true, attributes: true, attributeFilter: ['class'] });
+  actualizar();
+})();
 
 // ---- Navegación inferior ----
 document.querySelectorAll('.nav-btn').forEach((btn) => {
@@ -511,191 +1331,1435 @@ document.querySelectorAll('.nav-btn').forEach((btn) => {
   });
 });
 
-document.getElementById('btn-bell').addEventListener('click', () => toast('🔔 3 conversaciones nuevas hoy'));
+// ---- Nuevo / editar cliente ----
+function abrirModalNuevoCliente() {
+  document.querySelector('#sheet-cliente .sheet-title').textContent = 'Nuevo cliente';
+  document.getElementById('f-nombre').value = '';
+  document.getElementById('f-id').value = '';
+  delete document.getElementById('f-id').dataset.tocado;
+  document.getElementById('f-bot-url').value = '';
+  document.getElementById('f-panel-key').value = '';
+  document.getElementById('f-customer-id').value = '';
+  document.getElementById('f-facturacion-dia').value = '';
+  document.getElementById('f-facturacion-pago-fijo').value = '';
+  document.getElementById('f-facturacion-comision').value = '';
+  document.getElementById('f-codigo-acceso').value = '';
+  openModal('sheet-cliente');
+}
+function abrirModalEditarCliente(c) {
+  document.querySelector('#sheet-cliente .sheet-title').textContent = 'Editar cliente';
+  document.getElementById('f-nombre').value = c ? c.nombre : '';
+  document.getElementById('f-id').value = c ? c.id : '';
+  document.getElementById('f-id').dataset.tocado = '1';
+  document.getElementById('f-bot-url').value = '';
+  document.getElementById('f-panel-key').value = '';
+  document.getElementById('f-customer-id').value = c ? c.ads.customerId : '';
+  document.getElementById('f-facturacion-dia').value = c && c.facturacion && c.facturacion.diaCorte ? c.facturacion.diaCorte : '';
+  document.getElementById('f-facturacion-pago-fijo').value = c && c.facturacion && c.facturacion.pagoFijo ? c.facturacion.pagoFijo : '';
+  document.getElementById('f-facturacion-comision').value = c && c.facturacion && c.facturacion.comisionPct ? c.facturacion.comisionPct : '';
+  document.getElementById('f-codigo-acceso').value = c ? (c.codigoAcceso || '') : '';
+  openModal('sheet-cliente');
+}
+function generarCodigoAcceso() {
+  const alfabeto = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789'; // sin caracteres ambiguos (0/O, 1/I)
+  const random = new Uint8Array(8);
+  crypto.getRandomValues(random);
+  let out = '';
+  for (let i = 0; i < random.length; i++) out += alfabeto[random[i] % alfabeto.length];
+  return out;
+}
+document.getElementById('btn-nuevo-cliente').addEventListener('click', abrirModalNuevoCliente);
+document.getElementById('btn-nuevo-cliente-empty').addEventListener('click', abrirModalNuevoCliente);
+document.getElementById('btn-conectar-whatsapp').addEventListener('click', () => {
+  const c = clienteActualObj();
+  if (c) abrirModalEditarCliente(c); else abrirModalNuevoCliente();
+});
+document.getElementById('btn-generar-codigo').addEventListener('click', () => {
+  document.getElementById('f-codigo-acceso').value = generarCodigoAcceso();
+});
+
+document.getElementById('f-nombre').addEventListener('input', (e) => {
+  const idField = document.getElementById('f-id');
+  if (!idField.dataset.tocado) {
+    idField.value = e.target.value.toLowerCase()
+      .normalize('NFD').replace(/[̀-ͯ]/g, '')
+      .replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '');
+  }
+});
+document.getElementById('f-id').addEventListener('input', (e) => { e.target.dataset.tocado = '1'; });
+
+document.getElementById('btn-guardar-cliente').addEventListener('click', () => {
+  const nombre = document.getElementById('f-nombre').value.trim();
+  const id = document.getElementById('f-id').value.trim();
+  if (!nombre || !id) { alert('Nombre e ID son obligatorios'); return; }
+
+  const botUrl = document.getElementById('f-bot-url').value.trim();
+  const panelKey = document.getElementById('f-panel-key').value.trim();
+  const customerId = document.getElementById('f-customer-id').value.trim();
+  const facturacionDia = document.getElementById('f-facturacion-dia').value.trim();
+  const facturacionPagoFijo = document.getElementById('f-facturacion-pago-fijo').value.trim();
+  const facturacionComision = document.getElementById('f-facturacion-comision').value.trim();
+  const codigoAcceso = document.getElementById('f-codigo-acceso').value.trim();
+
+  const body = {
+    id, nombre, codigoAcceso,
+    facturacion: {
+      diaCorte: facturacionDia ? Number(facturacionDia) : null,
+      pagoFijo: facturacionPagoFijo ? Number(facturacionPagoFijo) : 0,
+      comisionPct: facturacionComision ? Number(facturacionComision) : 0,
+    },
+  };
+  if (botUrl && panelKey) body.whatsapp = { botUrl, panelKey };
+  if (customerId) body.ads = { customerId };
+
+  fetch('api/clients', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(body),
+  })
+    .then((r) => r.json())
+    .then((res) => {
+      if (res.error) { alert(res.error); return; }
+      closeModals();
+      CLIENTE_ACTUAL = id;
+      cargarClientes();
+    });
+});
 
 // ---- Chats de WhatsApp ----
-let chatAbierto = null;
+function tiempoRelativo(ts) {
+  if (!ts) return '';
+  const diffMin = Math.round((Date.now() - ts) / 60000);
+  if (diffMin < 1) return 'ahora';
+  if (diffMin < 60) return `hace ${diffMin} min`;
+  const diffH = Math.round(diffMin / 60);
+  if (diffH < 24) return `hace ${diffH} h`;
+  return `hace ${Math.round(diffH / 24)} d`;
+}
+
+// Estado/color de un chat: Polimer lo calcula el bot en vivo (cumple el mínimo de
+// producción o no); Conflex no tiene mínimo, así que verde = ya tiene una cotización.
+let ROSTER_POR_TEL = {};
+let FILTRO_ESTADO = 'todos';
+function estadoDeChat(c) {
+  const manual = c.estadoManual ? ' ✎' : '';
+  if (c.estadoPedido === 'cumple') return { clave: 'cumple', texto: 'Cumple mínimo' + manual };
+  if (c.estadoPedido === 'no_cumple') return { clave: 'no_cumple', texto: 'No cumple mínimo' + manual };
+  if (c.estadoPedido === 'parcial') return { clave: 'parcial', texto: 'Cumple parcial' + manual };
+  const cl = ROSTER_POR_TEL[(c.telefono || '').replace(/\D/g, '')];
+  if (!c.estadoPedido && cl && cl.cantidadCotizaciones > 0) return { clave: 'cumple', texto: 'Cotizó' };
+  return null;
+}
+
+// ---- Sin leer: por dispositivo (localStorage). Un chat está "sin leer" si el cliente
+// escribió después de la última vez que se abrió acá. La primera vez que se usa en un
+// cliente se fija una base (ahora), para no marcar todo el historial como nuevo. ----
+function leidosDe() {
+  try {
+    const raw = JSON.parse(localStorage.getItem('panel_leidos_' + CLIENTE_ACTUAL) || 'null');
+    if (raw && raw.base) return raw;
+  } catch (e) { /* sin storage: se cae a la base de abajo */ }
+  const nuevo = { base: Date.now(), chats: {} };
+  try { localStorage.setItem('panel_leidos_' + CLIENTE_ACTUAL, JSON.stringify(nuevo)); } catch (e) { /* sin storage */ }
+  return nuevo;
+}
+function marcarLeido(telefono) {
+  const c = CHATS_CACHE.find((x) => x.telefono === telefono);
+  if (!c || !c.ultimoClienteTs) return;
+  const l = leidosDe();
+  if ((l.chats[telefono] || 0) >= c.ultimoClienteTs) return;
+  l.chats[telefono] = c.ultimoClienteTs;
+  try { localStorage.setItem('panel_leidos_' + CLIENTE_ACTUAL, JSON.stringify(l)); } catch (e) { /* sin storage */ }
+}
+function sinLeer(c, l) {
+  l = l || leidosDe();
+  return (c.ultimoClienteTs || 0) > Math.max(l.base, l.chats[c.telefono] || 0);
+}
+
+// ---- Seguimiento: clientes que dejaron de responder (mismos umbrales que el cron del
+// servidor, ver pendientesSeguimiento en worker.js) ----
+const SEGUIMIENTO_MIN_DIAS = 2;
+const SEGUIMIENTO_MAX_DIAS = 14;
+function esPendienteSeguimiento(c) {
+  const DIA = 24 * 3600 * 1000;
+  const ahora = Date.now();
+  return (c.ultimoClienteTs || 0) > 0
+    && c.ultimoTs > c.ultimoClienteTs + 60000
+    && ahora - c.ultimoTs >= SEGUIMIENTO_MIN_DIAS * DIA
+    && ahora - c.ultimoTs <= SEGUIMIENTO_MAX_DIAS * DIA
+    && c.estadoPedido !== 'no_cumple'
+    && !c.pausada
+    && !c.archivado;
+}
+
+// Nombre cargado a mano / de cotizaciones para un teléfono (vacío si el roster solo
+// tiene el número, que es lo que pasa con un contacto que aún no se completó).
+function nombreDeContacto(telefono) {
+  const cl = ROSTER_POR_TEL[(telefono || '').replace(/\D/g, '')];
+  if (!cl || !cl.nombre) return '';
+  return cl.nombre.replace(/\D/g, '') === (telefono || '').replace(/\D/g, '') ? '' : cl.nombre;
+}
+function nombreParaMostrar(c) {
+  if (c.canal === 'web') return 'Chat web · ' + String(c.telefono).slice(4, 10);
+  return nombreDeContacto(c.telefono) || c.telefono;
+}
+
+let BUSQUEDA_CHATS = '';
+let ORDEN_CHATS = 'recientes';
+
+// Cuenta cuántos chats caen en cada estado, para los chips de filtro. Los archivados
+// no cuentan en "Todos" ni en los estados: tienen su propio chip.
+function contarPorEstado() {
+  const conteo = { todos: 0, cumple: 0, parcial: 0, no_cumple: 0, respondidos: 0, archivados: 0 };
+  for (const c of CHATS_CACHE) {
+    if (c.archivado) { conteo.archivados++; continue; }
+    conteo.todos++;
+    if (c.respondido) conteo.respondidos++;
+    const est = estadoDeChat(c);
+    if (est && conteo[est.clave] != null) conteo[est.clave]++;
+  }
+  return conteo;
+}
+
+function renderChipsFiltro() {
+  const conteo = contarPorEstado();
+  const nombres = { todos: 'Todos', cumple: 'Cumple mínimo', parcial: 'Variable', no_cumple: 'No cumple', respondidos: 'Respondidos', archivados: 'Archivados' };
+  document.querySelectorAll('.filtro-chip').forEach((btn) => {
+    const estado = btn.dataset.estado;
+    btn.classList.toggle('activo', estado === FILTRO_ESTADO);
+    btn.textContent = `${nombres[estado]} (${conteo[estado] || 0})`;
+  });
+  // Atajo para limpiar de una vez los chats de prueba del chat web (más de 7 días).
+  const hace7d = Date.now() - 7 * 24 * 3600 * 1000;
+  const viejosWeb = CHATS_CACHE.filter((c) => c.canal === 'web' && !c.archivado && c.ultimoTs < hace7d);
+  const btnWeb = document.getElementById('btn-archivar-web');
+  btnWeb.style.display = viejosWeb.length ? '' : 'none';
+  btnWeb.textContent = `Archivar ${viejosWeb.length} chat(s) web antiguos`;
+}
+
+// Chats visibles según filtro, búsqueda y orden.
+function chatsVisibles() {
+  let lista = CHATS_CACHE.filter((c) => (FILTRO_ESTADO === 'archivados' ? !!c.archivado : !c.archivado));
+  if (FILTRO_ESTADO === 'respondidos') lista = lista.filter((c) => c.respondido);
+  else if (FILTRO_ESTADO !== 'todos' && FILTRO_ESTADO !== 'archivados') {
+    lista = lista.filter((c) => { const est = estadoDeChat(c); return est && est.clave === FILTRO_ESTADO; });
+  }
+  const q = BUSQUEDA_CHATS.trim().toLowerCase();
+  if (q) {
+    const qDigitos = q.replace(/\D/g, '');
+    lista = lista.filter((c) =>
+      nombreParaMostrar(c).toLowerCase().includes(q)
+      || (qDigitos && String(c.telefono).replace(/\D/g, '').includes(qDigitos))
+      || (c.ultimoMensaje || '').toLowerCase().includes(q));
+  }
+  const l = leidosDe();
+  const peso = { cumple: 0, parcial: 1, no_cumple: 2 };
+  if (ORDEN_CHATS === 'sin_leer') {
+    lista = [...lista].sort((a, b) => (sinLeer(b, l) - sinLeer(a, l)) || (b.ultimoTs - a.ultimoTs));
+  } else if (ORDEN_CHATS === 'etiqueta') {
+    lista = [...lista].sort((a, b) => {
+      const ea = estadoDeChat(a), eb = estadoDeChat(b);
+      return ((ea ? peso[ea.clave] : 9) - (eb ? peso[eb.clave] : 9)) || (b.ultimoTs - a.ultimoTs);
+    });
+  }
+  return lista;
+}
 
 function renderListaChats() {
   const list = document.getElementById('inbox-list');
-  list.innerHTML = CHATS.map((c) => `
-    <div class="inbox-item ${c.telefono === chatAbierto ? 'selected' : ''}" data-telefono="${c.telefono}">
-      <div class="inbox-avatar">${c.telefono.slice(-2)}</div>
+  renderChipsFiltro();
+  renderSeguimiento();
+  renderMetricas();
+  const l = leidosDe();
+  const totalSinLeer = CHATS_CACHE.filter((c) => !c.archivado && c.telefono !== chatAbierto && sinLeer(c, l)).length;
+  const navBadge = document.getElementById('nav-badge-chats');
+  navBadge.textContent = totalSinLeer > 99 ? '99+' : String(totalSinLeer);
+  navBadge.style.display = totalSinLeer ? 'flex' : 'none';
+
+  const chatsFiltrados = chatsVisibles();
+  if (!chatsFiltrados.length) {
+    list.innerHTML = `<div class="inbox-empty-msg">${CHATS_CACHE.length ? 'Ningún chat coincide con este filtro.' : 'Todavía no hay conversaciones.'}</div>`;
+    return;
+  }
+  list.innerHTML = chatsFiltrados.map((c) => {
+    const esWeb = c.canal === 'web';
+    const nombreContacto = esWeb ? '' : nombreDeContacto(c.telefono);
+    const est = estadoDeChat(c);
+    const nuevo = c.telefono !== chatAbierto && sinLeer(c, l);
+    return `
+    <div class="inbox-item ${c.telefono === chatAbierto ? 'selected' : ''} ${est ? 'estado-' + est.clave : ''} ${nuevo ? 'sin-leer' : ''}" data-telefono="${esc(c.telefono)}">
+      <div class="inbox-avatar">${esWeb ? icon('chat', 16) : (nombreContacto ? esc(iniciales(nombreContacto)) : esc(String(c.telefono).slice(-2)))}</div>
       <div class="inbox-item-body">
         <div class="inbox-item-top">
-          <span class="inbox-item-name">${c.telefono}</span>
+          <span class="inbox-item-name">${esc(nombreParaMostrar(c))}</span>
           <span class="inbox-item-time">${tiempoRelativo(c.ultimoTs)}</span>
         </div>
-        <div class="inbox-item-preview">${(c.ultimoMensaje || 'Sin mensajes').slice(0, 60)}</div>
+        <div class="inbox-item-preview">${esc((c.ultimoMensaje || 'Sin mensajes').slice(0, 60))}</div>
         <div class="inbox-item-badges">
+          ${nuevo ? '<span class="badge badge-nuevo">Nuevo</span>' : ''}
+          <span class="badge ${esWeb ? 'canal-web' : 'canal-whatsapp'}">${esWeb ? 'Chat web' : 'WhatsApp'}</span>
+          ${est ? `<span class="badge est-${est.clave}">${est.texto}</span>` : ''}
+          ${c.respondido ? '<span class="badge est-respondido">Respondido</span>' : ''}
           <span class="badge ${c.pausada ? 'pausado' : 'activo'}">${c.pausada ? 'Pausado' : 'Bot activo'}</span>
+          ${c.entregaFallida ? `<span class="badge pausado">${icon('alert', 11)} No entregado</span>` : ''}
         </div>
       </div>
     </div>
-  `).join('');
+  `;
+  }).join('');
   list.querySelectorAll('.inbox-item').forEach((el) => {
     el.addEventListener('click', () => abrirChat(el.dataset.telefono));
   });
 }
 
+// ---- Inicio: clientes que esperan seguimiento ----
+function renderSeguimiento() {
+  const cont = document.getElementById('inicio-seguimiento');
+  if (!cont) return;
+  const DIA = 24 * 3600 * 1000;
+  const pendientes = CHATS_CACHE.filter(esPendienteSeguimiento).sort((a, b) => a.ultimoTs - b.ultimoTs);
+  if (!pendientes.length) {
+    cont.innerHTML = '<div class="inbox-empty-msg">Nadie pendiente: no hay clientes sin respuesta hace más de 2 días.</div>';
+    return;
+  }
+  cont.innerHTML = pendientes.map((c) => {
+    const est = estadoDeChat(c);
+    return `
+    <div class="client-roster-card" data-telefono="${esc(c.telefono)}">
+      <div class="client-roster-avatar">${icon('clock', 16)}</div>
+      <div class="client-roster-body">
+        <div class="client-roster-name">${esc(nombreParaMostrar(c))}</div>
+        <div class="client-roster-meta">Sin respuesta hace ${Math.floor((Date.now() - c.ultimoTs) / DIA)} días · ${esc((c.ultimoMensaje || '').slice(0, 50))}</div>
+        <div class="client-roster-tags">${est ? `<span class="badge est-${est.clave}">${est.texto}</span>` : ''}</div>
+      </div>
+    </div>`;
+  }).join('');
+  cont.querySelectorAll('.client-roster-card').forEach((el) => el.addEventListener('click', () => irAChat(el.dataset.telefono)));
+}
+
+// ---- Análisis: métricas de pedidos por etiqueta y por semana (según la última
+// actividad del chat) ----
+function renderMetricas() {
+  const cont = document.getElementById('analisis-metricas');
+  if (!cont) return;
+  const activos = CHATS_CACHE.filter((c) => !c.archivado);
+  const clasif = activos.filter((c) => { const e = estadoDeChat(c); return e && ['cumple', 'parcial', 'no_cumple'].includes(e.clave); });
+  if (!clasif.length) { cont.innerHTML = ''; return; }
+  const cuenta = { cumple: 0, parcial: 0, no_cumple: 0 };
+  clasif.forEach((c) => { cuenta[estadoDeChat(c).clave]++; });
+  const pct = (n) => Math.round((n / clasif.length) * 100);
+
+  // Últimas 8 semanas (lunes a domingo), contando cada chat en la semana de su última actividad.
+  const lunes = (ts) => { const d = new Date(ts); d.setHours(0, 0, 0, 0); d.setDate(d.getDate() - ((d.getDay() + 6) % 7)); return d.getTime(); };
+  const semanaActual = lunes(Date.now());
+  const SEM = 7 * 24 * 3600 * 1000;
+  const semanas = [];
+  for (let i = 7; i >= 0; i--) semanas.push({ ini: semanaActual - i * SEM, cumple: 0, parcial: 0, no_cumple: 0 });
+  clasif.forEach((c) => {
+    const w = semanas.find((x) => c.ultimoTs >= x.ini && c.ultimoTs < x.ini + SEM);
+    if (w) w[estadoDeChat(c).clave]++;
+  });
+  const maximo = Math.max(1, ...semanas.map((w) => w.cumple + w.parcial + w.no_cumple));
+  const fmt = (ts) => new Date(ts).toLocaleDateString('es-CL', { day: 'numeric', month: 'short' });
+
+  cont.innerHTML = `
+    <div class="panel" style="margin-bottom:16px;">
+      <div class="panel-title"><span>Pedidos por etiqueta</span></div>
+      <div style="padding:14px 16px 12px;">
+      <div class="metricas-kpis">
+        <div class="metrica-kpi"><div class="v" style="color:#17874a;">${pct(cuenta.cumple)}%</div><div class="l">Cumple mínimo (${cuenta.cumple})</div></div>
+        <div class="metrica-kpi"><div class="v" style="color:#e0a11b;">${pct(cuenta.parcial)}%</div><div class="l">Variable (${cuenta.parcial})</div></div>
+        <div class="metrica-kpi"><div class="v" style="color:#c23c34;">${pct(cuenta.no_cumple)}%</div><div class="l">No cumple (${cuenta.no_cumple})</div></div>
+      </div>
+      <div class="metricas-semanas">
+        ${semanas.map((w) => {
+          const tot = w.cumple + w.parcial + w.no_cumple;
+          const h = (n) => (n / maximo) * 100;
+          return `<div class="metrica-col" title="Semana del ${fmt(w.ini)}: ${w.cumple} cumplen, ${w.parcial} variables, ${w.no_cumple} no cumplen">
+            <div class="metrica-num">${tot || ''}</div>
+            <div class="metrica-barra">
+              <div style="height:${h(w.no_cumple)}%;background:#c23c34;"></div>
+              <div style="height:${h(w.parcial)}%;background:#e0a11b;"></div>
+              <div style="height:${h(w.cumple)}%;background:#17874a;"></div>
+            </div>
+            <div class="metrica-sem">${fmt(w.ini)}</div>
+          </div>`;
+        }).join('')}
+      </div>
+      <div class="client-roster-meta" style="margin-top:8px;">Cada pedido se cuenta en la semana de su última actividad. Incluye las etiquetas que cambiaste a mano.</div>
+      </div>
+    </div>`;
+}
+
+document.querySelectorAll('.filtro-chip').forEach((btn) => {
+  btn.addEventListener('click', () => {
+    FILTRO_ESTADO = btn.dataset.estado;
+    renderListaChats();
+  });
+});
+document.getElementById('chats-buscar').addEventListener('input', (e) => { BUSQUEDA_CHATS = e.target.value; renderListaChats(); });
+document.getElementById('chats-orden').addEventListener('change', (e) => { ORDEN_CHATS = e.target.value; renderListaChats(); });
+document.getElementById('btn-archivar-web').addEventListener('click', () => {
+  const hace7d = Date.now() - 7 * 24 * 3600 * 1000;
+  const viejos = CHATS_CACHE.filter((c) => c.canal === 'web' && !c.archivado && c.ultimoTs < hace7d).map((c) => c.telefono);
+  if (!viejos.length || !confirm(`¿Archivar ${viejos.length} chat(s) web de hace más de 7 días? No se borran: quedan en "Archivados".`)) return;
+  fetch(`api/clients/${CLIENTE_ACTUAL}/chats-archivar-lote`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ telefonos: viejos }),
+  }).then(() => cargarChats()).catch(() => alert('No se pudo archivar.'));
+});
+
+function cargarChats() {
+  const c = clienteActualObj();
+  const noConfig = document.getElementById('chats-no-config');
+  const inbox = document.getElementById('chats-inbox');
+  const filtroEstado = document.getElementById('chats-filtro-estado');
+  if (!c || !c.whatsapp.configurado) {
+    noConfig.style.display = '';
+    inbox.style.display = 'none';
+    filtroEstado.style.display = 'none';
+    document.getElementById('chats-herramientas').style.display = 'none';
+    return;
+  }
+  noConfig.style.display = 'none';
+  inbox.style.display = '';
+  filtroEstado.style.display = 'flex';
+  document.getElementById('chats-herramientas').style.display = 'flex';
+  // Se limpia la lista y se muestra "Cargando..." de inmediato — antes se quedaba
+  // mostrando los chats del cliente anterior (ej. Conflex) hasta que la respuesta del
+  // nuevo cliente (ej. Polimer) llegaba, y como esa consulta podía demorar, parecía que
+  // el panel se había quedado pegado mostrando datos de otro cliente.
+  // Solo al cambiar de cliente se vacía la lista. Los refrescos automáticos (cada 8 s)
+  // reemplazan la lista sin borrarla, para no parpadear ni mostrar "Cargando" todo el rato.
+  if (CHATS_CACHE_CLIENTE !== CLIENTE_ACTUAL) {
+    CHATS_CACHE = [];
+    CHATS_FIRMA = '';
+    FILTRO_ESTADO = 'todos'; // el filtro no debe quedar pegado de un cliente a otro
+    document.getElementById('inbox-list').innerHTML = '<div class="inbox-empty-msg">Cargando conversaciones…</div>';
+  }
+  CHATS_CACHE_CLIENTE = CLIENTE_ACTUAL;
+  const clienteAlPedir = CLIENTE_ACTUAL;
+  Promise.all([
+    fetch(`api/clients/${CLIENTE_ACTUAL}/chats?_=` + Date.now()).then((r) => r.json()),
+    fetch(`api/clients/${CLIENTE_ACTUAL}/clientes?_=` + Date.now()).then((r) => r.json()).catch(() => null),
+  ])
+    .then(([chats, roster]) => {
+      // Si mientras esperaba la respuesta el usuario ya cambió a otro cliente, esta
+      // respuesta (tardía) ya no corresponde — se descarta para no pisar la lista nueva.
+      if (CLIENTE_ACTUAL !== clienteAlPedir) return;
+      ROSTER_POR_TEL = {};
+      ((roster && roster.clientes) || []).forEach((cl) => {
+        if (cl.telefono) ROSTER_POR_TEL[String(cl.telefono).replace(/\D/g, '')] = cl;
+      });
+      // El bot puede fallar (ej. 503 por exceso de CPU con muchas conversaciones) — antes
+      // eso se mostraba igual que "no hay conversaciones" y parecía que se habían borrado
+      // todas. Ahora, si falla, se deja la lista tal cual estaba y se avisa arriba.
+      const avisoBot = document.getElementById('chats-aviso-bot');
+      if (chats && chats.error) {
+        avisoBot.textContent = `⚠ No se pudo actualizar (${chats.error}). Mostrando lo último cargado.`;
+        avisoBot.style.display = '';
+        return;
+      }
+      avisoBot.style.display = 'none';
+      const nuevos = Array.isArray(chats) ? chats : (chats && chats.items) || [];
+      // Si nada cambió desde el último refresco, no se vuelve a dibujar la lista.
+      // Así el refresco cada 8 s no reemplaza filas que ya están en pantalla.
+      const firma = JSON.stringify(nuevos) + '|' + JSON.stringify(ROSTER_POR_TEL) + '|' + chatAbierto;
+      if (firma === CHATS_FIRMA && CHATS_CACHE_CLIENTE === clienteAlPedir) return;
+      CHATS_FIRMA = firma;
+      CHATS_CACHE = nuevos;
+      if (chatAbierto) marcarLeido(chatAbierto); // lo que llega con el chat abierto ya se vio
+      renderListaChats();
+      actualizarCabeceraChat();
+    })
+    .catch(() => {});
+}
+
 function abrirChat(telefono) {
   chatAbierto = telefono;
+  MENSAJES_FIRMA = ''; // fuerza el primer render al abrir, aunque coincida con la firma de otro chat
+  marcarLeido(telefono);
   document.getElementById('chats-inbox').classList.add('chat-open');
-  document.getElementById('inbox-chat-telefono').textContent = telefono;
-  const chat = CHATS.find((c) => c.telefono === telefono);
-  document.getElementById('chat-reanudar').style.display = chat && chat.pausada ? '' : 'none';
+  bloquearScrollFondo(true);
+  document.getElementById('inbox-chat-head').style.display = '';
+  document.getElementById('inbox-input-row').style.display = '';
+  actualizarCabeceraChat();
   renderListaChats();
-  const body = document.getElementById('chat-body');
-  const mensajes = MENSAJES[telefono] || [];
-  body.innerHTML = mensajes.map((m) => `<div class="bubble ${m.rol}">${m.texto}</div>`).join('');
-  body.scrollTop = body.scrollHeight;
+  cargarMensajesChat();
+}
+
+// Cabecera del chat abierto: nombre/teléfono + color y etiqueta de estado. Se vuelve a
+// llamar cuando llega la lista de chats, así un cambio de etiqueta se ve al toque.
+function actualizarCabeceraChat() {
+  if (!chatAbierto) return;
+  const nombre = nombreDeContacto(chatAbierto);
+  document.getElementById('inbox-chat-telefono').textContent = nombre ? `${nombre} · ${chatAbierto}` : chatAbierto;
+  const chatSel = CHATS_CACHE.find((x) => x.telefono === chatAbierto);
+  const estSel = chatSel ? estadoDeChat(chatSel) : null;
+  document.getElementById('inbox-chat-head').className = 'inbox-chat-head' + (estSel ? ' estado-' + estSel.clave : '');
+  // La etiqueta siempre se muestra (aunque el bot aún no clasifique) y al tocarla se
+  // abren las opciones para cambiarla.
+  const bEst = document.getElementById('chat-estado');
+  bEst.style.display = '';
+  bEst.className = 'badge ' + (estSel ? 'est-' + estSel.clave : 'est-ninguna');
+  bEst.textContent = (estSel ? estSel.texto : 'Sin etiqueta') + ' ▾';
+  document.getElementById('chat-etiqueta').title = 'Cambiar etiqueta / archivar';
+  const respondido = !!(chatSel && chatSel.respondido);
+  document.getElementById('chat-respondido').style.display = respondido ? '' : 'none';
+  const btnResp = document.getElementById('estado-respondido');
+  btnResp.dataset.respondido = respondido ? 'false' : 'true';
+  btnResp.textContent = respondido ? 'Quitar «Respondido»' : 'Marcar como respondido';
+  const archivado = !!(chatSel && chatSel.archivado);
+  const btnArch = document.getElementById('estado-archivar');
+  btnArch.dataset.archivar = archivado ? 'false' : 'true';
+  btnArch.textContent = archivado ? 'Desarchivar chat' : 'Archivar chat';
 }
 
 document.getElementById('btn-volver-chats').addEventListener('click', () => {
   document.getElementById('chats-inbox').classList.remove('chat-open');
+  bloquearScrollFondo(false);
+});
+
+// En mobile el chat abierto es un overlay "fixed" encima de .inbox-list, que sigue
+// montado en el flujo normal detrás. Sin esto, arrastrar el dedo dentro del chat
+// puede mover el scroll del documento por debajo y la lista de chats se ve como
+// fondo deslizándose. Se bloquea el scroll del body mientras el chat está abierto.
+let SCROLL_Y_PREVIO = 0;
+function bloquearScrollFondo(bloquear) {
+  if (window.matchMedia && !window.matchMedia('(max-width: 759px)').matches) return;
+  if (bloquear) {
+    SCROLL_Y_PREVIO = window.scrollY;
+    document.body.style.position = 'fixed';
+    document.body.style.top = `-${SCROLL_Y_PREVIO}px`;
+    document.body.style.left = '0';
+    document.body.style.right = '0';
+    document.body.style.width = '100%';
+  } else {
+    document.body.style.position = '';
+    document.body.style.top = '';
+    document.body.style.left = '';
+    document.body.style.right = '';
+    document.body.style.width = '';
+    window.scrollTo(0, SCROLL_Y_PREVIO);
+  }
+}
+
+// ---- Burbujas estilo WhatsApp: hora + check de enviado/entregado/leído ----
+function formatHora(ts) {
+  if (!ts) return '';
+  return new Date(ts).toLocaleTimeString('es-CL', { hour: '2-digit', minute: '2-digit' });
+}
+function tickEstado(estado) {
+  if (estado === 'read') return `<span class="bubble-tick tick-read">${icon('tickDouble', 14)}</span>`;
+  if (estado === 'delivered') return `<span class="bubble-tick tick-delivered">${icon('tickDouble', 14)}</span>`;
+  if (estado === 'sent' || estado === 'enviado') return `<span class="bubble-tick tick-sent">${icon('tickSingle', 14)}</span>`;
+  if (estado === 'failed') return `<span class="bubble-tick tick-failed">${icon('alert', 12)}</span>`;
+  return '';
+}
+function renderBurbuja(m) {
+  const meta = (m.ts || m.estado)
+    ? `<div class="bubble-meta">${formatHora(m.ts)}${m.rol === 'bot' ? tickEstado(m.estado) : ''}</div>`
+    : '';
+  const audio = m.audioKey
+    ? `<audio controls preload="none" class="bubble-audio" src="api/clients/${CLIENTE_ACTUAL}/chats/${encodeURIComponent(chatAbierto)}/audio?key=${encodeURIComponent(m.audioKey)}"></audio>`
+    : '';
+  const imagen = m.imageKey
+    ? `<img class="bubble-imagen" loading="lazy" src="api/clients/${CLIENTE_ACTUAL}/chats/${encodeURIComponent(chatAbierto)}/audio?key=${encodeURIComponent(m.imageKey)}" alt="Imagen enviada por el cliente">`
+    : '';
+  return `<div class="bubble ${m.rol === 'bot' ? 'bot' : 'cliente'}">${audio}${imagen}${esc(m.texto)}${meta}</div>`;
+}
+
+let MENSAJES_FIRMA = '';
+function cargarMensajesChat() {
+  if (!chatAbierto) return;
+  fetch(`api/clients/${CLIENTE_ACTUAL}/chats/` + encodeURIComponent(chatAbierto) + '?_=' + Date.now())
+    .then((r) => r.json())
+    .then((data) => {
+      document.getElementById('chat-reanudar').style.display = data.pausada ? '' : 'none';
+      document.getElementById('chat-pausar').style.display = data.pausada ? 'none' : '';
+      const body = document.getElementById('chat-body');
+      const aviso = data.entregaFallida
+        ? `<div class="inbox-chat-aviso">${icon('alert', 13)} El último mensaje del bot NO llegó a WhatsApp (${new Date(data.entregaFallida.ts).toLocaleString('es-CL')}). Probablemente el token de WhatsApp venció — este chat solo muestra lo que el bot generó, no lo que realmente recibió el cliente.</div>`
+        : '';
+      const html = aviso + ((data.mensajes || []).map(renderBurbuja).join('')
+        || `<div class="inbox-chat-empty"><div class="inbox-chat-empty-icon">${icon('chat', 30)}</div><span>Sin mensajes todavía</span></div>`);
+      // Si nada cambió desde el último refresco (cada 2s mientras el chat está abierto),
+      // no se vuelve a escribir el innerHTML: reemplazarlo igual aunque no cambiara nada
+      // le rompía al usuario cualquier selección de texto en curso (para copiar un
+      // mensaje) porque el navegador pierde el punto de anclaje de la selección cuando
+      // el nodo de texto subyacente se destruye y se vuelve a crear a mitad de camino.
+      const firma = chatAbierto + '|' + html;
+      if (firma === MENSAJES_FIRMA) return;
+      MENSAJES_FIRMA = firma;
+      // Solo se auto-baja al fondo si el usuario ya estaba abajo (o es la primera carga)
+      // — antes se forzaba SIEMPRE en cada refresco, así que si alguien scrolleaba para
+      // arriba a leer el historial, el panel lo devolvía al fondo solo, todo el rato.
+      const estabaAbajo = body.scrollHeight - body.scrollTop - body.clientHeight < 80;
+      body.innerHTML = html;
+      if (estabaAbajo) body.scrollTop = body.scrollHeight;
+    })
+    .catch(() => {});
+}
+
+// PDF de solicitud: se genera una vez (la IA tarda unos segundos) y después se puede
+// descargar, compartir (en celular abre "Guardar en Archivos") o ver, sin volver a generarlo.
+let PDF_ACTUAL = null;
+document.getElementById('chat-pdf').addEventListener('click', () => {
+  if (!chatAbierto) return;
+  const estado = document.getElementById('pdf-estado');
+  const acciones = document.getElementById('pdf-acciones');
+  estado.textContent = 'Generando el resumen de lo solicitado… (unos segundos)';
+  acciones.style.display = 'none';
+  openModal('sheet-pdf');
+  fetch(`api/clients/${CLIENTE_ACTUAL}/chats/${encodeURIComponent(chatAbierto)}/solicitud-pdf?descargar=1`)
+    .then(async (r) => {
+      if (!r.ok) throw new Error((await r.json().catch(() => ({}))).error || 'Error ' + r.status);
+      const m = (r.headers.get('Content-Disposition') || '').match(/filename="([^"]+)"/);
+      return { blob: await r.blob(), nombre: m ? m[1] : 'solicitud-cotizacion.pdf' };
+    })
+    .then(({ blob, nombre }) => {
+      if (PDF_ACTUAL) URL.revokeObjectURL(PDF_ACTUAL.url);
+      PDF_ACTUAL = { blob, nombre, url: URL.createObjectURL(blob) };
+      estado.textContent = 'Listo: ' + nombre;
+      acciones.style.display = 'flex';
+      const archivo = new File([blob], nombre, { type: 'application/pdf' });
+      document.getElementById('pdf-compartir').style.display =
+        navigator.canShare && navigator.canShare({ files: [archivo] }) ? '' : 'none';
+    })
+    .catch((err) => { estado.textContent = 'No se pudo generar el PDF: ' + err.message; });
+});
+document.getElementById('pdf-descargar').addEventListener('click', () => {
+  if (!PDF_ACTUAL) return;
+  const a = document.createElement('a');
+  a.href = PDF_ACTUAL.url;
+  a.download = PDF_ACTUAL.nombre;
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+});
+document.getElementById('pdf-compartir').addEventListener('click', () => {
+  if (!PDF_ACTUAL) return;
+  const archivo = new File([PDF_ACTUAL.blob], PDF_ACTUAL.nombre, { type: 'application/pdf' });
+  navigator.share({ files: [archivo], title: 'Solicitud de cotización' }).catch(() => {});
+});
+document.getElementById('pdf-ver').addEventListener('click', () => {
+  if (PDF_ACTUAL) window.open(PDF_ACTUAL.url, '_blank');
 });
 
 document.getElementById('chat-send').addEventListener('click', enviarMensajeChat);
 document.getElementById('chat-input').addEventListener('keydown', (e) => {
   if (e.key === 'Enter') enviarMensajeChat();
 });
+
 function enviarMensajeChat() {
   const input = document.getElementById('chat-input');
   const texto = input.value.trim();
   if (!texto || !chatAbierto) return;
   input.value = '';
-  const body = document.getElementById('chat-body');
-  body.insertAdjacentHTML('beforeend', `<div class="bubble bot">${texto}</div>`);
-  body.scrollTop = body.scrollHeight;
+  fetch(`api/clients/${CLIENTE_ACTUAL}/chats/` + encodeURIComponent(chatAbierto) + '/enviar', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ texto }),
+  })
+    .then(() => { cargarMensajesChat(); cargarChats(); })
+    .catch(() => { alert('No se pudo enviar el mensaje'); });
 }
+
 document.getElementById('chat-reanudar').addEventListener('click', () => {
-  toast('▶ Bot reactivado para esta conversación');
-  document.getElementById('chat-reanudar').style.display = 'none';
+  if (!chatAbierto) return;
+  fetch(`api/clients/${CLIENTE_ACTUAL}/chats/` + encodeURIComponent(chatAbierto) + '/reanudar', { method: 'POST' })
+    .then(() => { cargarMensajesChat(); cargarChats(); });
+});
+document.getElementById('chat-pausar').addEventListener('click', () => {
+  if (!chatAbierto) return;
+  fetch(`api/clients/${CLIENTE_ACTUAL}/chats/` + encodeURIComponent(chatAbierto) + '/pausar', { method: 'POST' })
+    .then(() => { cargarMensajesChat(); cargarChats(); });
 });
 
-// ---- Pipeline ----
-const PIPELINE_SECCIONES = [
-  { etapa: 'enviada', urgente: true, titulo: '🔴 Necesita seguimiento', clase: 'urgente' },
-  { etapa: 'enviada', urgente: false, titulo: '🟠 Cotización enviada', clase: 'tibio' },
-  { etapa: 'pendiente', titulo: '🟡 Pendiente de cotizar', clase: 'tibio' },
-  { etapa: 'sin_stock', titulo: '⚪ Sin stock / no disponible', clase: 'frio' },
-  { etapa: 'no_interesado', titulo: '⚫ No interesado', clase: 'frio' },
-  { etapa: 'ganado', titulo: '🟢 Ganado', clase: 'ganado' },
-];
-const PIPELINE_STALE_MS = 24 * H;
+// ---- Análisis de chats (IA profunda, una vez al día por cron o "Analizar ahora") ----
+function claseInteres(puntaje) {
+  if (puntaje >= 70) return 'interes-alto';
+  if (puntaje >= 40) return 'interes-medio';
+  return 'interes-bajo';
+}
+// La etiqueta puesta a mano en el chat manda sobre lo que concluyó el análisis de IA.
+function etiquetaManual(it) {
+  const c = CHATS_CACHE.find((x) => x.telefono === it.telefono);
+  return c && c.estadoManual ? c.estadoPedido : null;
+}
+function minimoEfectivo(it) {
+  const m = etiquetaManual(it);
+  if (m === 'cumple') return true;
+  if (m === 'no_cumple') return false;
+  if (m === 'parcial') return null;
+  return it.cumpleMinimo;
+}
 
-function renderPipeline() {
-  document.getElementById('pipeline-updated').textContent = 'Última clasificación automática: ' + tiempoRelativo(now - 20 * MIN);
-  const content = document.getElementById('pipeline-content');
-  content.innerHTML = PIPELINE_SECCIONES.map((sec) => {
-    const items = PIPELINE_ITEMS.filter((it) => {
-      if (it.etapa !== sec.etapa) return false;
-      if (sec.etapa !== 'enviada') return true;
-      const esUrgente = now - (it.actualizadoTs || 0) > PIPELINE_STALE_MS;
-      return sec.urgente ? esUrgente : !esUrgente;
-    });
-    if (!items.length) return '';
-    return `
-      <div class="pipeline-section">
-        <div class="pipeline-section-title">${sec.titulo} <span class="pipeline-section-count">${items.length}</span></div>
-        <div class="pipeline-cards">
-          ${items.map((it) => `
-            <div class="pipeline-card ${sec.clase}" data-telefono="${it.telefono}">
-              <div class="pipeline-card-avatar">${it.telefono.slice(-2)}</div>
-              <div class="pipeline-card-body">
-                <div class="pipeline-card-top">
-                  <span class="pipeline-card-tel">${it.telefono}</span>
-                  <span class="pipeline-card-time">${tiempoRelativo(it.actualizadoTs)}</span>
-                </div>
-                <div class="pipeline-card-resumen">${it.resumen || ''}</div>
-              </div>
-            </div>
-          `).join('')}
-        </div>
-      </div>
-    `;
-  }).join('');
+function iconoInteres(puntaje) {
+  if (puntaje >= 70) return icon('flame', 12);
+  if (puntaje >= 40) return icon('thermometer', 12);
+  return icon('snowflake', 12);
+}
 
-  content.querySelectorAll('.pipeline-card').forEach((el) => {
-    el.addEventListener('click', () => {
-      document.querySelectorAll('.nav-btn').forEach((b) => b.classList.remove('active'));
-      document.querySelectorAll('.view').forEach((v) => v.classList.remove('active'));
-      document.querySelector('.nav-btn[data-view="chats"]').classList.add('active');
-      document.getElementById('view-chats').classList.add('active');
-      if (!MENSAJES[el.dataset.telefono]) {
-        MENSAJES[el.dataset.telefono] = [{ rol: 'cliente', texto: '(Conversación de ejemplo)' }];
-        if (!CHATS.find((c) => c.telefono === el.dataset.telefono)) {
-          CHATS.unshift({ telefono: el.dataset.telefono, ultimoMensaje: '(Conversación de ejemplo)', ultimoTs: now, pausada: false });
-        }
+function cargarAnalisis() {
+  const noConfig = document.getElementById('analisis-no-config');
+  const content = document.getElementById('analisis-content');
+  const updated = document.getElementById('analisis-updated');
+  fetch(`api/clients/${CLIENTE_ACTUAL}/analisis?_=` + Date.now())
+    .then((r) => r.json())
+    .then((data) => {
+      const items = (data && data.items) || [];
+      updated.textContent = data && data.actualizadoTs
+        ? 'Último análisis: ' + tiempoRelativo(data.actualizadoTs)
+        : '';
+      if (!items.length) {
+        noConfig.style.display = '';
+        content.innerHTML = '';
+        return;
       }
-      abrirChat(el.dataset.telefono);
-    });
-  });
+      noConfig.style.display = 'none';
+
+      const ordenados = [...items].sort((a, b) => ((b.nivelInteres && b.nivelInteres.puntaje) || 0) - ((a.nivelInteres && a.nivelInteres.puntaje) || 0));
+      content.innerHTML = ordenados.map((it) => {
+        const puntaje = (it.nivelInteres && it.nivelInteres.puntaje) || 0;
+        return `
+          <div class="analisis-card" data-telefono="${esc(it.telefono)}">
+            <div class="analisis-card-top">
+              <span class="analisis-card-tel">${esc(it.telefono)}</span>
+              <span class="analisis-card-time">${tiempoRelativo(it.actualizadoTs)}</span>
+            </div>
+            <div class="analisis-badges">
+              <span class="analisis-badge ${claseInteres(puntaje)}">${iconoInteres(puntaje)} Interés ${puntaje}/100</span>
+              ${minimoEfectivo(it) === true ? `<span class="analisis-badge minimo-si">${icon('check', 11)} Cumple mínimo${etiquetaManual(it) ? ' ✎' : ''}</span>` : ''}
+              ${minimoEfectivo(it) === false ? `<span class="analisis-badge minimo-no">${icon('x', 11)} No cumple mínimo${etiquetaManual(it) ? ' ✎' : ''}</span>` : ''}
+              ${etiquetaManual(it) === 'parcial' ? `<span class="analisis-badge">Variable ✎</span>` : ''}
+              ${(it.alertas && it.alertas.length) ? `<span class="analisis-badge minimo-no">${icon('alert', 11)} ${it.alertas.length} alerta(s)</span>` : ''}
+            </div>
+            <div class="analisis-resumen">${esc(it.resumen || '')}</div>
+            ${(it.nivelInteres && it.nivelInteres.razon) ? `<div class="analisis-nota">${icon('info', 13)} ${esc(it.nivelInteres.razon)}</div>` : ''}
+            ${(it.alertas && it.alertas.length) ? `<ul class="analisis-alertas">${it.alertas.map((a) => `<li>${esc(a)}</li>`).join('')}</ul>` : ''}
+            ${it.comparacionHistorica ? `<div class="analisis-nota">${icon('barChart', 13)} ${esc(it.comparacionHistorica)}</div>` : ''}
+          </div>
+        `;
+      }).join('');
+
+      content.querySelectorAll('.analisis-card').forEach((el) => {
+        el.addEventListener('click', () => {
+          document.querySelectorAll('.nav-btn').forEach((b) => b.classList.remove('active'));
+          document.querySelectorAll('.view').forEach((v) => v.classList.remove('active'));
+          document.querySelector('.nav-btn[data-view="chats"]').classList.add('active');
+          document.getElementById('view-chats').classList.add('active');
+          abrirChat(el.dataset.telefono);
+        });
+      });
+    })
+    .catch(() => {});
 }
 
-document.getElementById('btn-ejecutar-pipeline').addEventListener('click', (e) => {
-  const btn = e.currentTarget;
+document.getElementById('btn-ejecutar-analisis').addEventListener('click', () => {
+  const btn = document.getElementById('btn-ejecutar-analisis');
   btn.disabled = true;
-  btn.textContent = 'Clasificando conversaciones...';
-  setTimeout(() => {
-    btn.disabled = false;
-    btn.textContent = '🔄 Actualizar ahora';
-    toast('✓ Pipeline actualizado');
-  }, 900);
+  btn.textContent = 'Analizando conversaciones...';
+  fetch(`api/clients/${CLIENTE_ACTUAL}/analisis/ejecutar`, { method: 'POST' })
+    .then((r) => r.json())
+    .then((res) => {
+      btn.disabled = false;
+      btn.innerHTML = icon('refresh', 15) + ' Analizar ahora';
+      if (res.error) { alert(res.error); return; }
+      cargarAnalisis();
+    })
+    .catch(() => {
+      btn.disabled = false;
+      btn.innerHTML = icon('refresh', 15) + ' Analizar ahora';
+      alert('No se pudo ejecutar el análisis.');
+    });
 });
 
-// ---- Clientes ----
-function renderClientesRoster() {
-  document.getElementById('clientes-updated').textContent = 'Actualizado ' + tiempoRelativo(now - 20 * MIN);
-  const totalGeneral = CLIENTES_ROSTER.reduce((sum, cl) => sum + (cl.totalCotizado || 0), 0);
-  const conCotizacion = CLIENTES_ROSTER.filter((cl) => cl.totalCotizado > 0).length;
-  document.getElementById('clientes-stats').innerHTML = `
-    <div class="stat"><div class="stat-icon">💰</div><div class="stat-body"><div class="label">Total cotizado</div><div class="value orange">${clp(totalGeneral)}</div></div></div>
-    <div class="stat"><div class="stat-icon">👥</div><div class="stat-body"><div class="label">Clientes</div><div class="value">${CLIENTES_ROSTER.length} (${conCotizacion} cotizados)</div></div></div>
-  `;
-  const content = document.getElementById('clientes-content');
-  content.innerHTML = CLIENTES_ROSTER.map((cl) => `
-    <div class="client-roster-card" data-telefono="${cl.telefono || ''}">
-      <div class="client-roster-avatar">${iniciales(cl.nombre)}</div>
-      <div class="client-roster-body">
-        <div class="client-roster-name">${cl.nombre}</div>
-        <div class="client-roster-meta">${cl.telefono || 'Sin contacto'}</div>
-        <div class="client-roster-tags">
-          ${cl.origenWhatsapp ? '<span class="tag on">WhatsApp</span>' : ''}
-          ${cl.cantidadCotizaciones ? `<span class="tag off">${cl.cantidadCotizaciones} cotización(es)</span>` : ''}
-        </div>
-      </div>
-      <div class="client-roster-total">
-        ${cl.totalCotizado ? `<div class="v">${clp(cl.totalCotizado)}</div>` : '<div class="v sin">Sin cotizar</div>'}
-        ${cl.ultimaFecha ? `<div class="n">${cl.ultimaFecha}</div>` : ''}
-      </div>
-    </div>
-  `).join('');
-  content.querySelectorAll('.client-roster-card').forEach((el) => {
-    if (!el.dataset.telefono) return;
-    el.addEventListener('click', () => {
-      document.querySelectorAll('.nav-btn').forEach((b) => b.classList.remove('active'));
-      document.querySelectorAll('.view').forEach((v) => v.classList.remove('active'));
-      document.querySelector('.nav-btn[data-view="chats"]').classList.add('active');
-      document.getElementById('view-chats').classList.add('active');
-      abrirChat(el.dataset.telefono);
+// ---- Clientes (cotizaciones + contactos de WhatsApp + análisis IA) ----
+function soloDigitos(s) { return (s || '').replace(/\D/g, ''); }
+
+// ---- Inicio: recordatorios (cotizaciones marcadas importantes + formularios web) ----
+function irAVista(nombre) {
+  const btn = document.querySelector(`.nav-btn[data-view="${nombre}"]`);
+  if (!btn) return;
+  document.querySelectorAll('.nav-btn').forEach((b) => b.classList.remove('active'));
+  document.querySelectorAll('.view').forEach((v) => v.classList.remove('active'));
+  btn.classList.add('active');
+  document.getElementById('view-' + nombre).classList.add('active');
+}
+
+function irAChat(telefono) {
+  document.querySelectorAll('.nav-btn').forEach((b) => b.classList.remove('active'));
+  document.querySelectorAll('.view').forEach((v) => v.classList.remove('active'));
+  document.querySelector('.nav-btn[data-view="chats"]').classList.add('active');
+  document.getElementById('view-chats').classList.add('active');
+  abrirChat(telefono);
+}
+
+function cargarInicio() {
+  Promise.all([
+    fetch(`api/clients/${CLIENTE_ACTUAL}/clientes?_=` + Date.now()).then((r) => r.json()).catch(() => null),
+    fetch(`api/clients/${CLIENTE_ACTUAL}/formularios?_=` + Date.now()).then((r) => r.json()).catch(() => null),
+  ]).then(([clientesData, formulariosData]) => {
+    const importantes = ((clientesData && clientesData.clientes) || []).filter((cl) => cl.importante);
+    const contImportantes = document.getElementById('inicio-importantes');
+    contImportantes.innerHTML = importantes.length
+      ? importantes.map((cl) => `
+        <div class="client-roster-card" data-telefono="${esc(cl.telefono || '')}">
+          <div class="client-roster-avatar">${esc(iniciales(cl.nombre))}</div>
+          <div class="client-roster-body">
+            <div class="client-roster-name">${esc(cl.nombre)}</div>
+            <div class="client-roster-meta">${esc(cl.notaSeguimiento || cl.telefono || cl.email || 'Sin contacto')}</div>
+          </div>
+          <div class="client-roster-total">
+            ${cl.totalCotizado ? `<div class="v">${clp(cl.totalCotizado)}</div>` : '<div class="v sin">Sin cotizar</div>'}
+          </div>
+        </div>`).join('')
+      : '<div class="factura-empty">No tienes cotizaciones marcadas para hacer seguimiento — márcalas con la estrella en la pestaña Clientes.</div>';
+    contImportantes.querySelectorAll('.client-roster-card[data-telefono]').forEach((el) => {
+      if (el.dataset.telefono) el.addEventListener('click', () => irAChat(el.dataset.telefono));
+    });
+
+    FORMULARIOS_CACHE = (formulariosData && formulariosData.items) || [];
+    const contFormularios = document.getElementById('inicio-formularios');
+    contFormularios.innerHTML = FORMULARIOS_CACHE.length
+      ? FORMULARIOS_CACHE.slice(0, 20).map((f, i) => `
+        <div class="factura-row">
+          <div>
+            <div class="factura-label">${esc(f.nombre || 'Sin nombre')}${f.empresa ? ' — ' + esc(f.empresa) : ''}</div>
+            <div class="factura-sub">${esc([f.producto, f.cantidad ? f.cantidad + ' unid.' : ''].filter(Boolean).join(' · ') || f.mensaje || '')}</div>
+            <div class="factura-sub">${esc([f.email, f.telefono].filter(Boolean).join(' · '))} · ${tiempoRelativo(f.ts)}</div>
+          </div>
+          <button class="btn btn-outline btn-sm btn-ver-formulario" data-idx="${i}">Ver</button>
+        </div>`).join('')
+      : '<div class="factura-empty">Todavía no ha llegado ningún formulario.</div>';
+    contFormularios.querySelectorAll('.btn-ver-formulario').forEach((btn) => {
+      btn.addEventListener('click', () => verFormulario(FORMULARIOS_CACHE[Number(btn.dataset.idx)]));
     });
   });
 }
-document.getElementById('btn-sincronizar-clientes').addEventListener('click', (e) => {
-  const btn = e.currentTarget;
+
+let FORMULARIOS_CACHE = [];
+function filaFormularioDetalle(label, valor) {
+  if (!valor) return '';
+  return `<div class="factura-desglose-item"><span>${label}</span><span style="text-align:right;">${esc(String(valor)).replace(/\n/g, '<br>')}</span></div>`;
+}
+function verFormulario(f) {
+  if (!f) return;
+  document.getElementById('formulario-detalle').innerHTML = `
+    <div class="factura-desglose">
+      ${filaFormularioDetalle('Nombre', f.nombre)}
+      ${filaFormularioDetalle('Empresa', f.empresa)}
+      ${filaFormularioDetalle('Email', f.email)}
+      ${filaFormularioDetalle('Teléfono', f.telefono)}
+      ${filaFormularioDetalle('Producto', f.producto)}
+      ${filaFormularioDetalle('Cantidad', f.cantidad)}
+      ${filaFormularioDetalle('Mensaje', f.mensaje)}
+      ${filaFormularioDetalle('Página', f.pagina)}
+      ${filaFormularioDetalle('Origen', f.origen)}
+      ${filaFormularioDetalle('Recibido', f.ts ? new Date(f.ts).toLocaleString('es-CL') : '')}
+    </div>`;
+  openModal('sheet-formulario');
+}
+
+function cargarClientesRoster() {
+  const noConfig = document.getElementById('clientes-no-config');
+  const content = document.getElementById('clientes-content');
+  const updated = document.getElementById('clientes-updated');
+  Promise.all([
+    fetch(`api/clients/${CLIENTE_ACTUAL}/clientes?_=` + Date.now()).then((r) => r.json()),
+    fetch(`api/clients/${CLIENTE_ACTUAL}/analisis?_=` + Date.now()).then((r) => r.json()).catch(() => null),
+  ])
+    .then(([data, analisisData]) => {
+      const clientes = (data && data.clientes) || [];
+      const analisisPorTel = {};
+      ((analisisData && analisisData.items) || []).forEach((a) => {
+        if (a.telefono) analisisPorTel[soloDigitos(a.telefono)] = a;
+      });
+      updated.textContent = data && data.actualizadoTs
+        ? 'Actualizado ' + tiempoRelativo(data.actualizadoTs)
+        : '';
+      if (!clientes.length) {
+        noConfig.style.display = '';
+        content.innerHTML = '';
+        document.getElementById('clientes-stats').innerHTML = '';
+        return;
+      }
+      noConfig.style.display = 'none';
+
+      const totalGeneral = clientes.reduce((sum, cl) => sum + (cl.totalCotizado || 0), 0);
+      const conCotizacion = clientes.filter((cl) => cl.totalCotizado > 0).length;
+      document.getElementById('clientes-stats').innerHTML = `
+        <div class="stat"><div class="stat-icon">${icon('wallet', 17)}</div><div class="stat-body"><div class="label">Total cotizado</div><div class="value orange">${clp(totalGeneral)}</div></div></div>
+        <div class="stat"><div class="stat-icon">${icon('users', 17)}</div><div class="stat-body"><div class="label">Clientes</div><div class="value">${clientes.length} (${conCotizacion} cotizados)</div></div></div>
+      `;
+
+      content.innerHTML = clientes.map((cl) => {
+        const a = analisisPorTel[soloDigitos(cl.telefono)];
+        const puntaje = a && a.nivelInteres ? a.nivelInteres.puntaje : null;
+        return `
+        <div class="client-roster-card" data-telefono="${esc(cl.telefono || '')}">
+          <div class="client-roster-avatar">${esc(iniciales(cl.nombre))}</div>
+          <div class="client-roster-body">
+            <div class="client-roster-name">${esc(cl.nombre)}</div>
+            <div class="client-roster-meta">${esc([cl.contacto && cl.contacto !== cl.nombre ? cl.contacto : '', cl.telefono, cl.email].filter(Boolean).join(' · ') || 'Sin contacto')}</div>
+            ${cl.nota ? `<div class="client-roster-nota">${esc(cl.nota)}</div>` : ''}
+            <div class="client-roster-tags">
+              ${cl.origenWhatsapp ? '<span class="tag on">WhatsApp</span>' : ''}
+              ${cl.origenFormulario ? `<span class="tag off">${icon('inbox', 10)} ${cl.cantidadFormularios || 1} formulario(s)</span>` : ''}
+              ${cl.cantidadCotizaciones ? `<span class="tag off">${cl.cantidadCotizaciones} cotización(es)</span>` : ''}
+              ${puntaje !== null ? `<span class="tag ${puntaje >= 70 ? 'on' : 'off'}">${iconoInteres(puntaje)} ${puntaje}</span>` : ''}
+              ${(a && a.alertas && a.alertas.length) ? `<span class="tag off" style="color:var(--danger-fg);">${icon('alert', 11)} ${a.alertas.length}</span>` : ''}
+            </div>
+          </div>
+          <div class="client-roster-total">
+            ${cl.totalCotizado ? `<div class="v">${clp(cl.totalCotizado)}</div>` : '<div class="v sin">Sin cotizar</div>'}
+            ${cl.ultimaFecha ? `<div class="n">${cl.ultimaFecha}</div>` : ''}
+            <button class="client-roster-edit" data-clave="${esc(cl.clave || '')}" aria-label="Editar datos del cliente">${icon('edit', 15)}</button>
+            <button class="client-roster-star admin-only ${cl.importante ? 'on' : ''}" data-clave="${cl.clave || ''}" aria-label="Marcar importante">${icon('star', 17)}</button>
+          </div>
+        </div>
+      `;
+      }).join('');
+
+      content.querySelectorAll('.client-roster-card').forEach((el) => {
+        if (!el.dataset.telefono) return;
+        el.addEventListener('click', () => {
+          document.querySelectorAll('.nav-btn').forEach((b) => b.classList.remove('active'));
+          document.querySelectorAll('.view').forEach((v) => v.classList.remove('active'));
+          document.querySelector('.nav-btn[data-view="chats"]').classList.add('active');
+          document.getElementById('view-chats').classList.add('active');
+          abrirChat(el.dataset.telefono);
+        });
+      });
+
+      content.querySelectorAll('.client-roster-edit').forEach((btn) => {
+        btn.addEventListener('click', (e) => {
+          e.stopPropagation();
+          const cl = clientes.find((x) => x.clave === btn.dataset.clave);
+          if (cl) abrirContacto(cl);
+        });
+      });
+
+      content.querySelectorAll('.client-roster-star').forEach((btn) => {
+        btn.addEventListener('click', (e) => {
+          e.stopPropagation();
+          if (!btn.dataset.clave) return;
+          const yaEsImportante = btn.classList.contains('on');
+          const nota = yaEsImportante ? '' : (prompt('¿Alguna nota de seguimiento? (opcional)', '') || '');
+          fetch(`api/clients/${CLIENTE_ACTUAL}/clientes/importante`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ clave: btn.dataset.clave, importante: !yaEsImportante, nota }),
+          })
+            .then(() => { cargarClientesRoster(); cargarInicio(); })
+            .catch(() => alert('No se pudo actualizar.'));
+        });
+      });
+    })
+    .catch(() => {});
+}
+
+// ---- Alta / edición manual de un cliente (nombre, empresa, email, nota) ----
+let CONTACTO_EDITANDO = null; // clave del roster que se está editando (null = alta nueva)
+function abrirContacto(cl) {
+  CONTACTO_EDITANDO = cl ? cl.clave : null;
+  document.getElementById('contacto-titulo').textContent = cl ? 'Editar cliente' : 'Agregar cliente';
+  const soloNumero = cl && (cl.nombre || '').replace(/\D/g, '') === (cl.telefono || '').replace(/\D/g, '');
+  document.getElementById('ct-nombre').value = cl && !soloNumero ? (cl.contacto || '') : '';
+  document.getElementById('ct-empresa').value = (cl && cl.empresa) || '';
+  const tel = document.getElementById('ct-telefono');
+  tel.value = (cl && cl.telefono) || '';
+  tel.readOnly = !!(cl && cl.telefono); // el teléfono identifica al cliente: no se cambia al editar
+  document.getElementById('ct-email').value = (cl && cl.email) || '';
+  document.getElementById('ct-nota').value = (cl && cl.nota) || '';
+  openModal('sheet-contacto');
+}
+document.getElementById('btn-agregar-contacto').addEventListener('click', () => abrirContacto(null));
+document.getElementById('btn-guardar-contacto').addEventListener('click', () => {
+  const body = {
+    clave: CONTACTO_EDITANDO || undefined,
+    nombre: document.getElementById('ct-nombre').value,
+    empresa: document.getElementById('ct-empresa').value,
+    telefono: document.getElementById('ct-telefono').value,
+    email: document.getElementById('ct-email').value,
+    nota: document.getElementById('ct-nota').value,
+  };
+  const btn = document.getElementById('btn-guardar-contacto');
+  btn.disabled = true;
+  fetch(`api/clients/${CLIENTE_ACTUAL}/clientes/contacto`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(body),
+  })
+    .then((r) => r.json())
+    .then((res) => {
+      btn.disabled = false;
+      if (res.error) { alert(res.error); return; }
+      closeModals();
+      cargarClientesRoster();
+      cargarChats();
+    })
+    .catch(() => { btn.disabled = false; alert('No se pudo guardar.'); });
+});
+
+// ---- Etiqueta del chat a mano (cumple / variable / no cumple / automático) ----
+document.getElementById('chat-etiqueta').addEventListener('click', () => {
+  if (chatAbierto) openModal('sheet-estado');
+});
+document.getElementById('chat-estado').addEventListener('click', () => {
+  if (chatAbierto) openModal('sheet-estado');
+});
+document.getElementById('estado-respondido').addEventListener('click', (e) => {
+  if (!chatAbierto) return;
+  const respondido = e.currentTarget.dataset.respondido !== 'false';
+  fetch(`api/clients/${CLIENTE_ACTUAL}/chats/` + encodeURIComponent(chatAbierto) + '/respondido', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ respondido }),
+  })
+    .then(() => { closeModals(); cargarChats(); })
+    .catch(() => alert('No se pudo cambiar.'));
+});
+document.getElementById('estado-archivar').addEventListener('click', (e) => {
+  if (!chatAbierto) return;
+  const archivar = e.currentTarget.dataset.archivar !== 'false';
+  fetch(`api/clients/${CLIENTE_ACTUAL}/chats/` + encodeURIComponent(chatAbierto) + '/archivar', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ archivar }),
+  })
+    .then(() => {
+      closeModals();
+      if (archivar) document.getElementById('btn-volver-chats').click();
+      cargarChats();
+    })
+    .catch(() => alert('No se pudo archivar.'));
+});
+document.querySelectorAll('.estado-opt').forEach((btn) => {
+  btn.addEventListener('click', () => {
+    if (!chatAbierto) return;
+    const estado = btn.dataset.estado === 'auto' ? null : btn.dataset.estado;
+    fetch(`api/clients/${CLIENTE_ACTUAL}/chats/` + encodeURIComponent(chatAbierto) + '/estado', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ estado }),
+    })
+      .then((r) => r.json())
+      .then((res) => {
+        if (res.error) { alert(res.error); return; }
+        closeModals();
+        cargarChats();
+        setTimeout(cargarAnalisis, 400); // para que Análisis también muestre la etiqueta nueva
+      })
+      .catch(() => alert('No se pudo cambiar la etiqueta.'));
+  });
+});
+
+document.getElementById('btn-sincronizar-clientes').addEventListener('click', () => {
+  const btn = document.getElementById('btn-sincronizar-clientes');
   btn.disabled = true;
   btn.textContent = 'Actualizando...';
-  setTimeout(() => {
-    btn.disabled = false;
-    btn.textContent = '🔄 Actualizar ahora';
-    toast('✓ Clientes actualizados');
-  }, 900);
+  fetch(`api/clients/${CLIENTE_ACTUAL}/clientes/sincronizar`, { method: 'POST' })
+    .then((r) => r.json())
+    .then((res) => {
+      btn.disabled = false;
+      btn.innerHTML = icon('refresh', 15) + ' Actualizar ahora';
+      if (res.error) { alert(res.error); return; }
+      cargarClientesRoster();
+    })
+    .catch(() => {
+      btn.disabled = false;
+      btn.innerHTML = icon('refresh', 15) + ' Actualizar ahora';
+      alert('No se pudo actualizar la lista de clientes.');
+    });
 });
 
 // ---- Google Ads ----
+// ---- Selector de mes para Google Ads: antes solo mostraba un rolling "últimos 30
+// días" fijo, sin poder ver el mes en curso como tal ni navegar a meses anteriores. ----
+let ADS_MES_SELECCIONADO = null; // null = mes actual
+let ADS_MESES_DISPONIBLES = [];
+
+function mesActualClaveLocal() {
+  return new Date().toLocaleDateString('en-CA', { timeZone: 'America/Santiago' }).slice(0, 7);
+}
+function nombreMesLocal(mesClave) {
+  const [anio, mesNum] = mesClave.split('-').map(Number);
+  const nombre = new Date(anio, mesNum - 1, 1).toLocaleDateString('es-CL', { month: 'long', year: 'numeric' });
+  return nombre.charAt(0).toUpperCase() + nombre.slice(1);
+}
+function mesAnteriorClaveLocal(mesClave) {
+  const [anio, mesNum] = mesClave.split('-').map(Number);
+  const d = new Date(anio, mesNum - 2, 1);
+  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`;
+}
+function mesSiguienteClaveLocal(mesClave) {
+  const [anio, mesNum] = mesClave.split('-').map(Number);
+  const d = new Date(anio, mesNum, 1);
+  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`;
+}
+
+function cargarAds() {
+  const c = clienteActualObj();
+  if (!c) return;
+  document.getElementById('btn-sincronizar-ads-vacio').style.display = c.ads.customerId ? '' : 'none';
+  const mes = ADS_MES_SELECCIONADO || mesActualClaveLocal();
+  const mesAnt = mesAnteriorClaveLocal(mes);
+  Promise.all([
+    fetch(`api/clients/${CLIENTE_ACTUAL}/ads?mes=${mes}&_=` + Date.now()).then((r) => r.json()),
+    fetch(`api/clients/${CLIENTE_ACTUAL}/ads?mes=${mesAnt}&_=` + Date.now()).then((r) => r.json()).catch(() => null),
+  ]).then(([res, resAnt]) => {
+    ADS_MESES_DISPONIBLES = (res && res.mesesDisponibles) || [];
+    renderSelectorMesAds(mes);
+    renderAdsDatos(mes, res && res.datos, resAnt && resAnt.datos);
+  });
+}
+
+function renderSelectorMesAds(mes) {
+  document.getElementById('ads-mes-label').textContent = nombreMesLocal(mes);
+  document.getElementById('ads-mes-next').disabled = mes === mesActualClaveLocal();
+}
+
+function renderAdsDatos(mes, data, dataAnterior) {
+  const noConfig = document.getElementById('ads-no-config');
+  const content = document.getElementById('ads-content');
+  const esMesActual = mes === mesActualClaveLocal();
+
+  if (!data) {
+    noConfig.style.display = '';
+    content.style.display = 'none';
+    noConfig.querySelector('p').textContent = esMesActual
+      ? 'Todavía no hay datos de Google Ads cargados para este cliente.'
+      : `Todavía no se ha sincronizado ${nombreMesLocal(mes)} para este cliente.`;
+    if (esMesActual) {
+      GASTO_ADS = 0;
+      document.getElementById('resumen-ads-valor').textContent = clp(0);
+      actualizarResumenTotal();
+    }
+    return;
+  }
+  noConfig.style.display = 'none';
+  content.style.display = '';
+  document.getElementById('ads-updated').textContent = data.actualizado
+    ? 'Actualizado ' + tiempoRelativo(new Date(data.actualizado).getTime())
+    : '';
+  const t = data.totales || {};
+  if (esMesActual) {
+    GASTO_ADS = t.gasto || 0;
+    document.getElementById('resumen-ads-valor').textContent = clp(GASTO_ADS);
+    actualizarResumenTotal();
+  }
+
+  let comparacionHtml = '';
+  if (dataAnterior && dataAnterior.totales && dataAnterior.totales.gasto > 0) {
+    const gastoAnt = dataAnterior.totales.gasto;
+    const delta = ((t.gasto - gastoAnt) / gastoAnt) * 100;
+    const sube = delta >= 0;
+    comparacionHtml = `<div class="ads-comparacion ${sube ? 'sube' : 'baja'}">${sube ? '▲' : '▼'} ${Math.abs(delta).toFixed(0)}% vs ${dataAnterior.periodo}</div>`;
+  }
+
+  document.getElementById('ads-stats').innerHTML = `
+    <div class="stat stat-destacado"><div class="stat-icon">${icon('wallet', 17)}</div><div class="stat-body"><div class="label">Gasto mensual${esMesActual ? ' (a la fecha)' : ''}</div><div class="value orange">${clp(t.gasto)}</div>${comparacionHtml}</div></div>
+    <div class="stat"><div class="stat-icon">${icon('cursor', 17)}</div><div class="stat-body"><div class="label">Clicks</div><div class="value">${t.clicks ?? '—'}</div></div></div>
+    <div class="stat"><div class="stat-icon">${icon('eye', 17)}</div><div class="stat-body"><div class="label">Impresiones</div><div class="value">${t.impresiones ?? '—'}</div></div></div>
+    <div class="stat"><div class="stat-icon">${icon('check', 17)}</div><div class="stat-body"><div class="label">Conversiones</div><div class="value">${t.conversiones ?? '—'}</div></div></div>
+    <div class="stat"><div class="stat-icon">${icon('barChart', 17)}</div><div class="stat-body"><div class="label">CPC prom.</div><div class="value">${clp(t.cpc_promedio)}</div></div></div>
+    <div class="stat"><div class="stat-icon">${icon('target', 17)}</div><div class="stat-body"><div class="label">Costo/conv.</div><div class="value">${clp(t.costo_por_conversion)}</div></div></div>
+  `;
+  renderGraficoDiario(data.diario || []);
+  renderCalendario(data.diario || []);
+  renderCampanas(data.campañas || []);
+}
+
+document.getElementById('ads-mes-prev').addEventListener('click', () => {
+  ADS_MES_SELECCIONADO = mesAnteriorClaveLocal(ADS_MES_SELECCIONADO || mesActualClaveLocal());
+  cargarAds();
+});
+document.getElementById('ads-mes-next').addEventListener('click', () => {
+  const siguiente = mesSiguienteClaveLocal(ADS_MES_SELECCIONADO || mesActualClaveLocal());
+  ADS_MES_SELECCIONADO = siguiente === mesActualClaveLocal() ? null : siguiente;
+  cargarAds();
+});
+
+// ---- Facturación por ciclo: lo que el cliente le debe a JPB Marketing ----
+function formatFechaCorta(iso) {
+  if (!iso) return '';
+  const [y, m, d] = iso.split('-');
+  return `${d}-${m}-${y}`;
+}
+
+function cargarFacturacion() {
+  const c = clienteActualObj();
+  const panel = document.getElementById('panel-facturacion');
+  if (!c || !c.facturacion || !c.facturacion.diaCorte) {
+    panel.style.display = 'none';
+    return;
+  }
+  panel.style.display = '';
+  fetch(`api/clients/${CLIENTE_ACTUAL}/facturacion?_=` + Date.now())
+    .then((r) => r.json())
+    .then(renderFacturacion)
+    .catch(() => {});
+}
+
+// Ventas, comisión y pago fijo por ciclo son de solo lectura acá — se ajustan por API
+// (a pedido: "lo quiero editar directamente desde acá [por chat]"), no con inputs en el panel.
+// La info secundaria (motivo, monto normal) va en una línea chica debajo de la principal,
+// nunca entre paréntesis pegada al label — eso era lo que se cortaba feo antes.
+function filaDesglose(label, valor, subLabel, subValor) {
+  return `
+    <div class="factura-desglose-item">
+      <div class="factura-desglose-label">
+        <div>${label}</div>
+        ${subLabel ? `<div class="factura-desglose-sub">${subLabel}</div>` : ''}
+      </div>
+      <div class="factura-desglose-valor">
+        <div>${valor}</div>
+        ${subValor ? `<div class="factura-desglose-sub">${subValor}</div>` : ''}
+      </div>
+    </div>`;
+}
+
+function renderDesgloseFactura(desglose) {
+  if (!desglose) return '<div class="factura-desglose">Sin desglose disponible.</div>';
+  const visitas = desglose.visitas || [];
+  const visitasHtml = visitas.length
+    ? `<div class="factura-desglose-visitas">${visitas
+        .map((v) => `${formatFechaCorta(v.fecha)} — ${clp(v.total)} (${esc(v.detalle || 'ida y vuelta')})`)
+        .join('<br>')}</div>`
+    : '';
+
+  const filaAds = filaDesglose('Google Ads', clp(desglose.ads));
+  const filaMeta = filaDesglose('WhatsApp (Meta) + IA', clp(desglose.metaIA));
+  const filaDesp = filaDesglose(`Desplazamiento${visitas.length ? ` (${visitas.length})` : ''}`, clp(desglose.desplazamiento));
+
+  const tieneComision = !!(desglose.comisionPct || desglose.comision || desglose.ventas);
+  const filaVentas = tieneComision
+    ? filaDesglose('Ventas del ciclo', clp(desglose.ventas || 0), desglose.comisionPct ? `Comisión ${desglose.comisionPct}%` : '')
+      + filaDesglose('Comisión', clp(desglose.comision || 0))
+    : '';
+
+  const huboAjustePagoFijo = desglose.pagoFijoNormal && desglose.pagoFijo !== desglose.pagoFijoNormal;
+  const filaPagoFijo = (desglose.pagoFijo || desglose.pagoFijoNormal)
+    ? filaDesglose(
+        'Pago fijo mensual',
+        clp(desglose.pagoFijo),
+        desglose.pagoFijoMotivo || '',
+        huboAjustePagoFijo ? `Normal: ${clp(desglose.pagoFijoNormal)}` : ''
+      )
+    : '';
+
+  const hayTerminosComerciales = filaPagoFijo || filaVentas;
+
+  return `
+    <div class="factura-desglose">
+      ${filaAds}${filaMeta}${filaDesp}
+      ${visitasHtml}
+      ${hayTerminosComerciales ? '<div class="factura-desglose-divider"></div>' : ''}
+      ${filaPagoFijo}
+      ${filaVentas}
+    </div>
+  `;
+}
+
+function renderFacturacion(data) {
+  const content = document.getElementById('facturacion-content');
+  if (!data || !data.cicloVigente) { content.innerHTML = ''; return; }
+  const vigente = data.cicloVigente;
+  const cerrados = data.ciclosCerrados || [];
+
+  const filaVigente = `
+    <div class="factura-item">
+      <div class="factura-row factura-vigente">
+        <div>
+          <div class="factura-label">En curso · cierra ${formatFechaCorta(vigente.cierre)}</div>
+          <div class="factura-sub">${formatFechaCorta(vigente.inicio)} a hoy</div>
+        </div>
+        <div>
+          <div class="factura-monto">${clp(vigente.totalEstimado)}</div>
+          <button class="btn btn-outline btn-sm btn-toggle-detalle" data-target="factura-detalle-vigente" style="margin-top:6px;">Ver detalle</button>
+        </div>
+      </div>
+      <div class="factura-desglose-wrap" id="factura-detalle-vigente" hidden>${renderDesgloseFactura(vigente.desglose)}</div>
+    </div>
+  `;
+
+  const filasCerradas = cerrados.length
+    ? cerrados
+        .map((ciclo) => {
+          const idDetalle = `factura-detalle-${ciclo.cierre}`;
+          return `
+    <div class="factura-item">
+      <div class="factura-row ${ciclo.pagado ? 'factura-pagada' : 'factura-pendiente'}">
+        <div>
+          <div class="factura-label">${ciclo.pagado ? 'Pagado' : 'Pago pendiente'} · corte ${formatFechaCorta(ciclo.cierre)}</div>
+          <div class="factura-sub">${formatFechaCorta(ciclo.inicio)} al ${formatFechaCorta(ciclo.cierre)}${ciclo.pagado && ciclo.pagadoTs ? ' · pagado ' + tiempoRelativo(ciclo.pagadoTs) : ''}</div>
+        </div>
+        <div>
+          <div class="factura-monto">${clp(ciclo.total)}</div>
+          <div style="display:flex; gap:6px; margin-top:6px; justify-content:flex-end;">
+            <button class="btn btn-outline btn-sm btn-toggle-detalle" data-target="${idDetalle}">Ver detalle</button>
+            <button class="btn btn-sm ${ciclo.pagado ? 'btn-outline' : 'btn-primary'} btn-marcar-pago admin-only" data-cierre="${ciclo.cierre}" data-pagado="${ciclo.pagado ? '1' : '0'}">
+              ${ciclo.pagado ? 'Marcar como no pagado' : 'Marcar como pagado'}
+            </button>
+          </div>
+        </div>
+      </div>
+      <div class="factura-desglose-wrap" id="${idDetalle}" hidden>${renderDesgloseFactura(ciclo.desglose)}</div>
+    </div>`;
+        })
+        .join('')
+    : '<div class="factura-empty">Todavía no se ha cerrado ningún ciclo.</div>';
+
+  content.innerHTML = filaVigente + filasCerradas;
+
+  content.querySelectorAll('.btn-toggle-detalle').forEach((btn) => {
+    btn.addEventListener('click', () => {
+      const el = document.getElementById(btn.dataset.target);
+      el.hidden = !el.hidden;
+      btn.textContent = el.hidden ? 'Ver detalle' : 'Ocultar detalle';
+    });
+  });
+
+  content.querySelectorAll('.btn-marcar-pago').forEach((btn) => {
+    btn.addEventListener('click', () => {
+      const cierre = btn.dataset.cierre;
+      const pagado = btn.dataset.pagado !== '1';
+      btn.disabled = true;
+      fetch(`api/clients/${CLIENTE_ACTUAL}/facturacion/pagar`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ cierre, pagado }),
+      })
+        .then(() => cargarFacturacion())
+        .catch(() => { btn.disabled = false; alert('No se pudo actualizar el estado de pago.'); });
+    });
+  });
+}
+
+// Gasto del mes: WhatsApp/Meta + IA, calculados por el bot de cada cliente (ver
+// /admin/costos en whatsapp-agente[-polimer]) y cacheados por el panel en /gastos.
+function filaGasto(label, valor) {
+  return `<div style="display:flex;justify-content:space-between;padding:10px 0;border-bottom:1px solid #eee;"><span>${label}</span><span>${valor}</span></div>`;
+}
+
+function cargarGastos() {
+  fetch(`api/clients/${CLIENTE_ACTUAL}/gastos?_=` + Date.now())
+    .then((r) => r.json())
+    .then((data) => {
+      if (!data || data.mes === undefined) {
+        GASTO_META = 0;
+        GASTO_IA = 0;
+        document.getElementById('resumen-meta-valor').textContent = clp(0);
+        document.getElementById('resumen-ia-valor').textContent = clp(0);
+        actualizarResumenTotal();
+        return;
+      }
+
+      GASTO_META = data.metaClp || 0;
+      GASTO_IA = data.iaClp || 0;
+      document.getElementById('resumen-meta-valor').textContent = clp(GASTO_META);
+      document.getElementById('resumen-ia-valor').textContent = clp(GASTO_IA);
+      actualizarResumenTotal();
+
+      document.getElementById('gastos-updated').textContent = data.actualizadoTs
+        ? 'Actualizado ' + tiempoRelativo(data.actualizadoTs) + ' · mes ' + data.mes
+        : 'Mes ' + data.mes;
+
+      const m = data.metaMensajes || {};
+      document.getElementById('gastos-meta-detalle').innerHTML =
+        filaGasto('Marketing (seguimiento)', `${m.marketing || 0} msj`) +
+        filaGasto('Utility', `${m.utility || 0} msj`) +
+        filaGasto('Authentication', `${m.authentication || 0} msj`) +
+        filaGasto('Servicio', `${m.service || 0} msj`);
+
+      const t = data.iaTokens || {};
+      document.getElementById('gastos-ia-detalle').innerHTML =
+        filaGasto('Tokens de entrada', (t.promptTokens || 0).toLocaleString('es-CL')) +
+        filaGasto('Tokens de salida', (t.completionTokens || 0).toLocaleString('es-CL')) +
+        filaGasto('Llamadas al modelo', t.llamadas || 0);
+    });
+}
+
+// ---- Desplazamiento: visitas a la fábrica en auto propio ($6.000 tarifa plana, ida y
+// vuelta) — botón "Asistencia" + calendario de días. ----
+function cargarDesplazamiento() {
+  const c = clienteActualObj();
+  fetch(`api/clients/${CLIENTE_ACTUAL}/desplazamiento?_=` + Date.now())
+    .then((r) => r.json())
+    .then((data) => {
+      const visitas = (data && data.visitas) || [];
+      const mesActual = new Date().toISOString().slice(0, 7);
+      GASTO_DESP = visitas.filter((v) => v.fecha.startsWith(mesActual)).reduce((sum, v) => sum + v.total, 0);
+      document.getElementById('resumen-desp-valor').textContent = clp(GASTO_DESP);
+      actualizarResumenTotal();
+      renderCalendarioDesplazamiento(visitas);
+
+      const hoy = new Date().toLocaleDateString('en-CA', { timeZone: 'America/Santiago' });
+      const yaHoy = visitas.some((v) => v.fecha === hoy);
+      const btn = document.getElementById('btn-asistencia-conflex');
+      btn.disabled = yaHoy;
+      btn.innerHTML = yaHoy ? `${icon('check', 15)} Ya registraste hoy` : `${icon('car', 15)} Asistencia a ${c ? esc(c.nombre) : ''}`;
+    });
+}
+
+function renderCalendarioDesplazamiento(visitas) {
+  const wrap = document.getElementById('desp-calendar');
+  const detail = document.getElementById('desp-calendar-detail');
+  const porFecha = {};
+  visitas.forEach((v) => { porFecha[v.fecha] = v; });
+
+  const hoy = new Date();
+  const anio = hoy.getFullYear();
+  const mes = hoy.getMonth() + 1;
+  const diasEnMes = new Date(anio, mes, 0).getDate();
+  const offset = (new Date(anio, mes - 1, 1).getDay() + 6) % 7; // lunes = 0
+
+  let celdas = '';
+  for (let i = 0; i < offset; i++) celdas += '<div class="calendar-day empty"></div>';
+  for (let dia = 1; dia <= diasEnMes; dia++) {
+    const fecha = `${anio}-${String(mes).padStart(2, '0')}-${String(dia).padStart(2, '0')}`;
+    const v = porFecha[fecha];
+    const estilo = v ? 'style="background:var(--orange);color:#fff;"' : '';
+    celdas += `<div class="calendar-day ${v ? 'has-data' : ''}" ${estilo} data-fecha="${fecha}">${dia}</div>`;
+  }
+
+  wrap.innerHTML = `
+    <div class="calendar-month-label">${MESES_ES[mes - 1]} ${anio}</div>
+    <div class="calendar-grid">
+      ${['L', 'M', 'M', 'J', 'V', 'S', 'D'].map((d) => `<div class="calendar-dow">${d}</div>`).join('')}
+      ${celdas}
+    </div>
+  `;
+  detail.textContent = 'Toca un día para ver el detalle.';
+
+  wrap.querySelectorAll('.calendar-day.has-data').forEach((el) => {
+    el.addEventListener('click', () => {
+      wrap.querySelectorAll('.calendar-day').forEach((x) => x.classList.remove('selected'));
+      el.classList.add('selected');
+      const v = porFecha[el.dataset.fecha];
+      detail.textContent = `${el.dataset.fecha} — ${clp(v.total)} (${v.detalle || 'ida y vuelta'})`;
+    });
+  });
+}
+
+document.getElementById('btn-asistencia-conflex').addEventListener('click', () => {
+  const btn = document.getElementById('btn-asistencia-conflex');
+  btn.disabled = true;
+  fetch(`api/clients/${CLIENTE_ACTUAL}/desplazamiento/asistencia`, { method: 'POST' })
+    .then((r) => r.json())
+    .then((res) => {
+      if (res.error) { alert(res.error); btn.disabled = false; return; }
+      cargarDesplazamiento();
+    })
+    .catch(() => { alert('No se pudo registrar la asistencia'); btn.disabled = false; });
+});
+
 function renderGraficoDiario(diario) {
   const wrap = document.getElementById('ads-chart');
+  if (!diario.length) { wrap.innerHTML = '<div class="inbox-empty-msg">Sin datos diarios todavía.</div>'; return; }
   const max = Math.max(1, ...diario.map((d) => d.gasto));
   const barras = diario.map((d) => `<div class="chart-bar" style="height:${Math.max(3, Math.round((d.gasto / max) * 100))}%" title="${d.fecha}: ${clp(d.gasto)}"></div>`).join('');
   wrap.innerHTML = `
@@ -709,6 +2773,8 @@ const MESES_ES = ['enero','febrero','marzo','abril','mayo','junio','julio','agos
 function renderCalendario(diario) {
   const wrap = document.getElementById('ads-calendar');
   const detail = document.getElementById('ads-calendar-detail');
+  if (!diario.length) { wrap.innerHTML = '<div class="inbox-empty-msg">Sin datos todavía.</div>'; detail.textContent = ''; return; }
+
   const porFecha = {};
   let max = 1;
   diario.forEach((d) => { porFecha[d.fecha] = d; if (d.gasto > max) max = d.gasto; });
@@ -716,7 +2782,7 @@ function renderCalendario(diario) {
   const ultima = diario[diario.length - 1].fecha;
   const [anio, mes] = ultima.split('-').map(Number);
   const diasEnMes = new Date(anio, mes, 0).getDate();
-  const offset = (new Date(anio, mes - 1, 1).getDay() + 6) % 7;
+  const offset = (new Date(anio, mes - 1, 1).getDay() + 6) % 7; // lunes = 0
 
   let celdas = '';
   for (let i = 0; i < offset; i++) celdas += '<div class="calendar-day empty"></div>';
@@ -740,6 +2806,7 @@ function renderCalendario(diario) {
       ${celdas}
     </div>
   `;
+  detail.textContent = 'Toca un día para ver el detalle.';
 
   wrap.querySelectorAll('.calendar-day.has-data').forEach((el) => {
     el.addEventListener('click', () => {
@@ -751,24 +2818,19 @@ function renderCalendario(diario) {
   });
 }
 
-function campanaSparkline(diarioGastos) {
-  if (!diarioGastos.length) return '';
-  const max = Math.max(1, ...diarioGastos);
-  const barras = diarioGastos.map((g) => `<div class="chart-bar" style="height:${Math.max(3, Math.round((g / max) * 100))}%"></div>`).join('');
-  return `<div class="chart-bars" style="height:50px;">${barras}</div>`;
-}
-
-function renderCampanas() {
+function renderCampanas(campañas) {
   const wrap = document.getElementById('ads-campanas');
-  wrap.innerHTML = CAMPANAS.map((camp, i) => {
-    const promedioDiario = camp.gasto / camp.diario.length;
+  if (!campañas.length) { wrap.innerHTML = '<div class="inbox-empty-msg">Sin campañas cargadas</div>'; return; }
+
+  wrap.innerHTML = campañas.map((camp, i) => {
+    const promedioDiario = camp.diario && camp.diario.length ? camp.gasto / camp.diario.length : camp.gasto;
     const pctBudget = camp.presupuesto_diario ? Math.min(100, Math.round((promedioDiario / camp.presupuesto_diario) * 100)) : 0;
     const activa = camp.estado === 'ENABLED';
     return `
       <div class="campaign-card" data-idx="${i}">
         <div class="campaign-head">
           <div class="campaign-head-body">
-            <div class="campaign-name">${camp.nombre}</div>
+            <div class="campaign-name">${esc(camp.nombre)}</div>
             <div class="campaign-meta">
               <span class="badge ${activa ? 'activo' : 'pausado'}">${activa ? 'Activa' : 'Pausada'}</span>
               <span class="campaign-meta-clicks">${camp.clicks} clicks · ${camp.conversiones} conv.</span>
@@ -776,7 +2838,7 @@ function renderCampanas() {
             <div class="campaign-budget-bar"><div class="campaign-budget-fill" style="width:${pctBudget}%"></div></div>
           </div>
           <div class="campaign-gasto">${clp(camp.gasto)}</div>
-          <svg class="campaign-chevron" width="15" height="15" viewBox="0 0 24 24"><path d="M7 10l5 5 5-5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          <svg class="campaign-chevron" width="16" height="16" viewBox="0 0 24 24"><path d="M7 10l5 5 5-5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
         </div>
         <div class="campaign-detail">
           <div class="campaign-detail-stats">
@@ -784,49 +2846,89 @@ function renderCampanas() {
             <div class="campaign-detail-stat"><div class="v">${clp(camp.cpc_promedio)}</div><div class="l">CPC prom.</div></div>
             <div class="campaign-detail-stat"><div class="v">${clp(camp.valor_conversiones)}</div><div class="l">Valor conv.</div></div>
           </div>
-          ${campanaSparkline(camp.diario)}
+          ${campanaSparkline(camp.diario || [])}
         </div>
       </div>
     `;
   }).join('');
+
   wrap.querySelectorAll('.campaign-head').forEach((el) => {
     el.addEventListener('click', () => el.closest('.campaign-card').classList.toggle('open'));
   });
 }
 
-document.getElementById('btn-sincronizar-ads').addEventListener('click', (e) => {
-  const btn = e.currentTarget;
-  const original = btn.textContent;
-  btn.disabled = true;
-  btn.textContent = 'Sincronizando...';
-  setTimeout(() => {
-    btn.disabled = false;
-    btn.textContent = original;
-    toast('✓ Sincronizado con Google Ads');
-  }, 900);
-});
-
-function renderAds() {
-  document.getElementById('ads-updated').textContent = 'Actualizado ' + tiempoRelativo(now - 45 * MIN);
-  const t = TOTALES_ADS;
-  document.getElementById('ads-stats').innerHTML = `
-    <div class="stat"><div class="stat-icon">💰</div><div class="stat-body"><div class="label">Gasto total</div><div class="value orange">${clp(t.gasto)}</div></div></div>
-    <div class="stat"><div class="stat-icon">🖱️</div><div class="stat-body"><div class="label">Clicks</div><div class="value">${t.clicks}</div></div></div>
-    <div class="stat"><div class="stat-icon">👁️</div><div class="stat-body"><div class="label">Impresiones</div><div class="value">${t.impresiones.toLocaleString('es-CL')}</div></div></div>
-    <div class="stat"><div class="stat-icon">✅</div><div class="stat-body"><div class="label">Conversiones</div><div class="value">${t.conversiones}</div></div></div>
-    <div class="stat"><div class="stat-icon">📊</div><div class="stat-body"><div class="label">CPC prom.</div><div class="value">${clp(t.cpc_promedio)}</div></div></div>
-    <div class="stat"><div class="stat-icon">🎯</div><div class="stat-body"><div class="label">Costo/conv.</div><div class="value">${clp(t.costo_por_conversion)}</div></div></div>
-  `;
-  renderGraficoDiario(DIARIO);
-  renderCalendario(DIARIO);
-  renderCampanas();
+function campanaSparkline(diario) {
+  if (!diario.length) return '';
+  const max = Math.max(1, ...diario.map((d) => d.gasto));
+  const barras = diario.map((d) => `<div class="chart-bar" style="height:${Math.max(3, Math.round((d.gasto / max) * 100))}%" title="${d.fecha}: ${clp(d.gasto)}"></div>`).join('');
+  return `<div class="chart-bars" style="height:56px;">${barras}</div>`;
 }
 
-// ---- Init ----
-renderListaChats();
-renderPipeline();
-renderClientesRoster();
-renderAds();
+function sincronizarAds(btn) {
+  const original = btn.innerHTML;
+  btn.disabled = true;
+  btn.textContent = 'Sincronizando...';
+  const mes = ADS_MES_SELECCIONADO || mesActualClaveLocal();
+  fetch(`api/clients/${CLIENTE_ACTUAL}/ads/sincronizar`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ mes }),
+  })
+    .then((r) => r.json())
+    .then((res) => {
+      btn.disabled = false;
+      btn.innerHTML = original;
+      if (res.error) { alert(res.error); return; }
+      cargarAds();
+    })
+    .catch(() => {
+      btn.disabled = false;
+      btn.innerHTML = original;
+      alert('No se pudo sincronizar con Google Ads.');
+    });
+}
+document.getElementById('btn-sincronizar-ads').addEventListener('click', (e) => sincronizarAds(e.currentTarget));
+document.getElementById('btn-sincronizar-ads-vacio').addEventListener('click', (e) => sincronizarAds(e.currentTarget));
+
+document.getElementById('btn-cargar-ads').addEventListener('click', () => {
+  document.getElementById('f-ads-json').value = '';
+  openModal('sheet-ads');
+});
+document.getElementById('btn-editar-ads').addEventListener('click', () => {
+  const mes = ADS_MES_SELECCIONADO || mesActualClaveLocal();
+  fetch(`api/clients/${CLIENTE_ACTUAL}/ads?mes=${mes}&_=` + Date.now())
+    .then((r) => r.json())
+    .then((res) => {
+      document.getElementById('f-ads-json').value = res && res.datos ? JSON.stringify(res.datos, null, 2) : '';
+      openModal('sheet-ads');
+    });
+});
+document.getElementById('btn-guardar-ads').addEventListener('click', () => {
+  let data;
+  try { data = JSON.parse(document.getElementById('f-ads-json').value); }
+  catch (e) { alert('JSON inválido: ' + e.message); return; }
+  const mes = ADS_MES_SELECCIONADO || mesActualClaveLocal();
+  fetch(`api/clients/${CLIENTE_ACTUAL}/ads?mes=${mes}`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(data),
+  })
+    .then(() => { closeModals(); cargarAds(); });
+});
+
+fetch('api/me')
+  .then((r) => r.json())
+  .then((me) => {
+    ROL = me.role || 'admin';
+    MI_CLIENTE_ID = me.clientId || null;
+    if (ROL !== 'admin') document.body.classList.add('rol-cliente');
+  })
+  .catch(() => {})
+  .then(cargarClientes);
+setInterval(() => { if (CLIENTE_ACTUAL) cargarChats(); }, 8000);
+setInterval(() => { if (chatAbierto) cargarMensajesChat(); }, 2000);
+
+// (demo) sin notificaciones push ni service worker
 </script>
 </body>
 </html>

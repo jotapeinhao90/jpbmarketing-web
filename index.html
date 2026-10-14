@@ -314,10 +314,10 @@
         <p class="panel-app-hint">👆 La app del teléfono es una demo interactiva real — con datos de ejemplo de una empresa ficticia.</p>
 
         <div class="panel-app-features">
-          <span>Controla tu agente de WhatsApp en tiempo real</span>
-          <span>Pipeline de cotizaciones clasificado solo, todos los días</span>
-          <span>Gasto, clicks y conversiones de Google Ads en vivo</span>
-          <span>Notificaciones push cuando llega un lead nuevo</span>
+          <span>Conversaciones de WhatsApp en vivo: responde tú o deja al bot</span>
+          <span>Te muestra qué clientes dejaron de responder, para hacerles seguimiento</span>
+          <span>Análisis diario con IA: interés de cada cliente y alertas</span>
+          <span>Gastos claros: Google Ads, mensajes de Meta e IA, con facturación por ciclo</span>
         </div>
       </div>
 
@@ -762,6 +762,22 @@
     document.querySelectorAll('[data-count]').forEach(function (el) { el.textContent = '0'; io.observe(el); });
     setTimeout(function () { document.querySelectorAll('[data-count]').forEach(function (el) { if (+el.textContent === 0) el.textContent = el.dataset.count; }); }, 8000);
   }
+})();
+</script>
+<script>
+/* Escala la demo del panel (390 px lógicos) al ancho real del marco del teléfono */
+(function () {
+  var screen = document.querySelector('.iphone-screen');
+  var frame = screen && screen.querySelector('iframe');
+  if (!frame) return;
+  function fit() {
+    var s = screen.clientWidth / 390;
+    frame.style.transform = 'scale(' + s + ')';
+    frame.style.height = (screen.clientHeight / s) + 'px';
+  }
+  fit();
+  if ('ResizeObserver' in window) new ResizeObserver(fit).observe(screen);
+  else window.addEventListener('resize', fit);
 })();
 </script>
 </body>

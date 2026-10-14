@@ -171,3 +171,6 @@ body.body-announce .h2-hero { padding-top: calc(var(--announce-h) + var(--navbar
 }
 @media (prefers-reduced-motion: reduce) {
 }
+
+/* Demo del panel dentro del teléfono: se dibuja a 390 px (un iPhone real) y se escala al marco */
+.iphone-screen iframe { width: 390px; height: 844px; top: 0; left: 0; inset: auto; transform-origin: 0 0; }
