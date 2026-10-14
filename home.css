@@ -100,12 +100,7 @@ body.body-announce .h2-hero { padding-top: calc(var(--announce-h) + var(--navbar
   border: 1px solid rgba(255,255,255,.07);
   transition: transform .35s ease, box-shadow .35s ease, border-color .35s ease;
 }
-.h2-svc::before {
-  content: ''; position: absolute; inset: 0; opacity: 0; transition: opacity .35s ease;
-  background: radial-gradient(420px circle at var(--mx) var(--my), rgba(59,130,246,.28), transparent 60%);
-}
 .h2-svc:hover { transform: translateY(-6px); border-color: rgba(59,130,246,.5); box-shadow: 0 24px 60px rgba(11,18,32,.28); }
-.h2-svc:hover::before { opacity: 1; }
 .h2-svc > * { position: relative; }
 .h2-svc-top { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: auto; }
 .h2-svc-icon { width: 52px; height: 52px; border-radius: 16px; display: grid; place-items: center; background: rgba(59,130,246,.14); color: #8db8ff; }

@@ -14,7 +14,7 @@
     var ctx = cv.getContext('2d');
     var w = 0, h = 0, dpr = 1, pts = [], raf = 0, visible = true;
     var mouse = { x: -9999, y: -9999, tx: -9999, ty: -9999, on: false };
-    var LINK = 125, REACH = 190;
+    var LINK = 125;
 
     function build() {
       var r = host.getBoundingClientRect();
@@ -39,14 +39,6 @@
       ctx.clearRect(0, 0, w, h);
       mouse.x += (mouse.tx - mouse.x) * 0.14;
       mouse.y += (mouse.ty - mouse.y) * 0.14;
-
-      if (mouse.on) {
-        var g = ctx.createRadialGradient(mouse.x, mouse.y, 0, mouse.x, mouse.y, 220);
-        g.addColorStop(0, 'rgba(59,130,246,0.20)');
-        g.addColorStop(1, 'rgba(59,130,246,0)');
-        ctx.fillStyle = g;
-        ctx.fillRect(mouse.x - 220, mouse.y - 220, 440, 440);
-      }
 
       var i, j, p, q, dx, dy, d;
       for (i = 0; i < pts.length; i++) {
@@ -75,13 +67,6 @@
           if (d < LINK * LINK) {
             ctx.strokeStyle = 'rgba(96,165,250,' + (0.22 * (1 - Math.sqrt(d) / LINK)).toFixed(3) + ')';
             ctx.beginPath(); ctx.moveTo(p.x, p.y); ctx.lineTo(q.x, q.y); ctx.stroke();
-          }
-        }
-        if (mouse.on) {
-          dx = p.x - mouse.x; dy = p.y - mouse.y; d = Math.sqrt(dx * dx + dy * dy);
-          if (d < REACH) {
-            ctx.strokeStyle = 'rgba(245,184,0,' + (0.55 * (1 - d / REACH)).toFixed(3) + ')';
-            ctx.beginPath(); ctx.moveTo(p.x, p.y); ctx.lineTo(mouse.x, mouse.y); ctx.stroke();
           }
         }
       }
