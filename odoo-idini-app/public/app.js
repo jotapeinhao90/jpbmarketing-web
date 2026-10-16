@@ -1002,16 +1002,3 @@ if ("serviceWorker" in navigator && (location.protocol === "https:" || location.
   navigator.serviceWorker.register("/sw.js").catch(() => {});
 }
 token ? iniciar() : mostrarLogin();
-
-
-// --- Diagnóstico temporal del alto de pantalla (se quita cuando la barra quede bien) ---
-(() => {
-  const dbg = document.createElement("div");
-  dbg.style.cssText = "position:fixed;left:8px;right:8px;bottom:70px;z-index:999;text-align:center;font:12px monospace;color:#F2C230;background:#000;border:1px solid #F2C230;border-radius:6px;padding:3px;pointer-events:none";
-  document.body.appendChild(dbg);
-  const medir = () => {
-    const sa = navigator.standalone || matchMedia("(display-mode: standalone)").matches;
-    dbg.textContent = `alto ${innerHeight} · pantalla ${screen.height} · app ${sa ? "si" : "no"} · top ${getComputedStyle(document.documentElement).getPropertyValue("--x") || ""}`.trim();
-  };
-  medir(); addEventListener("resize", medir);
-})();

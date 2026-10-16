@@ -431,7 +431,7 @@ body, input, button { font-stretch: 100%; }
 
 /* Cabecera: acero cepillado + franja de seguridad fina */
 #hdr {
-  border-bottom: 0; position: relative; padding: calc(max(env(safe-area-inset-top), 44px) + 10px) 16px 17px;
+  border-bottom: 0; position: relative; padding: calc(env(safe-area-inset-top) + 14px) 16px 17px;
   background: #080A0C;
 }
 @media (min-width: 600px) { #hdr { padding-top: 40px !important; } }
