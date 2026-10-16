@@ -26,7 +26,7 @@ const plural = (n, s, p) => `${NUM.format(n)} ${n === 1 ? s : p}`;
 const quitarCodigo = (s) => String(s || "").replace(/^\[[^\]]*\]\s*/, "");
 const ultimoTramo = (s) => String(s || "").split(" / ").pop();
 const iniciales = (n) => (String(n).replace(/[^\p{L}\p{N} ]/gu, "").trim().split(/\s+/).slice(0, 2).map((w) => w[0]).join("") || "?").toUpperCase();
-const COLORES = ["#FF5A1F", "#7FC8A9", "#F7B72F", "#8FA7B8", "#D98C5F", "#C9B79C"];
+const COLORES = ["#E8392E", "#6FD0B5", "#F2C230", "#8FA7B8", "#C08A6A", "#B7C2CC"];
 const colorDe = (s) => COLORES[[...String(s)].reduce((a, c) => a + c.charCodeAt(0), 0) % COLORES.length];
 const semanaISO = (d) => {
   const t = new Date(Date.UTC(d.getFullYear(), d.getMonth(), d.getDate()));
@@ -794,7 +794,7 @@ const REPORTES = {
 
   pos(d) {
     const totM = d.metodos.reduce((a, m) => a + m.total, 0) || 1;
-    const col = ["var(--ac)", "var(--mint)", "var(--amb)", "#8FA7B8", "#C9B79C"];
+    const col = ["var(--ac)", "var(--mint)", "var(--amb)", "#8FA7B8", "#B7C2CC"];
     const dias = d.dias.map((x) => {
       const dt = parseFecha(x.dia);
       return { lab: String(dt.getUTCDate()), a: x.total, tip: `<b>${DIAS[dt.getUTCDay()]} ${dt.getUTCDate()} ${MESES[dt.getUTCMonth()]}</b> · <b class="num">${money(x.total)}</b> · ${plural(x.n, "venta", "ventas")}` };
