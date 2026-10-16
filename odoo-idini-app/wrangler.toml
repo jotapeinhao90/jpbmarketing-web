@@ -1,0 +1,22 @@
+name = "idini-odoo-app"
+main = "src/worker.js"
+compatibility_date = "2026-01-01"
+
+routes = [
+  { pattern = "fi.jpbmarketing.cl", custom_domain = true }
+]
+
+[assets]
+directory = "./public"
+binding = "ASSETS"
+run_worker_first = ["/api/*"]
+
+[vars]
+ODOO_URL = "https://seguimientoprueba1.odoo.com"
+ODOO_DB = "seguimientoprueba1"
+
+# Secrets (NO van acá; se cargan con `wrangler secret put --config ...`):
+#   ODOO_KEY        -> clave API de Odoo (usuario dedicado, mínimo privilegio)
+#   APP_USER        -> usuario de la app
+#   APP_PASS        -> contraseña de la app
+#   SESSION_SECRET  -> firma de los tokens de sesión

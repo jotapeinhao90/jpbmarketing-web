@@ -1,0 +1,112 @@
+<!doctype html>
+<html lang="es-CL">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Fierros Idini · Panel de ventas</title>
+<meta name="description" content="Ventas, KPIs, productos y clientes de Fierros Idini conectados a Odoo.">
+<meta name="robots" content="noindex, nofollow">
+<link rel="manifest" href="/manifest.webmanifest">
+<link rel="icon" type="image/png" href="/favicon.png">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<meta name="theme-color" content="#0A1220">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Idini">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Sora:wght@500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/styles.css">
+<script>
+  // Aplica el tema guardado antes de pintar (evita parpadeo).
+  try { var t = localStorage.getItem("idini_theme"); if (t) document.documentElement.dataset.theme = t; } catch (e) {}
+</script>
+</head>
+<body>
+
+<div class="phone" id="phone">
+
+  <!-- Login -->
+  <main id="login" class="login" hidden>
+    <form id="loginForm" class="login-card" autocomplete="on">
+      <div class="logos big">
+        <img class="lj" src="/logo-jpb-blanco.png" alt="JPB Marketing">
+        <span class="x">×</span>
+        <img class="li" src="/logo-idini.png" alt="Fierros Idini">
+      </div>
+      <div>
+        <h1>Panel de ventas</h1>
+        <p class="muted">Ingresa para ver tus datos de Odoo en tiempo real</p>
+      </div>
+      <label>Usuario
+        <input name="user" type="text" autocomplete="username" autocapitalize="none" spellcheck="false" required>
+      </label>
+      <label>Contraseña
+        <input name="pass" type="password" autocomplete="current-password" required>
+      </label>
+      <p id="loginError" class="error" role="alert" hidden></p>
+      <button class="btn ac block" type="submit">Entrar</button>
+    </form>
+  </main>
+
+  <!-- App -->
+  <div id="app" class="app" hidden>
+    <header id="hdr">
+      <div class="hrow">
+        <div class="logos">
+          <img class="lj" src="/logo-jpb-blanco.png" alt="JPB Marketing">
+          <span class="x">×</span>
+          <img class="li" src="/logo-idini.png" alt="Fierros Idini">
+        </div>
+        <div class="hbtns">
+          <button id="refresh" class="ib" aria-label="Actualizar" title="Actualizar">
+            <svg class="i" viewBox="0 0 24 24"><path d="M21 12a9 9 0 1 1-2.64-6.36"/><path d="M21 3v6h-6"/></svg>
+          </button>
+          <button id="theme" class="ib" aria-label="Cambiar tema" title="Cambiar tema">
+            <svg class="i" viewBox="0 0 24 24"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg>
+          </button>
+          <button id="logout" class="ib" aria-label="Cerrar sesión" title="Cerrar sesión">
+            <svg class="i" viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><path d="M16 17l5-5-5-5"/><path d="M21 12H9"/></svg>
+          </button>
+        </div>
+      </div>
+      <div class="hsub">
+        <h2>Panel de ventas · Idini</h2>
+        <span class="beta">VERSIÓN BETA</span>
+      </div>
+    </header>
+
+    <div id="offline" class="banner" hidden>Sin conexión · mostrando los últimos datos guardados</div>
+
+    <main id="view" class="scroll" tabindex="-1"></main>
+
+    <nav class="tabbar" aria-label="Secciones">
+      <button data-tab="resumen" class="active">
+        <svg class="i" viewBox="0 0 24 24"><path d="M3 11.5 12 4l9 7.5"/><path d="M5 10v10h14V10"/></svg>
+        <span>Hoy</span>
+      </button>
+      <button data-tab="ventas">
+        <svg class="i" viewBox="0 0 24 24"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><path d="M3 6h18"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
+        <span>Ventas</span>
+      </button>
+      <button data-tab="productos">
+        <svg class="i" viewBox="0 0 24 24"><path d="M21 8 12 3 3 8v8l9 5 9-5z"/><path d="M3 8l9 5 9-5"/><path d="M12 13v8"/></svg>
+        <span>Productos</span>
+      </button>
+      <button data-tab="clientes">
+        <svg class="i" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H7a4 4 0 0 0-4 4v2"/><circle cx="10" cy="8" r="4"/><path d="M21 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 4.13a4 4 0 0 1 0 7.75"/></svg>
+        <span>Clientes</span>
+      </button>
+    </nav>
+  </div>
+
+  <!-- Detalle (hoja inferior) -->
+  <div id="sheetBg" class="sheet-bg" hidden></div>
+  <section id="sheet" class="sheet" role="dialog" aria-modal="true" hidden></section>
+
+</div>
+
+<script src="/app.js" defer></script>
+</body>
+</html>
