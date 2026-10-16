@@ -521,8 +521,3 @@ button.item:active, .row-av:active { border-left-color: var(--ac); }
     var(--bg);
 }
 .login-card { background: var(--p1); border: 1px solid var(--bd); border-top: 4px solid var(--ac); padding: 26px 20px; border-radius: 16px; }
-
-/* Móvil: el alto lo fija app.js (--appH) para llegar hasta el borde inferior real */
-@media (max-width: 599px) {
-  .phone { position: fixed; top: 0; left: 0; right: 0; height: var(--appH, 100%); }
-}

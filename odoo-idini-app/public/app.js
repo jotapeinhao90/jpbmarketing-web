@@ -1004,18 +1004,14 @@ if ("serviceWorker" in navigator && (location.protocol === "https:" || location.
 token ? iniciar() : mostrarLogin();
 
 
-// --- Alto real de la pantalla (iOS en modo app instalada a veces reporta menos) ---
+// --- Diagnóstico temporal del alto de pantalla (se quita cuando la barra quede bien) ---
 (() => {
-  const root = document.documentElement;
-  const standalone = navigator.standalone || matchMedia("(display-mode: standalone)").matches;
   const dbg = document.createElement("div");
-  dbg.style.cssText = "position:fixed;left:0;right:0;top:50px;z-index:999;text-align:center;font:11px monospace;color:#F2C230;pointer-events:none";
+  dbg.style.cssText = "position:fixed;left:8px;right:8px;bottom:70px;z-index:999;text-align:center;font:12px monospace;color:#F2C230;background:#000;border:1px solid #F2C230;border-radius:6px;padding:3px;pointer-events:none";
   document.body.appendChild(dbg);
   const medir = () => {
-    const ih = innerHeight, vv = visualViewport ? Math.round(visualViewport.height) : 0, ch = root.clientHeight, sh = screen.height;
-    const h = standalone && innerWidth < 600 ? Math.max(ih, vv, ch, sh) : 0;
-    if (h) root.style.setProperty("--appH", h + "px"); else root.style.removeProperty("--appH");
-    dbg.textContent = `ih${ih} vv${vv} ch${ch} sh${sh} sa${standalone ? 1 : 0} -> ${h}`;
+    const sa = navigator.standalone || matchMedia("(display-mode: standalone)").matches;
+    dbg.textContent = `alto ${innerHeight} · pantalla ${screen.height} · app ${sa ? "si" : "no"} · top ${getComputedStyle(document.documentElement).getPropertyValue("--x") || ""}`.trim();
   };
-  medir(); addEventListener("resize", medir); addEventListener("orientationchange", medir);
+  medir(); addEventListener("resize", medir);
 })();
