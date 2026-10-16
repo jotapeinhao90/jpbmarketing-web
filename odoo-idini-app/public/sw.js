@@ -1,6 +1,7 @@
-// Service worker: deja la app instalable y abre al instante con el "cascarón" cacheado.
+// Service worker: deja la app instalable y permite abrirla sin conexión con el "cascarón" cacheado.
+// Estrategia "red primero": con internet siempre se obtiene la versión más nueva; sin internet, la última guardada.
 // Los datos de Odoo (/api/*) nunca se cachean aquí: la app guarda su último resumen en localStorage.
-const CACHE = "idini-v2";
+const CACHE = "idini-v4";
 const SHELL = ["/", "/styles.css", "/app.js", "/manifest.webmanifest", "/icon-192.png", "/icon-512.png", "/apple-touch-icon.png", "/favicon.png", "/logo-idini.png", "/logo-jpb-blanco.png"];
 
 self.addEventListener("install", (e) => {
@@ -20,14 +21,12 @@ self.addEventListener("fetch", (e) => {
   const url = new URL(req.url);
   if (req.method !== "GET" || url.origin !== location.origin || url.pathname.startsWith("/api/")) return;
 
-  // Stale-while-revalidate: responde con lo cacheado y actualiza en segundo plano.
   e.respondWith(
-    caches.open(CACHE).then(async (cache) => {
-      const hit = await cache.match(req, { ignoreSearch: true });
-      const red = fetch(req)
-        .then((res) => { if (res.ok) cache.put(req, res.clone()); return res; })
-        .catch(() => hit);
-      return hit || red;
-    })
+    fetch(req)
+      .then((res) => {
+        if (res.ok) caches.open(CACHE).then((c) => c.put(req, res.clone()));
+        return res;
+      })
+      .catch(() => caches.match(req, { ignoreSearch: true }).then((hit) => hit || caches.match("/")))
   );
 });
