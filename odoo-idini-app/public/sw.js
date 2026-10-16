@@ -1,7 +1,7 @@
 // Service worker: deja la app instalable y permite abrirla sin conexión con el "cascarón" cacheado.
 // Estrategia "red primero": con internet siempre se obtiene la versión más nueva; sin internet, la última guardada.
 // Los datos de Odoo (/api/*) nunca se cachean aquí: la app guarda su último resumen en localStorage.
-const CACHE = "idini-v5";
+const CACHE = "idini-v6";
 const SHELL = ["/", "/styles.css", "/app.js", "/manifest.webmanifest", "/icon-192.png", "/icon-512.png", "/apple-touch-icon.png", "/favicon.png", "/logo-idini.png", "/logo-jpb-blanco.png"];
 
 self.addEventListener("install", (e) => {

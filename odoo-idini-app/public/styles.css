@@ -17,8 +17,8 @@
   --steel: #8FA7B8;
   --shadow: none;
   --hdr: #0C0B0A;
-  --f-t: "Barlow Condensed", "Arial Narrow", system-ui, sans-serif;
-  --f-b: "Barlow", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --f-t: "Bricolage Grotesque", system-ui, sans-serif;
+  --f-b: "DM Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
   color-scheme: dark;
 }
 :root[data-theme="light"] {
@@ -64,12 +64,12 @@ svg.i { width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-widt
 
 /* ---------- Marco del teléfono (igual que el panel de Monkey) ---------- */
 .phone {
-  position: fixed; inset: 0;
+  position: relative; width: 100%; height: 100vh;
   background: var(--bg);
   overflow: hidden;
   display: flex; flex-direction: column;
 }
-@media (max-width: 599px) { html, body { background: var(--p1); overflow: hidden; } }
+@media (max-width: 599px) { html, body { background: #0C0B0A; overflow: hidden; } body { display: block; } }
 @media (min-width: 600px) {
   body { background: radial-gradient(circle at 50% 30%, #2a221c, #0a0908 70%); }
   .phone {
@@ -422,126 +422,103 @@ button.item:active, .row-av:active { background: var(--p2); }
 
 
 /* =====================================================================
-   FUNDICIÓN · identidad propia: placas de acero, remaches, franja de
-   seguridad, tipografía condensada industrial, esquinas casi rectas.
+   FUNDICIÓN v2 · acero cepillado, remaches, franja de seguridad.
+   Formas suaves, tipografía Bricolage Grotesque.
    ===================================================================== */
-html, body { background-color: var(--bg); }
 .num, .hero .big, .kpi .n, .fact .v, .mini .m .v, .price, .amount, .amt, .rt b { font-variant-numeric: tabular-nums; }
-h1, h2, h3, .sec, .badge, .chip, .btn, .tabbar button, .beta { text-transform: uppercase; letter-spacing: .04em; }
-h1 { font-size: 28px; font-weight: 800; }
+h1, h2, h3, .hero .big, .kpi .n, .fact .v, .mini .m .v, .mcard b { font-family: var(--f-t); letter-spacing: -.015em; }
 
-/* Cabecera: franja de peligro como borde inferior */
-#hdr { border-bottom: 0; position: relative; padding-bottom: 16px; }
-#hdr::after {
-  content: ""; position: absolute; left: 0; right: 0; bottom: 0; height: 5px;
-  background: repeating-linear-gradient(-45deg, var(--ac) 0 7px, #0C0B0A 7px 14px);
-}
-.hsub h2 { font-size: 19px; font-weight: 700; letter-spacing: .06em; }
-.beta { border-radius: 2px; font-family: var(--f-t); font-size: 12.5px; padding: 2px 8px; letter-spacing: .12em; }
-.ib { border-radius: 4px; background: rgba(255, 255, 255, .07); border: 1px solid rgba(255, 255, 255, .1); }
-.ib:active { background: var(--ac); border-color: var(--ac); color: #14100C; }
-.logos .x { opacity: .5; }
-
-/* Placas */
-.card, .item, .row-av, .mcard, .fact, .search, .note, .seg, .more, .btn, .login-card input {
-  border-radius: 3px;
-}
-.card, .mcard {
+/* Cabecera: acero cepillado + franja de seguridad fina */
+#hdr {
+  border-bottom: 0; position: relative; padding: 44px 16px 17px;
   background:
-    radial-gradient(circle at 7px 7px, #5b5249 1.6px, transparent 2.2px),
-    radial-gradient(circle at calc(100% - 7px) 7px, #5b5249 1.6px, transparent 2.2px),
-    linear-gradient(180deg, var(--p2) 0, var(--p1) 46px);
-  border: 1px solid var(--bd);
-  border-top: 2px solid #4a423b;
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, .04);
+    repeating-linear-gradient(90deg, rgba(255,255,255,.025) 0 1px, transparent 1px 3px),
+    linear-gradient(180deg, #1d1a17, #0C0B0A);
+}
+@media (min-width: 600px) { #hdr { padding-top: 40px !important; } }
+#hdr::after {
+  content: ""; position: absolute; left: 0; right: 0; bottom: 0; height: 4px;
+  background: repeating-linear-gradient(-45deg, var(--ac) 0 6px, #0C0B0A 6px 12px);
+}
+.hsub h2 { font-size: 17px; font-weight: 700; }
+.beta { font-size: 10.5px; border-radius: 99px; }
+.ib { background: linear-gradient(180deg, #2c2824, #1b1815); border: 1px solid #3f3832; box-shadow: inset 0 1px 0 rgba(255,255,255,.08); }
+.ib:active { background: var(--ac); border-color: var(--ac); color: #14100C; }
+
+/* Placas de acero con remaches discretos */
+.card, .mcard {
+  border-radius: 16px;
+  background:
+    radial-gradient(circle at 10px 10px, #6a5f54 1.5px, transparent 2.2px),
+    radial-gradient(circle at calc(100% - 10px) 10px, #6a5f54 1.5px, transparent 2.2px),
+    radial-gradient(circle at 10px calc(100% - 10px), #6a5f54 1.5px, transparent 2.2px),
+    radial-gradient(circle at calc(100% - 10px) calc(100% - 10px), #6a5f54 1.5px, transparent 2.2px),
+    linear-gradient(165deg, #2a2623 0%, #1c1917 55%, #181513 100%);
+  border: 1px solid #3a342f;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.07), 0 6px 16px rgba(0,0,0,.28);
 }
 :root[data-theme="light"] .card, :root[data-theme="light"] .mcard {
   background:
-    radial-gradient(circle at 7px 7px, #b9afa1 1.6px, transparent 2.2px),
-    radial-gradient(circle at calc(100% - 7px) 7px, #b9afa1 1.6px, transparent 2.2px),
-    linear-gradient(180deg, #fff 0, var(--p1) 46px);
-  border-top-color: #b9afa1;
+    radial-gradient(circle at 10px 10px, #b3a898 1.5px, transparent 2.2px),
+    radial-gradient(circle at calc(100% - 10px) 10px, #b3a898 1.5px, transparent 2.2px),
+    radial-gradient(circle at 10px calc(100% - 10px), #b3a898 1.5px, transparent 2.2px),
+    radial-gradient(circle at calc(100% - 10px) calc(100% - 10px), #b3a898 1.5px, transparent 2.2px),
+    linear-gradient(165deg, #ffffff, #F1ECE4);
+  border-color: #d3cabd;
+  box-shadow: inset 0 1px 0 #fff, 0 6px 16px rgba(60,40,20,.08);
 }
-.card { padding-top: 18px; }
-.item, .row-av { border-left: 3px solid var(--bd); }
+.card { padding: 18px; }
+.kpi { padding: 18px 16px; }
+.item, .row-av, .fact, .note, .search, .login-card input { border-radius: 12px; }
+.item, .row-av { border-left: 3px solid #4a423b; }
 button.item:active, .row-av:active { border-left-color: var(--ac); }
+.btn, .more { border-radius: 12px; }
+.seg { border-radius: 12px; }
+.seg button { border-radius: 9px; }
+.chip { border-radius: 99px; }
+.badge, .chip-s, .pill-n { border-radius: 99px; }
+.goal { border-radius: 10px; }
+.sk { border-radius: 14px; }
 
-/* Títulos de sección: marca de hierro + línea */
-.sec { font-size: 15px; font-weight: 700; letter-spacing: .14em; color: var(--tx); gap: 10px; margin: 14px 2px 0; }
-.sec::before { content: ""; width: 10px; height: 10px; background: var(--ac); flex-shrink: 0; transform: rotate(45deg) scale(.85); }
-.sec > :first-child { flex: 0 1 auto; }
-.sec button { text-transform: uppercase; letter-spacing: .08em; font-family: var(--f-t); font-size: 14px; margin-left: auto; }
-.hello h2 { font-size: 28px; font-weight: 800; letter-spacing: .02em; }
-.subhead h2 { font-size: 28px; font-weight: 800; }
+/* Títulos */
+.sec { font-size: 12.5px; font-weight: 700; letter-spacing: .12em; color: var(--tx2); justify-content: flex-start; gap: 9px; margin: 14px 2px 0; }
+.sec::before { content: ""; width: 14px; height: 4px; border-radius: 2px; background: var(--ac); flex-shrink: 0; }
+.sec button { margin-left: auto; letter-spacing: 0; text-transform: none; font-size: 13px; }
+.hello h2, .subhead h2 { font-size: 24px; font-weight: 800; }
+.hero .big { font-size: 28px; font-weight: 800; }
+.kpi .n { font-size: 26px; font-weight: 800; }
+.ringw .mid b { font-size: 32px; font-weight: 800; }
+.fact .v, .mini .m .v { font-size: 19px; font-weight: 700; }
+.btn { font-weight: 700; }
+.btn.ac { box-shadow: 0 3px 0 #a53a12; }
+.btn.ac:active { transform: translateY(2px); box-shadow: 0 1px 0 #a53a12; }
+.ic, .kpi .ic, .mcard .ic, .al .ic { border-radius: 10px; }
+.av { border-radius: 12px; font-weight: 800; }
+.ringw .fg { stroke-linecap: round; }
+.rank-bar { height: 7px; border-radius: 99px; background: var(--p2); }
+.rank-bar i { border-radius: 99px; background: linear-gradient(90deg, #c63e10, var(--ac)); }
+.stackbar { border-radius: 99px; }
+.dot { border-radius: 50%; }
+.chart .bar, .chart .bar2 { rx: 3px; }
 
-/* Números grandes: condensados y contundentes */
-.hero .big { font-size: 34px; font-weight: 800; letter-spacing: 0; }
-.kpi .n { font-size: 32px; font-weight: 800; letter-spacing: 0; }
-.fact .v { font-size: 23px; font-weight: 700; letter-spacing: 0; }
-.mini .m .v { font-size: 23px; letter-spacing: 0; }
-.ringw .mid b { font-size: 40px; font-weight: 800; }
-.kpi .l, .hero .l, .hero .s { font-size: 13.5px; }
-.item .price, .lrow .rt b, .rank-head .amount, .al .amt { font-size: 17px; font-weight: 700; letter-spacing: .01em; }
-.item .title { font-size: 16px; }
-.rank-head { font-size: 15px; }
-
-/* Anillo y barras: cantos vivos */
-.ringw .fg { stroke-linecap: butt; }
-.ringw .bgc { stroke: var(--p2); }
-.rank-bar, .rank-bar i, .stackbar, .stackbar i { border-radius: 0; }
-.rank-bar { height: 8px; background: var(--p2); border: 1px solid var(--bd); }
-.stackbar { height: 16px; border: 1px solid var(--bd); }
-.chart .bar, .chart .bar2 { rx: 1px; }
-.chart .bar { opacity: .75; }
-.chart .grid { stroke-dasharray: 2 5; }
-.chart text { font-family: var(--f-t); font-size: 11.5px; letter-spacing: .04em; }
-.dot { border-radius: 1px; width: 10px; height: 10px; }
-.goal { border-radius: 2px; border-left: 3px solid currentColor; }
-
-/* Íconos y avatares: bloques de acero */
-.kpi .ic, .mcard .ic, .al .ic { border-radius: 3px; width: 36px; height: 36px; }
-.kpi .ic { background: var(--mint-bg); }
-.av { border-radius: 3px; font-size: 20px; font-weight: 800; background: color-mix(in srgb, var(--c, var(--ac)) 16%, var(--p2)); border: 1px solid color-mix(in srgb, var(--c, var(--ac)) 45%, transparent); }
-.badge, .chip-s, .pill-n { border-radius: 2px; font-family: var(--f-t); font-size: 13px; letter-spacing: .08em; padding: 2px 8px; }
-.mcard b { font-size: 21px; font-weight: 800; letter-spacing: .04em; }
-.mcard span { font-size: 13.5px; }
-.card h3 { font-size: 18px; letter-spacing: .06em; }
-
-/* Controles */
-.btn { font-family: var(--f-t); font-size: 17px; font-weight: 700; letter-spacing: .1em; min-height: 48px; }
-.btn.ac { box-shadow: 0 3px 0 #9c3410; }
-.btn.ac:active { transform: translateY(2px); box-shadow: 0 1px 0 #9c3410; }
-.chip { border-radius: 2px; font-family: var(--f-t); font-size: 14.5px; padding: 6px 13px; }
-.seg { padding: 2px; gap: 2px; }
-.seg button { border-radius: 2px; font-family: var(--f-t); font-size: 15px; letter-spacing: .08em; text-transform: uppercase; }
-.search { height: 48px; }
-.back { font-family: var(--f-t); font-size: 16px; letter-spacing: .08em; text-transform: uppercase; }
-.sk { border-radius: 3px; }
-
-/* Barra inferior: pegada al fondo del teléfono, como un riel de acero */
+/* Barra inferior: pegada al fondo, sin margen extra (igual que Panel JPB) */
 .tabbar {
-  padding: 0 0 env(safe-area-inset-bottom);
-  background: var(--hdr);
-  border-top: 1px solid #3A342F;
-  box-shadow: 0 -1px 0 rgba(255, 255, 255, .03);
+  padding: 0;
+  background: linear-gradient(180deg, #1d1a17, #0C0B0A);
+  border-top: 1px solid #3f3832;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.05);
 }
-:root[data-theme="light"] .tabbar { background: #1A1612; }
-.tabbar button { padding: 10px 0 9px; gap: 3px; color: #8d857a; font-family: var(--f-t); font-size: 13.5px; font-weight: 600; letter-spacing: .1em; }
-.tabbar button.active { color: var(--ac); background: linear-gradient(180deg, rgba(255, 90, 31, .16), transparent 80%); }
-.tabbar button.active::before { top: 0; left: 0; transform: none; width: 100%; height: 3px; border-radius: 0; }
-.tabbar svg.i { width: 22px; height: 22px; }
-@media (min-width: 600px) { .tabbar { padding-bottom: 6px; } }
+.tabbar button { padding: 9px 0 10px; gap: 2px; color: #8d857a; font-size: 10.5px; font-weight: 700; letter-spacing: .02em; }
+.tabbar button.active { color: var(--ac); }
+.tabbar button.active::before { top: 0; left: 50%; transform: translateX(-50%); width: 28px; height: 3px; border-radius: 0 0 3px 3px; box-shadow: 0 2px 10px var(--ac); }
 
-/* Hoja de detalle y login */
-.sheet { border-radius: 8px 8px 0 0; border-top: 3px solid var(--ac); background: var(--p1); }
-.grab { border-radius: 0; width: 44px; height: 3px; background: var(--bd); }
+/* Hoja y login */
+.sheet { border-radius: 20px 20px 0 0; border-top: 3px solid var(--ac); padding-bottom: 24px; }
+.grab { border-radius: 4px; }
 .login {
   background:
-    linear-gradient(180deg, transparent 70%, var(--ac-bg)),
-    repeating-linear-gradient(0deg, transparent 0 31px, rgba(255, 255, 255, .03) 31px 32px),
-    repeating-linear-gradient(90deg, transparent 0 31px, rgba(255, 255, 255, .03) 31px 32px),
+    radial-gradient(520px 260px at 50% -10%, var(--ac-bg), transparent 70%),
+    repeating-linear-gradient(90deg, rgba(255,255,255,.02) 0 1px, transparent 1px 3px),
     var(--bg);
 }
-.login-card { background: var(--p1); border: 1px solid var(--bd); border-top: 5px solid var(--ac); padding: 26px 20px; border-radius: 3px; }
-.login-card h1 { font-size: 32px; }
-.sec { justify-content: flex-start; }
+.login-card { background: var(--p1); border: 1px solid var(--bd); border-top: 4px solid var(--ac); padding: 26px 20px; border-radius: 16px; }
