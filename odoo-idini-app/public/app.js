@@ -26,7 +26,7 @@ const plural = (n, s, p) => `${NUM.format(n)} ${n === 1 ? s : p}`;
 const quitarCodigo = (s) => String(s || "").replace(/^\[[^\]]*\]\s*/, "");
 const ultimoTramo = (s) => String(s || "").split(" / ").pop();
 const iniciales = (n) => (String(n).replace(/[^\p{L}\p{N} ]/gu, "").trim().split(/\s+/).slice(0, 2).map((w) => w[0]).join("") || "?").toUpperCase();
-const COLORES = ["#F2564B", "#2DD4B0", "#FFB547", "#6AA8FF", "#35C7E8", "#B58CFF"];
+const COLORES = ["#FF5A1F", "#7FC8A9", "#F7B72F", "#8FA7B8", "#D98C5F", "#C9B79C"];
 const colorDe = (s) => COLORES[[...String(s)].reduce((a, c) => a + c.charCodeAt(0), 0) % COLORES.length];
 const semanaISO = (d) => {
   const t = new Date(Date.UTC(d.getFullYear(), d.getMonth(), d.getDate()));
@@ -730,7 +730,7 @@ function renderSub() {
 const REPORTES = {
   cobranza(d) {
     const T = d.tramos;
-    const tr = [["Al día", T.alDia, "var(--mint)"], ["1–30 días", T.d30, "var(--amb)"], ["31–60 días", T.d60, "#FF9B54"], ["61–90 días", T.d90, "var(--red)"], ["+90 días", T.mas, "#C0352B"]];
+    const tr = [["Al día", T.alDia, "var(--mint)"], ["1–30 días", T.d30, "var(--amb)"], ["31–60 días", T.d60, "#FF9B54"], ["61–90 días", T.d90, "var(--red)"], ["+90 días", T.mas, "#B0301F"]];
     const totalT = tr.reduce((a, [, t]) => a + t.total, 0) || 1;
     return `<section class="card hero">
         ${anillo(d.porCobrar.total ? 1 - d.vencido.total / d.porCobrar.total : 1, d.porCobrar.total ? pct(1 - d.vencido.total / d.porCobrar.total) : "100%", "al día")}
@@ -794,7 +794,7 @@ const REPORTES = {
 
   pos(d) {
     const totM = d.metodos.reduce((a, m) => a + m.total, 0) || 1;
-    const col = ["var(--ac)", "var(--mint)", "var(--amb)", "#6AA8FF", "#B58CFF"];
+    const col = ["var(--ac)", "var(--mint)", "var(--amb)", "#8FA7B8", "#C9B79C"];
     const dias = d.dias.map((x) => {
       const dt = parseFecha(x.dia);
       return { lab: String(dt.getUTCDate()), a: x.total, tip: `<b>${DIAS[dt.getUTCDay()]} ${dt.getUTCDate()} ${MESES[dt.getUTCMonth()]}</b> · <b class="num">${money(x.total)}</b> · ${plural(x.n, "venta", "ventas")}` };
