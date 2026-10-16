@@ -17,8 +17,8 @@
   --steel: #8FA7B8;
   --shadow: none;
   --hdr: #080A0C;
-  --f-t: "Archivo", system-ui, sans-serif;
-  --f-b: "Archivo", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --f-t: "IBM Plex Sans", system-ui, sans-serif;
+  --f-b: "IBM Plex Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
   color-scheme: dark;
 }
 :root[data-theme="light"] {
@@ -426,16 +426,13 @@ button.item:active, .row-av:active { background: var(--p2); }
    Formas suaves, tipografía Bricolage Grotesque.
    ===================================================================== */
 .num, .hero .big, .kpi .n, .fact .v, .mini .m .v, .price, .amount, .amt, .rt b { font-variant-numeric: tabular-nums; }
-h1, h2, h3, .hero .big, .kpi .n, .fact .v, .mini .m .v, .mcard b, .ringw .mid b, .item .price, .lrow .rt b, .rank-head .amount, .al .amt { font-stretch: 118%; letter-spacing: -.01em; }
+h1, h2, h3, .hero .big, .kpi .n, .fact .v, .mini .m .v, .mcard b, .ringw .mid b, .item .price, .lrow .rt b, .rank-head .amount, .al .amt { letter-spacing: -.01em; }
 body, input, button { font-stretch: 100%; }
-.sec, .tabbar button, .seg button, .btn, .chip { font-stretch: 112%; }
 
 /* Cabecera: acero cepillado + franja de seguridad fina */
 #hdr {
   border-bottom: 0; position: relative; padding: calc(max(env(safe-area-inset-top), 44px) + 10px) 16px 17px;
-  background:
-    repeating-linear-gradient(90deg, rgba(255,255,255,.025) 0 1px, transparent 1px 3px),
-    linear-gradient(180deg, #1b2025, #080A0C);
+  background: #080A0C;
 }
 @media (min-width: 600px) { #hdr { padding-top: 40px !important; } }
 #hdr::after {
@@ -506,7 +503,7 @@ button.item:active, .row-av:active { border-left-color: var(--ac); }
 /* Barra inferior: pegada al fondo, sin margen extra (igual que Panel JPB) */
 .tabbar {
   padding: 0;
-  background: linear-gradient(180deg, #1b2025, #080A0C);
+  background: #080A0C;
   border-top: 1px solid #38414a;
   box-shadow: inset 0 1px 0 rgba(255,255,255,.05);
 }
@@ -524,3 +521,8 @@ button.item:active, .row-av:active { border-left-color: var(--ac); }
     var(--bg);
 }
 .login-card { background: var(--p1); border: 1px solid var(--bd); border-top: 4px solid var(--ac); padding: 26px 20px; border-radius: 16px; }
+
+/* Móvil: el alto lo fija app.js (--appH) para llegar hasta el borde inferior real */
+@media (max-width: 599px) {
+  .phone { position: fixed; top: 0; left: 0; right: 0; height: var(--appH, 100%); }
+}
