@@ -60,3 +60,35 @@ URLs revisadas (resultados de búsqueda; ver lista completa en el informe):
 - https://www.aurorainbox.com/chatbot-talleres-mecanicos-whatsapp/
 - https://agencyanalytics.com/es/features/ai-reporting-tools
 - https://www.cyberclick.es/numerical-blog/herramientas-para-analizar-tu-visibilidad-geo-en-chats-con-ia
+
+## 2026-10-22 – Estudio de mercado Chile (3 AM)
+
+Estudio completo: `estudios/2026-10-22.md`. Cubre las 5 ideas del informe 2 AM; las 5 del informe `ideas/2026-10-22.md` quedan sin estudiar. Datos limitados (solo WebSearch; precios CLP son estimaciones).
+
+| Idea | Veredicto | Puntaje |
+|---|---|---|
+| 1. Cumplimiento Ley 21.719 pymes | COMPETITIVO CON CONDICIONES | 7 |
+| 2. Herramientas Mercado Libre Chile | COMPETITIVO CON CONDICIONES | 6 |
+| 3. Reportes IA en español | COMPETITIVO CON CONDICIONES | 5 |
+| 4. Alertas licitaciones (LicitAlertas ya existe) | NO COMPETITIVO | 4 |
+| 4. CRM talleres (Carsu, Appli-Car, Aurora) | NO COMPETITIVO | 4 |
+
+**Mejor idea: #1 Ley 21.719** (vigencia 1-dic-2026). Pasos: verificar postergación; 10 contactos con 3 compromisos; landing + diagnóstico gratuito.
+
+URLs revisadas (resultados de búsqueda):
+- https://www.diarioconstitucional.cl/2026/06/12/la-ley-21-719-entra-en-vigor-el-1-de-diciembre-y-expone-vacios-en-regulacion-de-pequenas-empresas/
+- https://preyproject.com/es/resources/guia-de-proteccion-de-datos-para-pymes-cumplimiento-de-ley-21-719
+- https://www.minsegpres.gob.cl/wp-content/uploads/2025/11/Minuta-AGPD.pdf
+- https://ecosistemastartup.com/?p=88210
+- https://www.ine.gob.cl/docs/default-source/estadisticas-experimentales-rue/rue-demografia-de-empresas.html
+- https://abastible.cl/wp-content/uploads/2025/03/ESTUDIO_OBSERVATORIO_PYME.pdf
+- https://g5noticias.cl/2026/10/15/ecosistema-de-mercado-libre-impulso-mas-de-11-000-empleos-y-movilizo-us-575-millones-en-ventas-de-pymes/
+- https://www.repricer.com/es/blog/las-mejores-herramientas-de-optimizacion-de-precios-para-pequenas-empresas-online/
+- https://reportei.com/es/informe-para-negocio-local/
+- https://www.octoboard.com/ppc-reporting-tool/google-ads-automated-reports
+- https://www.comparasoftware.com/appli-car
+- https://www.capterra.es/software/1090536/Carsu
+- https://www.aurorainbox.com/chatbot-talleres-mecanicos-whatsapp/
+- https://www.producthunt.com/@patricio1905
+- https://www.chilecompra.cl/2025/07/atencion-proveedores-participa-en-la-primera-masterclass-sobre-compra-agil-y-mejora-tus-oportunidades-de-negocio/
+- https://www.chilecompra.cl/2020/04/ministro-de-hacienda-presento-compra-agil-que-permite-que-las-mipymes-puedan-hacer-mas-negocios-con-el-estado/
