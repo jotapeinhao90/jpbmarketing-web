@@ -27,3 +27,36 @@ URLs revisadas:
 - https://www.buk.cl/novedades/finanzas/mejor-software-de-cobranza
 - https://www.ionos.com/es-us/marketing/gestor-reputacion-online-ia
 - https://www.producthunt.com/@patricio1905
+
+## 2026-10-22 – Ideas (2 AM)
+
+Informe completo: `ideas/2026-10-22-2AM.md`. Datos de ingresos mayormente no verificados (blogs/búsquedas).
+
+| # | Idea | Rent. | Facilidad | Baja comp. Chile |
+|---|------|---|---|---|
+| 1 | Cumplimiento Ley 21.719 para pymes (entra en vigor 1-dic-2026, posible postergación) | 7 | 8 | 6 |
+| 2 | Herramientas para vendedores de Mercado Libre Chile (ref. Closet Tools, ~USD 40k/mes no verificado) | 7 | 7 | 6 |
+| 3 | Reportes automáticos con IA en español (ref. agencia solo USD 10k/mes, anecdótico) | 6 | 8 | 5 |
+| 4 | CRM vertical talleres mecánicos (ref. CRM USD 6,7k MRR, Reddit secundario) | 6 | 8 | 4 |
+| 5 | Alertas de licitaciones con IA (ya existe LicitAlertas) | 6 | 8 | 4 |
+
+URLs revisadas (resultados de búsqueda; ver lista completa en el informe):
+- https://www.questera.ai/blogs/micro-saas-ideas-indie-hackers-ai
+- https://greyjournal.net/micro-saas-ideas-solopreneurs-2026/
+- https://flowjam.com/blog/27-micro-saas-examples-that-actually-print-money-in-2025
+- https://beginnersinai.org/ai-agency-success-story/
+- https://trustmrr.com/startup/tracco-ai.md
+- https://investors.club/listing/32438-sales-automation-tool-for-poshmark-sellers
+- https://www.producthunt.com/@patricio1905
+- https://www.chilecompra.cl/2026/07/cuenta-publica-participativa-de-chilecompra-destaca-ahorros-por-us-381-millones-en-2025-y-presenta-nuevas-herramientas-con-inteligencia-artificial-para-2026/
+- https://www.extruct.ai/hub/govscout-io/
+- https://flippa.com/13824813-fully-built-ai-saas-for-finding-analyzing-and-managing-us-federal-contract-opportunities-with-proposal-automation-and-bid-tools
+- https://extscope.org/extension/pfbcojnpnelmjaodkgbbjdlklopjgakd
+- https://www.diarioconstitucional.cl/2026/06/12/la-ley-21-719-entra-en-vigor-el-1-de-diciembre-y-expone-vacios-en-regulacion-de-pequenas-empresas/
+- https://usercentrics.com/es/knowledge-hub/ley-proteccion-datos-chile/
+- https://preyproject.com/es/blog/ley-21719-pymes-proteccion-datos
+- https://www.producthunt.com/products/one-privacy
+- https://www.capterra.es/software/1090536/Carsu
+- https://www.aurorainbox.com/chatbot-talleres-mecanicos-whatsapp/
+- https://agencyanalytics.com/es/features/ai-reporting-tools
+- https://www.cyberclick.es/numerical-blog/herramientas-para-analizar-tu-visibilidad-geo-en-chats-con-ia
