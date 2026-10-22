@@ -92,3 +92,9 @@ URLs revisadas (resultados de búsqueda):
 - https://www.producthunt.com/@patricio1905
 - https://www.chilecompra.cl/2025/07/atencion-proveedores-participa-en-la-primera-masterclass-sobre-compra-agil-y-mejora-tus-oportunidades-de-negocio/
 - https://www.chilecompra.cl/2020/04/ministro-de-hacienda-presento-compra-agil-que-permite-que-las-mipymes-puedan-hacer-mas-negocios-con-el-estado/
+
+
+## 2026-10-22 – Prospección Recepcia
+- Leads: 11 (meta 15; WebFetch sin red, solo snippets de búsqueda; sin teléfonos verificados).
+- Rubros/ciudades: veterinaria Temuco, dental La Serena, kinesiología y barberías Concepción, estética Antofagasta, gimnasio La Serena. Psicólogos Valparaíso y talleres Temuco sin candidatos concretos.
+- URLs: agendapro.com (fichas citadas en el CSV), cronoshare.cl, fresha.com, doctoralia.cl, bienestar.pjud.cl.
