@@ -98,3 +98,36 @@ URLs revisadas (resultados de búsqueda):
 - Leads: 11 (meta 15; WebFetch sin red, solo snippets de búsqueda; sin teléfonos verificados).
 - Rubros/ciudades: veterinaria Temuco, dental La Serena, kinesiología y barberías Concepción, estética Antofagasta, gimnasio La Serena. Psicólogos Valparaíso y talleres Temuco sin candidatos concretos.
 - URLs: agendapro.com (fichas citadas en el CSV), cronoshare.cl, fresha.com, doctoralia.cl, bienestar.pjud.cl.
+
+## 2026-10-23 – Ideas (2 AM)
+
+Informe completo: `ideas/2026-10-23.md`. Ingresos mayormente auto-reportados / no verificados (solo WebSearch).
+
+| # | Idea | Rent. | Facilidad | Baja comp. Chile |
+|---|------|---|---|---|
+| 1 | Auditoría/monitoreo GEO (visibilidad en IA) para pymes (ref. Peec AI ~USD 10M ARR) — **mejor** | 8 | 8 | 7 |
+| 2 | Cotizador IA por WhatsApp para maestros/contratistas (ref. Toolbelt USD 29/mes; OneEstimate existe en LATAM) | 6 | 8 | 6 |
+| 3 | Videos UGC con IA para ecommerce chileno (ref. plataforma en Acquire ~USD 7k/mes, no verificado) | 7 | 7 | 5 |
+| 4 | Directorio SEO programático B2B industrial (ref. OpenAlternative ~USD 6,5k MRR, auto-reportado) | 6 | 9 | 6 |
+| 5 | Kit IA para corredores de propiedades (ref. Reeltors.ai desde USD 49) | 6 | 8 | 6 |
+
+URLs revisadas:
+- https://trustmrr.com/startup/admakerai
+- https://pickaxe.co/post/how-to-start-ai-agent-agency
+- https://thenextweb.com/news/peec-ai-berlin-10-million-arr-geo-ai-search
+- https://ecosistemastartup.com/peec-ai-alcanza-10m-arr-lecciones-para-founders/
+- https://www.softwareadvice.com.au/software/562090/Toobelt
+- https://hunted.space/product/tradeestimate
+- https://dirstarter.com/blog/openalternative-case-study
+- https://dirstarter.com/blog/how-much-do-directory-websites-make
+- https://app.acquire.com/public/u8kiyuu9ni-ai-ugc-video-ad-platform-with-3-000-new-monthly-sign-ups
+- https://www.capterra.com/p/10045003/Reeltors-ai/
+- https://ai.g2.com/marketplace/tools/listing-ai
+- https://app.acquire.com/startup/zqovrifona-ai-listing-copy-platform-for-mls-compliant-luxury-real-estate-descriptions
+- https://cyberclick.es/que-es/generative-engine-optimization
+- https://oneestimate.ai/es/software-presupuestos-construccion
+- https://influee.co/es/ai-ugc-videos
+- https://www.2x3.cl/servicios/articulo/SThgMWI-seo-chile-especialistas-posicionamiento-web
+- https://www.getonbrd.com/jobs/corredor-de-propiedades-sector-oriente-assetplan-santiago
+- https://www.indiehackers.com/Ojin/history
+- https://redwerk.com/blog/micro-saas-ideas-that-print-money/
