@@ -131,3 +131,37 @@ URLs revisadas:
 - https://www.getonbrd.com/jobs/corredor-de-propiedades-sector-oriente-assetplan-santiago
 - https://www.indiehackers.com/Ojin/history
 - https://redwerk.com/blog/micro-saas-ideas-that-print-money/
+
+## 2026-10-23 – Estudio de mercado Chile (3 AM)
+
+Estudio completo: `estudios/2026-10-23.md`. Solo WebSearch; precios CLP = estimación.
+
+| # | Idea | Veredicto | Puntaje |
+|---|------|-----------|---------|
+| 1 | GEO (visibilidad en IA) — **mejor** | COMPETITIVO CON CONDICIONES | 7 |
+| 2 | UGC IA ecommerce | COMPETITIVO CON CONDICIONES | 5 |
+| 3 | Directorio B2B industrial | COMPETITIVO CON CONDICIONES | 5 |
+| 4 | Cotizador maestros | NO COMPETITIVO | 4 |
+| 5 | Kit corredores | NO COMPETITIVO | 4 |
+
+Pasos GEO esta semana: 2 auditorías manuales a clientes JPB; mapear competidores GEO chilenos y precios; landing con auditoría ~CLP 190.000 y 3 preventas.
+
+URLs revisadas:
+- https://www.elcontribuyente.mx/2026/08/las-5-agencias-que-dominan-la-visibilidad-en-ia-en-la-region-las-mejores-en-optimizacion-para-chatgpt-y-entornos-generativosp/
+- https://geotoolbox.ai/es/blog/agencia-geo
+- https://seybold.de/en/guide/how-much-does-geo-cost-pricing-transparency-for-ai-visibility/
+- https://www.emol.com/noticias/Economia/2026/07/24/1206635/empresas-motores-busqueda-ia.html
+- https://oneestimate.ai/es/blog/presupuestos-construccion-chile-2026
+- https://oneestimate.ai/es/software-presupuestos-construccion
+- https://www.capterra.cl/software/182439/fizure
+- https://www.capterra.com/p/10043545/Motor-de-Presupuestos/
+- https://www.pauta.cl/actualidad/2026/08/13/cchc-proyecta-que-inversion-en-construccion-crecera-hasta-45-en-2026-y-pide-acelerar-proyectos-para-recuperar-el-empleo.html
+- https://novoads.ai/es/blog/cuanto-cobra-un-creador-ugc
+- https://fluxnote.io/es-ES/guides/how-much-do-ugc-ads-cost
+- https://fiverr.com/julmkonline/create-ugc-ai-content-for-ecommerce
+- https://ecosistemastartup.com/chile-ventas-online-camino-a-us10-500m-en-2026/
+- https://ecosistemastartup.com/chile-ecommerce-llegara-a-us10-600m-este-2026/
+- https://www.reporteminero.cl/noticia/noticias/2026/07/proveedores-mineros-encuentro-nacional-2026-empleo-innovacion
+- https://www.reporteminero.cl/noticia/noticias/2023/12/barometro-proveedores-sicep-aia
+- https://www.mercadolibre.cl/inmuebles/blog/elige-tu-corredor
+- https://www.getonbrd.com/jobs/corredor-de-propiedades-sector-oriente-assetplan-santiago
