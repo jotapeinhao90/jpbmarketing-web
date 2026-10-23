@@ -165,3 +165,9 @@ URLs revisadas:
 - https://www.reporteminero.cl/noticia/noticias/2023/12/barometro-proveedores-sicep-aia
 - https://www.mercadolibre.cl/inmuebles/blog/elige-tu-corredor
 - https://www.getonbrd.com/jobs/corredor-de-propiedades-sector-oriente-assetplan-santiago
+
+## 2026-10-23 – Prospección Recepcia
+- Leads: 7 (meta 15; no alcanzada). Puntajes 3–5.
+- Rubros/ciudades: barbería (Chicureo), estética y veterinarias (Puerto Montt). Búsquedas sin resultados útiles en psicólogos Viña, talleres Valparaíso, dentales Valparaíso, kinesiología Providencia/Ñuñoa, peluquerías Viña.
+- WebFetch sin red; solo snippets de búsqueda.
+- URLs: https://agendapro.com/mp/cl/centros-psicologicos-vina-del-mar, https://www.2x3.cl/servicios/talleres-mecanicos/provincia-valparaiso, https://clinics.chatfuel.com/cl/beauty-personal-care/chicureobarbermk, https://agendapro.com/mp/cl/pl/amatista-estudio-de-belleza-puerto-montt/37619, https://agendapro.com/mp/cl/pl/antonietta-beauty-space-puerto-montt/213646, https://agendapro.com/mp/cl/pl/tempo-estetica-puerto-montt/213559, https://agendapro.com/mp/cl/pl/estetica-del-valle-puerto-montt/213709, https://agendapro.com/mp/cl/pl/veterinaria-puerta-sur-puerto-montt/37752, https://agendapro.com/mp/cl/pl/veterinaria-antupiren-puerto-montt/37754, https://agendapro.com/mp/cl/centros-kinesiologicos-providencia
