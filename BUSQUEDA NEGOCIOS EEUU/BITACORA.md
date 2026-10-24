@@ -236,3 +236,24 @@ URLs revisadas:
 - https://www.diarioconstitucional.cl/2026/06/12/la-ley-21-719-entra-en-vigor-el-1-de-diciembre-y-expone-vacios-en-regulacion-de-pequenas-empresas/
 - https://academiajudicial.cl/recursos/actualizaciones-normativas/ley-21-719-que-regula-la-proteccion-y-el-tratamiento-de-los-datos-personales-y-crea-la-agencia-de-proteccion-de-datos-personales/
 - https://agencies.semrush.com/es/list/chile/
+
+## 2026-10-24 – Prospección Recepcia
+- Leads: 15 (calidad media; sin verificación directa por falta de red en WebFetch)
+- Rubros: veterinaria, gimnasio/pilates/crossfit, talleres, dental, psicología
+- Ciudades: Valparaíso/Viña, Rancagua, Talca, Osorno, Iquique
+- URLs revisadas:
+  - https://agendapro.com/mp/cl/pl/crossfit-big-bang-osorno/235280
+  - https://clinicadentallaestancia.cl/
+  - https://dentalfamiliar.cl/agendar-hora/
+  - https://drajavieramancilla.cl/
+  - https://ingenermotor.cl/
+  - https://quieroentrenar.cl/listado/adulto/osorno/dual-pilates-yoga-sede-osorno/
+  - https://quieroentrenar.cl/listado/con-instalacion-propia/osorno/club-deportivo-olimpia/
+  - https://rossochile.cl/
+  - https://veterinariasosrancagua.cl/
+  - https://www.automotrizjc.cl/rancagua/
+  - https://www.ayen.cl/
+  - https://www.cuidapet.cl/veterinario-a-domicilio-vina-del-mar
+  - https://www.doctoralia.cl/perfil/fernanda-bravo-guerrero
+  - https://www.psicologorancagua.cl/
+  - https://www.vetclin.cl/
