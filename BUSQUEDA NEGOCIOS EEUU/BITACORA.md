@@ -171,3 +171,37 @@ URLs revisadas:
 - Rubros/ciudades: barbería (Chicureo), estética y veterinarias (Puerto Montt). Búsquedas sin resultados útiles en psicólogos Viña, talleres Valparaíso, dentales Valparaíso, kinesiología Providencia/Ñuñoa, peluquerías Viña.
 - WebFetch sin red; solo snippets de búsqueda.
 - URLs: https://agendapro.com/mp/cl/centros-psicologicos-vina-del-mar, https://www.2x3.cl/servicios/talleres-mecanicos/provincia-valparaiso, https://clinics.chatfuel.com/cl/beauty-personal-care/chicureobarbermk, https://agendapro.com/mp/cl/pl/amatista-estudio-de-belleza-puerto-montt/37619, https://agendapro.com/mp/cl/pl/antonietta-beauty-space-puerto-montt/213646, https://agendapro.com/mp/cl/pl/tempo-estetica-puerto-montt/213559, https://agendapro.com/mp/cl/pl/estetica-del-valle-puerto-montt/213709, https://agendapro.com/mp/cl/pl/veterinaria-puerta-sur-puerto-montt/37752, https://agendapro.com/mp/cl/pl/veterinaria-antupiren-puerto-montt/37754, https://agendapro.com/mp/cl/centros-kinesiologicos-providencia
+
+## 2026-10-24 – Ideas (2 AM)
+
+Informe completo: `ideas/2026-10-24.md`. Solo WebSearch (WebFetch sin red); ingresos mayormente no verificados.
+
+| # | Idea | Rent. | Facilidad | Baja comp. Chile |
+|---|------|---|---|---|
+| 1 | Newsletter B2B de nicho semi-automatizado (listado ~USD 34K/mes auspicios, no verificado) | 6 | 8 | 8 |
+| 2 | Retainer de clips/reels con IA + curación (retainers USD 1,2–2,5K, marketing de proveedor) | 6 | 7 | 6 |
+| 3 | Generador de propuestas en CLP/IVA (ref. Propal USD 1.074 MRR, verificado TrustMRR) | 5 | 9 | 7 |
+| 4 | Revisor de contratos IA con marco legal chileno (ref. listado Acquire USD 9/29) | 6 | 8 | 7 |
+| 5 | Scribe IA para psicólogos/kinesiólogos (Mentalyc/Upheal; **AgendaPro ya lanzó en Chile**) | 8 | 6 | 4 |
+
+URLs revisadas:
+- https://trustmrr.com/startup/propal
+- https://trustmrr.com/startup/proposalai-pro
+- https://app.acquire.com/startup/y1r7167sqv-contracts-don-t-lie-ai-just-reads-them-better
+- https://app.acquire.com/public/2vq84j5zbx-300k-subscribers-ai-newsletter-31-open-rate
+- https://www.microns.io/startup-listings/newsletter-about-ai-news
+- https://letteroperators.beehiiv.com/p/paid-newsletter-revenue-is-climbing-fast
+- https://hub.causo.ai/guides/ai-for-podcast-video-repurposing-2026
+- https://www.opus.pro/blog/why-independent-podcasters-need-ai-video-clipping-tools-2026
+- https://yespress.io/mentalyc-inc
+- https://tech.eu/2022/10/19/upheal-raises-eur168-million-and-launches-ai-powered-notes-app-for-mental-health-care-professionals/
+- https://www.commure.com/blog-scribe/ai-scribe-for-behavioral-health
+- https://www.getapp.com/all-software/a/contractreview/
+- https://agendapro.com/blog/fichas-clinicas-digitales-con-ia/
+- https://thedigitalprojectmanager.com/es/tools/mejores-generadores-propuestas-ia/
+- https://www.diegoceredi.com/blog/ia-pymes-chile-2026
+- https://www.foximusic.com/blog/es/mejor-generador-de-clips-de-podcast-con-ia/
+- https://thecmo.com/es/carrera/mejores-boletines-b2b/
+- https://bigideasdb.com/solo-developer-saas-monthly-revenue-examples
+- https://redwerk.com/blog/micro-saas-ideas-that-print-money/
+- https://superframeworks.com/articles/profitable-micro-saas-niches
