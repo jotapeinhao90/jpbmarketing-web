@@ -205,3 +205,34 @@ URLs revisadas:
 - https://bigideasdb.com/solo-developer-saas-monthly-revenue-examples
 - https://redwerk.com/blog/micro-saas-ideas-that-print-money/
 - https://superframeworks.com/articles/profitable-micro-saas-niches
+
+## 2026-10-24 – Estudio de mercado Chile (3 AM)
+
+Informe: `estudios/2026-10-24.md`. Solo WebSearch (8 búsquedas); cifras en CLP son estimaciones.
+
+| Idea | Veredicto | Puntaje |
+|---|---|---|
+| Clips/reels con IA (upsell JPB) | COMPETITIVO CON CONDICIONES | 5/10 |
+| Newsletter B2B nicho | COMPETITIVO CON CONDICIONES | 5/10 |
+| Revisor de contratos | COMPETITIVO CON CONDICIONES | 4/10 |
+| Scribe IA clínico (AgendaPro ya entró) | NO COMPETITIVO | 4/10 |
+| Propuestas CLP/IVA | NO COMPETITIVO | 3/10 |
+
+Ranking: 1) Clips/reels como upsell a clientes JPB (piloto gratis de 5 clips a 10 contactos, retainer CLP 350–500k, meta ≥2 cierres); 2) Newsletter con preventa de 10 suscriptores.
+Dato clave: Ley 21.719 vigente 1-dic-2026, con proyecto de aplazo a 2027 (boletín 18.623-07).
+
+URLs revisadas:
+- https://www.mch.cl/b2b-media-group-y-el-ministerio-de-mineria-colaboran-en-la-promocion-de-inversiones/
+- https://www.bnamericas.com/es/noticias/inteligencia-artificial-en-la-mineria-hacia-una-industria-mas-eficiente-segura-y-sostenible
+- https://www.ssemble.com/es/blog/opus-clip-pricing-2026
+- https://www.foximusic.com/blog/es/?p=621
+- https://simplo.cl/recursos/plantilla-cotizacion/
+- https://www.capterra.cl/software/131897/quotient
+- https://www.emol.com/noticias/Economia/2025/07/30/1173519/legaltech-chilena-ia-para-abogados.html
+- https://www.coderhouse.com/cl/coderlibrary/ia-para-abogados-legaltech-herramientas-argentina-latam
+- https://agendapro.com/blog/fichas-clinicas-digitales-con-ia/
+- https://agendapro.com/cl/psicologos/software-para-terapeutas
+- https://www.superdesalud.gob.cl/observatorio/671/articles-17372_recurso_2.pdf
+- https://www.diarioconstitucional.cl/2026/06/12/la-ley-21-719-entra-en-vigor-el-1-de-diciembre-y-expone-vacios-en-regulacion-de-pequenas-empresas/
+- https://academiajudicial.cl/recursos/actualizaciones-normativas/ley-21-719-que-regula-la-proteccion-y-el-tratamiento-de-los-datos-personales-y-crea-la-agencia-de-proteccion-de-datos-personales/
+- https://agencies.semrush.com/es/list/chile/
