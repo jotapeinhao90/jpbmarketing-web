@@ -325,3 +325,32 @@ URLs revisadas:
 - https://elevenlabs.io/es/dubbing-api
 - https://async.com/es/ai-translation-and-dubbing/spanish-dubbing
 - https://www.semanariolocal.cl/?p=1080
+
+## 2026-10-25 – Prospección Recepcia
+
+- Leads: 15 (nuevos, sin repetir días anteriores)
+- Rubros: clínicas dentales (5), kinesiología (6), psicología, taller/lubricentro, veterinaria, estética (2)
+- Ciudades: Punta Arenas, Santiago (Ñuñoa/Providencia), Chillán, Copiapó, Los Ángeles, Arica
+- Nota: WebFetch sin red; datos de resultados de búsqueda, no verificados en fuente directa. Sin hallazgos útiles en barberías (Copiapó/Punta Arenas), gimnasios (Punta Arenas) ni inmobiliarias (Ñuñoa).
+
+URLs revisadas:
+- https://agendapro.com/mp/cl/centros-deportivos-arica
+- https://agendapro.com/mp/cl/pl/clinica-veterinaria-parque-vespucio-penalolen/43535
+- https://bienestarchillan.cl/
+- https://casaraices.cl/agenda-consulta/
+- https://cl.dentispot.com/es-cl/z/dentistas/33168-punta-arenas/
+- https://lubricentrorg.com/mecanica-automotriz-en-copiapo/
+- https://rpechile.com/
+- https://sernac.cl/portal/619/w3-article-3561.html
+- https://stilodental.cl/
+- https://surterradental.cl/
+- https://trekine.cl/
+- https://www.clinicadentaldelestrecho.cl/
+- https://www.cronoshare.cl/servicios/psicologos/region-de-atacama/copiapo
+- https://www.doctoralia.cl/clinicas/kinesiologia/chillan
+- https://www.doctoralia.cl/kinesiologo/chillan
+- https://www.glaciardent.com/
+- https://www.klife.cl/
+- https://www.klife.cl/nuestrocentro
+- https://www.remax-first.cl/?p=5845
+- https://www.unosalud.cl/clinicas/punta-arenas/
