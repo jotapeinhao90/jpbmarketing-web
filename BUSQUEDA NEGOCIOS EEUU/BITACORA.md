@@ -297,3 +297,31 @@ URLs revisadas (lista completa en el informe):
 - https://senalnews.com/en/content/zdf-digital-expands-getfactual-reach-with-a-localization-deal-with-dubhub
 - https://async.com/es/ai-translation-and-dubbing/spanish-dubbing
 - https://www.prnewswire.com/mx/comunicados-de-prensa/coursera-lanza-cursos-en-espanol-con-doblaje-por-ia-para-ampliar-el-acceso-al-aprendizaje-de-alta-calidad-en-mexico-302428990.html
+
+## 2026-10-25 – Estudio de mercado Chile (3 AM)
+
+Informe completo: `estudios/2026-10-25.md`. Solo WebSearch (5 búsquedas); cifras en CLP son estimaciones.
+
+| # | Idea | Veredicto | Puntaje |
+|---|------|-----------|---------|
+| 1 | Rescate de apps vibe-coded | COMPETITIVO CON CONDICIONES | 7 |
+| 2 | Doblaje IA español | COMPETITIVO CON CONDICIONES | 5 |
+| 3 | Extracción DTE con IA | COMPETITIVO CON CONDICIONES | 4 |
+| 4 | Bolsa de trabajo nicho | NO COMPETITIVO | 3 |
+| 5 | Calculadoras SEO | NO COMPETITIVO | 2 |
+
+Ranking: mejor #1. Pasos: checklist de auditoría + prueba, landing con precio fijo, 3 auditorías gratis en comunidades.
+
+URLs revisadas:
+- https://br.fiverr.com/croger19/fix-debug-and-improve-your-lovable-bolt-or-cursor-ai-app
+- https://www.banani.co/es/blog/lovable-vs-bolt-comparison
+- https://www.zapier.com/blog/lovable-vs-bolt
+- https://www.capterra.co.uk/software/1244736/MassDTE
+- https://docs.docbits.com/administration-and-setup/settings/global-settings/document-types/edi/supported-electronic-documents/chile-dte
+- https://www.libredte.cl/academy/capacitacion-inicial.pdf?full=1
+- https://www.guiadesoftware.com/blog/mejor-software-facturacion-chile
+- https://www.mch.cl/a-partir-de-hoy-las-ofertas-de-empleo-de-mineria-estan-en-www-mch-cl/
+- https://www.vozo.ai/es/blogs/cost-of-ai-dubbing-vs-traditional-dubbing
+- https://elevenlabs.io/es/dubbing-api
+- https://async.com/es/ai-translation-and-dubbing/spanish-dubbing
+- https://www.semanariolocal.cl/?p=1080
