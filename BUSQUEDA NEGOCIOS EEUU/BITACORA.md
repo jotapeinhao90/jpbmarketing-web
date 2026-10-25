@@ -257,3 +257,43 @@ URLs revisadas:
   - https://www.doctoralia.cl/perfil/fernanda-bravo-guerrero
   - https://www.psicologorancagua.cl/
   - https://www.vetclin.cl/
+
+## 2026-10-25 – Ideas (2 AM)
+
+Informe completo: `ideas/2026-10-25.md`. Solo WebSearch; ingresos no verificados en todos los casos.
+
+| # | Idea | Rent. | Facilidad | Baja comp. Chile |
+|---|------|---|---|---|
+| 1 | Rescate de apps vibe-coded (auditoría + arreglo precio fijo) — **mejor** | 7 | 9 | 7 |
+| 2 | Calculadoras laborales/tributarias SEO programático (Chile ya cubierto: Finclaro, Runahr, etc.) | 4 | 9 | 2 |
+| 3 | Extracción de DTE/facturas con IA para contadores | 6 | 8 | 4 |
+| 4 | Bolsa de trabajo de nicho | 5 | 8 | 5 |
+| 5 | Doblaje/localización IA al español para creadores | 6 | 7 | 6 |
+
+URLs revisadas (lista completa en el informe):
+- https://mezha.media/en/news/freelancers-and-companies-making-money-fixing-vibe-code-304768
+- https://wavect.io/services/vibe-coding-rescue/
+- https://www.metacto.com/solutions/vibe-rescue
+- https://levelup.gitconnected.com/i-cant-wait-to-fix-your-vibe-code-for-200-hour-684328c571cd
+- https://www.indiehackers.com/product/calcflow
+- https://www.indiehackers.com/product/calcfi
+- https://flippa.com/12032211-728-peak-monthly-profit-25k-monthly-pageviews-100-margins-passive-calculator-site-earning-with-mediavine-primed-for-seo-growth
+- https://finclaro.cl/categoria/laboral
+- https://runahr.com/cl/recursos/salario/calculadora-de-finiquito/
+- https://hacecuentas.com/cl/calculadora-finiquito-chile-completo-causal-despido
+- https://monedario.cl/
+- https://hunted.space/product/invorec
+- https://hunted.space/product/inboxdoc
+- https://trustmrr.com/startup/contacerta?metric=mrr
+- https://trustmrr.com/startup/anyrow?metric=mrr
+- https://tailride.so/es/blog/extraer-datos-de-una-factura-en-pdf
+- https://invoicedataextraction.com/es
+- https://blog.mean.ceo/?p=11175
+- https://ideaproof.io/business-ideas/job-board
+- https://dirstarter.com/blog/start-niche-job-board
+- https://indiehustle.beehiiv.com/p/an-ultra-niche-job-board-making-60-000-mrr
+- https://www.getonbrd.com/empleos-trabajo-remoto
+- https://www.toptrabajos.com/cl/empleos
+- https://senalnews.com/en/content/zdf-digital-expands-getfactual-reach-with-a-localization-deal-with-dubhub
+- https://async.com/es/ai-translation-and-dubbing/spanish-dubbing
+- https://www.prnewswire.com/mx/comunicados-de-prensa/coursera-lanza-cursos-en-espanol-con-doblaje-por-ia-para-ampliar-el-acceso-al-aprendizaje-de-alta-calidad-en-mexico-302428990.html
