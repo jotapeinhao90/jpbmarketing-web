@@ -111,6 +111,7 @@
   .etiqueta{background:#fff;color:#1a1d23;border:none;border-radius:6px;font:700 12px/1.2 -apple-system,system-ui,sans-serif;padding:3px 7px;box-shadow:0 1px 4px rgba(0,0,0,.3)}
   .etiqueta::before{display:none}
   #mapa.sin-etiquetas .etiqueta{display:none}
+  #mapa .leaflet-tile-pane{filter:grayscale(1) brightness(1.1) contrast(.85)}
   .leaflet-popup-content{font-family:inherit;color:#1a1d23;margin:12px 14px}
   .pop b{font-size:1rem;display:block;margin-bottom:2px}
   .pop .s{font-size:.8rem;color:#555;margin-bottom:8px}
@@ -461,8 +462,8 @@ function vistaMapa() {
 function montarMapa() {
   if (typeof L === 'undefined') { $('mapa').innerHTML = '<div class="vacio">No se pudo cargar el mapa. Revisa tu conexión.</div>'; return; }
   mapa = L.map('mapa', { zoomControl: true }).setView(mapaVista ? mapaVista.centro : [-33.4489, -70.6693], mapaVista ? mapaVista.zoom : 11);
-  // Mapa claro y minimalista: solo calles y nombres principales, sin ruido.
-  L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', { subdomains: 'abcd', maxZoom: 19, attribution: '© OpenStreetMap · © CARTO' }).addTo(mapa);
+  // OpenStreetMap (no pide clave). El filtro CSS de #mapa lo deja gris y suave para que los pines resalten.
+  L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', { maxZoom: 19, attribution: '© OpenStreetMap' }).addTo(mapa);
 
   const puntos = [];
   datos.barberias.filter((b) => b.lat != null && (mapaFiltro === 'todas' || GRUPO[b.estado] === mapaFiltro)).forEach((b) => {
