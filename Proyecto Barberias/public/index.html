@@ -108,6 +108,9 @@
   #mapa.ubicando{cursor:crosshair;outline:3px solid var(--c-pend)}
   .banner{background:#3a3220;color:#f5c842;border-radius:12px;padding:10px 12px;font-size:.88rem;margin-bottom:10px;display:flex;justify-content:space-between;align-items:center;gap:10px}
   .banner button{background:none;border:1px solid currentColor;border-radius:8px;padding:5px 10px;font-size:.8rem}
+  .etiqueta{background:#fff;color:#1a1d23;border:none;border-radius:6px;font:700 12px/1.2 -apple-system,system-ui,sans-serif;padding:3px 7px;box-shadow:0 1px 4px rgba(0,0,0,.3)}
+  .etiqueta::before{display:none}
+  #mapa.sin-etiquetas .etiqueta{display:none}
   .leaflet-popup-content{font-family:inherit;color:#1a1d23;margin:12px 14px}
   .pop b{font-size:1rem;display:block;margin-bottom:2px}
   .pop .s{font-size:.8rem;color:#555;margin-bottom:8px}
@@ -458,18 +461,22 @@ function vistaMapa() {
 function montarMapa() {
   if (typeof L === 'undefined') { $('mapa').innerHTML = '<div class="vacio">No se pudo cargar el mapa. Revisa tu conexión.</div>'; return; }
   mapa = L.map('mapa', { zoomControl: true }).setView(mapaVista ? mapaVista.centro : [-33.4489, -70.6693], mapaVista ? mapaVista.zoom : 11);
-  L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', { maxZoom: 19, attribution: '© OpenStreetMap' }).addTo(mapa);
+  // Mapa claro y minimalista: solo calles y nombres principales, sin ruido.
+  L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', { subdomains: 'abcd', maxZoom: 19, attribution: '© OpenStreetMap · © CARTO' }).addTo(mapa);
 
   const puntos = [];
   datos.barberias.filter((b) => b.lat != null && (mapaFiltro === 'todas' || GRUPO[b.estado] === mapaFiltro)).forEach((b) => {
     const g = GRUPOS[GRUPO[b.estado]];
-    const m = L.circleMarker([b.lat, b.lng], { radius: 11, color: '#fff', weight: 2.5, fillColor: g.color, fillOpacity: 0.95 }).addTo(mapa);
+    const m = L.circleMarker([b.lat, b.lng], { radius: 15, color: '#fff', weight: 3, fillColor: g.color, fillOpacity: 1 }).addTo(mapa);
+    m.bindTooltip(esc(b.nombre), { permanent: true, direction: 'top', offset: [0, -14], className: 'etiqueta' });
     const dir = [b.direccion, b.comuna].filter(Boolean).join(', ');
     m.bindPopup(`<div class="pop"><b>${esc(b.nombre)}</b><div class="s">${ESTADOS[b.estado]}${dir ? ' · ' + esc(dir) : ''}</div>
       <div class="acc"><button class="pri" data-pop-abrir="${b.id}">Abrir ficha</button>
       <a target="_blank" rel="noopener" href="https://www.google.com/maps/dir/?api=1&destination=${b.lat},${b.lng}">Cómo llegar</a></div></div>`);
     puntos.push([b.lat, b.lng]);
   });
+  const ajustarEtiquetas = () => $('mapa').classList.toggle('sin-etiquetas', mapa.getZoom() < 14);
+  mapa.on('zoomend', ajustarEtiquetas); ajustarEtiquetas();
   mapa.on('popupopen', (e) => {
     const btn = e.popup.getElement().querySelector('[data-pop-abrir]');
     if (btn) btn.onclick = () => abrirDetalle(Number(btn.dataset.popAbrir));
