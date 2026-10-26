@@ -382,3 +382,41 @@ URLs revisadas: ver lista completa en `ideas/2026-10-26.md`. Principales:
 - https://www.descubre.vc/noticia/filadd-potencia-la-preparaci-n-para-la-paes-con-su-plataforma-100-online-e-inteligencia-artificial-2026-09-14
 - https://portalinnova.cl/?p=178487
 - https://www.descubre.vc/leasity
+
+## 2026-10-26 – Estudio de mercado Chile (3 AM)
+
+Estudio completo: `estudios/2026-10-26.md`. Solo WebSearch; cifras CLP = estimación propia (CLP 950/USD supuesto).
+
+| # | Idea | Veredicto | Puntaje |
+|---|------|-----------|---------|
+| 1 | Software + IA nutricionistas | COMPETITIVO CON CONDICIONES | 6 |
+| 2 | Paquete Ley Karin pymes (protocolo tipo gratis del Gobierno + mutuales compiten) | COMPETITIVO CON CONDICIONES | 5 |
+| 3 | Datasets Apify Chile (ya hay ≥3 actores Mercado Público, 1 usuario) | NO COMPETITIVO | 3 |
+| 4 | Planificación docente IA (AI-Llu gratis) | NO COMPETITIVO | 3 |
+| 5 | Copiloto freelancers (Honorix, Bolo, SII) | NO COMPETITIVO | 3 |
+
+**Ranking:** 1) Nutricionistas (CLP 0,4–1,2 M/mes realista), 2) Ley Karin como servicio a clientes JPB. Pasos de validación: entrevistar 5–8 nutricionistas; demo de pauta IA con alimentos chilenos; landing con preventa CLP 19.990/mes (meta ≥3 preinscripciones).
+
+URLs revisadas:
+- https://agendapro.com/cl/nutricion/software-de-nutricion
+- https://agendapro.com/cl/planes
+- https://www.workana.com/es/job/desarrollo-de-software-nutricional-mvp-para-profesionales-con-base-de-datos-de-alimentos-chilenos
+- https://www.promealplan.com/es/blog/nutrium-resena-2026
+- https://www.capterra.es/software/173803/nutrium
+- https://docs.bvsalud.org/biblioref/2020/02/1050809/v21n1a06.pdf
+- https://ecosistemastartup.com/ley-karin-las-2-obligaciones-que-toda-pyme-debe-cumplir/
+- https://simplo.cl/ley-karin-protocolo-pymes/
+- https://simplo.cl/canal-de-denuncias-ley-karin/
+- https://web.talana.com/blog/ley-karin-implementacion-del-canal-de-denuncias
+- https://www.emol.com/noticias/Economia/2024/06/27/1134939/implementacion-ley-karin.html
+- https://www.pwc.com/cl/es/publicaciones/boletin-laboral/Alerta-laboral-agosto-2025-PwC-Chile.pdf
+- https://blog.nubox.com/empresas/ley-karin-todo-lo-que-debes-saber
+- https://apify.com/scraperschile/mercado-publico.md
+- https://apify.com/licify/mercadopublico-licitaciones/api
+- https://apify.com/licify/mercadopublico-compraagil/api
+- https://apify.com/jchame/mercadolibre-chile-scraper/api
+- https://www.ciperchile.cl/2025/11/16/faltan-profesores-o-falta-voluntad-para-contratarlos-y-cuidarlos/
+- https://www.emol.com/noticias/Nacional/2026/09/29/1212733/docentes-resultados-ocde-analisis-expertos.html
+- https://www.pauta.cl/actualidad/2025/04/24/aumenta-la-fiscalizacion-del-sii-a-trabajadores-independientes-empresas-en-alerta-por-boletas-de-honorarios-retroactivas.html
+- https://www.24horas.cl/actualidad/economia/devolucion-impuestos-emprendedores-influencers-sii-en-alerta-boletas-honorarios
+- https://www.meganoticias.cl/nacional/471937-retencion-boletas-de-honorarios-descuento-nuevo-porcentaje-sii-pdp-6-1-2025.html
