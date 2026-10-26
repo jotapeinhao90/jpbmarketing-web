@@ -420,3 +420,28 @@ URLs revisadas:
 - https://www.pauta.cl/actualidad/2025/04/24/aumenta-la-fiscalizacion-del-sii-a-trabajadores-independientes-empresas-en-alerta-por-boletas-de-honorarios-retroactivas.html
 - https://www.24horas.cl/actualidad/economia/devolucion-impuestos-emprendedores-influencers-sii-en-alerta-boletas-honorarios
 - https://www.meganoticias.cl/nacional/471937-retencion-boletas-de-honorarios-descuento-nuevo-porcentaje-sii-pdp-6-1-2025.html
+
+## 2026-10-26 – Prospección Recepcia
+- Leads: 15. Rubros: barberías/peluquerías/estética (6), clínicas dentales (4), veterinarias (4), estética láser (1). Ciudades: Valdivia, Curicó, Calama.
+- Limitación: WebFetch sin red; datos de resultados de búsqueda, no verificados en origen. Sin resultados útiles en kinesiología Calama, gimnasios Coquimbo/Ovalle, talleres Coyhaique/Valdivia, psicólogos Valdivia.
+- URLs revisadas:
+  - http://www.petsfamily.cl/IE/explorer.html
+  - https://agendapro.com/mp/cl/corte-de-cabello-perfilado-de-barba-valdivia
+  - https://agendapro.com/mp/cl/corte-de-cabello-y-barba-valdivia
+  - https://agendapro.com/mp/cl/depilacion-calama
+  - https://barberiaovejanegra.cl/
+  - https://clinicamenta.cl/
+  - https://dentalcoique.com/
+  - https://hogga.cl/buscar/veterinarias/curico/
+  - https://odonto-sur.cl/
+  - https://veterinariadraencina.cl/
+  - https://vitabellacalama.cl/
+  - https://www.autofact.cl/planta-revision-tecnica/coyhaique
+  - https://www.clinicaramis.cl/
+  - https://www.dentavaldivia.cl/diagnosticogratis/
+  - https://www.doctoralia.cl/clinicas/kinesiologia/calama
+  - https://www.facebook.com/BarberiaSantabarbavaldivia/
+  - https://www.fresha.com/a/taurus-barberia-valdivia-anibal-pinto-802-fex4gtsz
+  - https://www.instagram.com/bonevet.curico/
+  - https://www.unosalud.cl/clinicas/valdivia/
+  - https://www.zonaesteticavaldivia.cl/
