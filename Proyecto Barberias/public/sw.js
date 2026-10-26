@@ -1,5 +1,5 @@
 // Guarda solo el "cascarón" de la app para que abra rápido; los datos (/api) siempre van a la red.
-const CACHE = "barberias-v1";
+const CACHE = "barberias-v2";
 const SHELL = ["/", "/manifest.webmanifest", "/icon-192.png"];
 
 self.addEventListener("install", (e) => {
@@ -13,7 +13,8 @@ self.addEventListener("activate", (e) => {
 });
 self.addEventListener("fetch", (e) => {
   const url = new URL(e.request.url);
-  if (e.request.method !== "GET" || url.pathname.startsWith("/api/")) return;
+  // Solo la app propia: los mapas (tiles) y librerías externas no se guardan.
+  if (e.request.method !== "GET" || url.origin !== location.origin || url.pathname.startsWith("/api/")) return;
   // Red primero (para ver siempre la última versión); cache si no hay conexión.
   e.respondWith(fetch(e.request).then((r) => { const copia = r.clone(); caches.open(CACHE).then((c) => c.put(e.request, copia)); return r; }).catch(() => caches.match(e.request)));
 });

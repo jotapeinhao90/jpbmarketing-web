@@ -3,6 +3,7 @@
 
 const ESTADOS = ["por_visitar", "contactada", "interesada", "demo", "cliente", "no_interesada"];
 const TIPOS = ["visita", "llamada", "whatsapp", "nota"];
+const MOTIVOS = ["", "precio", "no_le_interesa", "no_es_decisor", "tiene_sistema", "desconfianza", "sin_tiempo", "otro"];
 
 const json = (data, status = 200) => Response.json(data, { status });
 const texto = (v, max = 2000) => String(v ?? "").trim().slice(0, max);
@@ -14,6 +15,35 @@ function claveValida(recibida, esperada) {
   let diff = 0;
   for (let i = 0; i < esperada.length; i++) diff |= recibida.charCodeAt(i) ^ esperada.charCodeAt(i);
   return diff === 0;
+}
+
+const espera = (ms) => new Promise((r) => setTimeout(r, ms));
+
+// Dirección -> coordenadas con Nominatim (OpenStreetMap). Si el número no aparece en el mapa,
+// reintenta solo con la calle y marca el resultado como "aprox" para que se vea en la ficha.
+async function geocodificar(direccion, comuna) {
+  if (!direccion && !comuna) return null;
+  const intentos = [[[direccion, comuna, "Chile"], "exacta"]];
+  const soloCalle = direccion.replace(/\s*(#|n°|nº|no\.?|número)?\s*\d+[\w-]*.*$/i, "").trim();
+  if (soloCalle && soloCalle !== direccion) intentos.push([[soloCalle, comuna, "Chile"], "aprox"]);
+
+  for (let i = 0; i < intentos.length; i++) {
+    if (i > 0) await espera(1100); // política de Nominatim: 1 consulta por segundo
+    const [partes, precision] = intentos[i];
+    const q = partes.filter(Boolean).join(", ");
+    try {
+      const r = await fetch(
+        `https://nominatim.openstreetmap.org/search?format=jsonv2&limit=1&countrycodes=cl&q=${encodeURIComponent(q)}`,
+        { headers: { "User-Agent": "JPBMarketing-Barberias/1.0 (admin-barberias.jpbmarketing.cl)", "Accept-Language": "es" } }
+      );
+      if (!r.ok) continue;
+      const [hit] = await r.json();
+      if (!hit) continue;
+      const lat = Number(hit.lat), lng = Number(hit.lon);
+      if (lat > -56 && lat < -17 && lng > -76 && lng < -66) return { lat, lng, geo: precision };
+    } catch (e) { /* sigue con el siguiente intento */ }
+  }
+  return null;
 }
 
 function camposBarberia(b) {
@@ -54,14 +84,15 @@ async function api(request, env, url) {
     if (metodo === "POST" && ruta.length === 1) {
       const { datos, error } = camposBarberia(cuerpo);
       if (error) return json({ error }, 400);
+      const g = await geocodificar(datos.direccion, datos.comuna);
       const r = await db
         .prepare(
-          `INSERT INTO barberias (nombre, direccion, comuna, contacto, telefono, instagram, estado, proxima_accion, proxima_fecha, creado_en, actualizado_en)
-           VALUES (?,?,?,?,?,?,?,?,?,?,?)`
+          `INSERT INTO barberias (nombre, direccion, comuna, contacto, telefono, instagram, estado, proxima_accion, proxima_fecha, lat, lng, geo, creado_en, actualizado_en)
+           VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?)`
         )
-        .bind(datos.nombre, datos.direccion, datos.comuna, datos.contacto, datos.telefono, datos.instagram, datos.estado, datos.proxima_accion, datos.proxima_fecha, ahora, ahora)
+        .bind(datos.nombre, datos.direccion, datos.comuna, datos.contacto, datos.telefono, datos.instagram, datos.estado, datos.proxima_accion, datos.proxima_fecha, g?.lat ?? null, g?.lng ?? null, g?.geo ?? "", ahora, ahora)
         .run();
-      return json({ id: r.meta.last_row_id }, 201);
+      return json({ id: r.meta.last_row_id, geo: g?.geo ?? "" }, 201);
     }
 
     const id = Number(ruta[1]);
@@ -75,6 +106,30 @@ async function api(request, env, url) {
           `UPDATE barberias SET nombre=?, direccion=?, comuna=?, contacto=?, telefono=?, instagram=?, estado=?, proxima_accion=?, proxima_fecha=?, actualizado_en=? WHERE id=?`
         )
         .bind(datos.nombre, datos.direccion, datos.comuna, datos.contacto, datos.telefono, datos.instagram, datos.estado, datos.proxima_accion, datos.proxima_fecha, ahora, id)
+        .run();
+      let geo = null;
+      if (cuerpo.geocodificar) {
+        geo = await geocodificar(datos.direccion, datos.comuna);
+        await db.prepare("UPDATE barberias SET lat=?, lng=?, geo=? WHERE id=?").bind(geo?.lat ?? null, geo?.lng ?? null, geo?.geo ?? "", id).run();
+      }
+      return json({ ok: true, geo: geo?.geo ?? (cuerpo.geocodificar ? "" : undefined) });
+    }
+
+    // Ubicación puesta a mano (tocando el mapa)
+    if (metodo === "PUT" && ruta[2] === "ubicacion") {
+      const lat = Number(cuerpo.lat), lng = Number(cuerpo.lng);
+      if (!(lat > -56 && lat < -17 && lng > -76 && lng < -66)) return json({ error: "Ubicación fuera de Chile" }, 400);
+      await db.prepare("UPDATE barberias SET lat=?, lng=?, geo='manual', actualizado_en=? WHERE id=?").bind(lat, lng, ahora, id).run();
+      return json({ ok: true });
+    }
+
+    // Zona de notas: cómo enfocar, qué salió bien / mal, notas libres, motivo de rechazo
+    if (metodo === "PUT" && ruta[2] === "notas") {
+      const motivo = texto(cuerpo.motivo_rechazo, 30);
+      if (!MOTIVOS.includes(motivo)) return json({ error: "Motivo inválido" }, 400);
+      await db
+        .prepare("UPDATE barberias SET enfoque=?, salio_bien=?, salio_mal=?, notas=?, motivo_rechazo=?, actualizado_en=? WHERE id=?")
+        .bind(texto(cuerpo.enfoque, 4000), texto(cuerpo.salio_bien, 4000), texto(cuerpo.salio_mal, 4000), texto(cuerpo.notas, 4000), motivo, ahora, id)
         .run();
       return json({ ok: true });
     }
@@ -109,6 +164,11 @@ async function api(request, env, url) {
         const f = texto(cuerpo.proxima_fecha, 10);
         if (!fechaOk(f)) return json({ error: "Fecha inválida" }, 400);
         sets.push("proxima_fecha = ?"); vals.push(f);
+      }
+      if (cuerpo.motivo_rechazo !== undefined) {
+        const m = texto(cuerpo.motivo_rechazo, 30);
+        if (!MOTIVOS.includes(m)) return json({ error: "Motivo inválido" }, 400);
+        sets.push("motivo_rechazo = ?"); vals.push(m);
       }
       sentencias.push(db.prepare(`UPDATE barberias SET ${sets.join(", ")} WHERE id = ?`).bind(...vals, id));
       await db.batch(sentencias);

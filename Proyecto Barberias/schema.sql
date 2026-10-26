@@ -11,6 +11,14 @@ CREATE TABLE IF NOT EXISTS barberias (
                 -- por_visitar | contactada | interesada | demo | cliente | no_interesada
   proxima_accion TEXT NOT NULL DEFAULT '',
   proxima_fecha  TEXT NOT NULL DEFAULT '',  -- YYYY-MM-DD
+  lat           REAL,
+  lng           REAL,
+  geo           TEXT NOT NULL DEFAULT '',   -- '' | exacta | aprox | manual
+  enfoque       TEXT NOT NULL DEFAULT '',   -- cómo enfocar la venta
+  salio_bien    TEXT NOT NULL DEFAULT '',
+  salio_mal     TEXT NOT NULL DEFAULT '',
+  notas         TEXT NOT NULL DEFAULT '',
+  motivo_rechazo TEXT NOT NULL DEFAULT '',
   creado_en     INTEGER NOT NULL,
   actualizado_en INTEGER NOT NULL
 );

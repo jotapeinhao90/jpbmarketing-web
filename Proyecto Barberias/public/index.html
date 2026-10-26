@@ -11,11 +11,13 @@
 <meta name="apple-mobile-web-app-title" content="Barberías">
 <link rel="manifest" href="/manifest.webmanifest">
 <link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.css">
 <title>Barberías — Seguimiento</title>
 <style>
   :root{
     --bg:#0f1115; --panel:#181b21; --panel2:#20242c; --line:#2a2f39;
-    --text:#f1eee7; --muted:#9097a3; --accent:#d6402f; --accent2:#e8a33d; --ok:#3fb27f; --blue:#5b8def;
+    --text:#f1eee7; --muted:#9097a3; --accent:#d6402f; --accent2:#e8a33d; --blue:#5b8def;
+    --c-no:#e5484d; --c-pend:#f5b800; --c-proc:#3b82f6; --c-ok:#30a46c;
     --r:14px;
   }
   *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
@@ -23,28 +25,30 @@
   body{min-height:100vh;min-height:100dvh;padding-top:env(safe-area-inset-top)}
   button{font-family:inherit;cursor:pointer;color:inherit}
   input,select,textarea{font-family:inherit;font-size:16px;color:var(--text);background:var(--panel2);border:1px solid var(--line);border-radius:10px;padding:11px 12px;width:100%}
-  textarea{resize:vertical;min-height:70px}
+  textarea{resize:vertical;min-height:74px;line-height:1.4}
   label{display:block;font-size:.74rem;color:var(--muted);margin:10px 0 4px;text-transform:uppercase;letter-spacing:.04em}
   a{color:var(--blue);text-decoration:none}
   .hidden{display:none!important}
 
-  /* Login */
   #login{min-height:100dvh;display:flex;align-items:center;justify-content:center;padding:24px}
   .login-box{width:100%;max-width:340px}
   .login-box h1{font-size:1.5rem;margin-bottom:6px}
   .login-box p{color:var(--muted);font-size:.9rem;margin-bottom:18px}
   .btn{display:block;width:100%;padding:13px;border:none;border-radius:12px;background:var(--accent);color:#fff;font-weight:700;font-size:1rem}
+  .btn:disabled{opacity:.55}
   .btn.sec{background:var(--panel2);color:var(--text);border:1px solid var(--line)}
   .btn.danger{background:transparent;color:#ff6b5e;border:1px solid #5a2a26}
+  .btn.sm{padding:9px 12px;font-size:.85rem;border-radius:10px}
   .err{color:#ff6b5e;font-size:.85rem;margin-top:10px;min-height:1.2em}
 
-  /* Layout */
   #app{max-width:640px;margin:0 auto;padding:16px 16px calc(92px + env(safe-area-inset-bottom))}
+  #app.wide{max-width:1000px}
   h2.t{font-size:1.5rem;margin:6px 0 14px}
+  h3.sec{font-size:.78rem;color:var(--muted);margin:20px 0 8px;text-transform:uppercase;letter-spacing:.05em;font-weight:600}
   .sub{color:var(--muted);font-size:.85rem}
   nav{position:fixed;left:0;right:0;bottom:0;background:rgba(24,27,33,.96);backdrop-filter:blur(12px);border-top:1px solid var(--line);display:flex;justify-content:center;padding-bottom:env(safe-area-inset-bottom);z-index:20}
   nav .in{display:flex;width:100%;max-width:640px}
-  nav button{flex:1;background:none;border:none;padding:11px 0 9px;font-size:.72rem;color:var(--muted);display:flex;flex-direction:column;align-items:center;gap:3px}
+  nav button{flex:1;background:none;border:none;padding:11px 0 9px;font-size:.68rem;color:var(--muted);display:flex;flex-direction:column;align-items:center;gap:3px}
   nav button svg{width:22px;height:22px;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
   nav button.on{color:var(--text)}
   nav button.on svg{stroke:var(--accent)}
@@ -52,7 +56,6 @@
   .card{background:var(--panel);border:1px solid var(--line);border-radius:var(--r);padding:16px;margin-bottom:12px}
   .card h3{font-size:.78rem;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);margin-bottom:12px;font-weight:600}
 
-  /* Meta semanal */
   .meta{display:flex;align-items:center;gap:18px}
   .ring{position:relative;width:104px;height:104px;flex:none}
   .ring svg{width:100%;height:100%;transform:rotate(-90deg)}
@@ -61,17 +64,27 @@
   .ring .fg{stroke:var(--accent);transition:stroke-dashoffset .5s}
   .ring .n{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;font-size:1.7rem;font-weight:800;line-height:1}
   .ring .n small{font-size:.7rem;color:var(--muted);font-weight:500;margin-top:3px}
-  .meta .txt b{font-size:1.05rem}
-  .semanas{display:flex;gap:6px;align-items:flex-end;height:46px;margin-top:10px}
+  .semanas{display:flex;gap:6px;align-items:flex-end;height:56px;margin-top:22px}
   .semanas div{flex:1;background:var(--panel2);border-radius:5px;min-height:4px;position:relative}
   .semanas div.cur{background:var(--accent)}
   .semanas div span{position:absolute;top:-16px;left:0;right:0;text-align:center;font-size:.68rem;color:var(--muted)}
-  .kpis{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
-  .kpi{background:var(--panel);border:1px solid var(--line);border-radius:var(--r);padding:12px;text-align:center}
-  .kpi b{display:block;font-size:1.5rem}
-  .kpi span{font-size:.7rem;color:var(--muted)}
+  .kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:12px}
+  .kpis.g3{grid-template-columns:repeat(3,1fr)}
+  .kpi{background:var(--panel);border:1px solid var(--line);border-radius:var(--r);padding:12px 6px;text-align:center}
+  .kpi b{display:block;font-size:1.45rem}
+  .kpi span{font-size:.68rem;color:var(--muted)}
+  .kpi i{display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:4px}
 
-  /* Lista */
+  .barra{display:flex;align-items:center;gap:10px;margin:7px 0;font-size:.85rem}
+  .barra .l{width:118px;flex:none;color:var(--muted)}
+  .barra .b{flex:1;height:10px;background:var(--panel2);border-radius:6px;overflow:hidden}
+  .barra .b i{display:block;height:100%;border-radius:6px}
+  .barra .v{width:34px;text-align:right;font-weight:700}
+  table.t{width:100%;border-collapse:collapse;font-size:.85rem}
+  table.t th{font-size:.68rem;color:var(--muted);text-transform:uppercase;text-align:right;padding:4px 4px;font-weight:600}
+  table.t th:first-child,table.t td:first-child{text-align:left}
+  table.t td{padding:8px 4px;border-top:1px solid var(--line);text-align:right}
+
   .item{display:block;width:100%;text-align:left;background:var(--panel);border:1px solid var(--line);border-radius:var(--r);padding:13px 14px;margin-bottom:10px}
   .item .row{display:flex;justify-content:space-between;align-items:flex-start;gap:10px}
   .item .nom{font-weight:700;font-size:1rem}
@@ -79,27 +92,38 @@
   .item .prox{font-size:.8rem;margin-top:8px;color:var(--accent2)}
   .item .prox.venc{color:#ff6b5e}
   .badge{display:inline-block;padding:3px 9px;border-radius:999px;font-size:.7rem;font-weight:700;white-space:nowrap;flex:none}
-  .e-por_visitar{background:#2a2f39;color:#c3c8d1}
-  .e-contactada{background:#3a3220;color:#e8c46d}
-  .e-interesada{background:#1f3355;color:#8cb4ff}
-  .e-demo{background:#2e2547;color:#bba3ff}
+  .e-por_visitar,.e-contactada{background:#3a3220;color:#f5c842}
+  .e-interesada,.e-demo{background:#1f3355;color:#8cb4ff}
   .e-cliente{background:#17402f;color:#6fe0ac}
   .e-no_interesada{background:#40201f;color:#ff8f86}
   .chips{display:flex;gap:8px;overflow-x:auto;padding-bottom:10px;margin:0 -16px 4px;padding-left:16px;padding-right:16px;scrollbar-width:none}
   .chips::-webkit-scrollbar{display:none}
   .chip{flex:none;padding:7px 13px;border-radius:999px;border:1px solid var(--line);background:var(--panel);font-size:.82rem;color:var(--muted)}
   .chip.on{background:var(--text);color:var(--bg);border-color:var(--text);font-weight:700}
-  .vacio{text-align:center;color:var(--muted);padding:30px 10px;font-size:.92rem}
+  .chip i{display:inline-block;width:9px;height:9px;border-radius:50%;margin-right:6px}
+  .vacio{text-align:center;color:var(--muted);padding:26px 10px;font-size:.92rem}
 
-  /* Hoja (detalle / formulario) */
-  .sheet-bg{position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:40;display:flex;align-items:flex-end;justify-content:center}
+  /* Mapa */
+  #mapa{height:calc(100dvh - 300px);min-height:340px;border-radius:var(--r);border:1px solid var(--line);position:relative;isolation:isolate;z-index:0}
+  #mapa.ubicando{cursor:crosshair;outline:3px solid var(--c-pend)}
+  .banner{background:#3a3220;color:#f5c842;border-radius:12px;padding:10px 12px;font-size:.88rem;margin-bottom:10px;display:flex;justify-content:space-between;align-items:center;gap:10px}
+  .banner button{background:none;border:1px solid currentColor;border-radius:8px;padding:5px 10px;font-size:.8rem}
+  .leaflet-popup-content{font-family:inherit;color:#1a1d23;margin:12px 14px}
+  .pop b{font-size:1rem;display:block;margin-bottom:2px}
+  .pop .s{font-size:.8rem;color:#555;margin-bottom:8px}
+  .pop .acc{display:flex;gap:6px}
+  .pop button,.pop a{flex:1;text-align:center;padding:7px 4px;border-radius:8px;font-size:.8rem;border:1px solid #cfd3da;background:#f4f5f7;color:#1a1d23;font-weight:600}
+  .pop button.pri{background:#d6402f;border-color:#d6402f;color:#fff}
+
+  /* Hojas */
+  .sheet-bg{position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:1100;display:flex;align-items:flex-end;justify-content:center}
   .sheet{background:var(--bg);width:100%;max-width:640px;max-height:94dvh;overflow-y:auto;border-radius:20px 20px 0 0;padding:18px 16px calc(24px + env(safe-area-inset-bottom));border:1px solid var(--line);border-bottom:none}
   .sheet .top{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px}
   .sheet .top h2{font-size:1.25rem}
   .x{background:var(--panel2);border:none;width:34px;height:34px;border-radius:50%;font-size:1.1rem;color:var(--muted)}
   .grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-  .acciones{display:flex;gap:8px;margin:12px 0}
-  .acciones a{flex:1;text-align:center;padding:10px 4px;background:var(--panel);border:1px solid var(--line);border-radius:12px;font-size:.82rem;color:var(--text)}
+  .acciones{display:flex;gap:8px;margin:12px 0;flex-wrap:wrap}
+  .acciones a,.acciones button{flex:1;min-width:70px;text-align:center;padding:10px 4px;background:var(--panel);border:1px solid var(--line);border-radius:12px;font-size:.82rem;color:var(--text)}
   .info{font-size:.9rem;line-height:1.7}
   .info span{color:var(--muted)}
   .tl{border-left:2px solid var(--line);margin-left:6px;padding-left:16px}
@@ -110,10 +134,12 @@
   .tl .fecha{font-size:.76rem;color:var(--muted)}
   .tl .fecha button{background:none;border:none;color:var(--muted);font-size:.76rem;margin-left:8px;text-decoration:underline}
   .tl .txt{font-size:.92rem;white-space:pre-wrap;margin-top:2px}
-  .seg{display:flex;gap:6px;margin-bottom:4px}
+  .seg{display:flex;gap:6px;margin:14px 0 4px}
   .seg button{flex:1;padding:9px 0;border-radius:10px;border:1px solid var(--line);background:var(--panel);font-size:.82rem;color:var(--muted)}
   .seg button.on{background:var(--text);color:var(--bg);font-weight:700;border-color:var(--text)}
-  #toast{position:fixed;left:50%;bottom:calc(90px + env(safe-area-inset-bottom));transform:translateX(-50%);background:var(--text);color:var(--bg);padding:10px 16px;border-radius:999px;font-size:.88rem;font-weight:600;z-index:60;opacity:0;pointer-events:none;transition:opacity .2s}
+  .nota-bloque{border-left:3px solid var(--line);padding-left:12px;margin-top:6px}
+  .nota-bloque.bien{border-color:var(--c-ok)} .nota-bloque.mal{border-color:var(--c-no)} .nota-bloque.enf{border-color:var(--c-pend)}
+  #toast{position:fixed;left:50%;bottom:calc(90px + env(safe-area-inset-bottom));transform:translateX(-50%);background:var(--text);color:var(--bg);padding:10px 16px;border-radius:999px;font-size:.88rem;font-weight:600;z-index:1200;opacity:0;pointer-events:none;transition:opacity .2s;white-space:nowrap}
   #toast.on{opacity:1}
 </style>
 </head>
@@ -133,16 +159,31 @@
 
 <nav id="nav" class="hidden"><div class="in">
   <button data-vista="hoy"><svg viewBox="0 0 24 24"><path d="M3 11l9-8 9 8"/><path d="M5 10v10h14V10"/></svg>Hoy</button>
+  <button data-vista="mapa"><svg viewBox="0 0 24 24"><path d="M12 21s-7-6.2-7-11a7 7 0 0114 0c0 4.8-7 11-7 11z"/><circle cx="12" cy="10" r="2.5"/></svg>Mapa</button>
   <button data-vista="lista"><svg viewBox="0 0 24 24"><path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01"/></svg>Barberías</button>
+  <button data-vista="metricas"><svg viewBox="0 0 24 24"><path d="M4 20V10M10 20V4M16 20v-8M22 20H2"/></svg>Métricas</button>
   <button data-vista="nueva"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 8v8M8 12h8"/></svg>Agregar</button>
 </div></nav>
 <div id="toast"></div>
 
+<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.js"></script>
 <script>
 const META_SEMANAL = 10;
 const ESTADOS = {
   por_visitar: 'Por visitar', contactada: 'Contactada', interesada: 'Interesada',
   demo: 'Demo / prueba', cliente: 'Cliente', no_interesada: 'No interesada',
+};
+// Color del pin: rojo = rechazó, amarillo = pendiente, azul = en proceso, verde = éxito.
+const GRUPO = { por_visitar: 'pend', contactada: 'pend', interesada: 'proc', demo: 'proc', cliente: 'ok', no_interesada: 'no' };
+const GRUPOS = {
+  pend: { nombre: 'Pendientes', color: '#f5b800' },
+  proc: { nombre: 'En proceso', color: '#3b82f6' },
+  ok: { nombre: 'Éxito', color: '#30a46c' },
+  no: { nombre: 'Rechazadas', color: '#e5484d' },
+};
+const MOTIVOS = {
+  precio: 'Precio', no_le_interesa: 'No le interesa', no_es_decisor: 'No era el decisor',
+  tiene_sistema: 'Ya tiene algo similar', desconfianza: 'Desconfianza', sin_tiempo: 'Sin tiempo / mal momento', otro: 'Otro',
 };
 const TIPOS = { visita: 'Visita', llamada: 'Llamada', whatsapp: 'WhatsApp', nota: 'Nota' };
 const CERRADOS = ['cliente', 'no_interesada'];
@@ -153,11 +194,16 @@ let datos = { barberias: [], visitas: [] };
 let vista = 'hoy';
 let filtro = 'todas';
 let busqueda = '';
+let mapaFiltro = 'todas';
+let mapa = null;
+let mapaVista = null;       // {centro, zoom} para no perder la posición al refrescar
+let ubicando = null;        // id de la barbería que se está ubicando a mano
 
 const $ = (id) => document.getElementById(id);
 const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+const dormir = (ms) => new Promise((r) => setTimeout(r, ms));
 
-// --- Fechas (todo en hora local del teléfono; las fechas viajan como YYYY-MM-DD) ---
+// --- Fechas (hora local del teléfono; viajan como YYYY-MM-DD) ---
 const iso = (d) => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
 const hoy = () => iso(new Date());
 function lunesDe(fechaIso) {
@@ -167,11 +213,13 @@ function lunesDe(fechaIso) {
 }
 function fechaCorta(f) {
   if (!f) return '';
-  const d = new Date(f + 'T12:00:00');
-  return d.toLocaleDateString('es-CL', { weekday: 'short', day: 'numeric', month: 'short' });
+  return new Date(f + 'T12:00:00').toLocaleDateString('es-CL', { weekday: 'short', day: 'numeric', month: 'short' });
+}
+function diasDesde(f) {
+  return Math.round((new Date(hoy() + 'T12:00:00') - new Date(f + 'T12:00:00')) / 86400000);
 }
 function relativa(f) {
-  const dif = Math.round((new Date(f + 'T12:00:00') - new Date(hoy() + 'T12:00:00')) / 86400000);
+  const dif = -diasDesde(f);
   if (dif === 0) return 'hoy';
   if (dif === 1) return 'mañana';
   if (dif === -1) return 'ayer';
@@ -181,7 +229,7 @@ function relativa(f) {
 function toast(msg) {
   const t = $('toast');
   t.textContent = msg; t.classList.add('on');
-  clearTimeout(toast.t); toast.t = setTimeout(() => t.classList.remove('on'), 2200);
+  clearTimeout(toast.t); toast.t = setTimeout(() => t.classList.remove('on'), 2400);
 }
 
 async function api(ruta, metodo = 'GET', cuerpo) {
@@ -234,26 +282,51 @@ $('loginForm').addEventListener('submit', async (e) => {
 
 // --- Navegación ---
 document.querySelectorAll('nav button').forEach((b) => b.addEventListener('click', () => {
-  if (b.dataset.vista === 'nueva') { abrirFormulario(); return; }
+  if (b.dataset.vista === 'nueva') { abrirAgregar(); return; }
+  ubicando = null;
   vista = b.dataset.vista; pintar();
 }));
 
 function pintar() {
+  if (mapa) { mapaVista = { centro: mapa.getCenter(), zoom: mapa.getZoom() }; mapa.remove(); mapa = null; }
   document.querySelectorAll('nav button').forEach((b) => b.classList.toggle('on', b.dataset.vista === vista));
-  $('app').innerHTML = vista === 'hoy' ? vistaHoy() : vistaLista();
+  $('app').classList.toggle('wide', vista === 'mapa' || vista === 'metricas');
+  $('app').innerHTML = { hoy: vistaHoy, mapa: vistaMapa, lista: vistaLista, metricas: vistaMetricas }[vista]();
   if (vista === 'lista') {
     const inp = $('buscar');
     inp.addEventListener('input', () => { busqueda = inp.value; pintarItems(); });
+    pintarItems();
   }
-  enlazarItems();
+  if (vista === 'mapa') montarMapa();
+  enlazar();
 }
 
-// --- Vista HOY ---
+function enlazar() {
+  document.querySelectorAll('.item').forEach((el) => el.onclick = () => abrirDetalle(Number(el.dataset.id)));
+  document.querySelectorAll('#chips .chip').forEach((el) => el.onclick = () => { filtro = el.dataset.f; pintar(); });
+  document.querySelectorAll('[data-mf]').forEach((el) => el.onclick = () => { mapaFiltro = el.dataset.mf; pintar(); });
+  document.querySelectorAll('[data-ubicar]').forEach((el) => el.onclick = (ev) => { ev.stopPropagation(); empezarUbicar(Number(el.dataset.ubicar)); });
+  const s = $('salir'); if (s) s.onclick = cerrarSesion;
+}
+
+// --- Cálculos compartidos ---
+const cuenta = (e) => datos.barberias.filter((b) => b.estado === e).length;
+const cuentaG = (g) => datos.barberias.filter((b) => GRUPO[b.estado] === g).length;
 function visitasPorSemana() {
   const m = {};
   datos.visitas.filter((v) => v.tipo === 'visita').forEach((v) => { const k = lunesDe(v.fecha); m[k] = (m[k] || 0) + 1; });
   return m;
 }
+function conversion() {
+  const trabajadas = datos.barberias.filter((b) => b.estado !== 'por_visitar').length;
+  return trabajadas ? Math.round((cuenta('cliente') / trabajadas) * 100) : 0;
+}
+function ultimaActividad(b) {
+  const v = datos.visitas.find((x) => x.barberia_id === b.id);
+  return v ? v.fecha : iso(new Date(b.creado_en));
+}
+
+// --- HOY ---
 function vistaHoy() {
   const semanas = visitasPorSemana();
   const lunes = lunesDe(hoy());
@@ -265,11 +338,9 @@ function vistaHoy() {
   for (let i = 5; i >= 0; i--) { const d = new Date(lunes + 'T12:00:00'); d.setDate(d.getDate() - 7 * i); claves.push(iso(d)); }
   const maxS = Math.max(META_SEMANAL, ...claves.map((k) => semanas[k] || 0));
   const barras = claves.map((k) => `<div class="${k === lunes ? 'cur' : ''}" style="height:${Math.max(((semanas[k] || 0) / maxS) * 100, 8)}%"><span>${semanas[k] || 0}</span></div>`).join('');
-
   const restan = Math.max(META_SEMANAL - estaSemana, 0);
   const mensaje = restan === 0 ? '¡Meta de la semana cumplida!' : `Te faltan <b>${restan}</b> visita${restan === 1 ? '' : 's'} esta semana`;
 
-  const cuenta = (e) => datos.barberias.filter((b) => b.estado === e).length;
   const abiertas = datos.barberias.filter((b) => !CERRADOS.includes(b.estado) && b.proxima_fecha);
   const t = hoy();
   const vencidas = abiertas.filter((b) => b.proxima_fecha <= t).sort((a, b) => a.proxima_fecha.localeCompare(b.proxima_fecha));
@@ -285,27 +356,149 @@ function vistaHoy() {
           <svg viewBox="0 0 100 100"><circle class="bg" cx="50" cy="50" r="44"/><circle class="fg" cx="50" cy="50" r="44" stroke-dasharray="${circ}" stroke-dashoffset="${circ * (1 - pct)}"/></svg>
           <div class="n">${estaSemana}<small>de ${META_SEMANAL}</small></div>
         </div>
-        <div class="txt"><div>${mensaje}</div><div class="sub" style="margin-top:4px">Semana desde el lunes ${fechaCorta(lunes)}</div></div>
+        <div><div>${mensaje}</div><div class="sub" style="margin-top:4px">Semana desde el lunes ${fechaCorta(lunes)}</div></div>
       </div>
       <div class="semanas">${barras}</div>
       <div class="sub" style="margin-top:6px">Últimas 6 semanas</div>
     </div>
-    <div class="kpis" style="margin-bottom:12px">
-      <div class="kpi"><b>${datos.barberias.length}</b><span>En el sistema</span></div>
-      <div class="kpi"><b>${cuenta('interesada') + cuenta('demo')}</b><span>Interesadas</span></div>
-      <div class="kpi"><b>${cuenta('cliente')}</b><span>Clientes</span></div>
+    <div class="kpis">
+      <div class="kpi"><b>${cuentaG('pend')}</b><span><i style="background:var(--c-pend)"></i>Pendientes</span></div>
+      <div class="kpi"><b>${cuentaG('proc')}</b><span><i style="background:var(--c-proc)"></i>En proceso</span></div>
+      <div class="kpi"><b>${cuentaG('ok')}</b><span><i style="background:var(--c-ok)"></i>Clientes</span></div>
+      <div class="kpi"><b>${conversion()}%</b><span>Conversión</span></div>
     </div>
-    <h3 class="sub" style="margin:18px 0 8px;text-transform:uppercase;letter-spacing:.05em">Para hacer seguimiento ${vencidas.length ? `(${vencidas.length})` : ''}</h3>
-    ${vencidas.length ? vencidas.map((b) => tarjeta(b, true)).join('') : '<div class="vacio">Nada pendiente para hoy 👌</div>'}
-    ${proximas.length ? `<h3 class="sub" style="margin:18px 0 8px;text-transform:uppercase;letter-spacing:.05em">Próximos 7 días</h3>${proximas.map((b) => tarjeta(b, true)).join('')}` : ''}
+    <h3 class="sec">Para hacer seguimiento ${vencidas.length ? `(${vencidas.length})` : ''}</h3>
+    ${vencidas.length ? vencidas.map(tarjeta).join('') : '<div class="vacio">Nada pendiente para hoy 👌</div>'}
+    ${proximas.length ? `<h3 class="sec">Próximos 7 días</h3>${proximas.map(tarjeta).join('')}` : ''}
     <button class="btn sec" style="margin-top:24px" id="salir">Cerrar sesión</button>
   `;
 }
 
-// --- Vista LISTA ---
+// --- MÉTRICAS ---
+function barra(label, valor, max, color) {
+  return `<div class="barra"><div class="l">${esc(label)}</div><div class="b"><i style="width:${max ? (valor / max) * 100 : 0}%;background:${color}"></i></div><div class="v">${valor}</div></div>`;
+}
+function vistaMetricas() {
+  const semanas = visitasPorSemana();
+  const lunes = lunesDe(hoy());
+  const mes = hoy().slice(0, 7);
+  const visitas = datos.visitas.filter((v) => v.tipo === 'visita');
+  const visitasMes = visitas.filter((v) => v.fecha.startsWith(mes)).length;
+  const ult6 = []; for (let i = 0; i < 6; i++) { const d = new Date(lunes + 'T12:00:00'); d.setDate(d.getDate() - 7 * i); ult6.push(semanas[iso(d)] || 0); }
+  const promedio = (ult6.reduce((a, b) => a + b, 0) / 6).toFixed(1);
+  const mejor = Math.max(0, ...Object.values(semanas));
+
+  const maxE = Math.max(1, ...Object.keys(ESTADOS).map(cuenta));
+  const embudo = Object.entries(ESTADOS).map(([k, v]) => barra(v, cuenta(k), maxE, GRUPOS[GRUPO[k]].color)).join('');
+
+  const rechazadas = datos.barberias.filter((b) => b.estado === 'no_interesada');
+  const porMotivo = {};
+  rechazadas.forEach((b) => { const m = b.motivo_rechazo || 'sin_motivo'; porMotivo[m] = (porMotivo[m] || 0) + 1; });
+  const maxM = Math.max(1, ...Object.values(porMotivo));
+  const motivos = Object.entries(porMotivo).sort((a, b) => b[1] - a[1])
+    .map(([k, n]) => barra(MOTIVOS[k] || 'Sin motivo anotado', n, maxM, GRUPOS.no.color)).join('');
+
+  const comunas = {};
+  datos.barberias.forEach((b) => {
+    const c = b.comuna || 'Sin comuna';
+    comunas[c] = comunas[c] || { total: 0, ok: 0, no: 0, pend: 0 };
+    comunas[c].total++; comunas[c][GRUPO[b.estado] === 'ok' ? 'ok' : GRUPO[b.estado] === 'no' ? 'no' : 'pend']++;
+  });
+  const filasComuna = Object.entries(comunas).sort((a, b) => b[1].total - a[1].total).slice(0, 12)
+    .map(([c, x]) => `<tr><td>${esc(c)}</td><td>${x.total}</td><td>${x.ok}</td><td>${x.no}</td><td>${x.total - x.ok - x.no}</td></tr>`).join('');
+
+  const enfriando = datos.barberias
+    .filter((b) => ['contactada', 'interesada', 'demo'].includes(b.estado))
+    .map((b) => ({ b, dias: diasDesde(ultimaActividad(b)) }))
+    .filter((x) => x.dias >= 7).sort((a, b) => b.dias - a.dias);
+
+  const sinUbicar = datos.barberias.filter((b) => b.lat == null).length;
+
+  return `
+    <h2 class="t">Métricas</h2>
+    <div class="kpis">
+      <div class="kpi"><b>${datos.barberias.length}</b><span>Barberías</span></div>
+      <div class="kpi"><b>${visitasMes}</b><span>Visitas este mes</span></div>
+      <div class="kpi"><b>${promedio}</b><span>Visitas/sem (prom. 6)</span></div>
+      <div class="kpi"><b>${conversion()}%</b><span>Conversión</span></div>
+    </div>
+    <div class="kpis g3">
+      <div class="kpi"><b>${visitas.length}</b><span>Visitas totales</span></div>
+      <div class="kpi"><b>${mejor}</b><span>Mejor semana</span></div>
+      <div class="kpi"><b>${datos.visitas.length - visitas.length}</b><span>Llamadas y mensajes</span></div>
+    </div>
+    <div class="card"><h3>Embudo</h3>${embudo}
+      <div class="sub" style="margin-top:8px">Conversión = clientes ÷ barberías ya contactadas o visitadas.</div></div>
+    <div class="card"><h3>Por qué rechazan (${rechazadas.length})</h3>${motivos || '<div class="sub">Todavía no hay rechazos.</div>'}</div>
+    <div class="card"><h3>Se están enfriando (${enfriando.length})</h3>
+      ${enfriando.length ? enfriando.map((x) => `<button class="item" data-id="${x.b.id}" style="margin-bottom:8px"><div class="row"><div><div class="nom">${esc(x.b.nombre)}</div><div class="meta2">${ESTADOS[x.b.estado]} · sin contacto hace ${x.dias} días</div></div></div></button>`).join('') : '<div class="sub">Ninguna barbería interesada lleva más de 7 días sin contacto 👌</div>'}</div>
+    <div class="card"><h3>Por comuna</h3>
+      ${filasComuna ? `<table class="t"><tr><th>Comuna</th><th>Total</th><th>Éxito</th><th>Rechaz.</th><th>Otras</th></tr>${filasComuna}</table>` : '<div class="sub">Sin datos aún.</div>'}</div>
+    ${sinUbicar ? `<div class="sub" style="margin-top:8px">${sinUbicar} barbería${sinUbicar === 1 ? '' : 's'} sin ubicación en el mapa.</div>` : ''}
+  `;
+}
+
+// --- MAPA ---
+function vistaMapa() {
+  const chips = [['todas', 'Todas', null], ...Object.entries(GRUPOS).map(([k, g]) => [k, g.nombre, g.color])]
+    .map(([k, n, c]) => `<button class="chip ${mapaFiltro === k ? 'on' : ''}" data-mf="${k}">${c ? `<i style="background:${c}"></i>` : ''}${n} · ${k === 'todas' ? datos.barberias.length : cuentaG(k)}</button>`).join('');
+  const sin = datos.barberias.filter((b) => b.lat == null);
+  const ub = ubicando ? datos.barberias.find((b) => b.id === ubicando) : null;
+  return `
+    <h2 class="t">Mapa</h2>
+    ${ub ? `<div class="banner"><span>Toca el mapa donde está <b>${esc(ub.nombre)}</b></span><button id="cancelarUb">Cancelar</button></div>` : ''}
+    <div class="chips" id="mchips">${chips}</div>
+    <div id="mapa" class="${ub ? 'ubicando' : ''}"></div>
+    <div class="acciones" style="margin-top:10px">
+      <button id="m-todo">Ver todas</button><button id="m-yo">📍 Mi ubicación</button>
+    </div>
+    ${sin.length ? `<h3 class="sec">Sin ubicar en el mapa (${sin.length})</h3>${sin.map((b) => `<button class="item" data-id="${b.id}"><div class="row"><div><div class="nom">${esc(b.nombre)}</div><div class="meta2">${esc([b.direccion, b.comuna].filter(Boolean).join(', ')) || 'Sin dirección'}</div></div><span class="badge e-por_visitar" data-ubicar="${b.id}">Ubicar</span></div></button>`).join('')}` : ''}
+  `;
+}
+function montarMapa() {
+  if (typeof L === 'undefined') { $('mapa').innerHTML = '<div class="vacio">No se pudo cargar el mapa. Revisa tu conexión.</div>'; return; }
+  mapa = L.map('mapa', { zoomControl: true }).setView(mapaVista ? mapaVista.centro : [-33.4489, -70.6693], mapaVista ? mapaVista.zoom : 11);
+  L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', { maxZoom: 19, attribution: '© OpenStreetMap' }).addTo(mapa);
+
+  const puntos = [];
+  datos.barberias.filter((b) => b.lat != null && (mapaFiltro === 'todas' || GRUPO[b.estado] === mapaFiltro)).forEach((b) => {
+    const g = GRUPOS[GRUPO[b.estado]];
+    const m = L.circleMarker([b.lat, b.lng], { radius: 11, color: '#fff', weight: 2.5, fillColor: g.color, fillOpacity: 0.95 }).addTo(mapa);
+    const dir = [b.direccion, b.comuna].filter(Boolean).join(', ');
+    m.bindPopup(`<div class="pop"><b>${esc(b.nombre)}</b><div class="s">${ESTADOS[b.estado]}${dir ? ' · ' + esc(dir) : ''}</div>
+      <div class="acc"><button class="pri" data-pop-abrir="${b.id}">Abrir ficha</button>
+      <a target="_blank" rel="noopener" href="https://www.google.com/maps/dir/?api=1&destination=${b.lat},${b.lng}">Cómo llegar</a></div></div>`);
+    puntos.push([b.lat, b.lng]);
+  });
+  mapa.on('popupopen', (e) => {
+    const btn = e.popup.getElement().querySelector('[data-pop-abrir]');
+    if (btn) btn.onclick = () => abrirDetalle(Number(btn.dataset.popAbrir));
+  });
+  if (!mapaVista && puntos.length) mapa.fitBounds(puntos, { padding: [40, 40], maxZoom: 15 });
+
+  $('m-todo').onclick = () => { if (puntos.length) mapa.fitBounds(puntos, { padding: [40, 40], maxZoom: 15 }); };
+  $('m-yo').onclick = () => {
+    mapa.once('locationfound', (e) => { L.circleMarker(e.latlng, { radius: 7, color: '#fff', weight: 2, fillColor: '#2563eb', fillOpacity: 1 }).addTo(mapa); mapa.setView(e.latlng, 15); });
+    mapa.once('locationerror', () => toast('No se pudo obtener tu ubicación'));
+    mapa.locate();
+  };
+  const c = $('cancelarUb'); if (c) c.onclick = () => { ubicando = null; pintar(); };
+  if (ubicando) {
+    mapa.on('click', async (e) => {
+      try { await api(`barberias/${ubicando}/ubicacion`, 'PUT', { lat: e.latlng.lat, lng: e.latlng.lng }); ubicando = null; await cargar(); toast('Ubicación guardada'); }
+      catch (err) { toast(err.message); }
+    });
+  }
+}
+function empezarUbicar(id) {
+  cerrarHoja();
+  ubicando = id; vista = 'mapa'; mapaFiltro = 'todas'; pintar();
+}
+
+// --- LISTA ---
 function vistaLista() {
   const chips = ['todas', ...Object.keys(ESTADOS)].map((e) => {
-    const n = e === 'todas' ? datos.barberias.length : datos.barberias.filter((b) => b.estado === e).length;
+    const n = e === 'todas' ? datos.barberias.length : cuenta(e);
     return `<button class="chip ${filtro === e ? 'on' : ''}" data-f="${e}">${e === 'todas' ? 'Todas' : ESTADOS[e]} · ${n}</button>`;
   }).join('');
   return `
@@ -315,35 +508,22 @@ function vistaLista() {
     <div id="items"></div>
   `;
 }
-function filtradas() {
-  const q = busqueda.trim().toLowerCase();
-  return datos.barberias.filter((b) =>
-    (filtro === 'todas' || b.estado === filtro) &&
-    (!q || [b.nombre, b.comuna, b.contacto, b.direccion].some((x) => x.toLowerCase().includes(q)))
-  );
-}
 function pintarItems() {
-  const l = filtradas();
-  $('items').innerHTML = l.length ? l.map((b) => tarjeta(b)).join('') : '<div class="vacio">No hay barberías con ese filtro.<br>Usa “Agregar” para sumar la primera.</div>';
-  enlazarItems();
+  const q = busqueda.trim().toLowerCase();
+  const l = datos.barberias.filter((b) =>
+    (filtro === 'todas' || b.estado === filtro) &&
+    (!q || [b.nombre, b.comuna, b.contacto, b.direccion].some((x) => (x || '').toLowerCase().includes(q))));
+  $('items').innerHTML = l.length ? l.map(tarjeta).join('') : '<div class="vacio">No hay barberías con ese filtro.<br>Usa “Agregar” para sumar la primera.</div>';
+  document.querySelectorAll('#items .item').forEach((el) => el.onclick = () => abrirDetalle(Number(el.dataset.id)));
 }
-function ultimaVisita(id) {
-  return datos.visitas.find((v) => v.barberia_id === id);
-}
-function tarjeta(b, mostrarProx) {
-  const uv = ultimaVisita(b.id);
+function tarjeta(b) {
+  const uv = datos.visitas.find((v) => v.barberia_id === b.id);
   const lugar = [b.comuna, b.contacto].filter(Boolean).join(' · ');
   const prox = b.proxima_fecha && !CERRADOS.includes(b.estado)
     ? `<div class="prox ${b.proxima_fecha < hoy() ? 'venc' : ''}">${esc(b.proxima_accion || 'Seguimiento')} · ${relativa(b.proxima_fecha)}</div>` : '';
   return `<button class="item" data-id="${b.id}">
-    <div class="row"><div><div class="nom">${esc(b.nombre)}</div><div class="meta2">${esc(lugar) || 'Sin datos de contacto'}${uv ? ` · última ${relativa(uv.fecha)}` : ''}</div></div>
+    <div class="row"><div><div class="nom">${esc(b.nombre)}</div><div class="meta2">${esc(lugar) || esc(b.direccion) || 'Sin datos de contacto'}${uv ? ` · última ${relativa(uv.fecha)}` : ''}</div></div>
     <span class="badge e-${b.estado}">${ESTADOS[b.estado]}</span></div>${prox}</button>`;
-}
-function enlazarItems() {
-  document.querySelectorAll('.item').forEach((el) => el.onclick = () => abrirDetalle(Number(el.dataset.id)));
-  document.querySelectorAll('#chips .chip').forEach((el) => el.onclick = () => { filtro = el.dataset.f; pintar(); pintarItems(); });
-  const s = $('salir'); if (s) s.onclick = cerrarSesion;
-  if (vista === 'lista' && $('items') && !$('items').innerHTML) pintarItems();
 }
 
 // --- Hojas ---
@@ -357,25 +537,32 @@ function abrirHoja(html) {
   return bg.firstChild;
 }
 function cerrarHoja() { const h = $('hoja'); if (h) h.remove(); }
-
-function limpiarTel(t) { return t.replace(/[^\d+]/g, ''); }
+const opcionesEstado = (sel) => Object.entries(ESTADOS).map(([k, v]) => `<option value="${k}" ${k === sel ? 'selected' : ''}>${v}</option>`).join('');
+const opcionesMotivo = (sel) => `<option value="">— Sin motivo —</option>` + Object.entries(MOTIVOS).map(([k, v]) => `<option value="${k}" ${k === sel ? 'selected' : ''}>${v}</option>`).join('');
+const limpiarTel = (t) => t.replace(/[^\d+]/g, '');
 function waNumero(t) {
   let n = t.replace(/\D/g, '');
-  if (n.length === 9 && n.startsWith('9')) n = '56' + n; // móvil chileno sin código de país
+  if (n.length === 9 && n.startsWith('9')) n = '56' + n;
   return n;
 }
 
-function abrirDetalle(id) {
+let pestanaDetalle = null;
+function abrirDetalle(id, pestana) {
   const b = datos.barberias.find((x) => x.id === id);
   if (!b) return;
   const vis = datos.visitas.filter((v) => v.barberia_id === id);
+  pestana = pestana || pestanaDetalle || (vis.length ? 'historial' : 'registrar');
+  pestanaDetalle = pestana;
+
   const acc = [];
   if (b.telefono) {
     acc.push(`<a href="tel:${esc(limpiarTel(b.telefono))}">📞 Llamar</a>`);
     acc.push(`<a href="https://wa.me/${esc(waNumero(b.telefono))}" target="_blank" rel="noopener">💬 WhatsApp</a>`);
   }
-  if (b.direccion || b.nombre) acc.push(`<a href="https://www.google.com/maps/search/?api=1&query=${encodeURIComponent([b.nombre, b.direccion, b.comuna].filter(Boolean).join(' '))}" target="_blank" rel="noopener">📍 Mapa</a>`);
+  if (b.lat != null) acc.push(`<a href="https://www.google.com/maps/dir/?api=1&destination=${b.lat},${b.lng}" target="_blank" rel="noopener">🧭 Ir</a>`);
+  else if (b.direccion) acc.push(`<a href="https://www.google.com/maps/search/?api=1&query=${encodeURIComponent([b.nombre, b.direccion, b.comuna].join(' '))}" target="_blank" rel="noopener">📍 Mapa</a>`);
   if (b.instagram) acc.push(`<a href="https://instagram.com/${esc(b.instagram.replace(/^@/, ''))}" target="_blank" rel="noopener">📷 IG</a>`);
+  const geoTxt = b.lat == null ? 'Sin ubicar en el mapa' : { exacta: 'Ubicada', aprox: 'Ubicación aproximada (solo la calle)', manual: 'Ubicada a mano' }[b.geo] || 'Ubicada';
 
   const h = abrirHoja(`
     <div class="top"><h2>${esc(b.nombre)}</h2><button class="x" id="cerrar">✕</button></div>
@@ -385,40 +572,53 @@ function abrirDetalle(id) {
       ${b.direccion || b.comuna ? `<div><span>Dirección:</span> ${esc([b.direccion, b.comuna].filter(Boolean).join(', '))}</div>` : ''}
       ${b.contacto ? `<div><span>Contacto:</span> ${esc(b.contacto)}</div>` : ''}
       ${b.telefono ? `<div><span>Teléfono:</span> ${esc(b.telefono)}</div>` : ''}
+      <div><span>Mapa:</span> ${geoTxt} · <a href="#" id="ubicarBtn">${b.lat == null ? 'ubicar a mano' : 'corregir'}</a></div>
       ${b.proxima_fecha ? `<div><span>Próxima acción:</span> ${esc(b.proxima_accion || 'Seguimiento')} · ${fechaCorta(b.proxima_fecha)}</div>` : ''}
+      ${b.motivo_rechazo ? `<div><span>Motivo de rechazo:</span> ${esc(MOTIVOS[b.motivo_rechazo] || b.motivo_rechazo)}</div>` : ''}
     </div>
-
-    <div class="card" style="margin-top:16px">
-      <h3>Registrar visita / contacto</h3>
-      <div class="seg" id="tipoSeg">${Object.entries(TIPOS).map(([k, v]) => `<button type="button" data-t="${k}" class="${k === 'visita' ? 'on' : ''}">${v}</button>`).join('')}</div>
-      <label>Qué dijeron</label>
-      <textarea id="v-notas" placeholder="Objeciones, interés, precio que preguntaron, quién es el dueño…"></textarea>
-      <div class="grid2">
-        <div><label>Fecha</label><input type="date" id="v-fecha" value="${hoy()}"></div>
-        <div><label>Estado</label><select id="v-estado">${Object.entries(ESTADOS).map(([k, v]) => `<option value="${k}" ${k === b.estado ? 'selected' : ''}>${v}</option>`).join('')}</select></div>
-      </div>
-      <label>Próxima acción</label>
-      <input id="v-accion" placeholder="Ej. Volver con demo en el celular" value="${esc(b.proxima_accion)}">
-      <label>Para cuándo</label>
-      <input type="date" id="v-prox" value="${esc(b.proxima_fecha)}">
-      <button class="btn" id="v-guardar" style="margin-top:14px">Guardar</button>
+    <div class="seg" id="pestanas">
+      <button data-p="historial" class="${pestana === 'historial' ? 'on' : ''}">Historial (${vis.length})</button>
+      <button data-p="registrar" class="${pestana === 'registrar' ? 'on' : ''}">Registrar</button>
+      <button data-p="estrategia" class="${pestana === 'estrategia' ? 'on' : ''}">Estrategia</button>
     </div>
-
-    <h3 class="sub" style="margin:18px 0 10px;text-transform:uppercase;letter-spacing:.05em">Historial (${vis.length})</h3>
-    <div class="tl">${vis.length ? vis.map((v) => `<div class="ev ${v.tipo}"><div class="fecha">${TIPOS[v.tipo]} · ${fechaCorta(v.fecha)}<button data-borrar="${v.id}">borrar</button></div>${v.notas ? `<div class="txt">${esc(v.notas)}</div>` : ''}</div>`).join('') : '<div class="sub">Aún sin registros.</div>'}</div>
-
-    <div class="grid2" style="margin-top:20px">
+    <div id="panelPestana"></div>
+    <div class="grid2" style="margin-top:22px">
       <button class="btn sec" id="editar">Editar datos</button>
       <button class="btn danger" id="eliminar">Eliminar</button>
     </div>
   `);
 
-  let tipo = 'visita';
-  h.querySelectorAll('#tipoSeg button').forEach((x) => x.onclick = () => {
-    tipo = x.dataset.t;
-    h.querySelectorAll('#tipoSeg button').forEach((y) => y.classList.toggle('on', y === x));
-  });
+  const panel = h.querySelector('#panelPestana');
+  if (pestana === 'historial') {
+    panel.innerHTML = `<div class="tl" style="margin-top:14px">${vis.length ? vis.map((v) => `<div class="ev ${v.tipo}"><div class="fecha">${TIPOS[v.tipo]} · ${fechaCorta(v.fecha)}<button data-borrar="${v.id}">borrar</button></div>${v.notas ? `<div class="txt">${esc(v.notas)}</div>` : ''}</div>`).join('') : '<div class="sub">Aún sin registros. Usa “Registrar” después de tu primera visita.</div>'}</div>`;
+  } else if (pestana === 'registrar') {
+    panel.innerHTML = `
+      <div class="seg" id="tipoSeg">${Object.entries(TIPOS).map(([k, v]) => `<button type="button" data-t="${k}" class="${k === 'visita' ? 'on' : ''}">${v}</button>`).join('')}</div>
+      <label>Qué dijeron / qué pasó</label>
+      <textarea id="v-notas" placeholder="Objeciones, interés, precio que preguntaron, quién es el dueño…"></textarea>
+      <div class="grid2">
+        <div><label>Fecha</label><input type="date" id="v-fecha" value="${hoy()}"></div>
+        <div><label>Estado</label><select id="v-estado">${opcionesEstado(b.estado)}</select></div>
+      </div>
+      <div id="v-motivoBox" class="${b.estado === 'no_interesada' ? '' : 'hidden'}"><label>Motivo del rechazo</label><select id="v-motivo">${opcionesMotivo(b.motivo_rechazo)}</select></div>
+      <label>Próxima acción</label>
+      <input id="v-accion" placeholder="Ej. Volver con demo en el celular" value="${esc(b.proxima_accion)}">
+      <label>Para cuándo</label>
+      <input type="date" id="v-prox" value="${esc(b.proxima_fecha)}">
+      <button class="btn" id="v-guardar" style="margin-top:14px">Guardar</button>`;
+  } else {
+    panel.innerHTML = `
+      <div class="nota-bloque enf"><label>🎯 Cómo enfocar esta barbería</label><textarea id="n-enfoque" placeholder="Qué le importa al dueño, qué argumento usar, con quién hablar, mejor horario…">${esc(b.enfoque)}</textarea></div>
+      <div class="nota-bloque bien"><label>✅ Qué salió bien</label><textarea id="n-bien" placeholder="Lo que funcionó en la conversación o la demo">${esc(b.salio_bien)}</textarea></div>
+      <div class="nota-bloque mal"><label>⚠️ Qué salió mal</label><textarea id="n-mal" placeholder="Objeciones que no supe responder, errores, lo que haría distinto">${esc(b.salio_mal)}</textarea></div>
+      <label>Notas generales</label><textarea id="n-notas" placeholder="Cualquier otra cosa">${esc(b.notas)}</textarea>
+      <label>Motivo de rechazo (si aplica)</label><select id="n-motivo">${opcionesMotivo(b.motivo_rechazo)}</select>
+      <button class="btn" id="n-guardar" style="margin-top:14px">Guardar notas</button>`;
+  }
+
+  h.querySelectorAll('#pestanas button').forEach((x) => x.onclick = () => abrirDetalle(id, x.dataset.p));
   h.querySelector('#cerrar').onclick = cerrarHoja;
+  h.querySelector('#ubicarBtn').onclick = (e) => { e.preventDefault(); empezarUbicar(id); };
   h.querySelector('#editar').onclick = () => abrirFormulario(b);
   h.querySelector('#eliminar').onclick = async () => {
     if (!confirm(`¿Eliminar "${b.nombre}" y todo su historial?`)) return;
@@ -428,18 +628,43 @@ function abrirDetalle(id) {
     if (!confirm('¿Borrar este registro?')) return;
     try { await api('visitas/' + x.dataset.borrar, 'DELETE'); await cargar(); abrirDetalle(id); } catch (e) { toast(e.message); }
   });
-  h.querySelector('#v-guardar').onclick = async () => {
-    const btn = h.querySelector('#v-guardar');
-    btn.disabled = true;
-    try {
-      await api(`barberias/${id}/visitas`, 'POST', {
-        tipo, fecha: h.querySelector('#v-fecha').value, notas: h.querySelector('#v-notas').value,
-        estado: h.querySelector('#v-estado').value, proxima_accion: h.querySelector('#v-accion').value,
-        proxima_fecha: h.querySelector('#v-prox').value,
-      });
-      await cargar(); abrirDetalle(id); toast('Guardado');
-    } catch (e) { toast(e.message); btn.disabled = false; }
-  };
+
+  if (pestana === 'registrar') {
+    let tipo = 'visita';
+    h.querySelectorAll('#tipoSeg button').forEach((x) => x.onclick = () => {
+      tipo = x.dataset.t;
+      h.querySelectorAll('#tipoSeg button').forEach((y) => y.classList.toggle('on', y === x));
+    });
+    h.querySelector('#v-estado').onchange = (e) => h.querySelector('#v-motivoBox').classList.toggle('hidden', e.target.value !== 'no_interesada');
+    h.querySelector('#v-guardar').onclick = async () => {
+      const btn = h.querySelector('#v-guardar');
+      btn.disabled = true;
+      const estado = h.querySelector('#v-estado').value;
+      try {
+        await api(`barberias/${id}/visitas`, 'POST', {
+          tipo, fecha: h.querySelector('#v-fecha').value, notas: h.querySelector('#v-notas').value,
+          estado, proxima_accion: h.querySelector('#v-accion').value, proxima_fecha: h.querySelector('#v-prox').value,
+          motivo_rechazo: estado === 'no_interesada' ? h.querySelector('#v-motivo').value : '',
+        });
+        pestanaDetalle = 'historial';
+        await cargar(); abrirDetalle(id, 'historial'); toast('Guardado');
+      } catch (e) { toast(e.message); btn.disabled = false; }
+    };
+  }
+  if (pestana === 'estrategia') {
+    h.querySelector('#n-guardar').onclick = async () => {
+      const btn = h.querySelector('#n-guardar');
+      btn.disabled = true;
+      try {
+        await api(`barberias/${id}/notas`, 'PUT', {
+          enfoque: h.querySelector('#n-enfoque').value, salio_bien: h.querySelector('#n-bien').value,
+          salio_mal: h.querySelector('#n-mal').value, notas: h.querySelector('#n-notas').value,
+          motivo_rechazo: h.querySelector('#n-motivo').value,
+        });
+        await cargar(); abrirDetalle(id, 'estrategia'); toast('Notas guardadas');
+      } catch (e) { toast(e.message); btn.disabled = false; }
+    };
+  }
 }
 
 function abrirFormulario(b) {
@@ -453,7 +678,7 @@ function abrirFormulario(b) {
     <div class="grid2"><div>${campo('comuna', 'Comuna')}</div><div>${campo('contacto', 'Contacto', 'Dueño / barbero')}</div></div>
     <div class="grid2"><div>${campo('telefono', 'Teléfono', '+56 9…', 'tel')}</div><div>${campo('instagram', 'Instagram', '@usuario')}</div></div>
     <label>Estado</label>
-    <select id="f-estado">${Object.entries(ESTADOS).map(([k, v]) => `<option value="${k}" ${k === b.estado ? 'selected' : ''}>${v}</option>`).join('')}</select>
+    <select id="f-estado">${opcionesEstado(b.estado)}</select>
     ${campo('proxima_accion', 'Próxima acción', 'Ej. Pasar el martes por la tarde')}
     ${campo('proxima_fecha', 'Para cuándo', '', 'date')}
     <button class="btn" id="guardar" style="margin-top:18px">${nueva ? 'Agregar' : 'Guardar cambios'}</button>
@@ -463,15 +688,71 @@ function abrirFormulario(b) {
   h.querySelector('#guardar').onclick = async () => {
     const out = {};
     ['nombre', 'direccion', 'comuna', 'contacto', 'telefono', 'instagram', 'estado', 'proxima_accion', 'proxima_fecha'].forEach((k) => out[k] = h.querySelector('#f-' + k).value);
+    if (!nueva && (out.direccion.trim() !== b.direccion || out.comuna.trim() !== b.comuna) && b.geo !== 'manual') out.geocodificar = true;
     const btn = h.querySelector('#guardar');
-    btn.disabled = true;
+    btn.disabled = true; btn.textContent = 'Guardando…';
     try {
       const r = nueva ? await api('barberias', 'POST', out) : await api('barberias/' + b.id, 'PUT', out);
       await cargar();
-      if (nueva) { vista = 'lista'; pintar(); abrirDetalle(r.id); toast('Barbería agregada'); }
-      else { abrirDetalle(b.id); toast('Actualizado'); }
-    } catch (e) { toast(e.message); btn.disabled = false; }
+      const sinMapa = (nueva || out.geocodificar) && !r.geo;
+      if (nueva) { vista = 'lista'; pintar(); abrirDetalle(r.id); }
+      else abrirDetalle(b.id);
+      toast(sinMapa && out.direccion ? 'Guardada, pero no encontré la dirección en el mapa' : nueva ? 'Barbería agregada' : 'Actualizado');
+    } catch (e) { toast(e.message); btn.disabled = false; btn.textContent = nueva ? 'Agregar' : 'Guardar cambios'; }
   };
+}
+
+// --- Agregar (una o varias) ---
+function abrirAgregar() {
+  const h = abrirHoja(`
+    <div class="top"><h2>Agregar barberías</h2><button class="x" id="cerrar">✕</button></div>
+    <div class="seg"><button id="a-una" class="on">Una</button><button id="a-varias">Varias a la vez</button></div>
+    <div id="a-cont"></div>
+  `);
+  h.querySelector('#cerrar').onclick = cerrarHoja;
+  h.querySelector('#a-una').onclick = () => abrirFormulario();
+  h.querySelector('#a-varias').onclick = () => {
+    h.querySelectorAll('.seg button').forEach((x) => x.classList.toggle('on', x.id === 'a-varias'));
+    h.querySelector('#a-cont').innerHTML = `
+      <label>Una barbería por línea</label>
+      <textarea id="lote" style="min-height:190px" placeholder="Barbería Don Pedro | Av. Irarrázaval 2450 | Ñuñoa&#10;The Corte | Los Leones 1234 | Providencia&#10;Estilo Urbano, Santa Isabel 321, Santiago"></textarea>
+      <div class="sub" style="margin-top:6px">Formato: <b>Nombre | Dirección | Comuna</b>. También sirve con comas (nombre, dirección, comuna). Las ubico en el mapa solas.</div>
+      <div class="sub" id="lotePrev" style="margin-top:8px"></div>
+      <button class="btn" id="loteGo" style="margin-top:14px">Importar</button>`;
+    const ta = h.querySelector('#lote');
+    const prev = () => { const n = parsearLote(ta.value).length; h.querySelector('#lotePrev').textContent = n ? `${n} barbería${n === 1 ? '' : 's'} detectada${n === 1 ? '' : 's'}` : ''; };
+    ta.addEventListener('input', prev);
+    h.querySelector('#loteGo').onclick = () => importarLote(parsearLote(ta.value), h);
+  };
+}
+function parsearLote(txt) {
+  return txt.split('\n').map((l) => l.trim()).filter(Boolean).map((l) => {
+    let p;
+    if (/[|\t;]/.test(l)) p = l.split(/[|\t;]/).map((x) => x.trim());
+    else {
+      p = l.split(',').map((x) => x.trim());
+      if (p.length >= 3) p = [p[0], p.slice(1, -1).join(', '), p[p.length - 1]];
+    }
+    return { nombre: p[0] || '', direccion: p[1] || '', comuna: p[2] || '' };
+  }).filter((x) => x.nombre);
+}
+async function importarLote(lista, h) {
+  if (!lista.length) { toast('No hay nada para importar'); return; }
+  const btn = h.querySelector('#loteGo');
+  btn.disabled = true;
+  let ok = 0, sinMapa = 0, fallo = 0;
+  for (let i = 0; i < lista.length; i++) {
+    btn.textContent = `Importando ${i + 1} de ${lista.length}…`;
+    try {
+      const r = await api('barberias', 'POST', { ...lista[i], estado: 'por_visitar' });
+      ok++; if (!r.geo) sinMapa++;
+    } catch (e) { fallo++; }
+    if (i < lista.length - 1) await dormir(1200); // respeta el límite del servicio de mapas
+  }
+  await cargar();
+  cerrarHoja();
+  vista = 'mapa'; mapaFiltro = 'todas'; pintar();
+  toast(`${ok} importadas${sinMapa ? ` · ${sinMapa} sin ubicar` : ''}${fallo ? ` · ${fallo} con error` : ''}`);
 }
 
 if ('serviceWorker' in navigator) navigator.serviceWorker.register('/sw.js').catch(() => {});
