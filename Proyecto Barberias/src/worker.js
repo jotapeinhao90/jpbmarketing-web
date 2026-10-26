@@ -119,7 +119,8 @@ async function api(request, env, url) {
     if (metodo === "PUT" && ruta[2] === "ubicacion") {
       const lat = Number(cuerpo.lat), lng = Number(cuerpo.lng);
       if (!(lat > -56 && lat < -17 && lng > -76 && lng < -66)) return json({ error: "Ubicación fuera de Chile" }, 400);
-      await db.prepare("UPDATE barberias SET lat=?, lng=?, geo='manual', actualizado_en=? WHERE id=?").bind(lat, lng, ahora, id).run();
+      const geo = cuerpo.geo === "verificada" ? "verificada" : "manual"; // verificada = coordenadas del propio negocio (Google/AgendaPro)
+      await db.prepare("UPDATE barberias SET lat=?, lng=?, geo=?, actualizado_en=? WHERE id=?").bind(lat, lng, geo, ahora, id).run();
       return json({ ok: true });
     }
 
