@@ -1,0 +1,26 @@
+name = "barberias-plataforma"
+main = "src/worker.js"
+compatibility_date = "2026-09-01"
+
+routes = [
+  { pattern = "admin-barberias.jpbmarketing.cl", custom_domain = true }
+]
+
+# Los archivos de public/ (la PWA) los sirve Cloudflare; /api/* pasa primero por el Worker.
+[assets]
+directory = "./public"
+binding = "ASSETS"
+run_worker_first = ["/api/*"]
+
+# Base de datos propia de la plataforma (prospección).
+[[d1_databases]]
+binding = "DB"
+database_name = "barberias-plataforma"
+database_id = "e65739d3-71fe-424b-84ac-b8e8e164c2e6"
+
+[observability]
+enabled = true
+
+# Secret (no va acá): PANEL_KEY -> clave de acceso a la plataforma.
+#   npx wrangler secret put PANEL_KEY --config <ruta>/wrangler.toml
+# En local se usa .dev.vars (ignorado por git).
