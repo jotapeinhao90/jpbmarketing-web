@@ -354,3 +354,31 @@ URLs revisadas:
 - https://www.klife.cl/nuestrocentro
 - https://www.remax-first.cl/?p=5845
 - https://www.unosalud.cl/clinicas/punta-arenas/
+
+## 2026-10-26 – Ideas (2 AM)
+
+Informe completo: `ideas/2026-10-26.md`. Solo WebSearch; ingresos de referentes no verificados (auto-reportados/listados). Descartadas por competencia chilena: tutor PAES, IA restaurantes (Justo), soporte Shopify, admin de arriendos.
+
+| # | Idea | Rent. | Facilidad | Baja comp. Chile |
+|---|------|---|---|---|
+| 1 | Software + IA para nutricionistas (ref. Fay, Serie B US$50M) — **mejor** | 6 | 7 | 7 |
+| 2 | Paquete Ley Karin para pymes (ref. Ethena; Talana ya ofrece canal) | 6 | 8 | 5 |
+| 3 | Datasets/APIs de datos chilenos en Apify (ref. top creador >US$4k MRR en 2023) | 4 | 9 | 6 |
+| 4 | Asistente IA planificación docente (AI-Llu gratis compite) | 5 | 8 | 4 |
+| 5 | Copiloto renta freelancers (ref. Keeper Tax; saturado: Honorix, Bolo, Relbase) | 5 | 8 | 3 |
+
+URLs revisadas: ver lista completa en `ideas/2026-10-26.md`. Principales:
+- https://cerebralvalley.beehiiv.com/p/fay-s-nutrition-revolution-expands-with-a-50m-series-b
+- https://techcrunch.com/2020/06/04/ethena-raises-2-million-in-seed-funding-for-smarter-anti-harassment-software
+- https://web.talana.com/blog/ley-karin-contra-el-acoso-laboral-en-chile
+- https://help.apify.com/en/articles/8684010-how-does-actor-monetization-work
+- https://blog.apify.com/programmer-passive-income-web-scraping/
+- https://www.df.cl/df-lab/innovacion-y-startups/fundacion-pais-digital-lanza-asistente-de-ia-para-profesores
+- https://flippa.com/12018706-ai-powered-edtech-saas-with-42k-ttm-revenue-31k-profit-74-margin-287-active-subs-and-90k-users-low-overhead-high-retention-ready-to-scale
+- https://dealroom.co/companies/keeper-tax/
+- https://contable.app/profesionales
+- https://chocale.cl/2025/12/bolo-la-plataforma-chilena-que-promete-ayudar-a-quienes-boletean-a-honorarios/
+- https://fitgeneration.es/5-mejores-softwares-para-dietistas/
+- https://www.descubre.vc/noticia/filadd-potencia-la-preparaci-n-para-la-paes-con-su-plataforma-100-online-e-inteligencia-artificial-2026-09-14
+- https://portalinnova.cl/?p=178487
+- https://www.descubre.vc/leasity
