@@ -97,6 +97,22 @@ function numero(valor) {
   return Number.isFinite(n) ? n : 0;
 }
 
+async function existeConversacion(db, negocioId, telefono) {
+  return !!(await db.prepare(
+    `SELECT 1 FROM chat WHERE negocio_id = ? AND telefono = ?
+     UNION ALL
+     SELECT 1 FROM clientes WHERE negocio_id = ? AND telefono = ? LIMIT 1`
+  ).bind(negocioId, telefono, negocioId, telefono).first());
+}
+
+async function llamarBot(env, ruta, cuerpo) {
+  return env.BOT.fetch(`https://bot.interno${ruta}`, {
+    method: "POST",
+    headers: { "content-type": "application/json", "x-interno": env.INTERNO_KEY },
+    body: JSON.stringify(cuerpo),
+  });
+}
+
 function situacionCliente(c, ahora) {
   if (c.canjeado_en != null) return "canjeado";
   if (c.estado === "cancelado") return "cancelado";
@@ -320,7 +336,7 @@ async function api(request, env, url, negocio) {
     if (metodo !== "GET") return json({ error: "Método no permitido" }, 405);
     const telefono = url.searchParams.get("telefono") || "";
     if (!/^\d{6,20}$/.test(telefono)) return json({ error: "Teléfono inválido" }, 400);
-    const [cliente, mensajesR] = await Promise.all([
+    const [cliente, mensajesR, estadoChat] = await Promise.all([
       db.prepare(
         "SELECT telefono, nombre, estado, codigo, codigo_vence, canjeado_en FROM clientes WHERE negocio_id = ? AND telefono = ?"
       ).bind(negocio.id, telefono).first(),
@@ -330,6 +346,10 @@ async function api(request, env, url, negocio) {
             WHERE negocio_id = ? AND telefono = ? ORDER BY id DESC LIMIT 200
          ) ORDER BY creado_en ASC, id ASC`
       ).bind(negocio.id, telefono).all(),
+      db.prepare(
+        `SELECT EXISTS(SELECT 1 FROM pausas WHERE negocio_id = ? AND telefono = ?) AS pausada,
+                (SELECT MAX(creado_en) FROM chat WHERE negocio_id = ? AND telefono = ? AND direccion = 'in') AS ultimo_in_ts`
+      ).bind(negocio.id, telefono, negocio.id, telefono).first(),
     ]);
     if (!cliente && mensajesR.results.length === 0) return json({ error: "No existe esa conversación" }, 404);
     return json({
@@ -338,8 +358,52 @@ async function api(request, env, url, negocio) {
       estado: cliente?.estado ?? null,
       situacion: cliente?.codigo == null ? null : situacionCliente(cliente, Date.now()),
       codigo: cliente?.codigo ?? null,
+      pausada: Boolean(estadoChat?.pausada),
+      ventana_abierta: estadoChat?.ultimo_in_ts != null && Date.now() - numero(estadoChat.ultimo_in_ts) < DIA_MS,
+      ultimo_in_ts: estadoChat?.ultimo_in_ts == null ? null : numero(estadoChat.ultimo_in_ts),
       mensajes: mensajesR.results,
     });
+  }
+
+  if (ruta === "/api/responder") {
+    if (metodo !== "POST") return json({ error: "Método no permitido" }, 405);
+    const cuerpo = await request.json().catch(() => ({}));
+    const telefono = typeof cuerpo.telefono === "string" ? cuerpo.telefono : "";
+    const texto = typeof cuerpo.texto === "string" ? cuerpo.texto.trim() : "";
+    if (!/^\d{6,20}$/.test(telefono)) return json({ error: "Teléfono inválido" }, 400);
+    if (!texto || texto.length > 1000) return json({ error: "Texto inválido" }, 400);
+    if (!env.BOT || !env.INTERNO_KEY) return json({ error: "El envío de mensajes aún no está configurado." }, 503);
+    if (!(await existeConversacion(db, negocio.id, telefono))) return json({ error: "No existe esa conversación" }, 404);
+    let respuesta;
+    try {
+      respuesta = await llamarBot(env, "/interno/responder", { negocio_id: negocio.id, telefono, texto });
+    } catch (_) {
+      return json({ error: "WhatsApp no aceptó el mensaje. Intenta de nuevo." }, 502);
+    }
+    const datos = await respuesta.json().catch(() => ({}));
+    if (respuesta.status === 200) return json({ ok: Boolean(datos.ok) });
+    if ([404, 409, 502].includes(respuesta.status) && typeof datos.error === "string") return json({ error: datos.error }, respuesta.status);
+    return json({ error: "WhatsApp no aceptó el mensaje. Intenta de nuevo." }, 502);
+  }
+
+  if (ruta === "/api/pausa") {
+    if (metodo !== "POST") return json({ error: "Método no permitido" }, 405);
+    const cuerpo = await request.json().catch(() => ({}));
+    const telefono = typeof cuerpo.telefono === "string" ? cuerpo.telefono : "";
+    if (!/^\d{6,20}$/.test(telefono)) return json({ error: "Teléfono inválido" }, 400);
+    if (typeof cuerpo.pausar !== "boolean") return json({ error: "Pausa inválida" }, 400);
+    if (!env.BOT || !env.INTERNO_KEY) return json({ error: "El envío de mensajes aún no está configurado." }, 503);
+    if (!(await existeConversacion(db, negocio.id, telefono))) return json({ error: "No existe esa conversación" }, 404);
+    let respuesta;
+    try {
+      respuesta = await llamarBot(env, "/interno/pausa", { negocio_id: negocio.id, telefono, pausar: cuerpo.pausar });
+    } catch (_) {
+      return json({ error: "No se pudo cambiar la pausa del bot." }, 502);
+    }
+    const datos = await respuesta.json().catch(() => ({}));
+    if (respuesta.status === 200) return json({ ok: Boolean(datos.ok), pausada: Boolean(datos.pausada) });
+    if (respuesta.status === 404 && typeof datos.error === "string") return json({ error: datos.error }, 404);
+    return json({ error: "No se pudo cambiar la pausa del bot." }, 502);
   }
 
   if (ruta === "/api/codigo/validar") {
