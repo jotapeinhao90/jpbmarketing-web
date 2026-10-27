@@ -32,8 +32,8 @@
   .nav-item .ico{width:34px;height:34px;border-radius:10px;display:grid;place-items:center;background:var(--bg);color:var(--navy)}
   .nav-item.activo{background:var(--navy);color:#fff}.nav-item.activo .ico{background:rgba(255,255,255,.11);color:#fff}
   main{min-width:0}header.top{background-color:var(--navy);background-image:repeating-linear-gradient(135deg,rgba(255,255,255,.03) 0 1px,transparent 1px 14px);color:#fff;padding:24px 28px 66px;box-shadow:inset 0 -1px 0 rgba(184,137,59,.6)}
-  .top-row{display:flex;align-items:center;justify-content:space-between;gap:12px}.top h1{margin:2px 0 0;font-size:28px;line-height:1.15;font-weight:700;letter-spacing:-.02em}.top .saludo{color:rgba(255,255,255,.72);font-size:13px}
-  .top-acciones{display:flex;align-items:center;gap:10px}.avatar-top{width:42px;height:42px;border-radius:50%;background:#1a3857;color:#fff;display:grid;place-items:center;font-weight:700;border:2px solid var(--laton)}
+  .top-row{display:flex;align-items:center;justify-content:space-between;gap:12px}.top h1{margin:2px 0 0;font-size:28px;line-height:1.15;font-weight:700;letter-spacing:-.02em}.top .saludo{color:rgba(255,255,255,.72);font-size:13px}.modo-etiqueta{display:flex;align-items:center;gap:6px;min-height:18px;margin-top:5px;color:rgba(255,255,255,.68);font-size:12px}
+  .top-acciones{display:flex;align-items:center;gap:10px}.avatar-top{width:42px;height:42px;border-radius:50%;background:#1a3857;color:#fff;display:grid;place-items:center;font-weight:700;border:2px solid var(--laton);flex:none}.modo-control{display:flex;align-items:center;padding:3px;border:1px solid rgba(255,255,255,.2);border-radius:12px;background:rgba(255,255,255,.08);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px)}.modo-control button{min-width:62px;min-height:40px;padding:7px 11px;border:0;border-radius:9px;background:transparent;color:rgba(255,255,255,.76);font-size:12px;font-weight:700;cursor:pointer}.modo-control button[aria-pressed="true"]{background:var(--bg);color:var(--navy);box-shadow:0 2px 8px rgba(0,0,0,.12)}.punto-vivo{width:7px;height:7px;border-radius:50%;background:#48c78e;box-shadow:0 0 0 0 rgba(72,199,142,.45);display:inline-block;flex:none}.modo-control .punto-vivo{display:none;margin-right:5px}.modo-control button[aria-pressed="true"] .punto-vivo,.modo-etiqueta .punto-vivo{display:inline-block;animation:pulso-vivo 2s ease-out infinite}@keyframes pulso-vivo{0%,55%{box-shadow:0 0 0 0 rgba(72,199,142,.42)}100%{box-shadow:0 0 0 6px rgba(72,199,142,0)}}
   .contenido{position:relative;z-index:1;padding:0 24px 110px;margin-top:-40px}.contenido>section{max-width:1100px;margin:0 auto}
   .tarjeta{background:#fff;border:1px solid var(--border);border-radius:20px;box-shadow:var(--sombra);padding:18px}
   .titulo-seccion{display:flex;align-items:center;gap:9px;font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:.08em;color:var(--suave);margin:24px 4px 11px}.titulo-seccion::before{content:"";width:16px;height:2px;border-radius:2px;background:var(--laton);flex:none}
@@ -67,12 +67,13 @@
     .app{grid-template-columns:1fr}aside{display:none}header.top{padding:19px 18px 58px}.top h1{font-size:24px}.contenido{padding:0 14px 110px}.tabbar{display:flex;position:fixed;bottom:10px;left:10px;right:10px;background:rgba(255,255,255,.9);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);border:1px solid rgba(235,229,219,.9);border-radius:20px;box-shadow:0 10px 30px rgba(15,34,54,.16);padding:7px;padding-bottom:calc(7px + env(safe-area-inset-bottom));z-index:10}.tabbar button{flex:1;min-height:50px;border:0;background:none;color:var(--suave);padding:6px 3px;border-radius:14px;cursor:pointer;font-size:11px;font-weight:600;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px}.tabbar button.activo{background:var(--navy);color:#fff}.hero{gap:4px}.ring svg{width:88px;height:88px}.ring-val{top:29px;font-size:18px}.ring-lbl{font-size:11.5px;text-align:center}.chat{max-height:52vh}.burbuja{max-width:86%}
     body.en-hilo .tabbar{display:none}body.en-hilo .contenido{padding-bottom:8px}body.en-hilo .hilo-wrap{display:flex;flex-direction:column;height:calc(100dvh - 98px);padding-bottom:env(safe-area-inset-bottom)}body.en-hilo .hilo-wrap>*{flex:none}body.en-hilo .hilo-wrap>.chat{flex:1 1 auto;min-height:90px;max-height:none}.hilo-wrap>.volver:first-child{margin-top:62px;align-self:flex-start}.redactor{padding-top:4px}.aviso-ventana{font-size:12.5px;padding:9px 12px}
   }
+  @media(max-width:420px){.top-row{align-items:flex-start;flex-wrap:wrap}.top-row>div:first-child{min-width:0;flex:1}.top-acciones{width:100%;justify-content:flex-end}.modo-control button{min-width:72px}}
   @media(max-width:420px){.tarjeta{padding:16px}.contenido{padding-left:12px;padding-right:12px}.grid-kpi{grid-template-columns:1fr 1fr;gap:10px}.kpi{align-items:flex-start}.kpi .val{font-size:23px}.fila-ciclo{grid-template-columns:1fr auto}.fila-ciclo .pill{grid-column:2}.frase-card{padding:20px}.frase-card .txt{font-size:20px}}
   @media(prefers-reduced-motion:reduce){*,*::before,*::after{scroll-behavior:auto!important;transition:none!important;animation:none!important}}
   /* Ajustes finales */
   .item .nombre .pill{flex:none}
   body:not(.sesion) .tabbar{display:none!important}
-  #vista-chats > .titulo-seccion:first-child{margin-top:44px}
+  #vista-chats > .titulo-seccion:first-child{margin-top:66px!important}
   #vista-resumen > .frase-card:first-child{margin-top:46px}
 </style>
 </head>
@@ -110,8 +111,15 @@
         <div>
           <div class="saludo" id="saludo"></div>
           <h1 id="titulo">Resumen</h1>
+          <div class="modo-etiqueta" id="modo-etiqueta"></div>
         </div>
-        <div class="top-acciones"><div class="avatar-top" id="avatar">B</div></div>
+        <div class="top-acciones">
+          <div class="modo-control" role="group" aria-label="Modo de datos">
+            <button type="button" data-modo="demo" aria-pressed="true">Demo</button>
+            <button type="button" data-modo="real" aria-pressed="false"><span class="punto-vivo" aria-hidden="true"></span>Real</button>
+          </div>
+          <div class="avatar-top" id="avatar">B</div>
+        </div>
       </div>
     </header>
 
@@ -137,6 +145,7 @@
 <script>
 (() => {
   const CLAVE_KEY = "barberiaAcceso";
+  const MODO_KEY = "barberiaModo";
   const COLORES = ["#0f2236", "#b8893b", "#356b73", "#56647a", "#8a672d", "#1f8a5b", "#c0392b", "#315d85"];
   const TITULOS = { resumen: "Resumen", clientes: "Clientes", chats: "Conversaciones", canjear: "Canjear código", facturacion: "Facturación" };
   const $ = (id) => document.getElementById(id);
@@ -146,6 +155,10 @@
   let clientes = [];
   let filtro = "todos";
   let busqueda = "";
+  let modo = "demo";
+  try { modo = localStorage.getItem(MODO_KEY) === "real" ? "real" : "demo"; } catch (e) {}
+  let resumenFirma = "";
+  let cargaVersion = 0;
 
   const escapar = (t) => String(t ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
   const iniciales = (nombre, tel) => {
@@ -258,7 +271,7 @@
   async function api(ruta, metodo = "GET", cuerpo) {
     const r = await fetch("/api/" + ruta, {
       method: metodo,
-      headers: { "x-acceso": acceso, ...(cuerpo ? { "content-type": "application/json" } : {}) },
+      headers: { "x-acceso": acceso, "x-modo": modo, ...(cuerpo ? { "content-type": "application/json" } : {}) },
       body: cuerpo ? JSON.stringify(cuerpo) : undefined,
     });
     const data = await r.json().catch(() => ({}));
@@ -269,8 +282,14 @@
 
   // ---------- Vistas ----------
   async function vistaResumen() {
+    const modoCarga = modo;
     const [r, lista] = await Promise.all([api("resumen"), api("clientes")]);
+    if (vistaActual !== "resumen" || modoCarga !== modo) return;
     clientes = lista;
+    const firma = JSON.stringify([r, lista]);
+    if (firma === resumenFirma && $("vista-resumen").innerHTML) { programarRefrescoResumen(); return; }
+    resumenFirma = firma;
+    const scrollY = window.scrollY;
     const c = r.clientes;
     const pctMetaClientes = r.metas.clientes.meta ? (r.metas.clientes.actual / r.metas.clientes.meta) * 100 : 0;
     const pctMetaCanjes = r.metas.canjes.meta ? (r.metas.canjes.actual / r.metas.canjes.meta) * 100 : 0;
@@ -322,6 +341,8 @@
     `;
     enlazarItems();
     activarFrase();
+    if (scrollY) window.scrollTo(0, scrollY);
+    programarRefrescoResumen();
   }
 
   function itemCliente(c) {
@@ -339,7 +360,9 @@
 
   const FILTROS = [["todos", "Todos"], ["vigente", "Vigentes"], ["por_vencer", "Por vencer"], ["canjeado", "Volvieron"], ["vencido", "Vencidos"], ["cancelado", "Cancelaron"]];
   async function vistaClientes() {
+    const modoCarga = modo;
     clientes = await api("clientes");
+    if (vistaActual !== "clientes" || modoCarga !== modo) return;
     const cont = $("vista-clientes");
     cont.innerHTML = `
       <input id="buscar" class="buscar" type="search" placeholder="Buscar por nombre, teléfono o código" value="${escapar(busqueda)}">
@@ -353,7 +376,8 @@
     const q = busqueda.trim().toLowerCase();
     const l = clientes.filter((c) => (filtro === "todos" || c.situacion === filtro) &&
       (!q || [c.nombre, c.telefono, c.codigo].some((x) => String(x || "").toLowerCase().includes(q))));
-    $("lista-clientes").innerHTML = l.length ? l.map(itemCliente).join("") : `<div class="vacio"><div class="empty-icon">${ico("users", 23)}</div>${clientes.length ? "No hay clientes con ese filtro." : "Todavía no hay clientes fidelizados.<br>Aparecerán cuando escaneen el QR de tu barbería."}</div>`;
+    const vacio = modo === "real" ? "Todavía no hay clientes reales.<br>Aparecerán cuando alguien escanee el QR de tu barbería." : "Todavía no hay clientes fidelizados.<br>Aparecerán cuando escaneen el QR de tu barbería.";
+    $("lista-clientes").innerHTML = l.length ? l.map(itemCliente).join("") : `<div class="vacio"><div class="empty-icon">${ico("users", 23)}</div>${clientes.length ? "No hay clientes con ese filtro." : vacio}</div>`;
     enlazarItems();
   }
 
@@ -488,11 +512,20 @@
     return new Date(ts).toLocaleDateString("es-CL", { ...TZ, weekday: "long", day: "numeric", month: "long" });
   };
   const detenerRefresco = () => { clearInterval(refresco); refresco = null; };
+  const programarRefrescoResumen = () => {
+    detenerRefresco();
+    if (modo !== "real" || vistaActual !== "resumen") return;
+    refresco = setInterval(() => {
+      if (vistaActual === "resumen" && !document.hidden) vistaResumen().catch(() => {});
+    }, 15000);
+  };
 
   async function vistaChats() {
     hiloTel = null;
     document.body.classList.remove("en-hilo");
+    const modoCarga = modo;
     const lista = await api("conversaciones");
+    if (vistaActual !== "chats" || hiloTel || modoCarga !== modo) return;
     $("vista-chats").innerHTML = lista.length ? `<div class="titulo-seccion" style="margin-top:4px">${lista.length >= 100 ? "Conversaciones recientes" : "Conversaciones con tu chatbot (" + lista.length + ")"}</div>
       <div class="lista">${lista.map((c) => {
         const nombre = c.nombre || "+" + c.telefono;
@@ -504,11 +537,11 @@
           <div class="derecha"><div class="hora">${tiempoMs(c.ultimo_ts)}</div><div class="hora">${c.mensajes} msj</div></div>
         </div>`;
       }).join("")}</div>`
-      : `<div class="vacio"><div class="empty-icon">${ico("message", 23)}</div>Todavía no hay conversaciones.<br>Aparecerán cuando alguien le escriba a tu chatbot de WhatsApp.</div>`;
+      : `<div class="vacio"><div class="empty-icon">${ico("message", 23)}</div>${modo === "real" ? "Todavía no hay conversaciones reales.<br>Aparecerán cuando alguien le escriba a tu chatbot de WhatsApp." : "Todavía no hay conversaciones.<br>Aparecerán cuando alguien le escriba a tu chatbot de WhatsApp."}</div>`;
     document.querySelectorAll("[data-chat]").forEach((el) => el.onclick = () => abrirHilo(el.dataset.chat));
     detenerRefresco();
     if (vistaActual !== "chats" || hiloTel) return; // cambiaste de pantalla mientras cargaba
-    refresco = setInterval(() => { if (vistaActual === "chats" && !hiloTel && !document.hidden) vistaChats().catch(() => {}); }, 20000);
+    refresco = setInterval(() => { if (vistaActual === "chats" && !hiloTel && !document.hidden) vistaChats().catch(() => {}); }, modo === "real" ? 8000 : 20000);
   }
 
   async function abrirHilo(tel) {
@@ -522,9 +555,10 @@
       "Tu hora quedó confirmada ✅ Te esperamos.",
       "¿Cómo te fue con el corte? Tu opinión nos ayuda a mejorar 🙌",
     ];
+    const modoCarga = modo;
     const dibujar = async () => {
       const d = await api("chat?telefono=" + encodeURIComponent(tel));
-      if (hiloTel !== tel || vistaActual !== "chats") return;
+      if (hiloTel !== tel || vistaActual !== "chats" || modoCarga !== modo) return;
       let ultimoDia = "";
       const burbujas = d.mensajes.map((m) => {
         const dia = diaCL(m.creado_en);
@@ -591,21 +625,24 @@
       if (vistaActual !== "chats" || hiloTel !== tel) return; // saliste del chat mientras cargaba
       window.scrollTo(0, 0);
       detenerRefresco();
-      refresco = setInterval(() => { if (hiloTel === tel && vistaActual === "chats" && !document.hidden) dibujar().catch(() => {}); }, 8000);
+      refresco = setInterval(() => { if (hiloTel === tel && vistaActual === "chats" && !document.hidden) dibujar().catch(() => {}); }, modo === "real" ? 4000 : 8000);
     } catch (e) { if (e.sesion) return cerrarSesion(); toast(e.message); vistaChats(); }
   }
 
   // ---------- Navegación ----------
   async function mostrarVista(nombre) {
+    const version = ++cargaVersion;
+    detenerRefresco();
     vistaActual = nombre;
     document.body.classList.remove("en-hilo");
-    if (nombre !== "chats") { detenerRefresco(); hiloTel = null; }
+    if (nombre !== "chats") hiloTel = null;
     ["resumen", "clientes", "chats", "canjear", "facturacion"].forEach((v) => $("vista-" + v).classList.toggle("oculto", v !== nombre));
     document.querySelectorAll("[data-vista]").forEach((b) => b.classList.toggle("activo", b.dataset.vista === nombre));
     $("titulo").textContent = TITULOS[nombre];
     window.scrollTo(0, 0);
     try {
       await { resumen: vistaResumen, clientes: vistaClientes, chats: vistaChats, canjear: async () => vistaCanjear(), facturacion: vistaFacturacion }[nombre]();
+      if (version !== cargaVersion) return;
     } catch (e) {
       if (e.sesion) return cerrarSesion();
       $("vista-" + nombre).innerHTML = `<div class="vacio">No se pudo cargar. ${escapar(e.message)}</div>`;
@@ -621,7 +658,40 @@
     $("saludo").textContent = `${saludo()}, ${yo.nombre}`;
     $("avatar").textContent = iniciales(yo.nombre, "B");
     document.title = `${yo.nombre} — JPB`;
+    actualizarModoUI();
     await mostrarVista("resumen");
+  }
+
+  function actualizarModoUI() {
+    document.querySelectorAll("[data-modo]").forEach((b) => b.setAttribute("aria-pressed", String(b.dataset.modo === modo)));
+    $("modo-etiqueta").innerHTML = modo === "real" ? '<span class="punto-vivo" aria-hidden="true"></span>En vivo · conectado a tu chatbot' : "Datos de demostración";
+  }
+  async function cambiarModo(nuevoModo) {
+    if ((nuevoModo !== "demo" && nuevoModo !== "real") || nuevoModo === modo) return;
+    modo = nuevoModo;
+    try { localStorage.setItem(MODO_KEY, modo); } catch (e) {}
+    cargaVersion++;
+    detenerRefresco();
+    cerrarHoja();
+    clientes = [];
+    filtro = "todos";
+    busqueda = "";
+    hiloTel = null;
+    resumenFirma = "";
+    document.body.classList.remove("en-hilo");
+    actualizarModoUI();
+    const destino = vistaActual === "chats" ? "chats" : vistaActual;
+    try {
+      yo = await api("yo");
+      $("marca-nombre").textContent = yo.nombre;
+      $("saludo").textContent = `${saludo()}, ${yo.nombre}`;
+      $("avatar").textContent = iniciales(yo.nombre, "B");
+      document.title = `${yo.nombre} — JPB`;
+      await mostrarVista(destino);
+    } catch (e) {
+      if (e.sesion) return cerrarSesion();
+      toast("No se pudo cambiar de modo");
+    }
   }
   function cerrarSesion() {
     try { localStorage.removeItem(CLAVE_KEY); } catch (e) {}
@@ -638,6 +708,7 @@
   });
   $("clave").addEventListener("keydown", (e) => { if (e.key === "Enter") $("entrar").click(); });
   document.querySelectorAll("[data-vista]").forEach((b) => b.addEventListener("click", () => mostrarVista(b.dataset.vista)));
+  document.querySelectorAll("[data-modo]").forEach((b) => b.addEventListener("click", () => cambiarModo(b.dataset.modo)));
   $("salir").addEventListener("click", cerrarSesion);
 
   const ICONOS_NAV = { resumen: "chart", clientes: "users", chats: "message", canjear: "ticket", facturacion: "wallet" };

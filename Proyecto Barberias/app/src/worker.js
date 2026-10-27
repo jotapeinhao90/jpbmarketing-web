@@ -2,7 +2,30 @@
 
 const ZONA_CHILE = "America/Santiago";
 const DIA_MS = 86_400_000;
+const MARCADOR_DEMO = "5690000";
+// Plan inventado que se muestra únicamente en el modo demo.
+const DEMO_PLAN = {
+  plan_nombre: "Plan Fidelización", precio_mensual: 49990, precio_canje: 0,
+  dia_corte: 5, inicio_servicio: "2025-08-05", meta_clientes: 80,
+  meta_canjes: 60, ticket_promedio: 12000,
+};
 const json = (data, status = 200) => Response.json(data, { status });
+
+function esTelefonoDemo(telefono) {
+  return String(telefono ?? "").startsWith(MARCADOR_DEMO);
+}
+
+function telefonoEnModo(telefono, modo) {
+  return esTelefonoDemo(telefono) === (modo === "demo");
+}
+
+function condTel(columna, modo) {
+  return `${columna} ${modo === "real" ? "NOT LIKE" : "LIKE"} '${MARCADOR_DEMO}%'`;
+}
+
+function planEnModo(negocio, modo) {
+  return modo === "demo" ? { ...negocio, ...DEMO_PLAN } : negocio;
+}
 
 export function fechaChile(epochMs) {
   return new Intl.DateTimeFormat("en-CA", {
@@ -97,11 +120,12 @@ function numero(valor) {
   return Number.isFinite(n) ? n : 0;
 }
 
-async function existeConversacion(db, negocioId, telefono) {
+async function existeConversacion(db, negocioId, telefono, modo) {
+  if (!telefonoEnModo(telefono, modo)) return false;
   return !!(await db.prepare(
-    `SELECT 1 FROM chat WHERE negocio_id = ? AND telefono = ?
+    `SELECT 1 FROM chat WHERE negocio_id = ? AND telefono = ? AND ${condTel("telefono", modo)}
      UNION ALL
-     SELECT 1 FROM clientes WHERE negocio_id = ? AND telefono = ? LIMIT 1`
+     SELECT 1 FROM clientes WHERE negocio_id = ? AND telefono = ? AND ${condTel("telefono", modo)} LIMIT 1`
   ).bind(negocioId, telefono, negocioId, telefono).first());
 }
 
@@ -122,8 +146,10 @@ function situacionCliente(c, ahora) {
 }
 
 // Dos clientes pueden (rara vez) compartir código: en ese caso no se adivina, se pide canjear desde la ficha.
-async function buscarCodigo(db, negocioId, codigo) {
-  const filas = (await db.prepare("SELECT * FROM clientes WHERE negocio_id = ? AND codigo = ? LIMIT 2").bind(negocioId, codigo).all()).results;
+async function buscarCodigo(db, negocioId, codigo, modo) {
+  const filas = (await db.prepare(
+    `SELECT * FROM clientes WHERE negocio_id = ? AND codigo = ? AND ${condTel("telefono", modo)} LIMIT 2`
+  ).bind(negocioId, codigo).all()).results;
   if (filas.length > 1) return { duplicado: true };
   return filas[0] ?? null;
 }
@@ -137,17 +163,19 @@ function errorCodigo(cliente, ahora) {
   return null;
 }
 
-async function canjearCliente(db, negocio, cliente, ahora) {
+async function canjearCliente(db, negocio, cliente, ahora, modo) {
   const error = errorCodigo(cliente, ahora);
   if (error) return error;
   const resultado = await db.prepare(
-    "UPDATE clientes SET canjeado_en = ? WHERE negocio_id = ? AND telefono = ? AND canjeado_en IS NULL"
+    `UPDATE clientes SET canjeado_en = ? WHERE negocio_id = ? AND telefono = ?
+      AND ${condTel("telefono", modo)} AND canjeado_en IS NULL`
   ).bind(ahora, negocio.id, cliente.telefono).run();
   if (numero(resultado.meta?.changes) === 0) return json({ error: "Ese código ya fue canjeado" }, 409);
   return json({ ok: true, nombre: cliente.nombre, descuento_pct: numero(negocio.descuento_pct) });
 }
 
-async function resumen(db, negocio) {
+async function resumen(db, negocio, modo) {
+  const plan = planEnModo(negocio, modo);
   const ahora = Date.now();
   const hoy = fechaChile(ahora);
   const inicioMes = `${hoy.slice(0, 7)}-01`;
@@ -156,13 +184,13 @@ async function resumen(db, negocio) {
     db.prepare(
       `SELECT estado, codigo, codigo_vence, creado_en, canjeado_en, cancelado_en,
               proximo_recordatorio, recordatorios_enviados
-         FROM clientes WHERE negocio_id = ?`
+         FROM clientes WHERE negocio_id = ? AND ${condTel("telefono", modo)}`
     ).bind(negocio.id).all(),
     db.prepare(
       `SELECT COALESCE(SUM(CASE WHEN direccion = 'in' THEN 1 ELSE 0 END), 0) AS recibidos_mes,
               COALESCE(SUM(CASE WHEN direccion = 'out' THEN 1 ELSE 0 END), 0) AS enviados_mes,
               COUNT(DISTINCT telefono) AS conversaciones_mes
-         FROM chat WHERE negocio_id = ? AND creado_en >= ? AND creado_en <= ?`
+         FROM chat WHERE negocio_id = ? AND ${condTel("telefono", modo)} AND creado_en >= ? AND creado_en <= ?`
     ).bind(negocio.id, inicioMesMs, ahora).first(),
   ]);
   const clientes = clientesR.results;
@@ -205,14 +233,14 @@ async function resumen(db, negocio) {
       }
     }
   }
-  const ticket = numero(negocio.ticket_promedio);
+  const ticket = numero(plan.ticket_promedio);
   const descuento = numero(negocio.descuento_pct);
   return {
     clientes: { registrados, vigentes, por_vencer: porVencer, vencidos, canjeados, cancelados, nuevos_mes: nuevosMes },
     canjes: { total: canjeados, mes: canjesMes, tasa: registrados ? Math.round((canjeados / registrados) * 1000) / 10 : 0 },
     metas: {
-      clientes: { actual: nuevosMes, meta: numero(negocio.meta_clientes) },
-      canjes: { actual: canjesMes, meta: numero(negocio.meta_canjes) },
+      clientes: { actual: nuevosMes, meta: numero(plan.meta_clientes) },
+      canjes: { actual: canjesMes, meta: numero(plan.meta_canjes) },
     },
     ventas_estimadas_mes: ticket === 0 ? null : Math.round(canjesMes * ticket * (1 - descuento / 100)),
     recordatorios: { enviados_total: recordatoriosEnviados, proximos_7d: recordatoriosProximos },
@@ -225,18 +253,19 @@ async function resumen(db, negocio) {
   };
 }
 
-async function facturacion(db, negocio) {
+async function facturacion(db, negocio, modo) {
+  const plan = planEnModo(negocio, modo);
   const hoy = fechaChile(Date.now());
-  const corte = corteValido(negocio.dia_corte);
-  const ciclosBase = ciclosEntre(negocio.inicio_servicio, hoy, corte);
+  const corte = corteValido(plan.dia_corte);
+  const ciclosBase = ciclosEntre(plan.inicio_servicio, hoy, corte);
   const [canjesR, pagosR] = await Promise.all([
-    db.prepare("SELECT canjeado_en FROM clientes WHERE negocio_id = ? AND canjeado_en IS NOT NULL").bind(negocio.id).all(),
-    db.prepare("SELECT periodo, monto, pagado_en, nota FROM pagos WHERE negocio_id = ?").bind(negocio.id).all(),
+    db.prepare(`SELECT canjeado_en FROM clientes WHERE negocio_id = ? AND ${condTel("telefono", modo)} AND canjeado_en IS NOT NULL`).bind(negocio.id).all(),
+    db.prepare("SELECT periodo, monto, pagado_en, nota FROM pagos WHERE negocio_id = ? AND demo = ?").bind(negocio.id, modo === "demo" ? 1 : 0).all(),
   ]);
   const pagos = new Map(pagosR.results.map((p) => [p.periodo, p]));
   const fechasCanje = canjesR.results.map((c) => fechaChile(c.canjeado_en));
-  const mensual = numero(negocio.precio_mensual), porCanje = numero(negocio.precio_canje);
-  const inicio = negocio.inicio_servicio;
+  const mensual = numero(plan.precio_mensual), porCanje = numero(plan.precio_canje);
+  const inicio = plan.inicio_servicio;
   const todos = ciclosBase.map((c) => {
     // El primer ciclo cuenta desde el inicio real del servicio, no desde el día de corte anterior.
     const desde = c.desde < inicio ? inicio : c.desde;
@@ -254,11 +283,11 @@ async function facturacion(db, negocio) {
   const actual = todos.at(-1);
   return {
     plan: {
-      nombre: negocio.plan_nombre,
+      nombre: plan.plan_nombre,
       precio_mensual: mensual,
       precio_canje: porCanje,
       dia_corte: corte,
-      inicio_servicio: negocio.inicio_servicio,
+      inicio_servicio: plan.inicio_servicio,
     },
     ciclos: todos.slice(-6).reverse(),
     deuda: todos.filter((c) => c.estado === "pendiente").reduce((s, c) => s + c.monto, 0),
@@ -267,24 +296,25 @@ async function facturacion(db, negocio) {
   };
 }
 
-async function api(request, env, url, negocio) {
+async function api(request, env, url, negocio, modo) {
   const db = env.DB;
   const metodo = request.method;
   const ruta = url.pathname;
 
   if (ruta === "/api/yo") {
     if (metodo !== "GET") return json({ error: "Método no permitido" }, 405);
-    const precio = numero(negocio.precio_mensual);
+    const plan = planEnModo(negocio, modo);
+    const precio = numero(plan.precio_mensual);
     return json({
-      nombre: negocio.nombre, prefijo: negocio.prefijo_codigo, plan_nombre: negocio.plan_nombre, descuento_pct: numero(negocio.descuento_pct),
-      meta_clientes: numero(negocio.meta_clientes), meta_canjes: numero(negocio.meta_canjes),
-      ticket_promedio: numero(negocio.ticket_promedio), precio_mensual: precio, tiene_plan: precio > 0,
+      nombre: negocio.nombre, prefijo: negocio.prefijo_codigo, plan_nombre: plan.plan_nombre, descuento_pct: numero(negocio.descuento_pct),
+      meta_clientes: numero(plan.meta_clientes), meta_canjes: numero(plan.meta_canjes),
+      ticket_promedio: numero(plan.ticket_promedio), precio_mensual: precio, modo, tiene_plan: precio > 0,
     });
   }
 
   if (ruta === "/api/resumen") {
     if (metodo !== "GET") return json({ error: "Método no permitido" }, 405);
-    return json(await resumen(db, negocio));
+    return json(await resumen(db, negocio, modo));
   }
 
   if (ruta === "/api/clientes") {
@@ -295,9 +325,9 @@ async function api(request, env, url, negocio) {
               c.proximo_recordatorio, c.canjeado_en, c.cancelado_en, COALESCE(m.mensajes, 0) AS mensajes
          FROM clientes c
          LEFT JOIN (
-           SELECT telefono, COUNT(*) AS mensajes FROM chat WHERE negocio_id = ? GROUP BY telefono
+           SELECT telefono, COUNT(*) AS mensajes FROM chat WHERE negocio_id = ? AND ${condTel("telefono", modo)} GROUP BY telefono
          ) m ON m.telefono = c.telefono
-        WHERE c.negocio_id = ? AND (c.codigo IS NOT NULL OR c.estado != 'esperando_nombre')
+        WHERE c.negocio_id = ? AND ${condTel("c.telefono", modo)} AND (c.codigo IS NOT NULL OR c.estado != 'esperando_nombre')
         ORDER BY c.creado_en DESC LIMIT 500`
     ).bind(negocio.id, negocio.id).all();
     return json(r.results.map((c) => ({ ...c, situacion: situacionCliente(c, ahora) })));
@@ -316,7 +346,7 @@ async function api(request, env, url, negocio) {
               (SELECT codigo_vence FROM clientes k WHERE k.negocio_id = c.negocio_id AND k.telefono = c.telefono) AS codigo_vence,
               (SELECT canjeado_en FROM clientes k WHERE k.negocio_id = c.negocio_id AND k.telefono = c.telefono) AS canjeado_en,
               EXISTS(SELECT 1 FROM pausas p WHERE p.negocio_id = c.negocio_id AND p.telefono = c.telefono) AS pausada
-         FROM chat c WHERE c.negocio_id = ?
+         FROM chat c WHERE c.negocio_id = ? AND ${condTel("c.telefono", modo)}
         GROUP BY c.telefono ORDER BY ultimo_ts DESC LIMIT 100`
     ).bind(negocio.id).all();
     return json(r.results.map((c) => ({
@@ -336,19 +366,22 @@ async function api(request, env, url, negocio) {
     if (metodo !== "GET") return json({ error: "Método no permitido" }, 405);
     const telefono = url.searchParams.get("telefono") || "";
     if (!/^\d{6,20}$/.test(telefono)) return json({ error: "Teléfono inválido" }, 400);
+    if (!telefonoEnModo(telefono, modo)) return json({ error: "No existe esa conversación" }, 404);
     const [cliente, mensajesR, estadoChat] = await Promise.all([
       db.prepare(
-        "SELECT telefono, nombre, estado, codigo, codigo_vence, canjeado_en FROM clientes WHERE negocio_id = ? AND telefono = ?"
+        `SELECT telefono, nombre, estado, codigo, codigo_vence, canjeado_en FROM clientes
+          WHERE negocio_id = ? AND telefono = ? AND ${condTel("telefono", modo)}`
       ).bind(negocio.id, telefono).first(),
       db.prepare(
         `SELECT direccion, tipo, texto, creado_en FROM (
            SELECT id, direccion, tipo, texto, creado_en FROM chat
-            WHERE negocio_id = ? AND telefono = ? ORDER BY id DESC LIMIT 200
+            WHERE negocio_id = ? AND telefono = ? AND ${condTel("telefono", modo)} ORDER BY id DESC LIMIT 200
          ) ORDER BY creado_en ASC, id ASC`
       ).bind(negocio.id, telefono).all(),
       db.prepare(
         `SELECT EXISTS(SELECT 1 FROM pausas WHERE negocio_id = ? AND telefono = ?) AS pausada,
-                (SELECT MAX(creado_en) FROM chat WHERE negocio_id = ? AND telefono = ? AND direccion = 'in') AS ultimo_in_ts`
+                (SELECT MAX(creado_en) FROM chat WHERE negocio_id = ? AND telefono = ?
+                  AND ${condTel("telefono", modo)} AND direccion = 'in') AS ultimo_in_ts`
       ).bind(negocio.id, telefono, negocio.id, telefono).first(),
     ]);
     if (!cliente && mensajesR.results.length === 0) return json({ error: "No existe esa conversación" }, 404);
@@ -372,8 +405,9 @@ async function api(request, env, url, negocio) {
     const texto = typeof cuerpo.texto === "string" ? cuerpo.texto.trim() : "";
     if (!/^\d{6,20}$/.test(telefono)) return json({ error: "Teléfono inválido" }, 400);
     if (!texto || texto.length > 1000) return json({ error: "Texto inválido" }, 400);
+    if (!telefonoEnModo(telefono, modo)) return json({ error: "No existe esa conversación" }, 404);
     if (!env.BOT || !env.INTERNO_KEY) return json({ error: "El envío de mensajes aún no está configurado." }, 503);
-    if (!(await existeConversacion(db, negocio.id, telefono))) return json({ error: "No existe esa conversación" }, 404);
+    if (!(await existeConversacion(db, negocio.id, telefono, modo))) return json({ error: "No existe esa conversación" }, 404);
     let respuesta;
     try {
       respuesta = await llamarBot(env, "/interno/responder", { negocio_id: negocio.id, telefono, texto });
@@ -392,8 +426,9 @@ async function api(request, env, url, negocio) {
     const telefono = typeof cuerpo.telefono === "string" ? cuerpo.telefono : "";
     if (!/^\d{6,20}$/.test(telefono)) return json({ error: "Teléfono inválido" }, 400);
     if (typeof cuerpo.pausar !== "boolean") return json({ error: "Pausa inválida" }, 400);
+    if (!telefonoEnModo(telefono, modo)) return json({ error: "No existe esa conversación" }, 404);
     if (!env.BOT || !env.INTERNO_KEY) return json({ error: "El envío de mensajes aún no está configurado." }, 503);
-    if (!(await existeConversacion(db, negocio.id, telefono))) return json({ error: "No existe esa conversación" }, 404);
+    if (!(await existeConversacion(db, negocio.id, telefono, modo))) return json({ error: "No existe esa conversación" }, 404);
     let respuesta;
     try {
       respuesta = await llamarBot(env, "/interno/pausa", { negocio_id: negocio.id, telefono, pausar: cuerpo.pausar });
@@ -411,7 +446,7 @@ async function api(request, env, url, negocio) {
     const cuerpo = await request.json().catch(() => ({}));
     const codigo = normalizarCodigo(cuerpo.codigo);
     if (!codigo) return json({ error: "Falta el código" }, 400);
-    const cliente = await buscarCodigo(db, negocio.id, codigo);
+    const cliente = await buscarCodigo(db, negocio.id, codigo, modo);
     const error = errorCodigo(cliente, Date.now());
     if (error) return error;
     return json({ ok: true, nombre: cliente.nombre, codigo: cliente.codigo, vence: cliente.codigo_vence, descuento_pct: numero(negocio.descuento_pct) });
@@ -422,7 +457,7 @@ async function api(request, env, url, negocio) {
     const cuerpo = await request.json().catch(() => ({}));
     const codigo = normalizarCodigo(cuerpo.codigo);
     if (!codigo) return json({ error: "Falta el código" }, 400);
-    return canjearCliente(db, negocio, await buscarCodigo(db, negocio.id, codigo), Date.now());
+    return canjearCliente(db, negocio, await buscarCodigo(db, negocio.id, codigo, modo), Date.now(), modo);
   }
 
   if (ruta === "/api/clientes/canje") {
@@ -430,15 +465,17 @@ async function api(request, env, url, negocio) {
     const cuerpo = await request.json().catch(() => ({}));
     const telefono = String(cuerpo.telefono ?? "").trim();
     if (!telefono) return json({ error: "Falta el teléfono" }, 400);
-    const cliente = await db.prepare("SELECT * FROM clientes WHERE negocio_id = ? AND telefono = ?").bind(negocio.id, telefono).first();
+    const cliente = await db.prepare(
+      `SELECT * FROM clientes WHERE negocio_id = ? AND telefono = ? AND ${condTel("telefono", modo)}`
+    ).bind(negocio.id, telefono).first();
     if (!cliente) return json({ error: "No existe el cliente" }, 404);
     if (cliente.codigo == null) return json({ error: "El cliente no tiene código" }, 409);
-    return canjearCliente(db, negocio, cliente, Date.now());
+    return canjearCliente(db, negocio, cliente, Date.now(), modo);
   }
 
   if (ruta === "/api/facturacion") {
     if (metodo !== "GET") return json({ error: "Método no permitido" }, 405);
-    return json(await facturacion(db, negocio));
+    return json(await facturacion(db, negocio, modo));
   }
 
   return json({ error: "No encontrado" }, 404);
@@ -450,12 +487,13 @@ export default {
     if (!url.pathname.startsWith("/api/")) return env.ASSETS.fetch(request);
     try {
       const acceso = request.headers.get("x-acceso")?.trim();
+      const modo = request.headers.get("x-modo") === "real" ? "real" : "demo";
       if (!acceso) return json({ error: "Acceso incorrecto" }, 401);
       const negocio = await env.DB.prepare(
         "SELECT * FROM negocios WHERE acceso = ? AND acceso IS NOT NULL AND acceso != ''"
       ).bind(acceso).first();
       if (!negocio) return json({ error: "Acceso incorrecto" }, 401);
-      return await api(request, env, url, negocio);
+      return await api(request, env, url, negocio, modo);
     } catch (_) {
       return json({ error: "Error interno" }, 500);
     }
