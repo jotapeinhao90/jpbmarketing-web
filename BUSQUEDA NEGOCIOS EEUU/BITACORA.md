@@ -517,3 +517,27 @@ URLs revisadas:
 - https://enlyft.com/tech/products/jumpseller
 - https://www.wmtips.com/technologies/e-commerce/jumpseller/
 - https://www.2x3.cl/servicios/articulo/STtfMYe-paginas-web-listas-jumpseller
+
+## 2026-10-27 – Prospección Recepcia
+- Leads: 15 (Concepción 6, Antofagasta 7, Viña del Mar 2; detalle en leads/2026-10-27.md)
+- Rubros: veterinaria, kinesiología, odontología, multiespecialidad, barbería, talleres, psicología. Ciudades: Concepción, Antofagasta, Viña del Mar/Quillota.
+- Limitación: WebFetch sin red; datos de snippets de búsqueda, no verificados.
+- URLs revisadas:
+  - https://agendapro.com/mp/cl/centros-kinesiologicos-antofagasta
+  - https://altabarberconcepcion.site.agendapro.com/cl/sucursal/131850
+  - https://automotrizmecatec.cl/
+  - https://barberiaestiloconcepcion.cl/
+  - https://clinicasydney.cl/
+  - https://dentistasantofagasta.cl/
+  - https://donesbarbero.setmore.com/
+  - https://nexarautomotriz.cl/
+  - https://subjetivamente.cl/
+  - https://www.automotrizcarbono.cl/
+  - https://www.ccumbres.com/
+  - https://www.centrokinemax.cl/
+  - https://www.cronoshare.cl/servicios/psicologos/region-del-biobio/concepcion
+  - https://www.kinessian.cl/
+  - https://www.mercantil.com/empresa/centro-medico-y-rehabilitacion-deportiva-physio-center-spa/antofagasta/300523841/esp/
+  - https://www.mercantil.com/empresa/kinet-med-centro-kinesico/antofagasta/300264018/eng/
+  - https://www.mercantil.com/empresa/nanyvet-dra-liliana-salazar/concepcion/300449858/esp/
+  - https://www.redpsicologica.cl/
