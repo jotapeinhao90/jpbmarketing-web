@@ -484,3 +484,36 @@ URLs revisadas:
 - https://trustradius.com/compare-products/price2spy-vs-prisync
 - https://www.descubre.vc/retail-compass
 - https://www.chilecompra.cl/?p=49339
+
+## 2026-10-27 – Estudio de mercado Chile (3 AM)
+
+Informe: `estudios/2026-10-27.md`. 6 búsquedas WebSearch; cifras de ingreso son estimaciones propias.
+
+Veredictos: 1 Fondos concursables IA – COMPETITIVO CON CONDICIONES 6/10 · 2 Agente de voz – CON CONDICIONES 5/10 · 3 Catálogo SEO+IA – CON CONDICIONES 4/10 · 4 DIN aduana – CON CONDICIONES 5/10 · 5 Monitoreo de precios – NO COMPETITIVO 3/10 (ya existe Rocketpyme Monitor desde USD 69, apps Shopify gratis).
+
+Ranking: 1) Fondos concursables, 2) DIN aduana, 3) Voz (como add-on), 4) Catálogo, 5) Precios.
+Primeros pasos: leer bases de 1 convocatoria abierta y armar plantilla; 3 borradores gratis a contactos JPB + landing SEO; cobrar la primera postulación y medir adjudicación. Paralelo: validar DIN con 3 agencias.
+
+URLs revisadas:
+- https://transparenciaactiva.sercotec.cl/ (registro consultoras)
+- https://www.odepa.gob.cl/odepaweb/servicios-informacion/Instrumentos/fichas/f-54.html
+- https://www.chileatiende.gob.cl/fichas/100248-programas-tecnologicos
+- https://www.24horas.cl/te-sirve/programa-semilla-inicia-postulaciones-corfo
+- https://www.meganoticias.cl/dato-util/530352-capital-semilla-sercotec-3-millones-fecha-limite-postulacion-plazo-30-08-2026.html
+- https://www.elmostrador.cl/datos-utiles/2026/06/10/fondo-crece-sercotec-2026-como-postular-al-subsidio-de-5-millones-para-pymes/
+- https://www.chilevision.cl/noticias/te-ayuda/fondo-crece-2026-pymes-y-cooperativas-pueden-obtener-5-millones-de-financiamiento/
+- https://www.lofwork.cl/?p=36848
+- https://chocale.cl/2026/05/hasta-220-millones-corfo-abrio-postulaciones-a-fondos-para-innovacion/
+- https://www.retellai.com/es/use-cases/recepcionista-virtual-para-pymes
+- https://www.cloudtalk.io/es/precios-del-agente-de-voz-con-ia/
+- https://ecosistemastartup.com/?p=93986
+- https://www.lofwork.cl/declaraciones-de-ingreso-din-en-chile/
+- https://www.mundomaritimo.cl/noticias/editor/19996
+- https://apps.shopify.com/competitor-tracking?locale=es
+- https://apps.shopify.com/pricekit?locale=es
+- https://thunderbit.com/es/blog/best-competitor-price-tracking-software
+- https://www.capterra.co.uk/software/1098178/Rocketpyme-Monitor
+- https://aimultiple.com/es/price-monitoring-tools
+- https://enlyft.com/tech/products/jumpseller
+- https://www.wmtips.com/technologies/e-commerce/jumpseller/
+- https://www.2x3.cl/servicios/articulo/STtfMYe-paginas-web-listas-jumpseller
