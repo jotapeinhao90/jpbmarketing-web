@@ -1,0 +1,678 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex, nofollow">
+<meta name="theme-color" content="#16324f">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Mi barbería">
+<link rel="manifest" href="/manifest.webmanifest">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<title>Mi barbería — JPB</title>
+<style>
+  :root {
+    --bg: #f3f5f8; --card: #ffffff; --border: #e7eaf0; --text: #161a1f; --suave: #6b7785;
+    --navy: #16324f; --navy-2: #1f4a72; --orange: #ec7a33; --orange-dark: #d1621f;
+    --ok-bg: #e5f6ec; --ok: #17874a; --bad-bg: #fdeaea; --bad: #c23c34; --warn-bg: #fff4e5; --warn: #b45309;
+    --sombra: 0 1px 2px rgba(16,24,32,.04), 0 8px 24px rgba(16,24,32,.06);
+  }
+  * { box-sizing: border-box; }
+  html, body { height: 100%; }
+  body { margin: 0; background: var(--bg); color: var(--text); font: 15px/1.45 -apple-system, BlinkMacSystemFont, "SF Pro Text", "Helvetica Neue", Arial, sans-serif; -webkit-font-smoothing: antialiased; }
+  button, input, select, textarea { font: inherit; }
+
+  /* ---------- Layout ---------- */
+  .app { display: grid; grid-template-columns: 240px 1fr; min-height: 100vh; }
+  aside { background: var(--card); border-right: 1px solid var(--border); padding: 22px 16px; position: sticky; top: 0; height: 100vh; }
+  .marca { display: flex; align-items: center; gap: 10px; padding: 4px 8px 22px; }
+  .marca .logo { width: 40px; height: 40px; border-radius: 12px; background: linear-gradient(155deg, var(--navy), var(--navy-2)); color: #fff; display: grid; place-items: center; font-weight: 800; letter-spacing: .5px; }
+  .marca b { display: block; font-size: 15px; }
+  .marca small { color: var(--suave); font-size: 12px; }
+  .nav-item { display: flex; align-items: center; gap: 12px; width: 100%; padding: 11px 12px; border: 0; background: none; color: var(--suave); border-radius: 12px; cursor: pointer; font-weight: 600; margin-bottom: 4px; text-align: left; }
+  .nav-item .ico { width: 34px; height: 34px; border-radius: 10px; display: grid; place-items: center; background: var(--bg); font-size: 16px; }
+  .nav-item.activo { background: #fdf1e8; color: var(--orange-dark); }
+  .nav-item.activo .ico { background: var(--orange); color: #fff; }
+  main { min-width: 0; }
+  header.top { background: linear-gradient(155deg, var(--navy), var(--navy-2)); color: #fff; padding: 22px 28px 64px; position: relative; }
+  .top-row { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+  .top h1 { margin: 0; font-size: 22px; font-weight: 700; }
+  .top .saludo { opacity: .75; font-size: 13px; }
+  .top-acciones { display: flex; align-items: center; gap: 10px; }
+  .pill-sel { background: rgba(255,255,255,.14); color: #fff; border: 1px solid rgba(255,255,255,.25); border-radius: 999px; padding: 8px 14px; }
+  .pill-sel option { color: #000; }
+  .avatar-top { width: 40px; height: 40px; border-radius: 50%; background: var(--orange); color: #fff; display: grid; place-items: center; font-weight: 700; }
+  .contenido { padding: 0 24px 110px; margin-top: -40px; }
+  .contenido > section { max-width: 1100px; margin: 0 auto; }
+
+  /* ---------- Componentes ---------- */
+  .tarjeta { background: var(--card); border-radius: 18px; box-shadow: var(--sombra); padding: 18px; }
+  .titulo-seccion { font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: .08em; color: var(--suave); margin: 22px 4px 10px; }
+  .grid-kpi { display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 14px; }
+  .kpi { display: flex; align-items: center; gap: 12px; }
+  .kpi .ic { width: 44px; height: 44px; border-radius: 14px; display: grid; place-items: center; font-size: 20px; flex-shrink: 0; }
+  .kpi .val { font-size: 24px; font-weight: 800; line-height: 1.1; }
+  .kpi .lbl { color: var(--suave); font-size: 12.5px; margin-top: 3px; }
+  .ic { color: var(--navy); }
+  .ic-naranja { color: var(--orange-dark); } .ic-verde { color: var(--ok); } .ic-rojo { color: var(--bad); } .ic-ambar { color: var(--warn); }
+  .ic-navy { background: #e6edf5; } .ic-naranja { background: #fdf1e8; } .ic-verde { background: var(--ok-bg); } .ic-rojo { background: var(--bad-bg); } .ic-ambar { background: var(--warn-bg); }
+  .hero { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 12px; text-align: center; }
+  .ring { display: flex; flex-direction: column; align-items: center; position: relative; }
+  .ring svg { width: 112px; height: 112px; transform: rotate(-90deg); }
+  .ring .pista { fill: none; stroke: var(--border); stroke-width: 9; }
+  .ring .progreso { fill: none; stroke-width: 9; stroke-linecap: round; transition: stroke-dashoffset .9s ease; }
+  .ring-val { position: absolute; top: 40px; font-size: 22px; font-weight: 800; }
+  .ring-lbl { margin-top: 8px; font-size: 13px; color: var(--suave); font-weight: 600; }
+  .lista { display: flex; flex-direction: column; gap: 8px; }
+  .item { display: flex; align-items: center; gap: 12px; background: var(--card); border-radius: 16px; padding: 12px 14px; box-shadow: var(--sombra); cursor: pointer; border: 1px solid transparent; }
+  .item:hover { border-color: #f3c7a6; }
+  .circ { width: 44px; height: 44px; border-radius: 50%; display: grid; place-items: center; color: #fff; font-weight: 700; flex-shrink: 0; font-size: 15px; }
+  .item .info { min-width: 0; flex: 1; }
+  .item .nombre { font-weight: 700; display: flex; gap: 6px; flex-wrap: wrap; align-items: center; }
+  .item .detalle { color: var(--suave); font-size: 13px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .item .derecha { text-align: right; flex-shrink: 0; }
+  .item .hora { color: var(--suave); font-size: 12px; }
+  .pill { display: inline-block; font-size: 11px; padding: 3px 9px; border-radius: 999px; font-weight: 700; }
+  .pill.ok { background: var(--ok-bg); color: var(--ok); }
+  .pill.bad { background: var(--bad-bg); color: var(--bad); }
+  .pill.warn { background: var(--warn-bg); color: var(--warn); }
+  .pill.info { background: #e6edf5; color: var(--navy); }
+  .btn { background: var(--orange); color: #fff; border: 0; border-radius: 999px; padding: 9px 16px; cursor: pointer; font-weight: 700; box-shadow: 0 6px 16px rgba(236,122,51,.3); }
+  .btn:hover { background: var(--orange-dark); }
+  .btn.sec { background: #fff; color: var(--navy); box-shadow: none; border: 1px solid var(--border); }
+  .btn.sec:hover { background: var(--bg); }
+  .btn:disabled { opacity: .5; cursor: default; }
+  .btn.peq { padding: 6px 12px; font-size: 12px; }
+  .vacio { text-align: center; color: var(--suave); padding: 36px 10px; }
+
+  /* Chat */
+  .hilo-head { display: flex; align-items: center; gap: 12px; margin-bottom: 14px; }
+  .hilo-head .nombre-grande { font-size: 18px; font-weight: 800; }
+  .hilo-head .tel { color: var(--suave); font-size: 13px; }
+  .volver { background: none; border: 0; color: var(--navy); font-weight: 700; cursor: pointer; padding: 0 0 10px; }
+  .chat { display: flex; flex-direction: column; gap: 8px; padding: 14px; background: var(--card); border-radius: 18px; box-shadow: var(--sombra); min-height: 260px; max-height: 60vh; overflow-y: auto; }
+  .burbuja { max-width: 78%; padding: 10px 14px; border-radius: 18px 18px 18px 6px; background: #f1f4f8; white-space: pre-wrap; word-wrap: break-word; }
+  .burbuja.out { align-self: flex-end; background: linear-gradient(155deg, var(--navy), var(--navy-2)); color: #fff; border-radius: 18px 18px 6px 18px; }
+  .burbuja.plantilla { background: var(--warn-bg); color: #5b3a12; border-radius: 14px; }
+  .burbuja .hora-b { display: block; font-size: 11px; opacity: .6; margin-top: 4px; text-align: right; }
+  .barra-resp { display: flex; gap: 10px; margin-top: 12px; align-items: flex-end; }
+  .barra-resp textarea { flex: 1; resize: none; border-radius: 16px; border: 1px solid var(--border); background: #fff; padding: 12px 14px; min-height: 48px; color: var(--text); }
+  .barra-resp textarea:focus, .login input:focus { outline: 2px solid #f3c7a6; border-color: var(--orange); }
+
+  /* Barra inferior (móvil) */
+  .tabbar { display: none; }
+
+  /* Login */
+  .login-wrap { min-height: 100vh; display: grid; place-items: center; padding: 24px; background: linear-gradient(155deg, var(--navy), var(--navy-2)); }
+  .login { width: 100%; max-width: 380px; background: #fff; border-radius: 24px; padding: 30px 26px; box-shadow: 0 24px 60px rgba(0,0,0,.25); text-align: center; }
+  .login .logo { width: 58px; height: 58px; border-radius: 18px; background: linear-gradient(155deg, var(--navy), var(--navy-2)); color: #fff; display: grid; place-items: center; font-weight: 800; font-size: 20px; margin: 0 auto 14px; }
+  .login h2 { margin: 0 0 6px; }
+  .login p { color: var(--suave); margin: 0 0 18px; font-size: 14px; }
+  .login input { width: 100%; padding: 13px 14px; border-radius: 14px; border: 1px solid var(--border); background: var(--bg); color: var(--text); margin-bottom: 12px; }
+  .login .btn { width: 100%; padding: 13px; }
+  .error { color: var(--bad); font-size: 13px; min-height: 18px; margin-top: 8px; }
+
+  .oculto { display: none !important; }
+
+  /* ---------- Móvil ---------- */
+  @media (max-width: 860px) {
+    .app { grid-template-columns: 1fr; }
+    aside { display: none; }
+    header.top { padding: 18px 18px 56px; }
+    .contenido { padding: 0 14px 110px; }
+    .tabbar { display: flex; position: fixed; bottom: 12px; left: 12px; right: 12px; background: #fff; border-radius: 22px; box-shadow: 0 10px 30px rgba(16,24,32,.18); padding: 8px; z-index: 10; padding-bottom: calc(8px + env(safe-area-inset-bottom)); }
+    .tabbar button { flex: 1; border: 0; background: none; color: var(--suave); padding: 8px 4px; border-radius: 16px; cursor: pointer; font-size: 12px; font-weight: 600; display: flex; flex-direction: column; align-items: center; gap: 2px; }
+    .tabbar button .ico { font-size: 19px; }
+    .tabbar button.activo { background: var(--navy); color: #fff; }
+    .chat { max-height: 52vh; }
+    .burbuja { max-width: 86%; }
+  }
+
+  /* ---------- Extras de la app de barberos ---------- */
+  .chips { display: flex; gap: 8px; overflow-x: auto; padding-bottom: 4px; margin: 0 -2px 12px; scrollbar-width: none; }
+  .chips::-webkit-scrollbar { display: none; }
+  .chip { flex: none; border: 1px solid var(--border); background: #fff; color: var(--suave); border-radius: 999px; padding: 7px 14px; font-weight: 600; font-size: 13px; cursor: pointer; }
+  .chip.activo { background: var(--navy); color: #fff; border-color: var(--navy); }
+  .buscar { width: 100%; padding: 12px 14px; border-radius: 14px; border: 1px solid var(--border); background: #fff; margin-bottom: 12px; }
+  .buscar:focus, .campo:focus { outline: 2px solid #f3c7a6; border-color: var(--orange); }
+  .meta-linea { margin: 14px 0 4px; }
+  .meta-linea .fila { display: flex; justify-content: space-between; font-size: 13px; font-weight: 600; margin-bottom: 6px; }
+  .meta-linea .fila span:last-child { color: var(--suave); }
+  .barra { height: 10px; border-radius: 999px; background: var(--border); overflow: hidden; }
+  .barra i { display: block; height: 100%; border-radius: 999px; transition: width .8s ease; }
+  .semanas { display: flex; align-items: flex-end; gap: 10px; height: 110px; margin-top: 6px; }
+  .semanas .col { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: flex-end; height: 100%; gap: 4px; }
+  .semanas .par { display: flex; align-items: flex-end; gap: 3px; height: 82px; }
+  .semanas .par i { width: 12px; border-radius: 5px 5px 2px 2px; min-height: 3px; display: block; }
+  .semanas small { font-size: 11px; color: var(--suave); }
+  .leyenda { display: flex; gap: 14px; font-size: 12px; color: var(--suave); margin-top: 8px; }
+  .leyenda b { display: inline-block; width: 10px; height: 10px; border-radius: 3px; margin-right: 5px; vertical-align: -1px; }
+  .canje-box { max-width: 520px; margin: 0 auto; text-align: center; }
+  .canje-box .campo { width: 100%; padding: 18px; font-size: 22px; font-weight: 800; letter-spacing: .06em; text-align: center; text-transform: uppercase; border-radius: 18px; border: 2px solid var(--border); background: #fff; }
+  .canje-box p { color: var(--suave); margin: 4px 0 16px; }
+  .resultado { margin-top: 16px; border-radius: 18px; padding: 18px; text-align: left; }
+  .resultado.ok { background: var(--ok-bg); } .resultado.bad { background: var(--bad-bg); }
+  .resultado h3 { margin: 0 0 4px; font-size: 18px; } .resultado.ok h3 { color: var(--ok); } .resultado.bad h3 { color: var(--bad); }
+  .resultado .desc { font-size: 34px; font-weight: 800; color: var(--ok); margin: 6px 0; }
+  .fila-ciclo { display: grid; grid-template-columns: 1fr auto auto; gap: 12px; align-items: center; padding: 12px 0; border-top: 1px solid var(--border); }
+  .fila-ciclo:first-of-type { border-top: 0; }
+  .fila-ciclo .per { font-weight: 700; } .fila-ciclo .sub { color: var(--suave); font-size: 12.5px; }
+  .fila-ciclo .monto { font-weight: 800; text-align: right; }
+  .dato { display: flex; justify-content: space-between; padding: 9px 0; border-top: 1px solid var(--border); }
+  .dato:first-of-type { border-top: 0; } .dato span:first-child { color: var(--suave); }
+  .aviso { background: var(--warn-bg); color: #5b3a12; border-radius: 14px; padding: 12px 14px; font-size: 13.5px; margin-bottom: 14px; }
+  .hoja-fondo { position: fixed; inset: 0; background: rgba(16,24,32,.45); z-index: 50; display: flex; align-items: flex-end; justify-content: center; }
+  .hoja { background: var(--bg); width: 100%; max-width: 520px; max-height: 90vh; overflow-y: auto; border-radius: 24px 24px 0 0; padding: 20px 18px 28px; box-shadow: 0 -10px 40px rgba(0,0,0,.2); }
+  @media (min-width: 861px) { .hoja-fondo { align-items: center; } .hoja { border-radius: 24px; } }
+  .hoja .cab { display: flex; align-items: center; gap: 12px; margin-bottom: 12px; }
+  .hoja .cab .nombre-grande { font-size: 18px; font-weight: 800; }
+  .hoja .acc { display: flex; gap: 8px; margin: 14px 0 4px; flex-wrap: wrap; }
+  .linea-tiempo { border-left: 2px solid var(--border); margin: 12px 0 0 8px; padding-left: 16px; }
+  .linea-tiempo .ev { position: relative; padding-bottom: 14px; font-size: 14px; }
+  .linea-tiempo .ev::before { content: ''; position: absolute; left: -23px; top: 5px; width: 10px; height: 10px; border-radius: 50%; background: var(--orange); }
+  .linea-tiempo .ev.ok::before { background: var(--ok); } .linea-tiempo .ev.bad::before { background: var(--bad); }
+  .linea-tiempo small { display: block; color: var(--suave); }
+  #toast { position: fixed; left: 50%; bottom: 96px; transform: translateX(-50%); background: var(--navy); color: #fff; padding: 11px 18px; border-radius: 999px; font-weight: 600; z-index: 80; opacity: 0; pointer-events: none; transition: opacity .2s; }
+  #toast.on { opacity: 1; }
+
+  /* ---------- Ajustes ---------- */
+  .dia-sep { align-self: center; font-size: 11.5px; color: var(--suave); background: var(--bg); padding: 3px 12px; border-radius: 999px; margin: 6px 0 2px; font-weight: 600; }
+  .nota-chat { color: var(--suave); font-size: 12.5px; text-align: center; margin: 10px 8px 0; }
+  .item .nombre .pill { font-size: 10px; padding: 2px 7px; }
+  .chat { overflow-y: auto; }
+  #vista-chats > .titulo-seccion:first-child, #vista-chats > .volver:first-child { margin-top: 66px; }
+  .contenido { position: relative; z-index: 1; }
+  .resultado .desc { font-size: 28px; }
+  a.btn { text-decoration: none; display: inline-block; text-align: center; }
+  @media (max-width: 860px) {
+    .hero { grid-template-columns: repeat(3, 1fr); gap: 4px; }
+    .ring svg { width: 88px; height: 88px; }
+    .ring-val { top: 29px; font-size: 18px; }
+    .ring-lbl { font-size: 11.5px; text-align: center; }
+  }
+</style>
+</head>
+<body>
+
+<div id="login" class="login-wrap oculto">
+  <div class="login">
+    <div class="logo">JPB</div>
+    <h2>Mi barbería</h2>
+    <p>Ingresa tu clave de acceso para ver a tus clientes fidelizados.</p>
+    <input id="clave" type="password" placeholder="Clave de acceso" autocomplete="current-password">
+    <button id="entrar" class="btn">Entrar</button>
+    <div id="errorLogin" class="error"></div>
+  </div>
+</div>
+
+<div id="app" class="app oculto">
+  <aside>
+    <div class="marca">
+      <div class="logo">JPB</div>
+      <div><b id="marca-nombre">Mi barbería</b><small>Programa de fidelización</small></div>
+    </div>
+    <button class="nav-item activo" data-vista="resumen"><span class="ico"></span>Resumen</button>
+    <button class="nav-item" data-vista="clientes"><span class="ico"></span>Clientes</button>
+    <button class="nav-item" data-vista="chats"><span class="ico"></span>Conversaciones</button>
+    <button class="nav-item" data-vista="canjear"><span class="ico"></span>Canjear código</button>
+    <button class="nav-item" data-vista="facturacion"><span class="ico"></span>Facturación</button>
+    <button class="nav-item" id="salir" style="margin-top:18px"><span class="ico"></span>Cerrar sesión</button>
+  </aside>
+
+  <main>
+    <header class="top">
+      <div class="top-row">
+        <div>
+          <div class="saludo" id="saludo"></div>
+          <h1 id="titulo">Resumen</h1>
+        </div>
+        <div class="top-acciones"><div class="avatar-top" id="avatar">B</div></div>
+      </div>
+    </header>
+
+    <div class="contenido">
+      <section id="vista-resumen"></section>
+      <section id="vista-clientes" class="oculto"></section>
+      <section id="vista-chats" class="oculto"></section>
+      <section id="vista-canjear" class="oculto"></section>
+      <section id="vista-facturacion" class="oculto"></section>
+    </div>
+  </main>
+</div>
+
+<nav class="tabbar" id="tabbar">
+  <button data-vista="resumen" class="activo"><span class="ico"></span>Resumen</button>
+  <button data-vista="clientes"><span class="ico"></span>Clientes</button>
+  <button data-vista="chats"><span class="ico"></span>Chats</button>
+  <button data-vista="canjear"><span class="ico"></span>Canjear</button>
+  <button data-vista="facturacion"><span class="ico"></span>Cobros</button>
+</nav>
+<div id="toast"></div>
+
+<script>
+(() => {
+  const CLAVE_KEY = "barberiaAcceso";
+  const COLORES = ["#16324f", "#ec7a33", "#1f7a8c", "#7c3aed", "#b45309", "#17874a", "#c23c34", "#2563eb"];
+  const TITULOS = { resumen: "Resumen", clientes: "Clientes", chats: "Conversaciones", canjear: "Canjear código", facturacion: "Facturación" };
+  const $ = (id) => document.getElementById(id);
+  let acceso = "";
+  let yo = null;
+  let vistaActual = "resumen";
+  let clientes = [];
+  let filtro = "todos";
+  let busqueda = "";
+
+  const escapar = (t) => String(t ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+  const iniciales = (nombre, tel) => {
+    const base = (nombre || "").trim();
+    if (!base) return String(tel || "").slice(-2);
+    return base.split(/\s+/).slice(0, 2).map((p) => p[0].toUpperCase()).join("");
+  };
+  const colorPara = (texto) => {
+    let h = 0;
+    for (const ch of String(texto || "")) h = (h * 31 + ch.charCodeAt(0)) >>> 0;
+    return COLORES[h % COLORES.length];
+  };
+  const clp = (n) => new Intl.NumberFormat("es-CL", { style: "currency", currency: "CLP", maximumFractionDigits: 0 }).format(n || 0);
+  const fechaMs = (ts) => (ts ? new Date(ts).toLocaleDateString("es-CL", { day: "numeric", month: "short" }) : "—");
+  const fechaIso = (f, conAnio) => (f ? new Date(f + "T12:00:00").toLocaleDateString("es-CL", { day: "numeric", month: "short", ...(conAnio ? { year: "numeric" } : {}) }) : "—");
+  const saludo = () => {
+    const h = new Date().getHours();
+    return h < 12 ? "Buenos días" : h < 19 ? "Buenas tardes" : "Buenas noches";
+  };
+  const toast = (msg) => {
+    const t = $("toast");
+    t.textContent = msg; t.classList.add("on");
+    clearTimeout(toast.t); toast.t = setTimeout(() => t.classList.remove("on"), 2600);
+  };
+
+  const ICONOS = {
+    chart: '<path d="M3 3v18h18"/><path d="M7 15l4-4 3 3 5-6"/>',
+    users: '<path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/>',
+    check: '<circle cx="12" cy="12" r="10"/><path d="m9 12 2 2 4-4"/>',
+    star: '<polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>',
+    ban: '<circle cx="12" cy="12" r="10"/><path d="m4.9 4.9 14.2 14.2"/>',
+    hourglass: '<path d="M5 22h14"/><path d="M5 2h14"/><path d="M17 22v-4.17a2 2 0 0 0-.59-1.42L12 12l-4.41 4.41A2 2 0 0 0 7 17.83V22"/><path d="M7 2v4.17a2 2 0 0 0 .59 1.42L12 12l4.41-4.41A2 2 0 0 0 17 6.17V2"/>',
+    userPlus: '<path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><line x1="19" x2="19" y1="8" y2="14"/><line x1="22" x2="16" y1="11" y2="11"/>',
+    ticket: '<path d="M2 9a3 3 0 0 1 0 6v2a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-2a3 3 0 0 1 0-6V7a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2Z"/><path d="M13 5v2"/><path d="M13 17v2"/><path d="M13 11v2"/>',
+    wallet: '<rect x="2" y="5" width="20" height="14" rx="2"/><path d="M2 10h20"/><path d="M6 15h4"/>',
+    coins: '<circle cx="8" cy="8" r="6"/><path d="M18.09 10.37A6 6 0 1 1 10.34 18"/><path d="M7 6h1v4"/>',
+    calendar: '<rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/>',
+    logout: '<path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><path d="m16 17 5-5-5-5"/><path d="M21 12H9"/>',
+    message: '<path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>',
+    bell: '<path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/>',
+    send: '<path d="m22 2-7 20-4-9-9-4Z"/><path d="M22 2 11 13"/>',
+    alert: '<path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><path d="M12 9v4"/><path d="M12 17h.01"/>',
+  };
+  const ico = (nombre, tam = 20) =>
+    `<svg width="${tam}" height="${tam}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${ICONOS[nombre] || ""}</svg>`;
+  const kpi = (icono, clase, valor, etiqueta) =>
+    `<div class="tarjeta kpi"><div class="ic ${clase}">${ico(icono)}</div><div><div class="val">${escapar(valor)}</div><div class="lbl">${escapar(etiqueta)}</div></div></div>`;
+  const ring = (pct, etiqueta, color) => {
+    const r = 46, c = 2 * Math.PI * r;
+    const off = c * (1 - Math.min(Math.max(pct, 0), 100) / 100);
+    return `<div class="ring">
+      <svg viewBox="0 0 112 112"><circle cx="56" cy="56" r="${r}" class="pista"/><circle cx="56" cy="56" r="${r}" class="progreso" stroke="${color}" stroke-dasharray="${c}" stroke-dashoffset="${off}"/></svg>
+      <div class="ring-val">${Math.round(pct)}%</div>
+      <div class="ring-lbl">${escapar(etiqueta)}</div>
+    </div>`;
+  };
+  const metaLinea = (titulo, actual, meta, color) => {
+    const pct = meta ? Math.min(100, Math.round((actual / meta) * 100)) : 0;
+    return `<div class="meta-linea"><div class="fila"><span>${escapar(titulo)}</span><span>${actual} de ${meta}</span></div><div class="barra"><i style="width:${pct}%;background:${color}"></i></div></div>`;
+  };
+
+  const SITUACION = {
+    vigente: ["ok", "Vigente"], por_vencer: ["warn", "Por vencer"], canjeado: ["info", "Volvió"],
+    vencido: ["bad", "Vencido"], cancelado: ["bad", "Canceló"],
+  };
+  const pillSituacion = (s) => { const [c, t] = SITUACION[s] || ["warn", s]; return `<span class="pill ${c}">${t}</span>`; };
+
+  // ---------- API ----------
+  async function api(ruta, metodo = "GET", cuerpo) {
+    const r = await fetch("/api/" + ruta, {
+      method: metodo,
+      headers: { "x-acceso": acceso, ...(cuerpo ? { "content-type": "application/json" } : {}) },
+      body: cuerpo ? JSON.stringify(cuerpo) : undefined,
+    });
+    const data = await r.json().catch(() => ({}));
+    if (r.status === 401) { const e = new Error("Acceso incorrecto"); e.sesion = true; throw e; }
+    if (!r.ok) { const e = new Error(data.error || "Error"); e.status = r.status; e.data = data; throw e; }
+    return data;
+  }
+
+  // ---------- Vistas ----------
+  async function vistaResumen() {
+    const [r, lista] = await Promise.all([api("resumen"), api("clientes")]);
+    clientes = lista;
+    const c = r.clientes;
+    const pctMetaClientes = r.metas.clientes.meta ? (r.metas.clientes.actual / r.metas.clientes.meta) * 100 : 0;
+    const pctMetaCanjes = r.metas.canjes.meta ? (r.metas.canjes.actual / r.metas.canjes.meta) * 100 : 0;
+    const maxS = Math.max(1, ...r.semanas.flatMap((s) => [s.registros, s.canjes]));
+    const semanas = r.semanas.map((s) =>
+      `<div class="col"><div class="par"><i style="height:${Math.max(4, (s.registros / maxS) * 100)}%;background:var(--navy)" title="${s.registros} registros"></i><i style="height:${Math.max(4, (s.canjes / maxS) * 100)}%;background:var(--orange)" title="${s.canjes} canjes"></i></div><small>${fechaIso(s.desde)}</small></div>`).join("");
+    const porVencer = lista.filter((x) => x.situacion === "por_vencer").slice(0, 5);
+
+    $("vista-resumen").innerHTML = `
+      <div class="tarjeta">
+        <div class="titulo-seccion" style="margin:4px 0 16px">Salud del programa</div>
+        <div class="hero">${ring(r.canjes.tasa, "Vuelven con su código", "#ec7a33") + ring(pctMetaClientes, "Meta de clientes", "#17874a") + ring(pctMetaCanjes, "Meta de canjes", "#16324f")}</div>
+        ${metaLinea("Clientes nuevos este mes", r.metas.clientes.actual, r.metas.clientes.meta, "#17874a")}
+        ${metaLinea("Canjes este mes", r.metas.canjes.actual, r.metas.canjes.meta, "#ec7a33")}
+      </div>
+
+      <div class="titulo-seccion">Tus clientes</div>
+      <div class="grid-kpi">
+        ${kpi("users", "ic-navy", c.registrados, "Fidelizados")}
+        ${kpi("check", "ic-verde", c.vigentes, "Con código vigente")}
+        ${kpi("hourglass", "ic-ambar", c.por_vencer, "Vencen en 7 días")}
+        ${kpi("ticket", "ic-naranja", c.canjeados, "Ya volvieron")}
+        ${kpi("ban", "ic-rojo", c.cancelados, "Cancelaron")}
+      </div>
+
+      <div class="titulo-seccion">Este mes</div>
+      <div class="grid-kpi">
+        ${kpi("userPlus", "ic-navy", c.nuevos_mes, "Clientes nuevos")}
+        ${kpi("ticket", "ic-naranja", r.canjes.mes, "Canjes")}
+        ${r.ventas_estimadas_mes != null ? kpi("coins", "ic-verde", clp(r.ventas_estimadas_mes), "Ventas por clientes que volvieron") : ""}
+      </div>
+
+      ${r.recordatorios || r.mensajes ? `<div class="titulo-seccion">Recordatorios y mensajes</div>
+      <div class="grid-kpi">
+        ${r.recordatorios ? kpi("bell", "ic-ambar", r.recordatorios.enviados_total, "Recordatorios enviados") : ""}
+        ${r.recordatorios ? kpi("send", "ic-naranja", r.recordatorios.proximos_7d, "Por enviar en 7 días") : ""}
+        ${r.mensajes ? kpi("message", "ic-navy", r.mensajes.conversaciones_mes, "Conversaciones este mes") : ""}
+        ${r.mensajes ? kpi("message", "ic-verde", r.mensajes.recibidos_mes, "Mensajes de clientes") : ""}
+      </div>` : ""}
+
+      <div class="titulo-seccion">Últimas 6 semanas</div>
+      <div class="tarjeta">
+        <div class="semanas">${semanas}</div>
+        <div class="leyenda"><span><b style="background:var(--navy)"></b>Registros</span><span><b style="background:var(--orange)"></b>Canjes</span></div>
+      </div>
+
+      ${porVencer.length ? `<div class="titulo-seccion">Vencen pronto: motívalos a volver</div><div class="lista">${porVencer.map(itemCliente).join("")}</div>` : ""}
+    `;
+    enlazarItems();
+  }
+
+  function itemCliente(c) {
+    const nombre = c.nombre || "Sin nombre";
+    const vence = c.canjeado_en ? `Canjeó el ${fechaMs(c.canjeado_en)}` : c.cancelado_en ? `Canceló el ${fechaMs(c.cancelado_en)}` : c.codigo_vence ? `Vence ${fechaMs(c.codigo_vence)}` : "";
+    return `<div class="item" data-tel="${escapar(c.telefono)}">
+      <div class="circ" style="background:${colorPara(c.telefono)}">${escapar(iniciales(c.nombre, c.telefono))}</div>
+      <div class="info"><div class="nombre">${escapar(nombre)}</div><div class="detalle">${escapar(c.codigo || "")}${vence ? " · " + vence : ""}</div></div>
+      <div class="derecha">${pillSituacion(c.situacion)}</div>
+    </div>`;
+  }
+  function enlazarItems() {
+    document.querySelectorAll(".item[data-tel]").forEach((el) => el.onclick = () => abrirCliente(el.dataset.tel));
+  }
+
+  const FILTROS = [["todos", "Todos"], ["vigente", "Vigentes"], ["por_vencer", "Por vencer"], ["canjeado", "Volvieron"], ["vencido", "Vencidos"], ["cancelado", "Cancelaron"]];
+  async function vistaClientes() {
+    clientes = await api("clientes");
+    const cont = $("vista-clientes");
+    cont.innerHTML = `
+      <input id="buscar" class="buscar" type="search" placeholder="Buscar por nombre, teléfono o código" value="${escapar(busqueda)}">
+      <div class="chips" id="chips">${FILTROS.map(([k, t]) => `<button class="chip ${filtro === k ? "activo" : ""}" data-f="${k}">${t} · ${k === "todos" ? clientes.length : clientes.filter((c) => c.situacion === k).length}</button>`).join("")}</div>
+      <div class="lista" id="lista-clientes"></div>`;
+    $("buscar").addEventListener("input", (e) => { busqueda = e.target.value; pintarLista(); });
+    cont.querySelectorAll(".chip").forEach((b) => b.onclick = () => { filtro = b.dataset.f; vistaClientes(); });
+    pintarLista();
+  }
+  function pintarLista() {
+    const q = busqueda.trim().toLowerCase();
+    const l = clientes.filter((c) => (filtro === "todos" || c.situacion === filtro) &&
+      (!q || [c.nombre, c.telefono, c.codigo].some((x) => String(x || "").toLowerCase().includes(q))));
+    $("lista-clientes").innerHTML = l.length ? l.map(itemCliente).join("") : `<div class="vacio">${clientes.length ? "No hay clientes con ese filtro." : "Todavía no hay clientes fidelizados.<br>Aparecerán cuando escaneen el QR de tu barbería."}</div>`;
+    enlazarItems();
+  }
+
+  function abrirCliente(tel) {
+    const c = clientes.find((x) => x.telefono === tel);
+    if (!c) return;
+    const puedeCanjear = c.situacion === "vigente" || c.situacion === "por_vencer";
+    const eventos = [`<div class="ev">Se registró<small>${fechaMs(c.creado_en)}</small></div>`];
+    if (c.recordatorios_enviados) eventos.push(`<div class="ev">Recibió ${c.recordatorios_enviados} recordatorio${c.recordatorios_enviados === 1 ? "" : "s"} por WhatsApp</div>`);
+    if (c.canjeado_en) eventos.push(`<div class="ev ok">Volvió y canjeó su descuento<small>${fechaMs(c.canjeado_en)}</small></div>`);
+    if (c.cancelado_en) eventos.push(`<div class="ev bad">Pidió no recibir más mensajes<small>${fechaMs(c.cancelado_en)}</small></div>`);
+    if (c.situacion === "vencido") eventos.push(`<div class="ev bad">Su código venció sin usarse<small>${fechaMs(c.codigo_vence)}</small></div>`);
+    abrirHoja(`
+      <div class="cab"><div class="circ" style="background:${colorPara(c.telefono)}">${escapar(iniciales(c.nombre, c.telefono))}</div>
+        <div><div class="nombre-grande">${escapar(c.nombre || "Sin nombre")}</div><div class="detalle" style="color:var(--suave)">+${escapar(c.telefono)}</div></div></div>
+      ${pillSituacion(c.situacion)}
+      <div class="tarjeta" style="margin-top:14px">
+        <div class="dato"><span>Código</span><b>${escapar(c.codigo || "—")}</b></div>
+        <div class="dato"><span>Vence</span><b>${fechaMs(c.codigo_vence)}</b></div>
+        <div class="dato"><span>Registro</span><b>${fechaMs(c.creado_en)}</b></div>
+        ${puedeCanjear && c.proximo_recordatorio ? `<div class="dato"><span>Próximo recordatorio</span><b>${fechaMs(c.proximo_recordatorio)}</b></div>` : ""}
+      </div>
+      <div class="linea-tiempo">${eventos.join("")}</div>
+      <div class="acc">
+        <a class="btn sec" href="https://wa.me/${escapar(c.telefono)}" target="_blank" rel="noopener">WhatsApp</a>
+        <button class="btn sec" id="h-chat">Ver chat</button>
+        ${puedeCanjear ? `<button class="btn" id="h-canje">Marcar canje</button>` : ""}
+        <button class="btn sec" id="h-cerrar">Cerrar</button>
+      </div>`);
+    $("h-cerrar").onclick = cerrarHoja;
+    $("h-chat").onclick = () => { cerrarHoja(); abrirHilo(c.telefono); };
+    const b = $("h-canje");
+    if (b) b.onclick = async () => {
+      if (!confirm(`¿Confirmas que ${c.nombre || "este cliente"} canjeó su ${yo.descuento_pct}% de descuento?`)) return;
+      b.disabled = true;
+      try { await api("clientes/canje", "POST", { telefono: c.telefono }); cerrarHoja(); toast("Canje registrado"); await mostrarVista(vistaActual); }
+      catch (e) { toast(e.message); b.disabled = false; }
+    };
+  }
+  function abrirHoja(html) {
+    cerrarHoja();
+    const f = document.createElement("div");
+    f.className = "hoja-fondo"; f.id = "hoja";
+    f.innerHTML = `<div class="hoja">${html}</div>`;
+    f.addEventListener("click", (e) => { if (e.target === f) cerrarHoja(); });
+    document.body.appendChild(f);
+  }
+  function cerrarHoja() { const h = $("hoja"); if (h) h.remove(); }
+
+  function vistaCanjear() {
+    $("vista-canjear").innerHTML = `
+      <div class="canje-box tarjeta">
+        <h2 style="margin:0 0 4px">Canjear código</h2>
+        <p>Pídele al cliente que te muestre su código (ej. <b>${escapar((yo.prefijo || "KEM"))}-JUAN-AB12</b>) y escríbelo aquí.</p>
+        <input id="codigo" class="campo" placeholder="CÓDIGO" autocomplete="off" autocapitalize="characters" spellcheck="false">
+        <button id="validar" class="btn" style="width:100%;padding:14px;margin-top:12px">Validar código</button>
+        <div id="resultado"></div>
+      </div>`;
+    const input = $("codigo");
+    const validar = async () => {
+      const codigo = input.value.trim();
+      if (!codigo) return;
+      $("validar").disabled = true;
+      try {
+        const r = await api("codigo/validar", "POST", { codigo });
+        $("resultado").innerHTML = `<div class="resultado ok"><h3>Código válido</h3>
+          <div><b>${escapar(r.nombre || "Cliente")}</b> · ${escapar(r.codigo)}</div>
+          <div class="desc">${r.descuento_pct}% de descuento</div>
+          <div style="color:var(--suave);font-size:13px">Vence el ${fechaMs(r.vence)}</div>
+          <button id="confirmar" class="btn" style="width:100%;margin-top:14px;padding:13px">Confirmar canje</button></div>`;
+        $("confirmar").onclick = async () => {
+          $("confirmar").disabled = true;
+          try {
+            await api("canjear", "POST", { codigo });
+            $("resultado").innerHTML = `<div class="resultado ok"><h3>Canje registrado ✔</h3><div>Aplica el ${r.descuento_pct}% a ${escapar(r.nombre || "tu cliente")}.</div></div>`;
+            input.value = "";
+          } catch (e) { $("resultado").innerHTML = `<div class="resultado bad"><h3>No se pudo canjear</h3><div>${escapar(e.message)}</div></div>`; }
+        };
+      } catch (e) {
+        if (e.sesion) throw e;
+        $("resultado").innerHTML = `<div class="resultado bad"><h3>Código no válido</h3><div>${escapar(e.message)}</div></div>`;
+      } finally { $("validar").disabled = false; }
+    };
+    $("validar").onclick = validar;
+    input.addEventListener("keydown", (e) => { if (e.key === "Enter") validar(); });
+    input.focus();
+  }
+
+  const ESTADO_CICLO = { pagado: ["ok", "Pagado"], pendiente: ["bad", "Pendiente"], en_curso: ["info", "En curso"] };
+  async function vistaFacturacion() {
+    const f = await api("facturacion");
+    const p = f.plan;
+    const aviso = !yo.tiene_plan ? `<div class="aviso">Tu plan todavía no está configurado. Tu ejecutivo de JPB Marketing lo cargará aquí.</div>` : "";
+    $("vista-facturacion").innerHTML = `
+      ${aviso}
+      <div class="grid-kpi">
+        ${kpi("wallet", f.deuda > 0 ? "ic-rojo" : "ic-verde", clp(f.deuda), f.deuda > 0 ? "Pendiente de pago" : "Sin deuda")}
+        ${f.proximo_cobro ? kpi("calendar", "ic-navy", fechaIso(f.proximo_cobro.fecha), "Próximo cobro") : ""}
+        ${f.proximo_cobro ? kpi("coins", "ic-naranja", clp(f.proximo_cobro.monto), "Monto estimado del ciclo") : ""}
+      </div>
+      <div class="titulo-seccion">Tu plan</div>
+      <div class="tarjeta">
+        <div class="dato"><span>Plan</span><b>${escapar(p.nombre)}</b></div>
+        <div class="dato"><span>Valor por ciclo</span><b>${clp(p.precio_mensual)}</b></div>
+        ${p.precio_canje ? `<div class="dato"><span>Por cada canje</span><b>${clp(p.precio_canje)}</b></div>` : ""}
+        <div class="dato"><span>El ciclo parte el día</span><b>${p.dia_corte} de cada mes</b></div>
+        <div class="dato"><span>Servicio desde</span><b>${p.inicio_servicio ? fechaIso(p.inicio_servicio, true) : "—"}</b></div>
+      </div>
+      <div class="titulo-seccion">Ciclos de cobro</div>
+      <div class="tarjeta">${f.ciclos.length ? f.ciclos.map((c) => {
+        const [cl, tx] = ESTADO_CICLO[c.estado] || ["warn", c.estado];
+        return `<div class="fila-ciclo"><div><div class="per">${fechaIso(c.desde)} – ${fechaIso(c.hasta)}</div><div class="sub">${c.canjes} canje${c.canjes === 1 ? "" : "s"}${c.estado === "pagado" && c.pagado_en ? " · pagado el " + fechaMs(c.pagado_en) : ""}${c.nota ? " · " + escapar(c.nota) : ""}</div></div><div class="monto">${clp(c.monto)}</div><span class="pill ${cl}">${tx}</span></div>`;
+      }).join("") : `<div class="vacio" style="padding:18px">Aún no hay ciclos de cobro.</div>`}</div>`;
+  }
+
+
+  // ---------- Conversaciones (las escribe el chatbot; aquí solo se leen) ----------
+  let hiloTel = null;
+  let refresco = null;
+  const TZ = { timeZone: "America/Santiago" };
+  const diaCL = (ts) => new Date(ts).toLocaleDateString("es-CL", TZ);
+  const horaMs = (ts) => new Date(ts).toLocaleTimeString("es-CL", { ...TZ, hour: "2-digit", minute: "2-digit" });
+  const tiempoMs = (ts) => {
+    if (!ts) return "";
+    const d = new Date(ts);
+    return diaCL(ts) === diaCL(Date.now()) ? horaMs(ts) : d.toLocaleDateString("es-CL", { ...TZ, day: "numeric", month: "short" });
+  };
+  const diaEtiqueta = (ts) => {
+    if (diaCL(ts) === diaCL(Date.now())) return "Hoy";
+    if (diaCL(ts) === diaCL(Date.now() - 86400000)) return "Ayer";
+    return new Date(ts).toLocaleDateString("es-CL", { ...TZ, weekday: "long", day: "numeric", month: "long" });
+  };
+  const detenerRefresco = () => { clearInterval(refresco); refresco = null; };
+
+  async function vistaChats() {
+    hiloTel = null;
+    const lista = await api("conversaciones");
+    $("vista-chats").innerHTML = lista.length ? `<div class="titulo-seccion" style="margin-top:4px">Conversaciones con tu chatbot (${lista.length})</div>
+      <div class="lista">${lista.map((c) => {
+        const nombre = c.nombre || "+" + c.telefono;
+        const quien = c.ultimo_direccion === "out" ? "Bot: " : "";
+        return `<div class="item" data-chat="${escapar(c.telefono)}">
+          <div class="circ" style="background:${colorPara(c.telefono)}">${escapar(iniciales(c.nombre, c.telefono))}</div>
+          <div class="info"><div class="nombre">${escapar(nombre)}${c.situacion ? " " + pillSituacion(c.situacion) : ""}${c.pausada ? ' <span class="pill warn">Pausada</span>' : ""}</div>
+            <div class="detalle">${escapar(quien + (c.ultimo_texto || ""))}</div></div>
+          <div class="derecha"><div class="hora">${tiempoMs(c.ultimo_ts)}</div><div class="hora">${c.mensajes} msj</div></div>
+        </div>`;
+      }).join("")}</div>`
+      : `<div class="vacio">Todavía no hay conversaciones.<br>Aparecerán cuando alguien le escriba a tu chatbot de WhatsApp.</div>`;
+    document.querySelectorAll("[data-chat]").forEach((el) => el.onclick = () => abrirHilo(el.dataset.chat));
+    detenerRefresco();
+    if (vistaActual !== "chats" || hiloTel) return; // cambiaste de pantalla mientras cargaba
+    refresco = setInterval(() => { if (vistaActual === "chats" && !hiloTel && !document.hidden) vistaChats().catch(() => {}); }, 20000);
+  }
+
+  async function abrirHilo(tel) {
+    hiloTel = tel;
+    if (vistaActual !== "chats") { vistaActual = "chats"; ["resumen", "clientes", "chats", "canjear", "facturacion"].forEach((v) => $("vista-" + v).classList.toggle("oculto", v !== "chats")); document.querySelectorAll("[data-vista]").forEach((b) => b.classList.toggle("activo", b.dataset.vista === "chats")); $("titulo").textContent = TITULOS.chats; }
+    const pintar = async (inicial) => {
+      const d = await api("chat?telefono=" + encodeURIComponent(tel));
+      let ultimoDia = "";
+      const burbujas = d.mensajes.map((m) => {
+        const dia = diaCL(m.creado_en);
+        const sep = dia !== ultimoDia ? `<div class="dia-sep">${escapar(diaEtiqueta(m.creado_en))}</div>` : "";
+        ultimoDia = dia;
+        const clase = m.direccion === "out" ? (m.tipo === "plantilla" ? "out plantilla" : "out") : "";
+        return `${sep}<div class="burbuja ${clase}">${escapar(m.texto)}<span class="hora-b">${horaMs(m.creado_en)}</span></div>`;
+      }).join("");
+      const cont = $("vista-chats");
+      const previo = cont.querySelector(".chat");
+      const pegado = !previo || previo.scrollHeight - previo.scrollTop - previo.clientHeight < 80;
+      cont.innerHTML = `<button class="volver" id="volver-chats">← Conversaciones</button>
+        <div class="hilo-head"><div class="circ" style="background:${colorPara(d.telefono)}">${escapar(iniciales(d.nombre, d.telefono))}</div>
+          <div><div class="nombre-grande">${escapar(d.nombre || "Sin nombre")}</div><div class="tel">+${escapar(d.telefono)}${d.codigo ? " · " + escapar(d.codigo) : ""}</div></div>
+          <div style="margin-left:auto">${d.situacion ? pillSituacion(d.situacion) : ""}</div></div>
+        <div class="chat" id="chat-caja">${burbujas || '<div class="vacio">Sin mensajes todavía.</div>'}</div>
+        <div class="acc" style="display:flex;gap:8px;margin-top:12px"><a class="btn" style="flex:1" href="https://wa.me/${escapar(d.telefono)}" target="_blank" rel="noopener">Escribirle por WhatsApp</a></div>
+        <div class="nota-chat">Tu chatbot responde solo. Aquí ves la conversación en vivo.</div>`;
+      $("volver-chats").onclick = () => { detenerRefresco(); vistaChats(); };
+      const caja = $("chat-caja");
+      if (inicial || pegado) caja.scrollTop = caja.scrollHeight; else if (previo) caja.scrollTop = previo.scrollTop;
+    };
+    try {
+      await pintar(true);
+      if (vistaActual !== "chats" || hiloTel !== tel) return; // saliste del chat mientras cargaba
+      window.scrollTo(0, 0);
+      detenerRefresco();
+      refresco = setInterval(() => { if (hiloTel === tel && vistaActual === "chats" && !document.hidden) pintar(false).catch(() => {}); }, 8000);
+    } catch (e) { if (e.sesion) return cerrarSesion(); toast(e.message); vistaChats(); }
+  }
+
+  // ---------- Navegación ----------
+  async function mostrarVista(nombre) {
+    vistaActual = nombre;
+    if (nombre !== "chats") { detenerRefresco(); hiloTel = null; }
+    ["resumen", "clientes", "chats", "canjear", "facturacion"].forEach((v) => $("vista-" + v).classList.toggle("oculto", v !== nombre));
+    document.querySelectorAll("[data-vista]").forEach((b) => b.classList.toggle("activo", b.dataset.vista === nombre));
+    $("titulo").textContent = TITULOS[nombre];
+    window.scrollTo(0, 0);
+    try {
+      await { resumen: vistaResumen, clientes: vistaClientes, chats: vistaChats, canjear: async () => vistaCanjear(), facturacion: vistaFacturacion }[nombre]();
+    } catch (e) {
+      if (e.sesion) return cerrarSesion();
+      $("vista-" + nombre).innerHTML = `<div class="vacio">No se pudo cargar. ${escapar(e.message)}</div>`;
+    }
+  }
+
+  async function mostrarApp() {
+    yo = await api("yo");
+    $("login").classList.add("oculto");
+    $("app").classList.remove("oculto");
+    $("marca-nombre").textContent = yo.nombre;
+    $("saludo").textContent = `${saludo()}, ${yo.nombre}`;
+    $("avatar").textContent = iniciales(yo.nombre, "B");
+    document.title = `${yo.nombre} — JPB`;
+    await mostrarVista("resumen");
+  }
+  function cerrarSesion() {
+    try { localStorage.removeItem(CLAVE_KEY); } catch (e) {}
+    acceso = "";
+    location.reload();
+  }
+
+  $("entrar").addEventListener("click", async () => {
+    acceso = $("clave").value.trim();
+    $("errorLogin").textContent = "";
+    if (!acceso) return;
+    try { await mostrarApp(); try { localStorage.setItem(CLAVE_KEY, acceso); } catch (e) {} }
+    catch (e) { acceso = ""; $("errorLogin").textContent = e.sesion ? "Clave incorrecta" : "No se pudo conectar"; }
+  });
+  $("clave").addEventListener("keydown", (e) => { if (e.key === "Enter") $("entrar").click(); });
+  document.querySelectorAll("[data-vista]").forEach((b) => b.addEventListener("click", () => mostrarVista(b.dataset.vista)));
+  $("salir").addEventListener("click", cerrarSesion);
+
+  const ICONOS_NAV = { resumen: "chart", clientes: "users", chats: "message", canjear: "ticket", facturacion: "wallet" };
+  document.querySelectorAll("[data-vista] .ico").forEach((el) => { el.innerHTML = ico(ICONOS_NAV[el.parentElement.dataset.vista], 18); });
+  $("salir").querySelector(".ico").innerHTML = ico("logout", 18);
+
+  let guardado = "";
+  try { guardado = localStorage.getItem(CLAVE_KEY) || ""; } catch (e) {}
+  if (guardado) { acceso = guardado; mostrarApp().catch(() => { acceso = ""; $("login").classList.remove("oculto"); }); }
+  else $("login").classList.remove("oculto");
+
+  if ("serviceWorker" in navigator) navigator.serviceWorker.register("/sw.js").catch(() => {});
+})();
+
+</script>
+</body>
+</html>

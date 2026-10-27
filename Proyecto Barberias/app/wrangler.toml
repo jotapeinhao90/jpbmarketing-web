@@ -1,0 +1,22 @@
+name = "barberias-app"
+main = "src/worker.js"
+compatibility_date = "2026-09-01"
+
+routes = [
+  { pattern = "barberias.jpbmarketing.cl", custom_domain = true }
+]
+
+# La PWA (public/) la sirve Cloudflare; /api/* pasa primero por el Worker.
+[assets]
+directory = "./public"
+binding = "ASSETS"
+run_worker_first = ["/api/*"]
+
+# Misma base que el bot de WhatsApp (clientes, códigos, canjes). Solo se leen y se marcan canjes.
+[[d1_databases]]
+binding = "DB"
+database_name = "barberia-demo"
+database_id = "235ae768-f37e-40b1-afc5-b39ef8d73cfd"
+
+[observability]
+enabled = true
