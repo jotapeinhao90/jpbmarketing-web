@@ -445,3 +445,42 @@ URLs revisadas:
   - https://www.instagram.com/bonevet.curico/
   - https://www.unosalud.cl/clinicas/valdivia/
   - https://www.zonaesteticavaldivia.cl/
+
+## 2026-10-27 – Ideas (2 AM)
+
+Informe completo: `ideas/2026-10-27.md`. Solo WebSearch; ingresos de referentes no verificados (listados/auto-reportados o no encontrados).
+
+| # | Idea | Rent. | Facilidad | Baja comp. Chile |
+|---|------|---|---|---|
+| 1 | Asistente IA para postular a fondos CORFO/Sercotec/ANID (ref. Instrumentl, US$55M inversión, 4.500+ clientes) — **mejor** | 6 | 8 | 7 |
+| 2 | Agente de voz telefónico para pymes (ref. listado Flippa US$14,5k MRR, no verificado; Elipse/Easybots atienden grandes) | 7 | 6 | 5 |
+| 3 | Enriquecimiento de catálogo SEO+IA para tiendas chilenas (ref. Describely; Shopify Magic gratis) | 5 | 9 | 5 |
+| 4 | Pre-llenado de DIN/documentos de importación para agentes de aduana (ref. DocUnlock, iCustoms; SIGAD/CargoWise) | 7 | 5 | 7 |
+| 5 | Monitoreo de precios para pymes ecommerce (ref. Prisync ~US$99/mes; RetailCompass enterprise) | 6 | 7 | 6 |
+
+URLs revisadas:
+- https://trustmrr.com/startup/zengrants
+- https://hub.causo.ai/guides/ai-for-grant-applications-2026
+- https://www.businesswire.com/news/home/20250423312598/en
+- https://www.silicon.co.uk/press-release/instrumentl-raises-55m-from-summit-partners-to-accelerate-their-ai-grant-fundraising-platform
+- https://chocale.cl/2026/05/hasta-220-millones-corfo-abrio-postulaciones-a-fondos-para-innovacion/
+- https://www.chileatiende.gob.cl/fichas/100248-programas-tecnologicos
+- https://www.tiendanube.com/cl/blog/fondos-concursables/
+- https://autocalls.ai/article/how-to-start-ai-calling-agency
+- https://ideaproof.io/startup-idea/ai-voice-agent-phone-calls
+- https://app.acquire.com/startup/mis4sdk3nf-24-7-ai-receptionist-saas-40-growth-3-2k-arr-lead-capture-scheduling
+- https://app.acquire.com/startup/9w08p46e3c-ai-texting-receptionist-for-smbs-autonomous-conversations-google-calendar-54k-arr-42k-sde
+- https://flippa.com/13041531-ai-voice-agent-saas-inbound-calls-auto-booking-sms-outbound-campaigns-next-js-stripe-twilio-elevenlabs-prod-ready
+- https://www.cbinsights.com/compare/elipse-inteligencia-artificial-vs-zenvia
+- https://aunoa.ai/blog/que-es-un-voicebot/
+- https://apps.shopify.com/describely?locale=es
+- https://www.productsup.com/media/productsup-ai-enrich-news-page/
+- https://techcrunch.com/2025/02/25/docunlock-wants-to-solve-a-customs-bottleneck/
+- https://www.cbinsights.com/company/docunlock/financials
+- https://siliconcanals.com/uks-icustoms-scores-2m/
+- https://www.lofwork.cl/declaraciones-de-ingreso-din-en-chile/
+- https://www.editrade.cl/index-en.html
+- https://www.capterra.com/p/153451/Prisync/reviews/126968/
+- https://trustradius.com/compare-products/price2spy-vs-prisync
+- https://www.descubre.vc/retail-compass
+- https://www.chilecompra.cl/?p=49339
