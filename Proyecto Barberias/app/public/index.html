@@ -153,8 +153,8 @@
   .bento .kpi, .grid-kpi .kpi { min-height: 0; }
   .bento .kpi.ancho, .bento .kpi.kpi-ancho { min-height: 0; padding-top: 14px; padding-bottom: 14px; }
   @media (prefers-color-scheme: dark) { .kpi .ic, .kpi .ic[class*="ic-"] { color: #e6c98a !important; background: rgba(255,255,255,.09) !important; } .kpi .ic svg { stroke: currentColor !important; } }
-  .hito:last-child .hito-label { left: auto; right: -2px; transform: none; text-align: right; }
-  .hito:first-child .hito-label { left: -2px; transform: none; text-align: left; }
+  .plan-hero .hito.hito-ultimo .hito-label { left: auto !important; right: -4px !important; transform: none !important; text-align: right !important; }
+  .plan-hero .hito.hito-primero .hito-label { left: -4px !important; transform: none !important; text-align: left !important; }
 </style>
 </head>
 <body>
@@ -693,7 +693,7 @@
       ${nivel ? `<div class="tarjeta plan-hero">
         <div class="plan-cab"><div><div class="plan-kicker">Tu plan</div><div class="plan-nombre">${escapar(actual?.nombre || p.nombre || "Nivel vigente")}</div></div><div class="plan-precio">${numeroAnimado(actual?.precio || yo?.precio_actual || 25000, "")}<small> CLP / mes</small></div></div>
         <div class="escala"><div class="escala-pista"><div class="escala-fill" data-width="${progreso}"></div>
-          ${tramos.map((t, i) => `<div class="hito ${t.alcanzado ? "alcanzado" : ""}" style="--pos:${i === 0 ? 0 : i === 1 ? 33.333 : 100}%;animation-delay:${i * 120}ms"><div class="hito-label"><b>${i === 0 ? "Base" : `${t.clientes} clientes`}</b>${clp(t.precio)}</div></div>`).join("")}
+          ${tramos.map((t, i) => `<div class="hito ${t.alcanzado ? "alcanzado" : ""} ${i === 0 ? "hito-primero" : i === tramos.length - 1 ? "hito-ultimo" : ""}" style="--pos:${i === 0 ? 0 : i === 1 ? 33.333 : 100}%;animation-delay:${i * 120}ms"><div class="hito-label"><b>${i === 0 ? "Base" : `${t.clientes} clientes`}</b>${clp(t.precio)}</div></div>`).join("")}
           <div class="nivel-marcador" style="--pos:${marcador}%">${Number(nivel.fidelizados) || 0}</div>
         </div></div>
         <div class="plan-resumen">${escapar(resumenNivel)}</div>
