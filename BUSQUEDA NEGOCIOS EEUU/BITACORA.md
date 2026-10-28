@@ -541,3 +541,42 @@ URLs revisadas:
   - https://www.mercantil.com/empresa/kinet-med-centro-kinesico/antofagasta/300264018/eng/
   - https://www.mercantil.com/empresa/nanyvet-dra-liliana-salazar/concepcion/300449858/esp/
   - https://www.redpsicologica.cl/
+
+## 2026-10-28 – Ideas (2 AM)
+
+Informe completo: `ideas/2026-10-28.md`. Datos de ingresos casi todos no verificados (blogs/fichas de producto); `WebFetch` bloqueado en pulse.bot.
+
+| # | Idea | Rent. | Facilidad | Baja comp. Chile |
+|---|------|---|---|---|
+| 1 | Reactivación de pacientes inactivos para clínicas dentales (ref. 10x Dental YC W25, cifras autoinformadas) — **mejor** | 8 | 6 | 6 |
+| 2 | Fotos profesionales con IA en CLP (ref. HeadshotPro; US$300k/mes no verificado, Latka US$96k 2023) | 6 | 7 | 5 |
+| 3 | Micro-apps de escritorio de pago bajo, mercado global (ref. app Mac US$20k MRR, no verificado) | 6 | 8 | 7 |
+| 4 | Optimizador de CV/ATS en español (ref. ATSandYou US$3,2k MRR no verificado; AITalnt ya existe en Chile) | 4 | 9 | 3 |
+| 5 | Software de arriendos para propietarios pequeños (ref. MyUnits.io US$15/mes; Leasity y RentApp ya existen) | 5 | 8 | 3 |
+
+URLs revisadas:
+- https://superframeworks.com/articles/best-places-sell-startup-microsaas
+- https://bigideasdb.com/solo-developer-saas-monthly-revenue-examples
+- https://indiereceipts-methodology.pages.dev/
+- https://dev.to/starsearn/how-a-solo-founder-reached-200000-arr-using-ai-agents-full-breakdown-36h0
+- https://www.pulse.bot/entrepreneurship/blogs/he-built-a-20k-mrr-mac-app-with-claude-code-663604dd-fccf-4295-9122-d4d814d6b9ba/
+- https://www.ycombinator.com/companies/10x
+- https://yespress.io/10xdental-yc-w25
+- https://datacommons.dealroom.co/companies/10x_yc_w25
+- https://www.myaifrontdesk.com/missed-call-text-back/dentists
+- https://www.chiletrabajos.cl/trabajo/ejecutivo-a-de-call-center-experiencia-de-pacientes-3898018
+- https://gurusup.com/es/chatbot-empresas/chatbot-clinicas-dentales
+- https://www.aurorainbox.com/2025/05/29/chatbot-whatsapp-clinicas-agenda-citas-atencion-paciente/
+- https://getlatka.com/companies/headshotpro
+- https://supabird.io/articles/danny-postma-how-a-solo-hacker-built-an-ai-empire-from-bali
+- https://instaheadshots.com/es/ai-headshot-generator
+- https://contra.com/p/e6mXe2R7-at-sand-you-ai-resume-optimizer-ai-powered
+- https://app.acquire.com/startup/iap9KSvMp5VmmbIEjjZVuFxiZXx2/JL2pi7afPAFlDjk1j9bb
+- https://www.microns.io/startup-listings/ai-resume-optimization-tool
+- https://hunted.space/product/aitalnt
+- https://www.kickresume.com/es/optimizacion-cv/
+- https://www.producthunt.com/products/myunits-io
+- https://ideaproof.io/startup-idea/property-management-saas
+- https://blog.mean.ceo/startup-idea-of-the-month-news-september-2026/
+- https://intercom.help/leasity/es/articles/6461430-que-es-leasity
+- https://www.capterra.cl/software/147659/turbo-tenant
