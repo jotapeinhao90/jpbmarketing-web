@@ -817,7 +817,15 @@
       if (irAlFondo || pegado) caja.scrollTop = caja.scrollHeight; else caja.scrollTop = antes;
       irAlFondo = false;
       const abierta = d.ventana_abierta !== false;
-      $("aviso-ventana").innerHTML = abierta ? "" : `<div class="aviso-ventana">Pasaron más de 24 h desde el último mensaje de este cliente. WhatsApp no permite escribirle hasta que él responda.</div>`;
+      const conCodigo = Boolean(d.codigo) && d.situacion !== "canjeado" && d.situacion !== "cancelado";
+      $("aviso-ventana").innerHTML = abierta ? "" : `<div class="aviso-ventana">Pasaron más de 24 h desde el último mensaje de este cliente: WhatsApp no permite escribirle libremente hasta que él responda.${conCodigo ? ` Sí puedes enviarle el recordatorio con la plantilla aprobada.<div style="margin-top:10px"><button class="btn sec" id="enviar-plantilla" style="min-height:40px;padding:8px 14px">Enviar recordatorio (plantilla)</button></div>` : ""}</div>`;
+      const bp = $("enviar-plantilla");
+      if (bp) bp.onclick = async () => {
+        if (!confirm("Se enviará la plantilla de recordatorio con el código de descuento de este cliente. Meta puede cobrar este mensaje. ¿Enviar?")) return;
+        bp.disabled = true;
+        try { await api("plantilla/enviar", "POST", { telefono: tel }); vibrar(); toast("Recordatorio enviado"); irAlFondo = true; await dibujar(); }
+        catch (e) { if (e.sesion) return cerrarSesion(); toast(e.message || "No se pudo enviar"); bp.disabled = false; }
+      };
       $("r-texto").disabled = !abierta; $("r-enviar").disabled = !abierta;
     };
     async function enviar() {

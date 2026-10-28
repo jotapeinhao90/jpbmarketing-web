@@ -521,6 +521,40 @@ async function api(request, env, url, negocio, modo) {
     return json({ error: "No se pudo eliminar el contacto. Intenta de nuevo." }, 502);
   }
 
+  // ---- Plantilla de recordatorio (para escribir a un cliente cuando ya pasaron las 24 h) ----
+  if (ruta === "/api/plantilla/estado") {
+    if (metodo !== "GET") return json({ error: "Método no permitido" }, 405);
+    if (!env.BOT || !env.INTERNO_KEY) return json({ error: "El envío de mensajes aún no está configurado." }, 503);
+    try {
+      const r = await llamarBot(env, "/interno/plantilla-estado", { negocio_id: negocio.id });
+      const d = await r.json().catch(() => ({}));
+      if (r.status !== 200) return json({ error: "No se pudo consultar el estado de la plantilla." }, 502);
+      return json({ existe: Boolean(d.existe), estado: String(d.estado ?? ""), categoria: d.categoria ?? null, motivo: d.motivo ?? null });
+    } catch (_) {
+      return json({ error: "No se pudo consultar el estado de la plantilla." }, 502);
+    }
+  }
+
+  if (ruta === "/api/plantilla/enviar") {
+    if (metodo !== "POST") return json({ error: "Método no permitido" }, 405);
+    const cuerpo = await request.json().catch(() => ({}));
+    const telefono = typeof cuerpo.telefono === "string" ? cuerpo.telefono : "";
+    if (!/^\d{6,20}$/.test(telefono)) return json({ error: "Teléfono inválido" }, 400);
+    if (!telefonoEnModo(telefono, modo)) return json({ error: "No existe esa conversación" }, 404);
+    if (!env.BOT || !env.INTERNO_KEY) return json({ error: "El envío de mensajes aún no está configurado." }, 503);
+    if (!(await existeConversacion(db, negocio.id, telefono, modo))) return json({ error: "No existe esa conversación" }, 404);
+    let respuesta;
+    try {
+      respuesta = await llamarBot(env, "/interno/enviar-plantilla", { negocio_id: negocio.id, telefono });
+    } catch (_) {
+      return json({ error: "No se pudo enviar el recordatorio. Intenta de nuevo." }, 502);
+    }
+    const datos = await respuesta.json().catch(() => ({}));
+    if (respuesta.status === 200) return json({ ok: true });
+    if ([404, 409, 502].includes(respuesta.status) && typeof datos.error === "string") return json({ error: datos.error }, respuesta.status);
+    return json({ error: "No se pudo enviar el recordatorio. Intenta de nuevo." }, 502);
+  }
+
   if (ruta === "/api/pausa") {
     if (metodo !== "POST") return json({ error: "Método no permitido" }, 405);
     const cuerpo = await request.json().catch(() => ({}));
