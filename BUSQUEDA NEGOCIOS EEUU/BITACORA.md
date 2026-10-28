@@ -580,3 +580,35 @@ URLs revisadas:
 - https://blog.mean.ceo/startup-idea-of-the-month-news-september-2026/
 - https://intercom.help/leasity/es/articles/6461430-que-es-leasity
 - https://www.capterra.cl/software/147659/turbo-tenant
+
+## 2026-10-28 – Estudio de mercado Chile (3 AM)
+
+Informe: `estudios/2026-10-28.md`. 5 búsquedas WebSearch; cifras en CLP son estimaciones (TC ~950).
+
+Veredictos:
+- 1 Reactivación pacientes dentales: COMPETITIVO CON CONDICIONES, 7/10 (Dentalink/Medilink solo WhatsApp manual; validar que no tengan recall; datos de salud; ~CLP 2,25 M/mes con 15 clínicas).
+- 3 Micro-apps globales: COMPETITIVO CON CONDICIONES, 5/10.
+- 2 Fotos IA en CLP: NO COMPETITIVO, 4/10 (saturado, sustituto gratis).
+- 4 CV/ATS: NO COMPETITIVO, 3/10 (AITalnt, Kickresume).
+- 5 Arriendos propietarios: NO COMPETITIVO, 3/10 (Leasity, ticket bajo).
+
+Ranking: 1) #1 dental, 2) #3 micro-apps, 3) #2 fotos, 4) #4/#5.
+Pasos: 8–10 llamadas a dueños de clínicas; consultar a Dentalink/Medilink por recall y API; piloto cobrado por cita agendada con CSV manual.
+
+Datos clave: 19.100 dentistas chilenos (2018), 28.335 inscritos (2021); Ley 21.719 vigente 1-dic-2026 salvo aplazamiento (boletín 18.623-07).
+
+URLs revisadas:
+- https://www.capterra.es/software/196361/dentalink
+- https://intercom.help/softwaredentalink/es/articles/9493137-como-notificar-cita-por-whatsapp
+- https://intercom.help/softwaremedilink/es/articles/9541291-como-confirmar-las-citas-por-whatsapp
+- https://www.wati.io/geo-chile-es/como-implementar-recordatorios-de-citas-por-whatsapp-en-una-cl
+- https://www.biobiochile.cl/especial/bbcl-investiga/noticias/reportajes/2021/11/02/chile-no-sonrie-apenas-el-05-de-los-odontologos-inscritos-en-el-pais-atiende-con-bono-fonasa.shtml
+- https://repositorio.unab.cl/items/a6aba4a1-5a7c-489f-b958-ce63122ac3b3/full
+- https://instaheadshots.com/es/ai-headshot-generator
+- https://similarlabs.com/es/p/realfakephotos
+- https://blog.waalaxy.com/es/fotos-linkedin-ia-2/
+- https://www.df.cl/df-mas/punto-de-partida/una-plataforma-para-administrar-arriendos-la-nueva-inversion-de-fen-y
+- https://www.descubre.vc/leasity
+- https://www.remax-first.cl/costo-administracion-propiedad-chile/
+- https://www.diarioconstitucional.cl/2026/06/12/la-ley-21-719-entra-en-vigor-el-1-de-diciembre-y-expone-vacios-en-regulacion-de-pequenas-empresas/
+- https://www.bcn.cl/balance-legislativo/detalle/ficha_LEY_21719_2024-12-13
