@@ -526,12 +526,28 @@ async function api(request, env, url, negocio, modo) {
     if (metodo !== "GET") return json({ error: "Método no permitido" }, 405);
     if (!env.BOT || !env.INTERNO_KEY) return json({ error: "El envío de mensajes aún no está configurado." }, 503);
     try {
-      const r = await llamarBot(env, "/interno/plantilla-estado", { negocio_id: negocio.id });
+      const nombre = new URL(request.url).searchParams.get("nombre");
+      const r = await llamarBot(env, "/interno/plantilla-estado", { negocio_id: negocio.id, nombre });
       const d = await r.json().catch(() => ({}));
       if (r.status !== 200) return json({ error: "No se pudo consultar el estado de la plantilla." }, 502);
-      return json({ existe: Boolean(d.existe), estado: String(d.estado ?? ""), categoria: d.categoria ?? null, motivo: d.motivo ?? null });
+      return json({ existe: Boolean(d.existe), nombre: d.nombre ?? null, estado: String(d.estado ?? ""), categoria: d.categoria ?? null, motivo: d.motivo ?? null });
     } catch (_) {
       return json({ error: "No se pudo consultar el estado de la plantilla." }, 502);
+    }
+  }
+
+  // Solicita en Meta la variante neutra del recordatorio (idempotente: si ya existe, no la vuelve a crear).
+  if (ruta === "/api/plantilla/crear") {
+    if (metodo !== "POST") return json({ error: "Método no permitido" }, 405);
+    if (!env.BOT || !env.INTERNO_KEY) return json({ error: "El envío de mensajes aún no está configurado." }, 503);
+    try {
+      const r = await llamarBot(env, "/interno/plantilla-crear", { negocio_id: negocio.id, variante: "neutra" });
+      const d = await r.json().catch(() => ({}));
+      if (r.status === 200) return json({ ok: true, nombre: d.nombre ?? null, estado: d.estado ?? "PENDING", categoria: d.categoria ?? null });
+      if ([409, 502].includes(r.status) && typeof d.error === "string") return json({ error: d.error, estado: d.estado ?? null }, r.status);
+      return json({ error: "No se pudo solicitar la plantilla." }, 502);
+    } catch (_) {
+      return json({ error: "No se pudo solicitar la plantilla." }, 502);
     }
   }
 
