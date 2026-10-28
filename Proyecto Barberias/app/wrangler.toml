@@ -25,3 +25,7 @@ database_id = "235ae768-f37e-40b1-afc5-b39ef8d73cfd"
 
 [observability]
 enabled = true
+
+# Llave PÚBLICA de las notificaciones push (no es secreta; la privada vive solo en el bot).
+[vars]
+VAPID_PUBLIC_KEY = "BOdnhqf0m5MtbrbYx1OvjNwy_x72f1u19-WKFvEkQt2PGawpsaVW_grQf6Io9xzLpqRBmx_91C_9wNt9InfOKPI"

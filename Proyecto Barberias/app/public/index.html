@@ -155,6 +155,22 @@
   @media (prefers-color-scheme: dark) { .kpi .ic, .kpi .ic[class*="ic-"] { color: #e6c98a !important; background: rgba(255,255,255,.09) !important; } .kpi .ic svg { stroke: currentColor !important; } }
   .plan-hero .hito.hito-ultimo .hito-label { left: auto !important; right: -4px !important; transform: none !important; text-align: right !important; }
   .plan-hero .hito.hito-primero .hito-label { left: -4px !important; transform: none !important; text-align: left !important; }
+
+  /* Tarjeta de notificaciones */
+  .notif-card { display: flex; gap: 14px; align-items: flex-start; padding: 16px; margin: 12px 0 14px; }
+  .notif-card .notif-ic { width: 44px; height: 44px; border-radius: 14px; display: grid; place-items: center; flex: none; background: rgba(184,137,59,.14); color: var(--laton, #b8893b); }
+  .notif-card .notif-ic svg { transform-origin: 50% 8%; }
+  .notif-card.activa .notif-ic svg { animation: campana 1.4s var(--ease, ease) 1; }
+  @keyframes campana { 0%,100% { transform: rotate(0); } 15% { transform: rotate(16deg); } 30% { transform: rotate(-14deg); } 45% { transform: rotate(10deg); } 60% { transform: rotate(-6deg); } }
+  .notif-card .notif-txt { min-width: 0; flex: 1; }
+  .notif-card h3 { margin: 0 0 3px; font-size: 15px; font-weight: 700; letter-spacing: -.01em; }
+  .notif-card p { margin: 0 0 10px; font-size: 13px; color: var(--suave); line-height: 1.4; }
+  .notif-acciones { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
+  .notif-acciones .btn { min-height: 42px; padding: 9px 16px; }
+  .notif-card .enlace { background: none; border: 0; color: var(--suave); font-size: 12.5px; text-decoration: underline; cursor: pointer; padding: 8px 4px; }
+  .notif-ok { display: inline-flex; align-items: center; gap: 6px; font-size: 12.5px; font-weight: 700; color: #176d48; background: rgba(31,138,91,.12); padding: 5px 11px; border-radius: 999px; margin-bottom: 10px; }
+  @media (prefers-color-scheme: dark) { .notif-ok { color: #6fe0ac; background: rgba(111,224,172,.12); } .notif-card .notif-ic { color: #e6c98a; } }
+  @media (prefers-reduced-motion: reduce) { .notif-card.activa .notif-ic svg { animation: none; } }
 </style>
 </head>
 <body>
@@ -504,6 +520,7 @@
 
     $("vista-resumen").innerHTML = `
       ${fraseCard()}
+      <div class="tarjeta notif-card" id="notif-card"></div>
       <div class="tarjeta resumen-hero">
         <div><div class="hero-kicker">Tu comunidad</div><div class="hero-numero">${numeroAnimado(c.registrados, "", "comunidad")}</div><div class="hero-label">clientes fidelizados</div><span class="crecimiento ${crecimiento >= 0 ? "pos" : "neg"}">${crecimiento >= 0 ? "+" : "−"}${Math.abs(crecimiento)} vs mes pasado</span><svg class="spark-mini" viewBox="0 0 70 28" preserveAspectRatio="none" aria-hidden="true"><polyline class="spark-line animar" points="${miniPuntos}" stroke-dasharray="150" stroke-dashoffset="150"/></svg></div>
         ${metaRing(r.metas.clientes.actual, r.metas.clientes.meta)}
@@ -539,6 +556,7 @@
     document.querySelectorAll(".canje-reciente[data-tel]").forEach((el) => el.onclick = () => abrirCliente(el.dataset.tel));
     const vencen = $("kpi-por-vencer"); if (vencen) vencen.onclick = () => { filtro = "por_vencer"; mostrarVista("clientes"); };
     activarFrase();
+    pintarNotificaciones();
     activarAnimaciones($("vista-resumen"));
     revisarAscenso(r.nivel);
     if (scrollY) window.scrollTo(0, scrollY);
@@ -807,6 +825,87 @@
     } catch (e) { if (e.sesion) return cerrarSesion(); toast(e.message); vistaChats(); }
   }
 
+
+  // ---------- Notificaciones push: aviso al teléfono cuando se fidelice un cliente ----------
+  const pushSoportado = () => "serviceWorker" in navigator && "PushManager" in window && "Notification" in window;
+  const esIOS = () => /iPad|iPhone|iPod/.test(navigator.userAgent) || (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1);
+  const esInstalada = () => (window.matchMedia && window.matchMedia("(display-mode: standalone)").matches) || navigator.standalone === true;
+  const claveVapid = (b64url) => {
+    const b64 = b64url.replace(/-/g, "+").replace(/_/g, "/") + "=".repeat((4 - (b64url.length % 4)) % 4);
+    return Uint8Array.from(atob(b64), (c) => c.charCodeAt(0));
+  };
+  async function suscripcionActual() {
+    if (!pushSoportado()) return null;
+    try { const reg = await navigator.serviceWorker.ready; return await reg.pushManager.getSubscription(); } catch (e) { return null; }
+  }
+  async function activarNotificaciones() {
+    const btn = $("notif-activar");
+    if (btn) btn.disabled = true;
+    try {
+      const permiso = await Notification.requestPermission(); // solo se pide por este gesto del usuario
+      if (permiso !== "granted") { toast(permiso === "denied" ? "Las notificaciones están bloqueadas" : "No se activaron las notificaciones"); return; }
+      const reg = await navigator.serviceWorker.ready;
+      const { clave } = await api("push/clave");
+      const sub = (await reg.pushManager.getSubscription()) || (await reg.pushManager.subscribe({ userVisibleOnly: true, applicationServerKey: claveVapid(clave) }));
+      await api("push/suscribir", "POST", { subscription: sub.toJSON() });
+      vibrar(); toast("Notificaciones activadas");
+    } catch (e) {
+      if (e.sesion) return cerrarSesion();
+      toast(e.message || "No se pudieron activar las notificaciones");
+    } finally { pintarNotificaciones(); }
+  }
+  async function desactivarNotificaciones() {
+    try {
+      const sub = await suscripcionActual();
+      if (sub) { const endpoint = sub.endpoint; await sub.unsubscribe(); await api("push/desuscribir", "POST", { endpoint }).catch(() => {}); }
+      toast("Notificaciones desactivadas");
+    } catch (e) { toast("No se pudieron desactivar"); }
+    pintarNotificaciones();
+  }
+  async function probarNotificacion() {
+    const btn = $("notif-probar");
+    if (btn) btn.disabled = true;
+    try { const r = await api("push/probar", "POST"); toast(r.enviadas > 0 ? "Notificación enviada, revisa tu teléfono" : "No se pudo entregar la notificación"); }
+    catch (e) { if (e.sesion) return cerrarSesion(); toast(e.message || "No se pudo enviar"); }
+    finally { if (btn) btn.disabled = false; }
+  }
+  async function pintarNotificaciones() {
+    const card = $("notif-card");
+    if (!card) return;
+    const cuerpo = (icono, titulo, texto, extra = "", clase = "") => {
+      card.className = "tarjeta notif-card " + clase;
+      card.innerHTML = `<div class="notif-ic">${ico(icono, 22)}</div><div class="notif-txt"><h3>${titulo}</h3><p>${texto}</p>${extra}</div>`;
+    };
+    if (!pushSoportado()) {
+      if (esIOS() && !esInstalada()) {
+        cuerpo("bell", "Activa los avisos en tu iPhone", "Toca el botón <b>Compartir</b> del navegador y elige <b>“Añadir a pantalla de inicio”</b>. Abre la app desde ese ícono y activa las notificaciones aquí.");
+      } else {
+        cuerpo("bell", "Notificaciones no disponibles", "Este navegador no admite notificaciones. Prueba desde Chrome o Safari actualizado.");
+      }
+      return;
+    }
+    const sub = await suscripcionActual();
+    if (!$("notif-card")) return;
+    if (Notification.permission === "denied") {
+      cuerpo("bell", "Notificaciones bloqueadas", "Las bloqueaste en este dispositivo. Para recibirlas, actívalas en los ajustes del navegador o del teléfono para este sitio.");
+    } else if (sub && Notification.permission === "granted") {
+      cuerpo("bell", "Avisos de clientes fidelizados", "Te avisaremos al instante cada vez que un cliente se fidelice.",
+        `<div class="notif-ok">${ico("check", 14)} Activas en este dispositivo</div><div class="notif-acciones"><button class="btn sec" id="notif-probar">Enviar notificación de prueba</button><button class="enlace" id="notif-off">Desactivar</button></div>`, "activa");
+      $("notif-probar").onclick = probarNotificacion;
+      $("notif-off").onclick = desactivarNotificaciones;
+    } else {
+      cuerpo("bell", "Entérate cuando se fidelice un cliente", "Recibe una notificación en tu teléfono cada vez que alguien se una a tu programa de fidelización.",
+        `<div class="notif-acciones"><button class="btn" id="notif-activar">Activar notificaciones</button></div>`);
+      $("notif-activar").onclick = activarNotificaciones;
+    }
+  }
+  if ("serviceWorker" in navigator) {
+    navigator.serviceWorker.addEventListener("message", (e) => {
+      if (e.data?.tipo === "resuscribir") pintarNotificaciones();
+      if (e.data?.tipo === "push") toast(e.data.titulo || "Nuevo cliente fidelizado");
+    });
+  }
+
   // ---------- Navegación ----------
   let indicadoresListos = false;
   function actualizarIndicadores(nombre = vistaActual, inmediato = false) {
@@ -875,7 +974,9 @@
     $("avatar").textContent = iniciales(yo.nombre, "B");
     document.title = `${yo.nombre} — JPB`;
     actualizarModoUI();
-    await mostrarVista("resumen");
+    const deseada = new URLSearchParams(location.search).get("vista");
+    await mostrarVista(["resumen", "clientes", "chats", "facturacion"].includes(deseada) ? deseada : "resumen");
+    if (deseada) history.replaceState(null, "", location.pathname);
     document.querySelector(".login-transicion")?.remove();
   }
 

@@ -452,6 +452,57 @@ async function api(request, env, url, negocio, modo) {
     return json({ error: "WhatsApp no aceptó el mensaje. Intenta de nuevo." }, 502);
   }
 
+  // ---- Notificaciones push (los avisos los envía el bot; la app solo guarda los dispositivos) ----
+  if (ruta === "/api/push/clave") {
+    if (metodo !== "GET") return json({ error: "Método no permitido" }, 405);
+    if (!env.VAPID_PUBLIC_KEY) return json({ error: "Las notificaciones aún no están configuradas." }, 503);
+    return json({ clave: env.VAPID_PUBLIC_KEY });
+  }
+
+  if (ruta === "/api/push/suscribir") {
+    if (metodo !== "POST") return json({ error: "Método no permitido" }, 405);
+    const cuerpo = await request.json().catch(() => ({}));
+    const sub = cuerpo.subscription ?? {};
+    const endpoint = typeof sub.endpoint === "string" ? sub.endpoint : "";
+    const p256dh = typeof sub.keys?.p256dh === "string" ? sub.keys.p256dh : "";
+    const auth = typeof sub.keys?.auth === "string" ? sub.keys.auth : "";
+    const b64url = /^[A-Za-z0-9_-]+={0,2}$/;
+    if (!endpoint.startsWith("https://") || endpoint.length > 700 || !b64url.test(p256dh) || p256dh.length > 200 || !b64url.test(auth) || auth.length > 100) {
+      return json({ error: "Suscripción inválida" }, 400);
+    }
+    // El dispositivo queda asociado SIEMPRE a la barbería autenticada. Máximo 10 por barbería.
+    await db.batch([
+      db.prepare("INSERT OR REPLACE INTO push_subs (endpoint, negocio_id, p256dh, auth, creado_en) VALUES (?, ?, ?, ?, ?)").bind(endpoint, negocio.id, p256dh, auth, Date.now()),
+      db.prepare("DELETE FROM push_subs WHERE negocio_id = ? AND endpoint NOT IN (SELECT endpoint FROM push_subs WHERE negocio_id = ? ORDER BY creado_en DESC LIMIT 10)").bind(negocio.id, negocio.id),
+    ]);
+    return json({ ok: true });
+  }
+
+  if (ruta === "/api/push/desuscribir") {
+    if (metodo !== "POST") return json({ error: "Método no permitido" }, 405);
+    const cuerpo = await request.json().catch(() => ({}));
+    const endpoint = typeof cuerpo.endpoint === "string" ? cuerpo.endpoint : "";
+    if (!endpoint) return json({ error: "Falta el dispositivo" }, 400);
+    await db.prepare("DELETE FROM push_subs WHERE endpoint = ? AND negocio_id = ?").bind(endpoint, negocio.id).run();
+    return json({ ok: true });
+  }
+
+  if (ruta === "/api/push/probar") {
+    if (metodo !== "POST") return json({ error: "Método no permitido" }, 405);
+    if (!env.BOT || !env.INTERNO_KEY) return json({ error: "El envío de mensajes aún no está configurado." }, 503);
+    const hay = await db.prepare("SELECT 1 FROM push_subs WHERE negocio_id = ? LIMIT 1").bind(negocio.id).first();
+    if (!hay) return json({ error: "Primero activa las notificaciones en este dispositivo." }, 409);
+    let respuesta;
+    try {
+      respuesta = await llamarBot(env, "/interno/push-prueba", { negocio_id: negocio.id });
+    } catch (_) {
+      return json({ error: "No se pudo enviar la notificación de prueba." }, 502);
+    }
+    const datos = await respuesta.json().catch(() => ({}));
+    if (respuesta.status === 200) return json({ ok: true, enviadas: Number(datos.enviadas) || 0 });
+    return json({ error: "No se pudo enviar la notificación de prueba." }, 502);
+  }
+
   if (ruta === "/api/pausa") {
     if (metodo !== "POST") return json({ error: "Método no permitido" }, 405);
     const cuerpo = await request.json().catch(() => ({}));
