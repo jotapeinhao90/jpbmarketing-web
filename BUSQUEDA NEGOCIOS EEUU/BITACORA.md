@@ -612,3 +612,25 @@ URLs revisadas:
 - https://www.remax-first.cl/costo-administracion-propiedad-chile/
 - https://www.diarioconstitucional.cl/2026/06/12/la-ley-21-719-entra-en-vigor-el-1-de-diciembre-y-expone-vacios-en-regulacion-de-pequenas-empresas/
 - https://www.bcn.cl/balance-legislativo/detalle/ficha_LEY_21719_2024-12-13
+
+## 2026-10-28 – Prospección Recepcia
+- Leads: 15 (WebFetch sin red; solo WebSearch, datos no verificados en fuente; búsquedas de Quilpué/Villa Alemana, Maipú urgencias y Temuco talleres sin resultados útiles).
+- Rubros/ciudades: psicología Temuco, kinesiología Concepción, inmobiliaria Talcahuano, estética La Serena, veterinaria Maipú, gimnasios Coyhaique, dental Coquimbo.
+- URLs revisadas:
+  - https://agendapro.com/mp/cl/depilacion-laser-la-serena
+  - https://agendapro.com/mp/cl/pl/clinica-dental-salud-san-carlos-coquimbo-coquimbo/34536
+  - https://agendapro.com/mp/cl/pl/gimnasio-coach-electrofitness-coyhaique/234048
+  - https://agendapro.com/mp/cl/pl/gimnasio-union-espanola-coyhaique/234022
+  - https://agendapro.com/mp/cl/pl/homefitcoyhaique-coyhaique/234049
+  - https://dermatologiacl.com/la-serena/
+  - https://encuadrado.com/especialidades/psicologia/todos/temuco
+  - https://encuadrado.com/p/denise-mallouhi-wellmann
+  - https://kinetic.cl/
+  - https://mercantil.com/empresa/lorens-propiedades/talcahuano/300226927/esp
+  - https://psicologadayanne.com/
+  - https://sersagaz.cl/
+  - https://www.chiletrabajos.cl/trabajo/3788530
+  - https://www.chiletrabajos.cl/trabajo/medico-veterinario-full-time-mart-a-sab-maipu-3814622
+  - https://www.doctoralia.cl/psicologo/temuco
+  - https://www.psicologaconstanzaescalona.cl/
+  - https://www.yapo.cl/bienes-raices-venta-de-propiedades/biobio-talcahuano.11
