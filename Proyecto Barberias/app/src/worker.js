@@ -3,10 +3,14 @@
 const ZONA_CHILE = "America/Santiago";
 const DIA_MS = 86_400_000;
 const MARCADOR_DEMO = "5690000";
+const TRAMOS = [
+  { nombre: "Nivel 1", clientes: 0, precio: 25000 },
+  { nombre: "Nivel 2", clientes: 100, precio: 85000 },
+  { nombre: "Nivel 3", clientes: 300, precio: 120000 },
+];
 // Plan inventado que se muestra únicamente en el modo demo.
 const DEMO_PLAN = {
-  plan_nombre: "Plan Fidelización", precio_mensual: 49990, precio_canje: 0,
-  dia_corte: 5, inicio_servicio: "2025-08-05", meta_clientes: 80,
+  plan_nombre: "Plan Fidelización", dia_corte: 5, inicio_servicio: "2025-08-05", meta_clientes: 80,
   meta_canjes: 60, ticket_promedio: 12000,
 };
 const json = (data, status = 200) => Response.json(data, { status });
@@ -118,6 +122,29 @@ function normalizarCodigo(valor) {
 function numero(valor) {
   const n = Number(valor);
   return Number.isFinite(n) ? n : 0;
+}
+
+export function tramoPara(n) {
+  const fidelizados = Math.max(0, numero(n));
+  return TRAMOS.findLast((tramo) => fidelizados >= tramo.clientes) ?? TRAMOS[0];
+}
+
+export function calcularNivel(n) {
+  const fidelizados = Math.max(0, numero(n));
+  const tramo = tramoPara(fidelizados);
+  const indice = TRAMOS.indexOf(tramo);
+  const siguienteTramo = TRAMOS[indice + 1];
+  return {
+    fidelizados,
+    tramos: TRAMOS.map((t) => ({ ...t, alcanzado: fidelizados >= t.clientes })),
+    actual: { ...tramo, indice },
+    siguiente: siguienteTramo ? {
+      ...siguienteTramo,
+      faltan: siguienteTramo.clientes - fidelizados,
+      progreso_pct: Math.round((fidelizados - tramo.clientes) / (siguienteTramo.clientes - tramo.clientes) * 100),
+    } : null,
+    progreso_total_pct: Math.min(100, Math.round(fidelizados / TRAMOS.at(-1).clientes * 100)),
+  };
 }
 
 async function existeConversacion(db, negocioId, telefono, modo) {
@@ -249,6 +276,7 @@ async function resumen(db, negocio, modo) {
       enviados_mes: numero(mensajesR?.enviados_mes),
       conversaciones_mes: numero(mensajesR?.conversaciones_mes),
     },
+    nivel: calcularNivel(registrados),
     semanas: semanas.map(({ desde, registros, canjes }) => ({ desde, registros, canjes })),
   };
 }
@@ -258,23 +286,24 @@ async function facturacion(db, negocio, modo) {
   const hoy = fechaChile(Date.now());
   const corte = corteValido(plan.dia_corte);
   const ciclosBase = ciclosEntre(plan.inicio_servicio, hoy, corte);
-  const [canjesR, pagosR] = await Promise.all([
-    db.prepare(`SELECT canjeado_en FROM clientes WHERE negocio_id = ? AND ${condTel("telefono", modo)} AND canjeado_en IS NOT NULL`).bind(negocio.id).all(),
+  const [clientesR, pagosR] = await Promise.all([
+    db.prepare(`SELECT creado_en FROM clientes WHERE negocio_id = ? AND ${condTel("telefono", modo)} AND codigo IS NOT NULL`).bind(negocio.id).all(),
     db.prepare("SELECT periodo, monto, pagado_en, nota FROM pagos WHERE negocio_id = ? AND demo = ?").bind(negocio.id, modo === "demo" ? 1 : 0).all(),
   ]);
   const pagos = new Map(pagosR.results.map((p) => [p.periodo, p]));
-  const fechasCanje = canjesR.results.map((c) => fechaChile(c.canjeado_en));
-  const mensual = numero(plan.precio_mensual), porCanje = numero(plan.precio_canje);
+  const fechasClientes = clientesR.results.map((c) => fechaChile(c.creado_en));
+  const nivel = calcularNivel(fechasClientes.length);
   const inicio = plan.inicio_servicio;
   const todos = ciclosBase.map((c) => {
     // El primer ciclo cuenta desde el inicio real del servicio, no desde el día de corte anterior.
     const desde = c.desde < inicio ? inicio : c.desde;
-    const canjes = fechasCanje.filter((f) => f >= desde && f <= c.hasta).length;
+    const tramoCalculado = tramoPara(fechasClientes.filter((f) => f < desde).length);
     const pago = pagos.get(c.periodo);
     // Un ciclo pagado conserva lo que realmente se pagó, aunque después cambie el plan.
-    const monto = pago ? numero(pago.monto) : mensual + canjes * porCanje;
+    const monto = pago ? numero(pago.monto) : tramoCalculado.precio;
+    const tramoPago = pago ? TRAMOS.find((tramo) => tramo.precio === monto) : null;
     return {
-      ...c, desde, canjes, monto,
+      ...c, desde, nivel: (tramoPago ?? tramoCalculado).nombre, monto,
       estado: pago ? "pagado" : c.hasta >= hoy ? "en_curso" : "pendiente",
       pagado_en: pago?.pagado_en ?? null,
       nota: pago?.nota ?? "",
@@ -283,16 +312,16 @@ async function facturacion(db, negocio, modo) {
   const actual = todos.at(-1);
   return {
     plan: {
-      nombre: plan.plan_nombre,
-      precio_mensual: mensual,
-      precio_canje: porCanje,
+      nombre: "Plan Fidelización",
       dia_corte: corte,
       inicio_servicio: plan.inicio_servicio,
     },
+    nivel,
+    tiene_servicio: Boolean(partesISO(plan.inicio_servicio) && plan.inicio_servicio <= hoy),
     ciclos: todos.slice(-6).reverse(),
     deuda: todos.filter((c) => c.estado === "pendiente").reduce((s, c) => s + c.monto, 0),
     // Si el ciclo actual ya está pagado, lo próximo a cobrar es el valor vigente del plan.
-    proximo_cobro: actual ? { fecha: moverDias(actual.hasta, 1), monto: actual.estado === "pagado" ? mensual : actual.monto } : null,
+    proximo_cobro: actual ? { fecha: moverDias(actual.hasta, 1), monto: actual.estado === "pagado" ? nivel.actual.precio : actual.monto } : null,
   };
 }
 
@@ -304,11 +333,14 @@ async function api(request, env, url, negocio, modo) {
   if (ruta === "/api/yo") {
     if (metodo !== "GET") return json({ error: "Método no permitido" }, 405);
     const plan = planEnModo(negocio, modo);
-    const precio = numero(plan.precio_mensual);
+    const fidelizados = numero((await db.prepare(
+      `SELECT COUNT(*) AS total FROM clientes WHERE negocio_id = ? AND ${condTel("telefono", modo)} AND codigo IS NOT NULL`
+    ).bind(negocio.id).first())?.total);
+    const precio = tramoPara(fidelizados).precio;
     return json({
       nombre: negocio.nombre, prefijo: negocio.prefijo_codigo, plan_nombre: plan.plan_nombre, descuento_pct: numero(negocio.descuento_pct),
       meta_clientes: numero(plan.meta_clientes), meta_canjes: numero(plan.meta_canjes),
-      ticket_promedio: numero(plan.ticket_promedio), precio_mensual: precio, modo, tiene_plan: precio > 0,
+      ticket_promedio: numero(plan.ticket_promedio), precio_actual: precio, precio_mensual: precio, modo, tiene_plan: true,
     });
   }
 
