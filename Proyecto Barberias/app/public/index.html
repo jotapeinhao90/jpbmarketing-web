@@ -180,7 +180,6 @@
     <button class="nav-item activo" data-vista="resumen"><span class="ico"></span>Resumen</button>
     <button class="nav-item" data-vista="clientes"><span class="ico"></span>Clientes</button>
     <button class="nav-item" data-vista="chats"><span class="ico"></span>Conversaciones</button>
-    <button class="nav-item" data-vista="canjear"><span class="ico"></span>Canjear código</button>
     <button class="nav-item" data-vista="facturacion"><span class="ico"></span>Facturación</button>
     <button class="nav-item" id="salir" style="margin-top:18px"><span class="ico"></span>Cerrar sesión</button>
   </aside>
@@ -207,7 +206,6 @@
       <section id="vista-resumen"></section>
       <section id="vista-clientes" class="oculto"></section>
       <section id="vista-chats" class="oculto"></section>
-      <section id="vista-canjear" class="oculto"></section>
       <section id="vista-facturacion" class="oculto"></section>
     </div>
   </main>
@@ -217,7 +215,6 @@
   <button data-vista="resumen" class="activo"><span class="ico"></span>Resumen</button>
   <button data-vista="clientes"><span class="ico"></span>Clientes</button>
   <button data-vista="chats"><span class="ico"></span>Chats</button>
-  <button data-vista="canjear"><span class="ico"></span>Canjear</button>
   <button data-vista="facturacion"><span class="ico"></span>Cobros</button>
 </nav>
 <div id="toast"></div>
@@ -227,7 +224,7 @@
   const CLAVE_KEY = "barberiaAcceso";
   const MODO_KEY = "barberiaModo";
   const COLORES = ["#0f2236", "#b8893b", "#356b73", "#56647a", "#8a672d", "#1f8a5b", "#c0392b", "#315d85"];
-  const TITULOS = { resumen: "Resumen", clientes: "Clientes", chats: "Conversaciones", canjear: "Canjear código", facturacion: "Facturación" };
+  const TITULOS = { resumen: "Resumen", clientes: "Clientes", chats: "Conversaciones", facturacion: "Facturación" };
   const $ = (id) => document.getElementById(id);
   let acceso = "";
   let yo = null;
@@ -636,46 +633,6 @@
   }
   function cerrarHoja() { const h = $("hoja"); if (h) { h.classList.add("cerrando"); setTimeout(() => h.remove(), reduceMotion.matches ? 0 : 280); } }
 
-  function vistaCanjear() {
-    $("vista-canjear").innerHTML = `
-      <div class="canje-box tarjeta">
-        <div class="canje-icono">${ico("ticket", 27)}</div>
-        <h2>Canjear código</h2>
-        <p>Pídele al cliente que te muestre su código (ej. <b>${escapar((yo.prefijo || "KEM"))}-JUAN-AB12</b>) y escríbelo aquí.</p>
-        <input id="codigo" class="campo" placeholder="CÓDIGO" autocomplete="off" autocapitalize="characters" spellcheck="false">
-        <button id="validar" class="btn" style="width:100%;padding:14px;margin-top:12px">Validar código</button>
-        <div id="resultado"></div>
-      </div>`;
-    const input = $("codigo");
-    const validar = async () => {
-      const codigo = input.value.trim();
-      if (!codigo) return;
-      $("validar").disabled = true;
-      try {
-        const r = await api("codigo/validar", "POST", { codigo });
-        $("resultado").innerHTML = `<div class="resultado ok"><h3>Código válido</h3>
-          <div><b>${escapar(r.nombre || "Cliente")}</b> · ${escapar(r.codigo)}</div>
-          <div class="desc">${r.descuento_pct}% de descuento</div>
-          <div style="color:var(--suave);font-size:13px">Vence el ${fechaMs(r.vence)}</div>
-          <button id="confirmar" class="btn" style="width:100%;margin-top:14px;padding:13px">Confirmar canje</button></div>`;
-        $("confirmar").onclick = async () => {
-          $("confirmar").disabled = true;
-          try {
-            await api("canjear", "POST", { codigo });
-            vibrar();
-            $("resultado").innerHTML = `<div class="resultado ok"><h3>Canje registrado</h3><div>Aplica el ${r.descuento_pct}% a ${escapar(r.nombre || "tu cliente")}.</div></div>`;
-            input.value = "";
-          } catch (e) { $("resultado").innerHTML = `<div class="resultado bad"><h3>No se pudo canjear</h3><div>${escapar(e.message)}</div></div>`; }
-        };
-      } catch (e) {
-        if (e.sesion) throw e;
-        $("resultado").innerHTML = `<div class="resultado bad"><h3>Código no válido</h3><div>${escapar(e.message)}</div></div>`;
-      } finally { $("validar").disabled = false; }
-    };
-    $("validar").onclick = validar;
-    input.addEventListener("keydown", (e) => { if (e.key === "Enter") validar(); });
-    input.focus();
-  }
 
   const ESTADO_CICLO = { pagado: ["ok", "Pagado"], pendiente: ["bad", "Pendiente"], en_curso: ["info", "En curso"] };
   async function vistaFacturacion() {
@@ -767,7 +724,7 @@
   async function abrirHilo(tel) {
     hiloTel = tel;
     document.body.classList.add("en-hilo");
-    if (vistaActual !== "chats") { vistaActual = "chats"; ["resumen", "clientes", "chats", "canjear", "facturacion"].forEach((v) => $("vista-" + v).classList.toggle("oculto", v !== "chats")); document.querySelectorAll("[data-vista]").forEach((b) => b.classList.toggle("activo", b.dataset.vista === "chats")); $("titulo").textContent = TITULOS.chats; }
+    if (vistaActual !== "chats") { vistaActual = "chats"; ["resumen", "clientes", "chats", "facturacion"].forEach((v) => $("vista-" + v).classList.toggle("oculto", v !== "chats")); document.querySelectorAll("[data-vista]").forEach((b) => b.classList.toggle("activo", b.dataset.vista === "chats")); $("titulo").textContent = TITULOS.chats; }
     let armado = false;
     let irAlFondo = true;
     const RAPIDAS = [
@@ -886,7 +843,7 @@
     vistaActual = nombre;
     document.body.classList.remove("en-hilo");
     if (nombre !== "chats") hiloTel = null;
-    ["resumen", "clientes", "chats", "canjear", "facturacion"].forEach((v) => $("vista-" + v).classList.toggle("oculto", v !== nombre));
+    ["resumen", "clientes", "chats", "facturacion"].forEach((v) => $("vista-" + v).classList.toggle("oculto", v !== nombre));
     document.querySelectorAll("[data-vista]").forEach((b) => b.classList.toggle("activo", b.dataset.vista === nombre));
     $("titulo").textContent = TITULOS[nombre];
     actualizarIndicadores(nombre);
@@ -894,9 +851,9 @@
     const destino = $("vista-" + nombre);
     destino.classList.add("vista-entrando");
     if (nombre === "resumen") destino.innerHTML = `<div class="skeleton skeleton-hero tarjeta"></div><div class="skeleton-grid">${"<div class=\"skeleton skeleton-kpi\"></div>".repeat(4)}</div>`;
-    else if (nombre !== "canjear") destino.innerHTML = `<div class="lista">${"<div class=\"skeleton item\" style=\"height:70px\"></div>".repeat(5)}</div>`;
+    else destino.innerHTML = `<div class="lista">${"<div class=\"skeleton item\" style=\"height:70px\"></div>".repeat(5)}</div>`;
     try {
-      await { resumen: vistaResumen, clientes: vistaClientes, chats: vistaChats, canjear: async () => vistaCanjear(), facturacion: vistaFacturacion }[nombre]();
+      await { resumen: vistaResumen, clientes: vistaClientes, chats: vistaChats, facturacion: vistaFacturacion }[nombre]();
       if (version !== cargaVersion) return;
       destino.classList.remove("vista-entrando"); void destino.offsetWidth; destino.classList.add("vista-entrando");
       if (nombre !== "resumen" && nombre !== "clientes" && nombre !== "facturacion") activarAnimaciones(destino);
@@ -978,7 +935,7 @@
   document.querySelectorAll("[data-modo]").forEach((b) => b.addEventListener("click", () => cambiarModo(b.dataset.modo)));
   $("salir").addEventListener("click", cerrarSesion);
 
-  const ICONOS_NAV = { resumen: "chart", clientes: "users", chats: "message", canjear: "ticket", facturacion: "wallet" };
+  const ICONOS_NAV = { resumen: "chart", clientes: "users", chats: "message", facturacion: "wallet" };
   document.querySelectorAll("[data-vista] .ico").forEach((el) => { el.innerHTML = ico(ICONOS_NAV[el.parentElement.dataset.vista], 18); });
   $("salir").querySelector(".ico").innerHTML = ico("logout", 18);
 
