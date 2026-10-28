@@ -273,6 +273,7 @@
     vistaObserver = null;
     listaObserver = null;
     cancelAnimationFrame(animacionesFrame);
+    animacionesFrame = 0; // si no se reinicia, contar() cree que ya hay una animación corriendo y los números se quedan en 0
     conteosActivos = [];
   };
   const vibrar = () => { if (!reduceMotion.matches && navigator.vibrate) navigator.vibrate(8); };
@@ -321,6 +322,15 @@
     }), { threshold: .12 });
     raiz.querySelectorAll(".lista .item,.fila-ciclo").forEach((el, i) => { el.dataset.orden = i; listaObserver.observe(el); });
     activarSpotlight(raiz);
+    // Seguro de cifras: si por cualquier motivo la animación de conteo no corrió, se muestra el valor final.
+    setTimeout(() => raiz.querySelectorAll("[data-count]:not([data-contado])").forEach((el) => {
+      const final = Number(el.dataset.count);
+      if (Number.isFinite(final)) { el.dataset.contado = "1"; el.textContent = final.toLocaleString("es-CL"); }
+    }), 2200);
+    setTimeout(() => raiz.querySelectorAll("[data-count][data-contado]").forEach((el) => {
+      const final = Number(el.dataset.count);
+      if (Number.isFinite(final) && el.textContent.replace(/\./g, "") !== String(final) && !conteosActivos.some((j) => j.el === el)) el.textContent = final.toLocaleString("es-CL");
+    }), 2600);
     // Red de seguridad: nada de esto debe quedarse invisible si el observador no alcanza a dispararse.
     setTimeout(() => raiz.querySelectorAll(".lista .item:not(.lista-visible),.fila-ciclo:not(.lista-visible)").forEach((el) => { el.style.opacity = "1"; }), 2600);
   };
@@ -597,6 +607,8 @@
     cont.querySelectorAll(".chip").forEach((b) => b.onclick = () => { filtro = b.dataset.f; vistaClientes(); });
     pintarLista();
     activarAnimaciones(cont);
+    clientesFirma = JSON.stringify(clientes.map((c) => [c.telefono, c.situacion, c.canjeado_en, c.codigo]));
+    programarRefrescoClientes();
   }
   function pintarLista() {
     const q = busqueda.trim().toLowerCase();
@@ -725,6 +737,21 @@
     return new Date(ts).toLocaleDateString("es-CL", { ...TZ, weekday: "long", day: "numeric", month: "long" });
   };
   const detenerRefresco = () => { clearInterval(refresco); refresco = null; };
+  let clientesFirma = "";
+  const programarRefrescoClientes = () => {
+    detenerRefresco();
+    if (modo !== "real" || vistaActual !== "clientes") return;
+    refresco = setInterval(async () => {
+      if (vistaActual !== "clientes" || document.hidden || $("hoja") || document.activeElement?.id === "buscar") return;
+      try {
+        const modoCarga = modo;
+        const nuevos = await api("clientes");
+        if (vistaActual !== "clientes" || modoCarga !== modo) return;
+        const firma = JSON.stringify(nuevos.map((c) => [c.telefono, c.situacion, c.canjeado_en, c.codigo]));
+        if (firma !== clientesFirma) { await vistaClientes(); }
+      } catch (e) { if (e.sesion) cerrarSesion(); }
+    }, 8000);
+  };
   const programarRefrescoResumen = () => {
     detenerRefresco();
     if (modo !== "real" || vistaActual !== "resumen") return;
