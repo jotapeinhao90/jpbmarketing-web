@@ -503,6 +503,24 @@ async function api(request, env, url, negocio, modo) {
     return json({ error: "No se pudo enviar la notificación de prueba." }, 502);
   }
 
+  if (ruta === "/api/contacto/eliminar") {
+    if (metodo !== "POST") return json({ error: "Método no permitido" }, 405);
+    const cuerpo = await request.json().catch(() => ({}));
+    const telefono = typeof cuerpo.telefono === "string" ? cuerpo.telefono : "";
+    if (!/^\d{6,20}$/.test(telefono)) return json({ error: "Teléfono inválido" }, 400);
+    if (!telefonoEnModo(telefono, modo)) return json({ error: "No existe esa conversación" }, 404);
+    if (!env.BOT || !env.INTERNO_KEY) return json({ error: "La eliminación aún no está configurada." }, 503);
+    if (!(await existeConversacion(db, negocio.id, telefono, modo))) return json({ error: "No existe esa conversación" }, 404);
+    let respuesta;
+    try {
+      respuesta = await llamarBot(env, "/interno/eliminar-contacto", { negocio_id: negocio.id, telefono });
+    } catch (_) {
+      return json({ error: "No se pudo eliminar el contacto. Intenta de nuevo." }, 502);
+    }
+    if (respuesta.status === 200) return json({ ok: true });
+    return json({ error: "No se pudo eliminar el contacto. Intenta de nuevo." }, 502);
+  }
+
   if (ruta === "/api/pausa") {
     if (metodo !== "POST") return json({ error: "Método no permitido" }, 405);
     const cuerpo = await request.json().catch(() => ({}));
