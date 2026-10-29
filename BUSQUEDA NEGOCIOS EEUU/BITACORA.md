@@ -634,3 +634,19 @@ URLs revisadas:
   - https://www.doctoralia.cl/psicologo/temuco
   - https://www.psicologaconstanzaescalona.cl/
   - https://www.yapo.cl/bienes-raices-venta-de-propiedades/biobio-talcahuano.11
+
+## 2026-10-29 – Prospección Recepcia
+- Leads: 15 (WebFetch sin red; solo WebSearch, datos no verificados en fuente; búsqueda de peluquerías Providencia y talleres La Serena sin resultados útiles).
+- Rubros/ciudades: estética Iquique, veterinaria Chillán, barberías Talca, pilates/gimnasio Rancagua.
+- URLs revisadas:
+  - https://agendapro.com/mp/cl/barba-talca
+  - https://agendapro.com/mp/cl/botox-iquique
+  - https://agendapro.com/mp/cl/centros-psicologicos-iquique
+  - https://agendapro.com/mp/cl/pl/animal-vet-chillan-viejo/34022
+  - https://agendapro.com/mp/cl/pl/centro-de-estetica-noel-cortes-e-i-r-l-iquique/216563
+  - https://agendapro.com/mp/cl/pl/centro-estetica-rosana-iquique/216530
+  - https://agendapro.com/mp/cl/pl/clinica-veterinaria-parque-lantano-chillan/34021
+  - https://agendapro.com/mp/cl/pl/clinica-y-farmacia-veterinaria-integral-chillan/34017
+  - https://agendapro.com/mp/cl/pl/profit-fitness-center-region-de-o-higgins/234713
+  - https://agendapro.com/mp/cl/pl/vetblu-centro-veterinario-chillan/34011
+  - https://agendapro.com/mp/cl/pl/veterinaria-budapets-chillan/34016
