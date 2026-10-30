@@ -650,3 +650,22 @@ URLs revisadas:
   - https://agendapro.com/mp/cl/pl/profit-fitness-center-region-de-o-higgins/234713
   - https://agendapro.com/mp/cl/pl/vetblu-centro-veterinario-chillan/34011
   - https://agendapro.com/mp/cl/pl/veterinaria-budapets-chillan/34016
+
+## 2026-10-30 – Prospección Recepcia
+- Leads: 15 (WebFetch sin red; solo WebSearch, datos no verificados en fuente; búsquedas de talleres Temuco y peluquerías Los Ángeles sin resultados útiles).
+- Rubros/ciudades: kinesiología/centros médicos Osorno y Temuco, dental y peluquería Puerto Montt, peluquerías Viña del Mar.
+- URLs revisadas:
+  - https://agendapro.com/mp/cl/pl/adri-hair-style-vina-del-mar/241661
+  - https://agendapro.com/mp/cl/pl/ariela-sinisterra-peluqueria-y-salon-de-belleza-vina-del-mar/241582
+  - https://agendapro.com/mp/cl/pl/centro-medico-medisur-temuco/39890
+  - https://agendapro.com/mp/cl/pl/clinica-dental-masterdent-puerto-montt/222050
+  - https://agendapro.com/mp/cl/pl/clinica-dental-puerto-montt-clinica-dental-wedent-puerto-montt/218171
+  - https://agendapro.com/mp/cl/pl/clinica-dental-uno-salud-puerto-montt/37704
+  - https://agendapro.com/mp/cl/pl/odontologia-sur-clinica-dental-puerto-montt/222009
+  - https://agendapro.com/mp/cl/pl/osorno-salud-centro-medico-osorno/36900
+  - https://agendapro.com/mp/cl/pl/peluqueria-boutique-unisex-puerto-montt/213675
+  - https://agendapro.com/mp/cl/pl/peluqueria-infantil-pelochic-vina-del-mar/40705
+  - https://agendapro.com/mp/cl/pl/salon-de-belleza-lady-s-vina-del-mar/241637
+  - https://agendapro.com/mp/cl/pl/urgencias-dentales-puerto-montt/218102
+  - https://www.cronoshare.cl/servicios/kinesiologos/region-de-los-lagos/osorno
+  - https://www.doctoralia.cl/clinicas/centro-kinesico-trioterapia
