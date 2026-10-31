@@ -669,3 +669,23 @@ URLs revisadas:
   - https://agendapro.com/mp/cl/pl/urgencias-dentales-puerto-montt/218102
   - https://www.cronoshare.cl/servicios/kinesiologos/region-de-los-lagos/osorno
   - https://www.doctoralia.cl/clinicas/centro-kinesico-trioterapia
+
+## 2026-10-31 – Prospección Recepcia
+- Leads: 15 (Villa Alemana, Quilpué, Ovalle, Los Ángeles). Rubros: pilates/gym, veterinaria, kinesiología, centros médicos, barbería, dental, estética.
+- Limitación: WebFetch sin red; solo resultados de WebSearch, datos no verificados.
+- URLs revisadas:
+  - https://agendapro.com/mp/cl/pl/clinica-dental-salud-dent/227085
+  - https://fisiosaludintegral.cl/domiciliaria/
+  - https://kinesiomedovalle.com/
+  - https://quieroentrenar.cl/listado/adulto/villa-alemana/alma-pilates-studio/
+  - https://veterinariaeverpet.cl/
+  - https://w3.metlife.cl/content/dam/metlifecom/cl/migration/beneficios-adicionales/pdfs/Red-Dental-Metlife-01052026.pdf
+  - https://wellhub.com/es-cl/search/partners/fitness-pro-gym/
+  - https://www.facebook.com/KevinBarber97/
+  - https://www.fresha.com/lp/en/bt/aesthetics/in/cl-villa-alemana
+  - https://www.instagram.com/bogota_barbershoplosangeles/
+  - https://www.instagram.com/clinicasecuelas/
+  - https://www.instagram.com/good.life_quilpue/
+  - https://www.kinesix.cl/
+  - https://www.reintegrachile.cl/
+  - https://www.veterinariavillaalemana.cl/
