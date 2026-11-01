@@ -689,3 +689,14 @@ URLs revisadas:
   - https://www.kinesix.cl/
   - https://www.reintegrachile.cl/
   - https://www.veterinariavillaalemana.cl/
+
+## 2026-11-01 – Prospección Recepcia
+- 6 leads (meta 15, no alcanzada: sin acceso a sitios de negocios, búsqueda débil). Puntajes bajos, sin dolor verificado.
+- Rubros/ciudades: inmobiliarias Punta Arenas, veterinaria Copiapó, dental Arica. Sin resultados útiles: talleres Antofagasta/Curicó, psicólogos Valdivia, gimnasios Calama.
+- URLs revisadas:
+  - https://mercantil.com/empresa/arecheta-propiedades/punta-arenas/300201901/esp
+  - https://mercantil.com/empresa/garcia-propiedades/punta-arenas/300316827/esp
+  - https://mercantil.com/empresa/roma-propiedades/punta-arenas/300252616/esp
+  - https://agendapro.com/mp/cl/pl/clinica-veterinaria-my-pet-region-de-atacama/241946
+  - https://www.doctoralia.cl/clinicas/clinica-dental-meli-dent
+  - https://w3.metlife.cl/content/dam/metlifecom/cl/migration/beneficios-adicionales/pdfs/Red-Dental-Digital-Metlife-01052026.pdf
