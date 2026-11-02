@@ -700,3 +700,19 @@ URLs revisadas:
   - https://agendapro.com/mp/cl/pl/clinica-veterinaria-my-pet-region-de-atacama/241946
   - https://www.doctoralia.cl/clinicas/clinica-dental-meli-dent
   - https://w3.metlife.cl/content/dam/metlifecom/cl/migration/beneficios-adicionales/pdfs/Red-Dental-Digital-Metlife-01052026.pdf
+
+## 2026-11-02 – Prospección Recepcia
+- 12 leads (meta 15 no alcanzada: doctoralia.cl y agendapro.com no accesibles por WebFetch; solo extractos de búsqueda). Puntajes 4-6, nada verificado en la fuente.
+- Rubros/ciudades: kinesiología Puerto Varas, estética Pucón, veterinaria El Quisco, dental San Antonio, taller Quillota. Sin resultados: talleres Villarrica/Pucón/Los Andes/San Felipe, psicólogos Linares, peluquerías Castro.
+- URLs revisadas:
+  - https://www.doctoralia.cl/clinicas/get-better-center
+  - https://www.doctoralia.cl/clinicas/centro-kinesico-reaktiva
+  - https://www.doctoralia.cl/clinicas/kinesiologia/puerto-varas
+  - https://agendapro.com/mp/cl/cejas-pucon
+  - https://agendapro.com/mp/cl/botox-pucon
+  - https://agendapro.com/mp/cl/pl/veterinaria-navidad-navidad/41367
+  - https://agendapro.com/mp/cl/pl/cet-puerto-varas-traumatologia-kinesiologia-ecografia-infantil-adolescente-y-adultos-ecotomografias-y-rayos-x-puerto-varas/37856
+  - https://www.chiletrabajos.cl/trabajo/3777264
+  - https://www.chiletrabajos.cl/trabajo/3815479
+  - https://euroamerica.cl/wp-content/img/colectivos/Ficha_EA_Red_Gerty_feb2025.pdf
+  - https://w3.metlife.cl/content/dam/metlifecom/cl/pdfs/mailing/red-dental-digital-metlife-01062025.pdf
