@@ -716,3 +716,18 @@ URLs revisadas:
   - https://www.chiletrabajos.cl/trabajo/3815479
   - https://euroamerica.cl/wp-content/img/colectivos/Ficha_EA_Red_Gerty_feb2025.pdf
   - https://w3.metlife.cl/content/dam/metlifecom/cl/pdfs/mailing/red-dental-digital-metlife-01062025.pdf
+
+## 2026-11-03 – Prospección Recepcia
+- 12 leads (meta 15 no alcanzada: WebFetch bloqueado para agendapro.com, mercantil.com, psicologiaymente.com y 2x3.cl; solo extractos de búsqueda). Puntajes 3-5, nada verificado.
+- Rubros/ciudades: dental y estética Linares, veterinaria Castro, psicología La Florida, dental y peluquería Los Andes. Sin resultados útiles: talleres Puente Alto, peluquerías San Felipe.
+- URLs revisadas:
+  - https://agendapro.com/mp/cl/consultas-medicas-la-florida
+  - https://agendapro.com/mp/cl/pl/centro-veterinario-piukevet-castro/33721
+  - https://agendapro.com/mp/cl/pl/clinica-dental-orthodent-dc-linares/36003
+  - https://agendapro.com/mp/cl/pl/clinica-dental-ortodentik-linares/35947
+  - https://agendapro.com/mp/cl/pl/clinica-dental-salud-oral-linares-linares/35945
+  - https://agendapro.com/mp/cl/pl/clinica-prosaluddental-linares/36001
+  - https://agendapro.com/mp/cl/pl/estudio-nui-linares-clinica-salud-y-estetica-linares/228778
+  - https://hair-salon-en.lorealprofessionnel.com/57879-soc-gonzalez-vergara-viviana-y-cia
+  - https://hair-salon-en.lorealprofessionnel.com/58270-ponte-bonita
+  - https://www.mercantil.com/clinicas-dentales/los-andes/valparaíso/7115/
