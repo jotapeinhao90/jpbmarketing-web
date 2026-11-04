@@ -731,3 +731,16 @@ URLs revisadas:
   - https://hair-salon-en.lorealprofessionnel.com/57879-soc-gonzalez-vergara-viviana-y-cia
   - https://hair-salon-en.lorealprofessionnel.com/58270-ponte-bonita
   - https://www.mercantil.com/clinicas-dentales/los-andes/valparaíso/7115/
+
+## 2026-11-04 – Prospección Recepcia
+- Leads: 15 (puntaje 4-5; datos de directorios, no verificados en la fuente).
+- Rubros/ciudades: dental, veterinaria, psicología y quiropraxia en Villarrica; gimnasios/pilates y fisioterapia en Pucón; veterinaria Panguipulli; barberías Angol. Sin resultados útiles: talleres Angol.
+- URLs revisadas:
+  - https://agendapro.com/mp/cl/barba-angol
+  - https://agendapro.com/mp/cl/pl/axel-munoz-fisioterapeuta-pucon/37457
+  - https://agendapro.com/mp/cl/pl/chile-quiropraxia-villarrica/226308
+  - https://agendapro.com/mp/cl/pl/clinica-veterinaria-panguipulli/228334
+  - https://agendapro.com/mp/cl/pl/sport-pucon-training-center/233575
+  - https://www.2x3.cl/servicios/clases-de-pilates/provincia-cautin/villarrica
+  - https://www.doctoralia.cl/psicologo/villarrica
+  - https://www.doctoralia.cl/tratamientos-servicios/primera-visita-odontologia/villarrica
