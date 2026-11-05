@@ -744,3 +744,27 @@ URLs revisadas:
   - https://www.2x3.cl/servicios/clases-de-pilates/provincia-cautin/villarrica
   - https://www.doctoralia.cl/psicologo/villarrica
   - https://www.doctoralia.cl/tratamientos-servicios/primera-visita-odontologia/villarrica
+
+## 2026-11-05 – Prospección Recepcia
+- 15 leads. Rubros: veterinaria, dental, estética/láser, kinesiología, centro médico, barbería, taller mecánico. Ciudades: Melipilla, San Fernando, Rengo, Santa Cruz, Peñaflor/Talagante.
+- Limitación: WebFetch bloqueado para agendapro.com, doctoralia.cl y 2x3.cl; solo extractos de WebSearch.
+- URLs revisadas (vía búsqueda):
+  - https://agendapro.com/mp/cl/depilacion-rebaje-completo-san-fernando
+  - https://agendapro.com/mp/cl/pl/5-stars-barber-shop-melipilla/36615
+  - https://agendapro.com/mp/cl/pl/barberia-menfresh-melipilla/36614
+  - https://automotrizmelipilla.com/
+  - https://ceoclinicadental.cl/contacto/
+  - https://clinicadantbrun.com/
+  - https://creoclinica.cl/
+  - https://esteticaintegralrengo.setmore.com/
+  - https://mabela.cl/
+  - https://melipets.cl/
+  - https://sparegiaestupenda.cl/
+  - https://www.bioimagen.cl/kinesiologia
+  - https://www.cuidapet.cl/comunas/melipilla
+  - https://www.findglocal.com/CL/San-Fernando/1444053412584664/Cl%C3%ADnica-San-Francisco
+  - https://www.guema.cl/clinica-dental-san-fernando
+  - https://www.implantologicadental.cl/
+  - https://www.instagram.com/bigboyschile/
+  - https://www.tallermecanicorys.cl/santiago/melipilla/
+  - https://www.unosalud.cl/clinicas/san-fernando/
