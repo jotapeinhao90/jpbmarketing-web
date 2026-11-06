@@ -768,3 +768,22 @@ URLs revisadas:
   - https://www.instagram.com/bigboyschile/
   - https://www.tallermecanicorys.cl/santiago/melipilla/
   - https://www.unosalud.cl/clinicas/san-fernando/
+
+## 2026-11-06 – Prospección Recepcia
+- Leads: 15 (calidad media-baja; sin teléfonos verificados por bloqueo de WebFetch).
+- Rubros: veterinaria, clínicas dentales, psicología, kinesiología, talleres, estética, corretaje.
+- Ciudades: Puente Alto, San Bernardo, Maipú, La Florida, Ñuñoa (Santiago) y Concepción.
+- URLs revisadas (vía WebSearch):
+  - https://agendapro.com/mp/cl/centros-dentales-maipu
+  - https://agendapro.com/mp/cl/centros-dentales-puente-alto
+  - https://agendapro.com/mp/cl/centros-dentales-san-bernardo
+  - https://agendapro.com/mp/cl/centros-psicologicos-puente-alto
+  - https://agendapro.com/mp/cl/pl/clinica-dental-salydent-san-bernardo/38833
+  - https://agendapro.com/mp/cl/pl/clinica-veterinaria-clavero-vet-puente-alto/37566
+  - https://agendapro.com/mp/cl/pl/clinica-veterinaria-n-q-pets-puente-alto/37570
+  - https://agendapro.com/mp/cl/pl/dr-pet-diego-portales-puente-alto/
+  - https://agendapro.com/mp/cl/pl/hospital-veterinario-nuevo-porvenir-puente-alto/37561
+  - https://agendapro.com/mp/cl/pl/kinesiologo-matias-carreno-la-florida/43023
+  - https://agendapro.com/mp/cl/pl/studio-marcelo-andre-atencion-solo-por-whatsapp/215041
+  - https://mercantil.com/empresa/propiedades-jaquelin-jara/concepcion/300240737/esp
+  - https://w3.metlife.cl/content/dam/metlifecom/cl/migration/beneficios-adicionales/pdfs/Red-Dental-Digital-Metlife-01052026.pdf
