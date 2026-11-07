@@ -787,3 +787,22 @@ URLs revisadas:
   - https://agendapro.com/mp/cl/pl/studio-marcelo-andre-atencion-solo-por-whatsapp/215041
   - https://mercantil.com/empresa/propiedades-jaquelin-jara/concepcion/300240737/esp
   - https://w3.metlife.cl/content/dam/metlifecom/cl/migration/beneficios-adicionales/pdfs/Red-Dental-Digital-Metlife-01052026.pdf
+
+## 2026-11-07 – Prospección Recepcia
+- Leads: 15 (calidad media-baja; datos de contacto casi todos no verificados).
+- Rubros/ciudades: clínicas dentales, kinesiología, gimnasios y peluquería en Calama; clínicas dentales en Vallenar.
+- Limitación: WebFetch bloqueado para agendapro.com y doctoralia.cl; búsquedas de veterinaria, barbería, psicología y talleres en Calama/Vallenar sin resultados utilizables.
+- URLs revisadas:
+  - https://agendapro.com/mp/cl/clinicas-region-de-antofagasta
+  - https://agendapro.com/mp/cl/gimnasios-region-de-antofagasta
+  - https://agendapro.com/mp/cl/pl/cedsadent-calama/33437
+  - https://agendapro.com/mp/cl/pl/centro-estetico-odontologico-san-miguel-vallenar/40192
+  - https://agendapro.com/mp/cl/pl/clinica-dental-dentiya-calama/33448
+  - https://agendapro.com/mp/cl/pl/clinica-dental-en-calama-sabureau-dent-calama/33443
+  - https://agendapro.com/mp/cl/pl/clinica-dental-flor-del-desierto-calama/33439
+  - https://agendapro.com/mp/cl/pl/clinica-dental-los-algarrobos-vallenar/40188
+  - https://agendapro.com/mp/cl/pl/clinica-dental-sonrieme-vallenar/40197
+  - https://agendapro.com/mp/cl/pl/dental-medical-dentimed-vallenar/221020
+  - https://agendapro.com/site/cl/peluqueriadejosuearaujo/584288
+  - https://www.doctoralia.cl/clinicas/clinica-odontologica-bocca-calama
+  - https://www.doctoralia.cl/clinicas/kinesiologia/calama
