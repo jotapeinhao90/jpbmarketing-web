@@ -806,3 +806,24 @@ URLs revisadas:
   - https://agendapro.com/site/cl/peluqueriadejosuearaujo/584288
   - https://www.doctoralia.cl/clinicas/clinica-odontologica-bocca-calama
   - https://www.doctoralia.cl/clinicas/kinesiologia/calama
+
+## 2026-11-08 – Prospección Recepcia
+- Leads: 15 (calidad media-baja; contactos no verificados).
+- Rubros/ciudades: veterinarias en Coronel/Lota/Chiguayante; barberías, peluquería y estética en Coronel/Lota; psicólogos en La Serena/Coquimbo.
+- Limitación: WebFetch bloqueado (agendapro.com, psychologytoday.com); talleres en Temuco sin resultados utilizables.
+- URLs revisadas:
+  - https://agendapro.com/mp/cl/barberias-region-del-biobio
+  - https://agendapro.com/mp/cl/pl/clinica-veterinaria-animal-center-chiguayante-chiguayante/33878
+  - https://agendapro.com/mp/cl/pl/clinica-veterinaria-ezootic-pet-chiguayante/33877
+  - https://agendapro.com/mp/cl/pl/clinica-veterinaria-happy-puppy-chiguayante/33879
+  - https://agendapro.com/mp/cl/pl/clinica-veterinaria-servet-lota-lota/36506
+  - https://agendapro.com/mp/cl/pl/nyc-veterinaria-lota/34673
+  - https://agendapro.com/mp/cl/pl/pet-happy-coronel-coronel/34667
+  - https://agendapro.com/mp/cl/pl/veterinaria-chiguayante-huesitos-chiguayante/33882
+  - https://agendapro.com/mp/cl/pl/veterinaria-trebolly-chiguayante/33884
+  - https://mercantil.com/clinicas-veterinarias/biobio/1896
+  - https://www.cronoshare.cl/servicios/talleres-mecanicos-mecanicos-a-domicilio/region-de-la-araucania/temuco
+  - https://www.cronoshare.cl/servicios/veterinarios-clinicas-veterinarias/region-del-biobio/coronel
+  - https://www.doctoralia.cl/perfil/sofia-mora-fajardo
+  - https://www.doctoralia.cl/psicologo/coquimbo
+  - https://www.psychologytoday.com/cl/psicologos/eduardo-ignacio-cortes-araya-la-serena-co/1347445
