@@ -827,3 +827,22 @@ URLs revisadas:
   - https://www.doctoralia.cl/perfil/sofia-mora-fajardo
   - https://www.doctoralia.cl/psicologo/coquimbo
   - https://www.psychologytoday.com/cl/psicologos/eduardo-ignacio-cortes-araya-la-serena-co/1347445
+
+## 2026-11-09 – Prospección Recepcia
+- Leads: 15. Rubros/ciudades: clínicas dentales Osorno, veterinarias Iquique, talleres Valdivia, barberías Temuco/Padre Las Casas.
+- Limitación: WebFetch bloqueado (agendapro.com, 2x3.cl); datos vía WebSearch, no verificados.
+- URLs revisadas:
+  - https://agendapro.com/mp/cl/barberias-la-araucania
+  - https://bcsvaldivia.cl/servicios-de-mecanica-automotriz/
+  - https://ceolosvolcanes.cl/
+  - https://clinicadentalaromos.cl/agenda-tu-hora.html
+  - https://clinicakronossosorno.cl/
+  - https://garagevaldivia.cl/
+  - https://mecanicovaldivia.cl/
+  - https://plazabuhlerclinicadental.cl/
+  - https://tallerpatricioangulo.cl/pagina-contacto/
+  - https://veterinariaoncopet.cl/
+  - https://www.clinicadelautomovildonpp.cl/taller-mecanico-valdivia
+  - https://www.facebook.com/veterinariadalma/
+  - https://www.mercantil.com/empresa/central-veterinaria-24-horas/iquique/300450754/esp/
+  - https://www.veterinariatarapaca.cl/
