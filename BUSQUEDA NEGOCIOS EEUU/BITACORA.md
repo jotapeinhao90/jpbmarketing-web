@@ -846,3 +846,23 @@ URLs revisadas:
   - https://www.facebook.com/veterinariadalma/
   - https://www.mercantil.com/empresa/central-veterinaria-24-horas/iquique/300450754/esp/
   - https://www.veterinariatarapaca.cl/
+
+## 2026-11-10 – Prospección Recepcia
+- Leads: 15. Rubros/ciudades: dental, estética, veterinarias (Santiago: La Florida, Puente Alto, Peñalolén, Las Condes), gimnasios Rancagua/Talca.
+- Limitación: WebFetch bloqueado (doctoralia.cl); datos vía WebSearch, no verificados; puntajes bajos por señales débiles.
+- URLs revisadas:
+  - https://agendapro.com/cl/medicina-estetica/software-para-clinicas-esteticas
+  - https://agendapro.com/mp/cl/clinicas-odontologicas-la-florida
+  - https://agendapro.com/mp/cl/gimnasios-region-de-o-higgins
+  - https://agendapro.com/mp/cl/pl/clinica-veterinaria-alto-gabriela-puente-alto/37567
+  - https://agendapro.com/mp/cl/pl/clinica-veterinaria-masquevet-penalolen/43536
+  - https://agendapro.com/mp/cl/pl/estetica-corporal-y-facial-puente-alto-puente-alto/37483
+  - https://agendapro.com/mp/cl/pl/estetica-y-tatuaje-puente-alto/42961
+  - https://agendapro.com/mp/cl/pl/hivy-dental-estetica-la-florida/43043
+  - https://agendapro.com/mp/cl/pl/petsmann-veterinaria-y-peluqueria-las-condes/43100
+  - https://crossfit.com/gym/31369/aria-crossfit-studio-las-rastras
+  - https://wellhub.com/es-cl/search/partners/makina-fit-rancagua/
+  - https://www.crossfit.com/gym/31369/aria-crossfit-studio-las-rastras
+  - https://www.doctoralia.cl/clinicas/dental-dali
+  - https://www.doctoralia.cl/psicologo/maipu
+  - https://www.whatclinic.com/dentists/chile/santiago/centro-dental-adonay-la-florida
