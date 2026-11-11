@@ -866,3 +866,27 @@ URLs revisadas:
   - https://www.doctoralia.cl/clinicas/dental-dali
   - https://www.doctoralia.cl/psicologo/maipu
   - https://www.whatclinic.com/dentists/chile/santiago/centro-dental-adonay-la-florida
+
+## 2026-11-11 – Prospección Recepcia
+- Leads: 15 (Arica: 10 — veterinaria x4, psicología x6; Antofagasta: 5 — veterinaria x2, barbería x2, estética x1).
+- Notas: WebFetch bloqueado (agendapro.com/doctoralia.cl); solo búsqueda. Clínica Veterinaria San Ignacio (Arica) descartada: ya tiene reserva online. Búsquedas de taller mecánico Valparaíso/Viña y kinesiología Arica sin prospectos concretos.
+- URLs revisadas:
+  - https://agendapro.com/mp/cl/pl/taller-mecanico-radiadores-springs-valparaiso/243623
+  - https://centrodesaludamaru.cl/
+  - https://clinica-veterinaria-san-ignacio.reservio.com/
+  - https://clinicaveterinaria24.help/catalogo/arica/veterinario/aura-centro-veterinario-1335/
+  - https://daniela-mateljan.ueniweb.com/
+  - https://guiaveterinarias.cl/region-de-arica-y-parinacota/arica/
+  - https://puppiesvet.cl/
+  - https://rodolfovalle.com/
+  - https://saludveterinaria.cl/arica/
+  - https://sindicatoescondida.cl/wp-content/uploads/2024/07/Mar-Elen-flayer.pdf
+  - https://veterinarialandia.cl/clinica-veterinaria-norte-arica/
+  - https://www.centropsicologicoarica.com/
+  - https://www.cronoshare.cl/servicios/kinesiologos/region-de-arica-y-parinacota/arica
+  - https://www.cuidapet.cl/comunas/antofagasta
+  - https://www.eneagrama-arica.cl/
+  - https://www.instagram.com/kaponebarberia/
+  - https://www.koxbarbershop.cl/
+  - https://www.psicologoeduardoschilling.cl/psic%C3%B3logos-en-arica
+  - https://www.veterinariapetzoo.cl/
