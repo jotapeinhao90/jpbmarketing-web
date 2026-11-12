@@ -890,3 +890,20 @@ URLs revisadas:
   - https://www.koxbarbershop.cl/
   - https://www.psicologoeduardoschilling.cl/psic%C3%B3logos-en-arica
   - https://www.veterinariapetzoo.cl/
+
+## 2026-11-12 – Prospección Recepcia
+- Leads: 15 (Quilpué y Villa Alemana: dental x3, veterinaria x3, barbería x3, estética x4, kinesiología/terapias x2). Calidad baja: datos parciales; teléfonos casi todos sin verificar.
+- Notas: WebFetch falló (agendapro.com y cronoshare.cl no resuelven en la red de la sesión); solo WebSearch. Descartados por tener reserva online: Mens Centers y Urban Studio (Quilpué). Atlas Kinesiología descartada (Viña del Mar).
+- URLs revisadas:
+  - https://agendapro.com/site/cl/beauty_kuyen/325541
+  - https://agendapro.com/mp/cl/barba-quilpue
+  - https://agendapro.com/mp/cl/rehabilitacion-oral-quilpue
+  - https://agendapro.com/mp/cl/pl/veterinaria-trupyvet-villa-alemana/232287
+  - https://agendapro.com/mp/cl/pl/clinica-veterinaria-villa-pets-villa-alemana/40547
+  - https://agendapro.com/mp/cl/pl/veterinaria-animaland-hospital-24-horas-cirugias-urgencias-villa-alemana/40511
+  - https://www.cronoshare.cl/croner-161136-clinica-plenodent-quilpue
+  - https://www.chilevision.cl/noticias/vina-del-mar-estos-son-los-centros-veterinarios-gratuitos-para-las
+  - https://www.reclamos.cl/reclamo/2024/jun/hospital-veterinario-integral-negligencia-medica
+  - https://www.2x3.cl/servicios/barberia-barbero/provincia-marga-marga/quilpue
+  - https://www.doctoralia.cl/clinicas/clinica-dental-white
+  - https://www.doctoralia.cl/medico-estetico/villa-alemana
