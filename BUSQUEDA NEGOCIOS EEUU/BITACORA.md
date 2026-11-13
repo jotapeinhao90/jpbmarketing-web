@@ -907,3 +907,7 @@ URLs revisadas:
   - https://www.2x3.cl/servicios/barberia-barbero/provincia-marga-marga/quilpue
   - https://www.doctoralia.cl/clinicas/clinica-dental-white
   - https://www.doctoralia.cl/medico-estetico/villa-alemana
+
+## 2026-11-13 – Prospección Recepcia
+- 15 leads (calidad baja-media: WebFetch bloqueado, solo snippets). Rubros: psicología, veterinaria, kinesiología, estética. Ciudades: Puerto Montt, Punta Arenas, Coquimbo/La Serena, San Pedro de la Paz.
+- URLs: doctoralia.cl (perfiles Monárdez, Hidalgo, Pérez, Narváez), agendapro.com (Santa Sofía, Zoonavet, Kinella), mercantil.com (Punta Arenas vets, SPP estética), 2x3.cl (ADN), fresha.com.
