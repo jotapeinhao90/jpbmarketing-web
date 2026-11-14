@@ -911,3 +911,7 @@ URLs revisadas:
 ## 2026-11-13 – Prospección Recepcia
 - 15 leads (calidad baja-media: WebFetch bloqueado, solo snippets). Rubros: psicología, veterinaria, kinesiología, estética. Ciudades: Puerto Montt, Punta Arenas, Coquimbo/La Serena, San Pedro de la Paz.
 - URLs: doctoralia.cl (perfiles Monárdez, Hidalgo, Pérez, Narváez), agendapro.com (Santa Sofía, Zoonavet, Kinella), mercantil.com (Punta Arenas vets, SPP estética), 2x3.cl (ADN), fresha.com.
+
+## 2026-11-14 – Prospección Recepcia
+- Leads: 15 (calidad baja-media; solo snippets, WebFetch bloqueado). Rubros: psicología x5, dental x4, peluquería x3, gimnasios x3. Ciudades: Osorno, Valdivia, Iquique, Chillán (ciudades ya cubiertas antes; búsquedas en Osorno/Copiapó/Calama de talleres y veterinarias no dieron negocios verificables).
+- URLs: doctoralia.cl (Arriagada, Rantul, Vargas, Mancilla, Escobar, Acuña, Cárdenas), agendapro.com (Bludent, Riodent, peluquerías Tarapacá, Stronge Life, Top Line), fresha.com/cl-iquique, mercantil.com (O2 Training Center).
