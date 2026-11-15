@@ -9,6 +9,7 @@
 
 const STORAGE = {
   expenses: 'gestipyme_expenses',
+  income:   'gestipyme_income',
   tasks:    'gestipyme_tasks',
   diary:    'gestipyme_diary',
   videos:   'gestipyme_videos',
@@ -29,7 +30,7 @@ const CATEGORIES = {
     'Alimentación', 'Transporte', 'Vivienda',
     'Salud', 'Educación', 'Entretenimiento',
     'Ropa y Calzado', 'Servicios Básicos',
-    'Ahorro / Inversión', 'Otros Personal',
+    'Ahorro / Inversión', 'Gatita', 'Otros Personal',
   ],
 };
 
@@ -37,7 +38,7 @@ const CATEGORY_ICONS = {
   'Alimentación': '🍽', 'Transporte': '🚗', 'Vivienda': '🏠',
   'Salud': '💊', 'Educación': '📚', 'Entretenimiento': '🎬',
   'Ropa y Calzado': '👟', 'Servicios Básicos': '⚡',
-  'Ahorro / Inversión': '💰', 'Otros Personal': '📌',
+  'Ahorro / Inversión': '💰', 'Gatita': '🐱', 'Otros Personal': '📌',
   'Marketing': '📢', 'Tecnología': '💻', 'Oficina y Suministros': '🖊',
   'Personal / RRHH': '👥', 'Ventas': '🤝', 'Logística': '📦',
   'Impuestos y Contabilidad': '📋', 'Servicios Profesionales': '⚖',
@@ -68,7 +69,7 @@ const QUOTES = [
 const state = {
   currentPage:      'dashboard',
   quoteIndex:       Math.floor(Math.random() * QUOTES.length),
-  expenseFilter:    { type: 'all', month: '', category: '' },
+  expenseFilter:    { type: 'all', month: '', category: '', tag: '' },
   calDate:          new Date(),
   calSelected:      null,
   chartPeriod:      6,
@@ -88,10 +89,13 @@ function load(key) {
 }
 function save(key, data) {
   localStorage.setItem(key, JSON.stringify(data));
+  if (window.gestipymeSync) window.gestipymeSync.pushDebounced();
 }
 
 function getExpenses() { return load(STORAGE.expenses); }
 function saveExpenses(data) { save(STORAGE.expenses, data); }
+function getIncome()   { return load(STORAGE.income); }
+function saveIncome(data) { save(STORAGE.income, data); }
 function getTasks()       { return load(STORAGE.tasks); }
 function saveTasks(data)  { save(STORAGE.tasks, data); }
 function getDiary()       { return load(STORAGE.diary); }
@@ -109,8 +113,28 @@ function uid() {
   return Date.now().toString(36) + Math.random().toString(36).slice(2);
 }
 
+let privacyMode = localStorage.getItem('gestipyme_privacy') === '1';
+
+function maskAmount() {
+  return '$***.***';
+}
+
 function clp(n) {
-  return '$' + Math.round(n).toLocaleString('es-CL');
+  const raw = '$' + Math.round(n).toLocaleString('es-CL');
+  return privacyMode ? maskAmount() : raw;
+}
+
+function setPrivacyMode(on) {
+  privacyMode = on;
+  localStorage.setItem('gestipyme_privacy', on ? '1' : '0');
+  document.getElementById('privacyLabel').textContent = on ? 'Activado' : 'Desactivado';
+  document.getElementById('privacyToggle').checked = on;
+  // re-render current page
+  const page = state.currentPage;
+  if (page === 'dashboard')     renderDashboard();
+  else if (page === 'gastos')   renderExpenses();
+  else if (page === 'graficos') renderCharts();
+  else if (page === 'pipeline') renderPipeline();
 }
 
 function shortClp(n) {
@@ -122,7 +146,8 @@ function shortClp(n) {
 }
 
 function today() {
-  return new Date().toISOString().slice(0, 10);
+  const n = new Date();
+  return `${n.getFullYear()}-${String(n.getMonth() + 1).padStart(2, '0')}-${String(n.getDate()).padStart(2, '0')}`;
 }
 
 function formatDate(iso) {
@@ -141,8 +166,9 @@ function isOverdue(dueDate) {
   return dueDate && dueDate < today();
 }
 
-function fmtPesos(n) {
-  return '$' + Math.round(Number(n)).toLocaleString('es-CL');
+function fmtPesos(n, skipPrivacy = false) {
+  const raw = '$' + Math.round(Number(n)).toLocaleString('es-CL');
+  return (privacyMode && !skipPrivacy) ? maskAmount() : raw;
 }
 
 function escHtml(str) {
@@ -162,13 +188,17 @@ function navigateTo(page) {
   });
   const titles = {
     dashboard: 'Dashboard',
+    archivo:   'Archivo',
     gastos:    'Gastos',
     graficos:  'Gráficos',
     tareas:    'Tareas',
     calendario:'Calendario',
     diario:    'Diario',
-    pipeline:  'Pipeline',
-    videos:    'Videos',
+    pipeline:      'Pipeline',
+    configuracion: 'Configuración',
+    videos:        'Videos',
+    notas:         'Notas',
+    sii:           'SII / Impuestos',
     donaciones:'Apóyanos',
   };
   document.getElementById('topbarPage').textContent = titles[page] || page;
@@ -176,49 +206,416 @@ function navigateTo(page) {
   if (page === 'graficos')   renderCharts();
   if (page === 'calendario') renderCalendar();
   if (page === 'dashboard')  renderDashboard();
+  if (page === 'archivo')    renderPlanner();
   if (page === 'tareas')     renderKanban();
   if (page === 'diario')     renderDiary();
   if (page === 'pipeline')   renderPipeline();
+  if (page === 'configuracion') { renderEmpresas(); mailConfigInit(); pushConfigInit(); }
   if (page === 'videos')     renderVideos();
+  if (page === 'notas' && typeof renderNotes === 'function') renderNotes();
+  if (page === 'sii' && typeof renderSii === 'function') renderSii();
   if (page === 'gastos')     renderExpenses();
   window.scrollTo(0, 0);
 }
 
 // ── Dashboard ────────────────────────────────────────
 
-function renderDashboard() {
-  const now  = new Date();
-  const yr   = now.getFullYear();
-  const mo   = String(now.getMonth() + 1).padStart(2, '0');
-  const curMo = `${yr}-${mo}`;
+let dashPeriod = 30;   // 30 | 90 | 'month'
+let dashType   = 'all'; // 'all' | 'empresa' | 'personal'
 
+function setDashPeriod(p) { dashPeriod = p; renderDashboard(); }
+function setDashType(t)   { dashType   = t; renderDashboard(); }
+
+function getDashExpenses() {
+  const all = getExpenses();
+  const now = new Date();
+  let filtered;
+  if (dashPeriod === 'month') {
+    const curMo = `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}`;
+    filtered = all.filter(e => e.date.startsWith(curMo));
+  } else {
+    const cutoff = new Date(now); cutoff.setDate(cutoff.getDate() - dashPeriod);
+    const cutoffStr = localDateStr(cutoff);
+    filtered = all.filter(e => e.date >= cutoffStr);
+  }
+  if (dashType !== 'all') filtered = filtered.filter(e => e.type === dashType);
+  return filtered;
+}
+
+function getDashPeriodLabel() {
+  if (dashPeriod === 'month') return 'Este mes';
+  return `Últimos ${dashPeriod} días`;
+}
+
+// ── Planificador diario / semanal ────────────────────
+
+const planner = { focus: null, initialized: false };
+const PLANNER_DAY_NAMES = ['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb'];
+const PLANNER_DAY_FULL = ['domingo', 'lunes', 'martes', 'miércoles', 'jueves', 'viernes', 'sábado'];
+
+function localDateStr(d) {
+  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+}
+
+function plannerAddDays(dateStr, n) {
+  const [y, m, d] = dateStr.split('-').map(Number);
+  return localDateStr(new Date(y, m - 1, d + n));
+}
+
+function plannerTasksOn(dateStr) {
+  return getTasks().filter(t => t.dueDate === dateStr);
+}
+
+function plannerStreak(todayStr) {
+  let streak = 0;
+  for (let i = 1; i <= 60; i++) {
+    const day = plannerAddDays(todayStr, -i);
+    const due = plannerTasksOn(day);
+    if (!due.length || due.some(t => t.status !== 'done')) break;
+    streak++;
+  }
+  return streak;
+}
+
+function plannerMotivation(done, total) {
+  if (total === 0) return { msg: 'Día en blanco. ¿Qué quieres lograr hoy?', tone: 'idle' };
+  if (done === 0) return { msg: 'El primer tick es el más difícil. ¡Vamos! 💪', tone: 'start' };
+  if (done === total) return { msg: '¡Día completo! 🏆 Te lo ganaste.', tone: 'win' };
+  const pct = done / total;
+  if (pct >= 0.5) return { msg: `¡Más de la mitad! Vas increíble 🔥 (${done}/${total})`, tone: 'mid' };
+  return { msg: `Buen comienzo, sigue así (${done}/${total})`, tone: 'go' };
+}
+
+function plannerEnsureInit() {
+  if (planner.initialized) return;
+  planner.initialized = true;
+  planner.focus = localDateStr(new Date());
+
+  document.getElementById('plannerRefresh').addEventListener('click', async (e) => {
+    const btn = e.currentTarget;
+    btn.disabled = true;
+    btn.textContent = '⟳ Actualizando…';
+    if (window.gestipymeSync) await window.gestipymeSync.pullAndApply();
+    renderDashboard();
+    renderKanban();
+    btn.disabled = false;
+    btn.textContent = '✓ Listo';
+    setTimeout(() => { btn.textContent = '⟳ Actualizar'; }, 1500);
+  });
+
+  document.getElementById('plannerAddForm').addEventListener('submit', (e) => {
+    e.preventDefault();
+    const title = document.getElementById('plannerAddTitle').value.trim();
+    if (!title) return;
+    const when = document.getElementById('plannerAddWhen').value;
+    const todayStr = localDateStr(new Date());
+    let dueDate;
+    if (when === 'today') dueDate = todayStr;
+    else if (when === 'tomorrow') dueDate = plannerAddDays(todayStr, 1);
+    else {
+      const dow = new Date().getDay();
+      dueDate = plannerAddDays(todayStr, dow === 0 ? 0 : 7 - dow);
+    }
+    const tasks = getTasks();
+    tasks.push({
+      id: uid(),
+      title,
+      description: '',
+      priority: document.getElementById('plannerAddPriority').value,
+      category: 'empresa',
+      dueDate,
+      status: 'pending',
+      createdAt: new Date().toISOString(),
+    });
+    saveTasks(tasks);
+    document.getElementById('plannerAddTitle').value = '';
+    planner.focus = dueDate;
+    renderPlanner();
+    renderKanban();
+  });
+}
+
+function plannerToggle(id) {
+  const tasks = getTasks();
+  const t = tasks.find(x => x.id === id);
+  if (!t) return;
+  t.status = t.status === 'done' ? 'pending' : 'done';
+  if (t.status === 'done') celebrate(window.event);
+  saveTasks(tasks);
+  renderPlanner();
+  renderKanban();
+  calRefresh();
+}
+
+function plannerTaskRow(t, showDate) {
+  const overdue = t.status !== 'done' && t.dueDate < localDateStr(new Date());
+  const prioCls = { high: 'p-high', medium: 'p-medium', low: 'p-low' }[t.priority] || 'p-medium';
+  const dateLabel = showDate && t.dueDate
+    ? `<span class="planner-task-date${overdue ? ' overdue' : ''}">${overdue ? '⚠ vencida · ' : ''}${formatDate(t.dueDate)}</span>`
+    : (overdue ? '<span class="planner-task-date overdue">⚠ vencida</span>' : '');
+  const isDone = t.status === 'done';
+  return `
+    <div class="planner-task ${isDone ? 'is-done' : ''} ${prioCls}" data-id="${t.id}">
+      <div class="planner-task-body">
+        <div class="planner-task-title">${escHtml(t.title)}</div>
+        ${dateLabel}
+      </div>
+      <span class="planner-task-cat">${t.category === 'empresa' ? 'Emp' : 'Per'}</span>
+      <button class="planner-toggle ${isDone ? 'undo' : 'complete'}" onclick="plannerToggle('${t.id}')">${isDone ? '↩ Deshacer' : '✓ Completar'}</button>
+      <button class="planner-task-del" onclick="deleteTask('${t.id}')" title="Borrar">✕</button>
+    </div>`;
+}
+
+function renderPlanner() {
+  const el = document.getElementById('planner');
+  if (!el) return;
+  plannerEnsureInit();
+
+  const now = new Date();
+  const todayStr = localDateStr(now);
+  if (!planner.focus) planner.focus = todayStr;
+
+  document.getElementById('plannerDate').textContent =
+    `${PLANNER_DAY_FULL[now.getDay()]} ${now.getDate()} de ${['enero','febrero','marzo','abril','mayo','junio','julio','agosto','septiembre','octubre','noviembre','diciembre'][now.getMonth()]}`;
+
+  const focusDue = plannerTasksOn(planner.focus);
+  const focusDone = focusDue.filter(t => t.status === 'done').length;
+  const pct = focusDue.length ? Math.round((focusDone / focusDue.length) * 100) : 0;
+
+  const C = 2 * Math.PI * 52;
+  const ring = document.getElementById('plannerRingFg');
+  ring.style.strokeDasharray = `${C}`;
+  ring.style.strokeDashoffset = `${C * (1 - pct / 100)}`;
+  document.getElementById('plannerPct').textContent = `${pct}%`;
+
+  const mot = plannerMotivation(focusDone, focusDue.length);
+  const msgEl = document.getElementById('plannerMsg');
+  msgEl.textContent = mot.msg;
+  msgEl.dataset.tone = mot.tone;
+
+  const streak = plannerStreak(todayStr);
+  document.getElementById('plannerStreak').textContent =
+    streak > 0 ? `🔥 Racha: ${streak} día${streak > 1 ? 's' : ''} completo${streak > 1 ? 's' : ''} seguidos` : '';
+
+  const weekEl = document.getElementById('plannerWeek');
+  weekEl.innerHTML = Array.from({ length: 7 }, (_, i) => {
+    const day = plannerAddDays(todayStr, i);
+    const due = plannerTasksOn(day);
+    const pending = due.filter(t => t.status !== 'done').length;
+    const d = new Date(...day.split('-').map((v, idx) => idx === 1 ? Number(v) - 1 : Number(v)));
+    const allDone = due.length > 0 && pending === 0;
+    return `
+      <button class="planner-day ${day === planner.focus ? 'active' : ''} ${day === todayStr ? 'is-today' : ''} ${allDone ? 'all-done' : ''}"
+              onclick="plannerFocus('${day}')">
+        <span class="planner-day-name">${PLANNER_DAY_NAMES[d.getDay()]}</span>
+        <span class="planner-day-num">${d.getDate()}</span>
+        <span class="planner-day-count">${allDone ? '✓' : (pending || '·')}</span>
+      </button>`;
+  }).join('');
+
+  const focusLabel = planner.focus === todayStr ? 'Hoy' : (() => {
+    const [y, m, dd] = planner.focus.split('-').map(Number);
+    const fd = new Date(y, m - 1, dd);
+    return `${PLANNER_DAY_FULL[fd.getDay()]} ${fd.getDate()}`;
+  })();
+  document.querySelector('#planner .planner-col:first-child .planner-col-title').firstChild.textContent = `${focusLabel} `;
+  document.getElementById('plannerCountToday').textContent = focusDue.length ? `${focusDone}/${focusDue.length}` : '';
+
+  const listToday = document.getElementById('plannerListToday');
+  listToday.innerHTML = focusDue.length
+    ? focusDue.map(t => plannerTaskRow(t, false)).join('')
+    : '<p class="planner-empty">Nada para este día. Agregá algo arriba ✨</p>';
+
+  document.getElementById('plannerWeekTitle').textContent = 'Próximos días';
+  const all = getTasks();
+  const upcoming = all
+    .filter(t => t.status !== 'done' && t.dueDate && t.dueDate > todayStr)
+    .sort((a, b) => a.dueDate.localeCompare(b.dueDate));
+  const listWeek = document.getElementById('plannerListWeek');
+  listWeek.innerHTML = upcoming.length
+    ? upcoming.map(t => plannerTaskRow(t, true)).join('')
+    : '<p class="planner-empty">Nada próximo agendado 🙌</p>';
+
+  const archive = all
+    .filter(t => t.status === 'done' || (t.dueDate && t.dueDate < todayStr && t.status !== 'done'))
+    .sort((a, b) => (b.dueDate || '').localeCompare(a.dueDate || ''));
+  document.getElementById('plannerArchiveBadge').textContent = archive.length ? archive.length : '';
+  document.getElementById('plannerListArchive').innerHTML = archive.length
+    ? archive.map(t => plannerArchiveRow(t)).join('')
+    : '<p class="planner-empty">Todavía no hay nada archivado.</p>';
+}
+
+function plannerArchiveRow(t) {
+  const done = t.status === 'done';
+  const badge = done
+    ? '<span class="planner-badge done">✓ completada</span>'
+    : '<span class="planner-badge late">⚠ vencida sin completar</span>';
+  const action = done
+    ? `<button class="planner-toggle undo" onclick="plannerToggle('${t.id}')">↩ Deshacer</button>`
+    : `<button class="planner-resched" onclick="plannerRescheduleToday('${t.id}')">Mover a hoy</button>`;
+  return `
+    <div class="planner-task ${done ? 'is-done' : 'p-high'}" data-id="${t.id}">
+      <div class="planner-task-body">
+        <div class="planner-task-title">${escHtml(t.title)}</div>
+        <div class="planner-task-date">${badge} ${t.dueDate ? formatDate(t.dueDate) : ''}</div>
+      </div>
+      ${action}
+      <button class="planner-task-del" onclick="deleteTask('${t.id}')" title="Borrar">✕</button>
+    </div>`;
+}
+
+function plannerRescheduleToday(id) {
+  const tasks = getTasks();
+  const t = tasks.find(x => x.id === id);
+  if (!t) return;
+  t.dueDate = localDateStr(new Date());
+  t.status = 'pending';
+  saveTasks(tasks);
+  renderPlanner();
+  renderKanban();
+}
+
+function plannerFocus(dateStr) {
+  planner.focus = dateStr;
+  renderPlanner();
+}
+
+function renderDashboard() {
+  renderPlanner();
+
+  const now = new Date();
   const h = now.getHours();
   const greeting = h < 12 ? 'Buenos días 👋' : h < 19 ? 'Buenas tardes 👋' : 'Buenas noches 👋';
   document.getElementById('greeting').textContent = greeting;
 
-  const expenses = getExpenses().filter(e => e.date.startsWith(curMo));
+  // update active state on filter buttons
+  document.querySelectorAll('[data-dashperiod]').forEach(b =>
+    b.classList.toggle('active', String(b.dataset.dashperiod) === String(dashPeriod)));
+  document.querySelectorAll('[data-dashtype]').forEach(b =>
+    b.classList.toggle('active', b.dataset.dashtype === dashType));
+
+  const expenses = getDashExpenses();
+  const periodLabel = getDashPeriodLabel();
   const empresa  = expenses.filter(e => e.type === 'empresa').reduce((a, e) => a + e.amount, 0);
   const personal = expenses.filter(e => e.type === 'personal').reduce((a, e) => a + e.amount, 0);
+  const total    = dashType === 'empresa' ? empresa : dashType === 'personal' ? personal : empresa + personal;
   const tasks    = getTasks().filter(t => t.status !== 'done');
 
-  document.getElementById('kpiEmpresa').textContent  = clp(empresa);
-  document.getElementById('kpiPersonal').textContent = clp(personal);
-  document.getElementById('kpiTotal').textContent    = clp(empresa + personal);
-  document.getElementById('kpiTasks').textContent    = tasks.length;
+  // Income filtered by same period
+  const allIncome = getIncome();
+  const now2 = new Date();
+  let incomeFiltered;
+  if (dashPeriod === 'month') {
+    const curMo = `${now2.getFullYear()}-${String(now2.getMonth()+1).padStart(2,'0')}`;
+    incomeFiltered = allIncome.filter(e => e.date.startsWith(curMo));
+  } else {
+    const cutoff = new Date(now2); cutoff.setDate(cutoff.getDate() - dashPeriod);
+    const cutoffStr = localDateStr(cutoff);
+    incomeFiltered = allIncome.filter(e => e.date >= cutoffStr);
+  }
+  const totalIncome = incomeFiltered.reduce((a, e) => a + e.amount, 0);
+  const saldoLibre  = totalIncome - total;
+
+  document.getElementById('kpiEmpresa').textContent   = clp(empresa);
+  document.getElementById('kpiPersonal').textContent  = clp(personal);
+  document.getElementById('kpiTotal').textContent     = clp(total);
+  document.getElementById('kpiTasks').textContent     = tasks.length;
+  document.getElementById('kpiIngresos').textContent  = clp(totalIncome);
+  document.getElementById('kpiSaldo').textContent     = clp(Math.abs(saldoLibre));
+  const saldoEl = document.getElementById('kpiSaldo');
+  saldoEl.style.color = saldoLibre >= 0 ? '#16a34a' : '#dc2626';
+  document.getElementById('kpiSaldoLabel').textContent = saldoLibre >= 0 ? 'Superávit' : 'Déficit';
+
+  document.querySelectorAll('.kpi-period').forEach((el, i) => {
+    if (i < 3) el.textContent = periodLabel;
+  });
+  document.getElementById('kpiIngresosPeriod').textContent = periodLabel;
+  document.getElementById('kpiSaldoPeriod').textContent    = periodLabel;
+
   const pipeline = getPipeline();
   const ventasLeads = pipeline.filter(l => l.stage === 'facturado' || l.stage === 'recompra');
   const ventasTotal = ventasLeads.reduce((s, l) => s + (Number(l.price) || 0), 0);
-  document.getElementById('kpiVentas').textContent = fmtPesos(ventasTotal);
-  document.getElementById('kpiVentasPeriod').textContent = `${ventasLeads.length} venta${ventasLeads.length !== 1 ? 's' : ''} · neto`;
+  const comision = Math.round(ventasTotal * 0.05);
+  document.getElementById('kpiVentas').textContent = fmtPesos(comision);
+  document.getElementById('kpiVentasPeriod').textContent = privacyMode
+    ? `5% de $***.*** · ** ventas`
+    : `5% de ${clp(ventasTotal)} · ${ventasLeads.length} venta${ventasLeads.length !== 1 ? 's' : ''}`;
 
+  renderBizKpis(totalIncome, total, empresa);
   renderRecentExpenses();
   renderUpcomingTasks();
   renderQuote();
 }
 
+function renderBizKpis(totalIncome, totalGastos, gastoEmpresa) {
+  const leads = getPipeline();
+  const now   = new Date();
+  const curMo = `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}`;
+
+  // Conversión: cerrados (facturado+recompra) / total
+  const cerrados = leads.filter(l => l.stage === 'facturado' || l.stage === 'recompra');
+  const convPct  = leads.length ? Math.round(cerrados.length / leads.length * 100) : 0;
+  document.getElementById('kpiBizConversion').textContent   = `${convPct}%`;
+  document.getElementById('kpiBizConversionSub').textContent = `${cerrados.length} de ${leads.length} leads`;
+
+  // Ticket promedio
+  const conPrecio = cerrados.filter(l => l.price > 0);
+  const ticketAvg = conPrecio.length
+    ? Math.round(conPrecio.reduce((s,l) => s + l.price, 0) / conPrecio.length)
+    : 0;
+  document.getElementById('kpiBizTicket').textContent = ticketAvg ? clp(ticketAvg) : '—';
+
+  // Pipeline activo (leads no cerrados con precio)
+  const activos     = leads.filter(l => l.stage !== 'facturado' && l.stage !== 'recompra' && l.stage !== 'perdido');
+  const pipelineVal = activos.reduce((s,l) => s + (Number(l.price)||0), 0);
+  document.getElementById('kpiBizPipeline').textContent    = pipelineVal ? clp(pipelineVal) : '—';
+  document.getElementById('kpiBizPipelineSub').textContent = `${activos.length} leads en curso`;
+
+  // Margen neto %
+  const margen = totalIncome > 0 ? Math.round((totalIncome - totalGastos) / totalIncome * 100) : null;
+  const margenEl = document.getElementById('kpiBizMargen');
+  if (margen !== null) {
+    margenEl.textContent      = `${margen}%`;
+    margenEl.style.color      = margen >= 0 ? '#16a34a' : '#dc2626';
+    document.getElementById('kpiBizMargenSub').textContent = margen >= 0 ? 'superávit del período' : 'déficit del período';
+  } else {
+    margenEl.textContent = '—';
+    margenEl.style.color = '';
+  }
+
+  // ROI JPB = (comisión 5% − gastos empresa) / gastos empresa × 100
+  const roiEl = document.getElementById('kpiBizRatio');
+  const ventasLeadsRoi = leads.filter(l => l.stage === 'facturado' || l.stage === 'recompra');
+  const comisionRoi = Math.round(ventasLeadsRoi.reduce((s,l) => s + (Number(l.price)||0), 0) * 0.05);
+  if (gastoEmpresa > 0) {
+    const roi = Math.round((comisionRoi - gastoEmpresa) / gastoEmpresa * 100);
+    roiEl.textContent = `${roi > 0 ? '+' : ''}${roi}%`;
+    roiEl.style.color = roi > 0 ? '#16a34a' : '#dc2626';
+  } else {
+    roiEl.textContent = '—';
+    roiEl.style.color = '';
+  }
+
+  // Leads este mes
+  const leadsMes = leads.filter(l => l.date && l.date.startsWith(curMo));
+  document.getElementById('kpiBizLeadsMes').textContent    = leadsMes.length;
+  document.getElementById('kpiBizLeadsMesSub').textContent = `${leadsMes.length} nuevos en ${['ene','feb','mar','abr','may','jun','jul','ago','sep','oct','nov','dic'][now.getMonth()]}`;
+
+  // Velocidad de cierre (días entre fecha lead y fecha cierre — aproximado por fecha del lead)
+  const conFecha = cerrados.filter(l => l.date);
+  const velDias  = conFecha.length
+    ? Math.round(conFecha.reduce((s,l) => {
+        const d = (new Date() - new Date(l.date)) / 86400000;
+        return s + d;
+      }, 0) / conFecha.length)
+    : null;
+  document.getElementById('kpiBizVelocidad').textContent = velDias !== null ? `${velDias}d` : '—';
+
+}
+
 function renderRecentExpenses() {
   const el = document.getElementById('recentExpenses');
-  const list = getExpenses().sort((a, b) => b.date.localeCompare(a.date)).slice(0, 6);
+  const list = getDashExpenses().sort((a, b) => b.date.localeCompare(a.date)).slice(0, 6);
   if (!list.length) {
     el.innerHTML = `<div class="empty-state">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="32" height="32"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg>
@@ -288,13 +685,22 @@ function populateCategorySelect(typeVal) {
   sel.innerHTML = cats.map(c => `<option value="${c}">${c}</option>`).join('');
 }
 
+function renderTagPreview(tagsStr) {
+  const tags = tagsStr.split(',').map(t => t.trim()).filter(Boolean);
+  const el = document.getElementById('expenseTagPreview');
+  if (!el) return;
+  el.innerHTML = tags.map(t => `<span class="exp-tag">${escHtml(t)}</span>`).join('');
+}
+
 function openExpenseModal(id, preDate) {
-  document.getElementById('expenseId').value    = '';
-  document.getElementById('expenseDesc').value  = '';
+  document.getElementById('expenseId').value     = '';
+  document.getElementById('expenseDesc').value   = '';
   document.getElementById('expenseAmount').value = '';
   document.getElementById('expenseType').value   = 'empresa';
   document.getElementById('expenseDate').value   = preDate || today();
   document.getElementById('expenseNotes').value  = '';
+  document.getElementById('expenseTags').value   = '';
+  document.getElementById('expenseTagPreview').innerHTML = '';
   populateCategorySelect('empresa');
 
   if (id) {
@@ -309,9 +715,15 @@ function openExpenseModal(id, preDate) {
     document.getElementById('expenseCategory').value = e.category;
     document.getElementById('expenseDate').value   = e.date;
     document.getElementById('expenseNotes').value  = e.notes || '';
+    const tagsStr = (e.tags || []).join(', ');
+    document.getElementById('expenseTags').value   = tagsStr;
+    renderTagPreview(tagsStr);
   } else {
     document.getElementById('expenseModalTitle').textContent = 'Nuevo Gasto';
   }
+
+  // live preview while typing tags
+  document.getElementById('expenseTags').oninput = e => renderTagPreview(e.target.value);
 
   openModal('expenseModal');
 }
@@ -327,9 +739,12 @@ function saveExpense(e) {
 
   if (!desc || !amount || !date) return;
 
+  const tagsRaw = document.getElementById('expenseTags').value;
+  const tags = tagsRaw.split(',').map(t => t.trim()).filter(Boolean);
+
   const id = document.getElementById('expenseId').value;
   const expenses = getExpenses();
-  const record = { id: id || uid(), description: desc, amount, type, category: cat, date, notes, createdAt: id ? undefined : new Date().toISOString() };
+  const record = { id: id || uid(), description: desc, amount, type, category: cat, date, notes, tags, createdAt: id ? undefined : new Date().toISOString() };
 
   if (id) {
     const idx = expenses.findIndex(x => x.id === id);
@@ -343,24 +758,42 @@ function saveExpense(e) {
   renderExpenses();
   renderDashboard();
   if (state.currentPage === 'graficos') renderCharts();
-  if (state.currentPage === 'calendario') renderCalendar();
+  if (state.currentPage === 'calendario') calRefresh();
 }
 
-function deleteExpense(id) {
-  if (!confirm('¿Eliminar este gasto?')) return;
+async function deleteExpense(id) {
+  if (!(await appConfirm('¿Eliminar este gasto?'))) return;
   saveExpenses(getExpenses().filter(e => e.id !== id));
   renderExpenses();
   renderDashboard();
   if (state.currentPage === 'graficos') renderCharts();
+  calRefresh();
 }
 
 function renderExpenses() {
-  const { type, month, category } = state.expenseFilter;
+  const { type, month, category, tag } = state.expenseFilter;
   let list = getExpenses();
 
   if (type !== 'all') list = list.filter(e => e.type === type);
   if (month)          list = list.filter(e => e.date.startsWith(month));
   if (category)       list = list.filter(e => e.category === category);
+  if (tag)            list = list.filter(e => (e.tags || []).includes(tag));
+
+  // show active tag filter banner
+  let tagBanner = document.getElementById('activeTagBanner');
+  if (!tagBanner) {
+    tagBanner = document.createElement('div');
+    tagBanner.id = 'activeTagBanner';
+    tagBanner.className = 'active-tag-banner';
+    const listContainer = document.getElementById('expenseListContainer') || document.getElementById('expenseGroupedList')?.parentElement;
+    if (listContainer) listContainer.prepend(tagBanner);
+  }
+  if (tag) {
+    tagBanner.innerHTML = `Filtrando por etiqueta: <strong>${escHtml(tag)}</strong> <button onclick="clearTagFilter()" class="btn-clear-tag">✕ Quitar</button>`;
+    tagBanner.style.display = '';
+  } else {
+    tagBanner.style.display = 'none';
+  }
 
   list.sort((a, b) => b.date.localeCompare(a.date));
 
@@ -370,6 +803,9 @@ function renderExpenses() {
   document.getElementById('sumPersonal').textContent = clp(personal);
   document.getElementById('sumTotal').textContent    = clp(empresa + personal);
   document.getElementById('sumCount').textContent    = list.length;
+  const gatitaTotal = list.filter(e => e.category === 'Gatita').reduce((s, e) => s + e.amount, 0);
+  document.getElementById('sumGatita').textContent   = clp(gatitaTotal);
+  document.getElementById('sumGatitaChip').classList.toggle('active', state.expenseFilter.category === 'Gatita');
 
   if (state.expenseView === 'calendar') {
     renderExpenseCalendar();
@@ -493,6 +929,9 @@ function renderExpDayPanel(dateStr) {
 }
 
 function expRowHtml(e) {
+  const tagPills = (e.tags || []).map(t =>
+    `<span class="exp-tag clickable" onclick="filterByTag('${escHtml(t)}')">${escHtml(t)}</span>`
+  ).join('');
   return `
     <div class="exp-row">
       <div class="exp-row-icon">${CATEGORY_ICONS[e.category] || '💼'}</div>
@@ -503,9 +942,11 @@ function expRowHtml(e) {
           <span class="cat-badge">${escHtml(e.category)}</span>
           ${e.notes ? `<span class="exp-row-notes">${escHtml(e.notes)}</span>` : ''}
         </div>
+        ${tagPills ? `<div class="exp-row-tags">${tagPills}</div>` : ''}
       </div>
       <div class="exp-row-amount">${clp(e.amount)}</div>
       <div class="td-actions">
+        <button class="cal-gatita${e.category === 'Gatita' ? ' on' : ''}" onclick="calToggleGatita('${e.id}')" title="${e.category === 'Gatita' ? 'Quitar de Gatita' : 'Guardar este gasto en la categoría Gatita'}">Gatita</button>
         <button class="btn-icon" onclick="openExpenseModal('${e.id}')" title="Editar">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
         </button>
@@ -514,6 +955,90 @@ function expRowHtml(e) {
         </button>
       </div>
     </div>`;
+}
+
+// Navigate from dashboard KPI → Gastos with pre-applied filter
+function goToGastosFiltered(type) {
+  state.expenseFilter.type = type;
+  // mirror the dash period into gastos month filter
+  if (dashPeriod === 'month') {
+    const now = new Date();
+    state.expenseFilter.month = `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}`;
+  } else {
+    state.expenseFilter.month = '';
+  }
+  state.expenseFilter.category = '';
+  navigateTo('gastos');
+  // sync the type tabs UI
+  setTimeout(() => {
+    document.querySelectorAll('#expenseFilterTabs .ftab').forEach(b => {
+      b.classList.toggle('active', b.dataset.filter === type);
+    });
+    const sel = document.getElementById('filterType');
+    if (sel) sel.value = type;
+  }, 50);
+}
+
+// Filter expenses by tag (from clicking a tag pill)
+function filterByTag(tag) {
+  state.expenseFilter.tag = tag;
+  navigateTo('gastos');
+}
+
+function clearTagFilter() {
+  state.expenseFilter.tag = '';
+  renderExpenses();
+}
+
+function openIncomeModal() {
+  const now = new Date();
+  let list = getIncome();
+  if (dashPeriod === 'month') {
+    const curMo = `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}`;
+    list = list.filter(e => e.date.startsWith(curMo));
+  } else {
+    const cutoff = new Date(now); cutoff.setDate(cutoff.getDate() - dashPeriod);
+    list = list.filter(e => e.date >= localDateStr(cutoff));
+  }
+  list.sort((a, b) => b.date.localeCompare(a.date));
+
+  const total = list.reduce((s, e) => s + e.amount, 0);
+  const totalGastos = getDashExpenses().reduce((s, e) => s + e.amount, 0);
+  const saldo = total - totalGastos;
+
+  document.getElementById('incomeModalSummary').innerHTML = `
+    <div style="flex:1;text-align:center">
+      <div style="font-size:.72rem;color:var(--light);margin-bottom:2px">Ingresos</div>
+      <div style="font-size:1.1rem;font-weight:800;color:#16a34a">${clp(total)}</div>
+    </div>
+    <div style="flex:1;text-align:center">
+      <div style="font-size:.72rem;color:var(--light);margin-bottom:2px">Gastos</div>
+      <div style="font-size:1.1rem;font-weight:800;color:#dc2626">${clp(totalGastos)}</div>
+    </div>
+    <div style="flex:1;text-align:center">
+      <div style="font-size:.72rem;color:var(--light);margin-bottom:2px">${saldo>=0?'Superávit':'Déficit'}</div>
+      <div style="font-size:1.1rem;font-weight:800;color:${saldo>=0?'#16a34a':'#dc2626'}">${clp(Math.abs(saldo))}</div>
+    </div>`;
+
+  document.getElementById('incomeModalList').innerHTML = list.length
+    ? list.map(e => `
+      <div style="display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid var(--border)">
+        <div style="width:36px;height:36px;border-radius:8px;background:#dcfce7;color:#16a34a;display:grid;place-items:center;font-size:.7rem;font-weight:700;flex-shrink:0">ING</div>
+        <div style="flex:1">
+          <div style="font-size:.85rem;font-weight:600;color:var(--heading)">${escHtml(e.description)}</div>
+          <div style="font-size:.72rem;color:var(--light)">${escHtml(e.category)} · ${formatDate(e.date)}</div>
+        </div>
+        <div style="font-size:.9rem;font-weight:800;color:#16a34a">${clp(e.amount)}</div>
+      </div>`).join('')
+    : `<p style="text-align:center;color:var(--light);padding:24px">Sin ingresos en este período</p>`;
+
+  document.getElementById('modalIngresos').style.display = 'flex';
+  document.body.style.overflow = 'hidden';
+}
+
+function closeIncomeModal() {
+  document.getElementById('modalIngresos').style.display = 'none';
+  document.body.style.overflow = '';
 }
 
 function renderExpenseList(list) {
@@ -584,7 +1109,59 @@ function exportCsv() {
 
 // ── Tasks ────────────────────────────────────────────
 
-function openTaskModal(id) {
+function toggleTaskReminderFields(show) {
+  document.getElementById('taskReminderFields').style.display = show ? 'block' : 'none';
+}
+
+const REMINDER_UNIT_LABELS = { minutes: 'minutos antes', hours: 'horas antes', days: 'días antes' };
+
+function reminderRowHtml(rowId, amount, unit) {
+  const opts = Object.entries(REMINDER_UNIT_LABELS)
+    .map(([val, label]) => `<option value="${val}"${val === unit ? ' selected' : ''}>${label}</option>`)
+    .join('');
+  return `
+    <div class="reminder-row" data-row-id="${rowId}">
+      <input type="number" min="1" value="${amount}" class="reminder-amount">
+      <select class="reminder-unit">${opts}</select>
+      <button type="button" class="reminder-row-remove" onclick="removeTaskReminderRow('${rowId}')">×</button>
+    </div>`;
+}
+
+function addTaskReminderRow(amount, unit) {
+  const list = document.getElementById('taskReminderList');
+  const rowId = uid();
+  list.insertAdjacentHTML('beforeend', reminderRowHtml(rowId, amount || 1, unit || 'days'));
+}
+
+function removeTaskReminderRow(rowId) {
+  document.querySelector(`.reminder-row[data-row-id="${rowId}"]`)?.remove();
+}
+
+function collectTaskReminders() {
+  return Array.from(document.querySelectorAll('#taskReminderList .reminder-row')).map(row => ({
+    amount: Math.max(1, parseInt(row.querySelector('.reminder-amount').value, 10) || 1),
+    unit:   row.querySelector('.reminder-unit').value,
+  }));
+}
+
+function renderTaskReminderEmailDefaults(selectedEmails) {
+  const box = document.getElementById('taskReminderEmailDefaults');
+  const defaults = mailConfigCache.defaultRecipients || [];
+  box.innerHTML = defaults.map(email => `
+    <label class="checkbox-label" style="font-weight:400">
+      <input type="checkbox" class="task-reminder-email-default" value="${escHtml(email)}"${selectedEmails.includes(email) ? ' checked' : ''}>
+      ${escHtml(email)}
+    </label>`).join('');
+}
+
+function collectTaskReminderEmails() {
+  const checked = Array.from(document.querySelectorAll('.task-reminder-email-default:checked')).map(c => c.value);
+  const extra = document.getElementById('taskReminderEmailExtra').value.trim();
+  if (extra) checked.push(extra);
+  return checked.join(',');
+}
+
+function openTaskModal(id, preDate, preTitle, preTime) {
   document.getElementById('taskId').value       = '';
   document.getElementById('taskTitle').value    = '';
   document.getElementById('taskDesc').value     = '';
@@ -592,6 +1169,12 @@ function openTaskModal(id) {
   document.getElementById('taskCategory').value = 'empresa';
   document.getElementById('taskDueDate').value  = '';
   document.getElementById('taskStatus').value   = 'pending';
+  document.getElementById('taskReminderEnabled').checked = false;
+  document.getElementById('taskDueTime').value  = '';
+  document.getElementById('taskReminderEmailExtra').value = '';
+  document.getElementById('taskReminderList').innerHTML = '';
+  renderTaskReminderEmailDefaults(mailConfigCache.defaultRecipients || []);
+  toggleTaskReminderFields(false);
 
   if (id) {
     const t = getTasks().find(x => x.id === id);
@@ -604,9 +1187,21 @@ function openTaskModal(id) {
     document.getElementById('taskCategory').value = t.category;
     document.getElementById('taskDueDate').value  = t.dueDate || '';
     document.getElementById('taskStatus').value   = t.status;
+    document.getElementById('taskReminderEnabled').checked = !!t.reminderEnabled;
+    document.getElementById('taskDueTime').value  = t.dueTime || '';
+    const savedEmails = (t.reminderEmail || '').split(',').map(e => e.trim()).filter(Boolean);
+    renderTaskReminderEmailDefaults(savedEmails.length ? savedEmails : (mailConfigCache.defaultRecipients || []));
+    document.getElementById('taskReminderEmailExtra').value =
+      savedEmails.filter(e => !(mailConfigCache.defaultRecipients || []).includes(e)).join(',');
+    (t.reminders && t.reminders.length ? t.reminders : []).forEach(r => addTaskReminderRow(r.amount, r.unit));
+    toggleTaskReminderFields(!!t.reminderEnabled);
   } else {
     document.getElementById('taskModalTitle').textContent = 'Nueva Tarea';
+    document.getElementById('taskDueDate').value = preDate || today();
+    if (preTitle) document.getElementById('taskTitle').value = preTitle;
+    if (preTime) document.getElementById('taskDueTime').value = preTime;
   }
+  if (!document.getElementById('taskReminderList').children.length) addTaskReminderRow(1, 'days');
 
   openModal('taskModal');
 }
@@ -615,7 +1210,10 @@ function saveTask(e) {
   e.preventDefault();
   const title   = document.getElementById('taskTitle').value.trim();
   if (!title) return;
-  const id      = document.getElementById('taskId').value;
+  const id           = document.getElementById('taskId').value;
+  const dueDate      = document.getElementById('taskDueDate').value;
+  const reminders    = collectTaskReminders();
+  const reminderEnabled = document.getElementById('taskReminderEnabled').checked && !!dueDate && reminders.length > 0;
   const tasks   = getTasks();
   const record  = {
     id:          id || uid(),
@@ -623,9 +1221,13 @@ function saveTask(e) {
     description: document.getElementById('taskDesc').value.trim(),
     priority:    document.getElementById('taskPriority').value,
     category:    document.getElementById('taskCategory').value,
-    dueDate:     document.getElementById('taskDueDate').value,
+    dueDate,
     status:      document.getElementById('taskStatus').value,
     createdAt:   id ? undefined : new Date().toISOString(),
+    reminderEnabled,
+    dueTime:       document.getElementById('taskDueTime').value || '09:00',
+    reminderEmail: collectTaskReminderEmails(),
+    reminders,
   };
 
   if (id) {
@@ -636,16 +1238,20 @@ function saveTask(e) {
   }
 
   saveTasks(tasks);
+  if (window.gestipyme) window.gestipyme.syncReminder(record);
   closeModal('taskModal');
   renderKanban();
   renderDashboard();
+  calRefresh();
 }
 
-function deleteTask(id) {
-  if (!confirm('¿Eliminar esta tarea?')) return;
+async function deleteTask(id) {
+  if (!(await appConfirm('¿Eliminar esta tarea?'))) return;
   saveTasks(getTasks().filter(t => t.id !== id));
+  if (window.gestipyme) window.gestipyme.deleteReminder(id);
   renderKanban();
   renderDashboard();
+  calRefresh();
 }
 
 function moveTask(id, direction) {
@@ -694,6 +1300,7 @@ function renderKanban() {
         <div class="task-card-footer">
           <span class="priority-badge ${t.priority}">${priorityLabel[t.priority]}</span>
           ${t.dueDate ? `<span class="due-date-badge${isOverdue(t.dueDate) && t.status !== 'done' ? ' overdue' : ''}">📅 ${formatDate(t.dueDate)}</span>` : ''}
+          ${t.reminderEnabled && t.reminders && t.reminders.length ? `<span class="due-date-badge" title="${t.reminders.length} recordatorio(s) por email antes del ${formatDate(t.dueDate)} ${t.dueTime || ''}">🔔 ${t.reminders.length}</span>` : ''}
           <div class="task-card-actions">
             ${cur > 0 ? `<button class="move-btn" onclick="moveTask('${t.id}',-1)">← Atrás</button>` : ''}
             ${cur < 2 ? `<button class="move-btn" onclick="moveTask('${t.id}',1)">Adelante →</button>` : ''}
@@ -764,8 +1371,8 @@ function saveDiaryEntry(e) {
   selectDiaryDay(record.date);
 }
 
-function deleteDiaryEntry(id) {
-  if (!confirm('¿Eliminar esta entrada del diario?')) return;
+async function deleteDiaryEntry(id) {
+  if (!(await appConfirm('¿Eliminar esta entrada del diario?'))) return;
   const entry = getDiary().find(e => e.id === id);
   saveDiary(getDiary().filter(e => e.id !== id));
   renderDiaryCalendar();
@@ -903,8 +1510,8 @@ function saveRule(e) {
   renderRules();
 }
 
-function deleteRule(id) {
-  if (!confirm('¿Eliminar esta regla?')) return;
+async function deleteRule(id) {
+  if (!(await appConfirm('¿Eliminar esta regla?'))) return;
   saveRules(getRules().filter(r => r.id !== id));
   renderRules();
 }
@@ -1003,8 +1610,8 @@ function saveVideoEntry(e) {
   renderVideos();
 }
 
-function deleteVideoEntry(id) {
-  if (!confirm('¿Eliminar este video?')) return;
+async function deleteVideoEntry(id) {
+  if (!(await appConfirm('¿Eliminar este video?'))) return;
   saveVideos(getVideos().filter(v => v.id !== id));
   renderVideos();
 }
@@ -1067,62 +1674,71 @@ function renderCalendar() {
   const year = d.getFullYear();
   const mon  = d.getMonth();
 
-  const months = ['Enero','Febrero','Marzo','Abril','Mayo','Junio',
-                  'Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
-  document.getElementById('calTitle').textContent = `${months[mon]} ${year}`;
+  const months = ['enero','febrero','marzo','abril','mayo','junio',
+                  'julio','agosto','septiembre','octubre','noviembre','diciembre'];
+  document.getElementById('calTitle').textContent = `${months[mon]} de ${year}`;
 
-  const firstDay = new Date(year, mon, 1).getDay(); // 0=Sun
-  const startOffset = firstDay === 0 ? 6 : firstDay - 1; // Mon=0
+  const startOffset = new Date(year, mon, 1).getDay(); // semana parte en domingo
   const daysInMonth = new Date(year, mon + 1, 0).getDate();
+  const weeks = Math.ceil((startOffset + daysInMonth) / 7);
   const todayStr = today();
+  const first = new Date(year, mon, 1 - startOffset);
 
-  const yStr = String(year);
-  const mStr = String(mon + 1).padStart(2, '0');
-  const prefix = `${yStr}-${mStr}`;
+  const all = {};
+  const bucket = (ds) => (all[ds] = all[ds] || { exp: 0, inc: 0, tasks: [] });
+  getExpenses().forEach(e => { bucket(e.date).exp += Number(e.amount) || 0; });
+  getIncome().forEach(e => { bucket(e.date).inc += Number(e.amount) || 0; });
+  getTasks().forEach(t => { if (t.dueDate) bucket(t.dueDate).tasks.push(t); });
 
-  const expenses = getExpenses().filter(e => e.date.startsWith(prefix));
-  const tasks    = getTasks().filter(t => t.dueDate && t.dueDate.startsWith(prefix));
-
-  const expByDay  = {};
-  const taskByDay = {};
-  expenses.forEach(e => {
-    const day = parseInt(e.date.split('-')[2]);
-    expByDay[day] = (expByDay[day] || []);
-    expByDay[day].push(e);
-  });
-  tasks.forEach(t => {
-    const day = parseInt(t.dueDate.split('-')[2]);
-    taskByDay[day] = (taskByDay[day] || []);
-    taskByDay[day].push(t);
-  });
-
-  const grid = document.getElementById('calGrid');
+  const fmtTime = (hhmm) => {
+    if (!hhmm) return '';
+    const [h, m] = hhmm.split(':').map(Number);
+    const h12 = h % 12 === 0 ? 12 : h % 12;
+    return `${h12}${m ? ':' + String(m).padStart(2, '0') : ''}${h < 12 ? 'am' : 'pm'}`;
+  };
+  const MAX = 4;
   let html = '';
-
-  for (let i = 0; i < startOffset; i++) {
-    html += `<div class="cal-day empty"><div class="cal-day-num"></div></div>`;
-  }
-
-  for (let day = 1; day <= daysInMonth; day++) {
-    const dStr = `${prefix}-${String(day).padStart(2, '0')}`;
-    const isToday    = dStr === todayStr;
-    const isSelected = state.calSelected === dStr;
-    const exps  = expByDay[day]  || [];
-    const tsks  = taskByDay[day] || [];
-    const dots  = [
-      ...exps.map(() => `<div class="cal-day-dot expense"></div>`),
-      ...tsks.map(() => `<div class="cal-day-dot task"></div>`),
-    ].slice(0, 6).join('');
-
+  for (let i = 0; i < weeks * 7; i++) {
+    const cd = new Date(first.getFullYear(), first.getMonth(), first.getDate() + i);
+    const dStr = localDateStr(cd);
+    const inMonth = cd.getMonth() === mon;
+    const b = all[dStr] || { exp: 0, inc: 0, tasks: [] };
+    const sorted = b.tasks.slice().sort((x, y) => (x.dueTime || '99').localeCompare(y.dueTime || '99'));
+    const tasks = sorted.filter(t => t.status !== 'done');
+    const doneN = sorted.length - tasks.length;
+    const gev = (window.GCAL ? window.GCAL.forDate(dStr) : []);
+    const items = [
+      ...gev.map(g => ({ k: 'g', g, o: g.allDay ? '00:00' : g.time })),
+      ...tasks.map(t => ({ k: 't', t, o: t.dueTime || '99:99' })),
+    ].sort((x, y) => x.o.localeCompare(y.o));
+    const chip = (it) => it.k === 'g' ? `
+      <div class="gcal-ev google" title="${escHtml(it.g.title)}" onclick="event.stopPropagation();calGoogleEvPop('${dStr}','${escHtml(it.g.id)}', this)">
+        <i></i><span class="gcal-ev-body">${it.g.allDay ? '' : `<span class="gcal-ev-t">${fmtTime(it.g.time)}</span>`}<span class="gcal-ev-n">${escHtml(it.g.title)}</span></span>
+      </div>` : `
+      <div class="gcal-ev${it.t.category === 'personal' ? ' personal' : ''}" title="${escHtml(it.t.title)}" onclick="event.stopPropagation();calTaskPop('${it.t.id}', this)">
+        <i></i><span class="gcal-ev-body">${it.t.dueTime ? `<span class="gcal-ev-t">${fmtTime(it.t.dueTime)}</span>` : ''}<span class="gcal-ev-n">${escHtml(it.t.title)}</span></span>
+      </div>`;
+    const chips = items.slice(0, MAX).map(chip).join('');
+    const more = items.length > MAX ? `<div class="gcal-more" onclick="event.stopPropagation();calMore('${dStr}')">+${items.length - MAX} más</div>` : '';
+    const allDone = doneN > 0 && tasks.length === 0;
+    const doneTag = doneN ? `<div class="gcal-donecount${allDone ? ' all' : ''}" title="Tareas completadas"><span class="gcal-donecheck">✓</span> ${allDone ? '¡Día completo!' : `${doneN} lista${doneN > 1 ? 's' : ''}`}</div>` : '';
+    const money = (b.exp > 0 || b.inc > 0)
+      ? `<div class="gcal-money">${b.inc > 0 ? `<span class="inc">+${clp(b.inc)}</span>` : ''}${b.exp > 0 ? `<span class="exp">−${clp(b.exp)}</span>` : ''}</div>` : '';
+    const label = cd.getDate() === 1 ? `${cd.getDate()} ${months[cd.getMonth()].slice(0, 3)}` : cd.getDate();
     html += `
-      <div class="cal-day${isToday ? ' today' : ''}${isSelected ? ' selected' : ''}"
-           data-date="${dStr}" onclick="selectCalDay('${dStr}')">
-        <div class="cal-day-num">${day}</div>
-        <div class="cal-day-dots">${dots}</div>
+      <div class="cal-day gcal-day${allDone ? ' alldone' : ''}${inMonth ? '' : ' other'}${dStr === todayStr ? ' today' : ''}${state.calSelected === dStr ? ' selected' : ''}"
+           data-date="${dStr}" onclick="calDayClick('${dStr}')">
+        <div class="gcal-top"><div class="gcal-num"><span>${label}</span></div>
+          <button class="gcal-add" title="Agregar una tarea este día" onclick="event.stopPropagation();calQuickAdd('${dStr}')">+</button></div>
+        ${chips}${more}${doneTag}${money}
       </div>`;
   }
+  document.getElementById('calGrid').innerHTML = html;
+}
 
-  grid.innerHTML = html;
+function calRefresh() {
+  if (!document.getElementById('calGrid')) return;
+  if (state.calSelected) selectCalDay(state.calSelected); else renderCalendar();
 }
 
 function selectCalDay(dateStr) {
@@ -1130,32 +1746,257 @@ function selectCalDay(dateStr) {
   renderCalendar();
 
   const expenses = getExpenses().filter(e => e.date === dateStr);
-  const tasks    = getTasks().filter(t => t.dueDate === dateStr);
+  const tasks    = getTasks().filter(t => t.dueDate === dateStr).sort((x, y) => (x.dueTime || '').localeCompare(y.dueTime || ''));
   const title    = document.getElementById('calEventsTitle');
   const list     = document.getElementById('calEventsList');
 
-  title.textContent = `Eventos del ${formatDate(dateStr)}`;
+  const longDay = (() => { const [yy, mm, dd] = dateStr.split('-').map(Number); const t = new Date(yy, mm - 1, dd).toLocaleDateString('es-CL', { weekday: 'long', day: 'numeric', month: 'long' }); return t.charAt(0).toUpperCase() + t.slice(1); })();
+  title.innerHTML = `${escHtml(longDay)}
+    <span class="cal-ev-actions"><button class="btn btn-primary btn-sm" onclick="openTaskModal('', '${dateStr}')">+ Tarea</button>
+    <button class="btn btn-outline btn-sm" onclick="openExpenseModal('', '${dateStr}')">+ Gasto</button></span>`;
 
-  if (!expenses.length && !tasks.length) {
-    list.innerHTML = '<p class="cal-events-empty">Sin eventos para este día.</p>';
+  if (!expenses.length && !tasks.length && !(window.GCAL && window.GCAL.forDate(dateStr).length)) {
+    list.innerHTML = '<p class="cal-events-empty">Sin eventos para este día. Usa «+ Tarea» o «+ Gasto».</p>';
     return;
   }
+  const gevs = (window.GCAL ? window.GCAL.forDate(dateStr) : []);
+  const doneCount = tasks.filter(t => t.status === 'done').length;
+  const progress = tasks.length ? `
+    <div class="cal-progress${doneCount === tasks.length ? ' full' : ''}">
+      <div class="cal-progress-top"><span>${doneCount === tasks.length ? '🎉 ¡Todo listo este día!' : `${doneCount} de ${tasks.length} tareas listas`}</span><b>${Math.round(doneCount / tasks.length * 100)}%</b></div>
+      <div class="cal-progress-bar"><i style="width:${Math.round(doneCount / tasks.length * 100)}%"></i></div>
+    </div>` : '';
 
-  list.innerHTML = [
+  const ic = (d) => `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14">${d}</svg>`;
+  const pen = ic('<path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/>');
+  const bin = ic('<polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a1 1 0 011-1h4a1 1 0 011 1v2"/>');
+  const gRows = gevs.map(g => `
+      <div class="cal-event-item cal-gev">
+        <span class="cal-gev-badge">G</span>
+        <span class="cal-event-name"><b>${g.allDay ? 'Todo el día' : escHtml(g.time) + (g.endTime ? '–' + escHtml(g.endTime) : '')}</b> · ${escHtml(g.title)}${g.location ? `<br><small style="color:var(--light)">📍 ${escHtml(g.location)}</small>` : ''}</span>
+        <span class="task-cat-badge" style="background:#ccfbf1;color:#0f766e">Google</span>
+      </div>`).join('');
+  list.innerHTML = progress + gRows + [
+    ...tasks.map(t => `
+      <div class="cal-event-item${t.status === 'done' ? ' is-done' : ''}">
+        <button class="cal-check${t.status === 'done' ? ' on' : ''}" onclick="calToggleTask('${t.id}', event)" title="${t.status === 'done' ? 'Marcar pendiente' : 'Marcar completada'}">✓</button>
+        <span class="cal-event-name"><b>${t.dueTime ? escHtml(t.dueTime) + ' · ' : ''}</b>${escHtml(t.title)}</span>
+        <span class="task-cat-badge ${t.category}">${t.category === 'empresa' ? 'Empresa' : 'Personal'}</span>
+        <button class="btn-icon" onclick="openTaskModal('${t.id}')" title="Editar">${pen}</button>
+        <button class="btn-icon danger" onclick="deleteTask('${t.id}')" title="Eliminar">${bin}</button>
+      </div>`),
     ...expenses.map(e => `
       <div class="cal-event-item">
         <div class="cal-event-type expense"></div>
         <span class="cal-event-name">${escHtml(e.description)} <small style="color:var(--light)">${escHtml(e.category)}</small></span>
         <span class="cal-event-amount">${clp(e.amount)}</span>
-      </div>`),
-    ...tasks.map(t => `
-      <div class="cal-event-item">
-        <div class="cal-event-type task"></div>
-        <span class="cal-event-name">${escHtml(t.title)}</span>
-        <span class="task-cat-badge ${t.category}">${t.category === 'empresa' ? 'Empresa' : 'Personal'}</span>
+        <button class="cal-gatita${e.category === 'Gatita' ? ' on' : ''}" onclick="calToggleGatita('${e.id}')" title="${e.category === 'Gatita' ? 'Quitar de Gatita' : 'Guardar este gasto en la categoría Gatita'}">🐱 Gatita</button>
+        <button class="btn-icon" onclick="openExpenseModal('${e.id}')" title="Editar">${pen}</button>
+        <button class="btn-icon danger" onclick="deleteExpense('${e.id}')" title="Eliminar">${bin}</button>
       </div>`),
   ].join('');
 }
+
+function gatitaFlash() {
+  const old = document.getElementById('gatitaFlash');
+  if (old) old.remove();
+  const el = document.createElement('div');
+  el.id = 'gatitaFlash';
+  el.className = 'gatita-flash';
+  const stars = Array.from({ length: 14 }, () =>
+    `<i style="left:${Math.round(Math.random() * 100)}%;top:${Math.round(Math.random() * 100)}%;animation-delay:${(Math.random() * .5).toFixed(2)}s;font-size:${18 + Math.round(Math.random() * 26)}px">${['✨', '⭐', '💖', '✨'][Math.floor(Math.random() * 4)]}</i>`).join('');
+  el.innerHTML = `<div class="gatita-flash-box">${stars}<span class="gatita-flash-text">macabeo culiao</span></div>`;
+  document.body.appendChild(el);
+  setTimeout(() => el.remove(), 1200);
+}
+
+function calToggleGatita(id) {
+  gatitaFlash();
+  const list = getExpenses();
+  const e = list.find(x => x.id === id);
+  if (!e) return;
+  if (e.category === 'Gatita') {
+    e.category = e.prevCategory || 'Otros Personal';
+    e.type = e.prevType || e.type;
+    delete e.prevCategory; delete e.prevType;
+  } else {
+    e.prevCategory = e.category; e.prevType = e.type;
+    e.category = 'Gatita'; e.type = 'personal';
+  }
+  saveExpenses(list);
+  renderExpenses(); renderDashboard();
+  if (state.currentPage === 'graficos') renderCharts();
+  calRefresh();
+}
+
+function celebrate(ev) {
+  const x = ev && ev.clientX ? ev.clientX : window.innerWidth / 2;
+  const y = ev && ev.clientY ? ev.clientY : window.innerHeight / 2;
+  const box = document.createElement('div');
+  box.className = 'celebrate';
+  const bits = ['🎉', '✨', '✅', '⭐', '💚', '🎊'];
+  box.innerHTML = Array.from({ length: 14 }, (_, i) => {
+    const ang = (Math.PI * 2 * i) / 14 + Math.random() * 0.4, dist = 60 + Math.random() * 70;
+    return `<i style="--dx:${Math.round(Math.cos(ang) * dist)}px;--dy:${Math.round(Math.sin(ang) * dist - 30)}px;animation-delay:${(Math.random() * 0.08).toFixed(2)}s">${bits[i % bits.length]}</i>`;
+  }).join('') + '<b>¡Listo!</b>';
+  box.style.left = x + 'px'; box.style.top = y + 'px';
+  document.body.appendChild(box);
+  setTimeout(() => box.remove(), 1100);
+}
+
+function calToggleTask(id, ev) {
+  const tasks = getTasks();
+  const t = tasks.find(x => x.id === id);
+  if (!t) return;
+  t.status = t.status === 'done' ? 'pending' : 'done';
+  if (t.status === 'done') celebrate(ev);
+  saveTasks(tasks);
+  renderKanban(); renderDashboard(); calRefresh();
+  calClosePop();
+}
+
+// ── Calendario: ventanitas (agregar rápido / detalle de tarea) ──
+
+function calClosePop() {
+  const p = document.getElementById('calPop');
+  if (p) p.remove();
+}
+
+function calPlacePop(pop, anchor) {
+  document.body.appendChild(pop);
+  const r = anchor ? anchor.getBoundingClientRect() : { left: 80, top: 120, right: 80, bottom: 120, width: 0 };
+  const w = pop.offsetWidth, h = pop.offsetHeight;
+  let left = r.right + 8;
+  if (left + w > window.innerWidth - 12) left = r.left - w - 8;
+  if (left < 12) left = Math.max(12, Math.min(window.innerWidth - w - 12, r.left));
+  let top = Math.max(12, Math.min(window.innerHeight - h - 12, r.top - 8));
+  pop.style.left = left + 'px';
+  pop.style.top = top + 'px';
+}
+
+function calDayClick(dateStr) {
+  calClosePop();
+  selectCalDay(dateStr);
+  const panel = document.getElementById('calEvents');
+  if (panel) {
+    const r = panel.getBoundingClientRect();
+    if (r.top > window.innerHeight * 0.55) panel.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+}
+
+function calQuickAdd(dateStr) {
+  calClosePop();
+  selectCalDay(dateStr);
+  const cell = document.querySelector(`.gcal-day[data-date="${dateStr}"]`);
+  const pop = document.createElement('div');
+  pop.id = 'calPop';
+  pop.className = 'cal-pop';
+  pop.innerHTML = `
+    <button class="cal-pop-x" onclick="calClosePop()" aria-label="Cerrar">×</button>
+    <div class="cal-pop-date">${escHtml(formatDate(dateStr))}</div>
+    <input class="cal-pop-title" id="calPopTitle" placeholder="Agregar título" autocomplete="off">
+    <div class="cal-pop-row">
+      <input type="time" id="calPopTime" class="cal-pop-in">
+      <select id="calPopCat" class="cal-pop-in"><option value="empresa">Empresa</option><option value="personal">Personal</option></select>
+    </div>
+    <div class="cal-pop-actions">
+      <button class="btn btn-outline btn-sm" id="calPopMore">Más opciones</button>
+      <button class="btn btn-primary btn-sm" id="calPopSave">Guardar</button>
+    </div>`;
+  calPlacePop(pop, cell);
+  const title = document.getElementById('calPopTitle');
+  title.focus();
+  const save = () => {
+    const v = title.value.trim();
+    if (!v) { title.focus(); return; }
+    const tasks = getTasks();
+    tasks.push({
+      id: uid(), title: v, description: '', priority: 'medium',
+      category: document.getElementById('calPopCat').value,
+      dueDate: dateStr, dueTime: document.getElementById('calPopTime').value || '',
+      status: 'pending', createdAt: new Date().toISOString(), reminderEnabled: false, reminders: [],
+    });
+    saveTasks(tasks);
+    calClosePop();
+    renderKanban(); renderDashboard(); calRefresh();
+  };
+  document.getElementById('calPopSave').onclick = save;
+  title.addEventListener('keydown', (e) => { if (e.key === 'Enter') save(); if (e.key === 'Escape') calClosePop(); });
+  document.getElementById('calPopMore').onclick = () => {
+    const v = title.value.trim(), tm = document.getElementById('calPopTime').value;
+    calClosePop();
+    openTaskModal('', dateStr, v, tm);
+  };
+}
+
+function calTaskPop(id, anchor) {
+  calClosePop();
+  const t = getTasks().find(x => x.id === id);
+  if (!t) return;
+  const pop = document.createElement('div');
+  pop.id = 'calPop';
+  pop.className = 'cal-pop';
+  const done = t.status === 'done';
+  pop.innerHTML = `
+    <div class="cal-pop-tools">
+      <button class="btn-icon" title="Editar" onclick="calClosePop();openTaskModal('${t.id}')">✏️</button>
+      <button class="btn-icon danger" title="Eliminar" onclick="calClosePop();deleteTask('${t.id}')">🗑️</button>
+      <button class="btn-icon" title="Cerrar" onclick="calClosePop()">✕</button>
+    </div>
+    <div class="cal-pop-h"><i class="${t.category === 'personal' ? 'personal' : ''}"></i><div><div class="cal-pop-name${done ? ' done' : ''}">${escHtml(t.title)}</div>
+      <div class="cal-pop-meta">${escHtml(formatDate(t.dueDate))}${t.dueTime ? ' · ' + escHtml(t.dueTime) : ''}</div></div></div>
+    <div class="cal-pop-meta">${t.category === 'empresa' ? 'Empresa' : 'Personal'} · Prioridad ${t.priority === 'high' ? 'alta' : t.priority === 'low' ? 'baja' : 'media'}${t.reminderEnabled ? ' · 🔔 ' + (t.reminders || []).length + ' recordatorio(s)' : ''}</div>
+    ${t.description ? `<div class="cal-pop-desc">${escHtml(t.description)}</div>` : ''}
+    <div class="cal-pop-actions"><button class="btn ${done ? 'btn-outline' : 'btn-primary'} btn-sm" onclick="calToggleTask('${t.id}', event)">${done ? '↩ Marcar pendiente' : '✓ Marcar completada'}</button></div>`;
+  calPlacePop(pop, anchor);
+}
+
+function calGoogleEvPop(dateStr, id, anchor) {
+  calClosePop();
+  const g = (window.GCAL ? window.GCAL.forDate(dateStr) : []).find(x => x.id === id);
+  if (!g) return;
+  const pop = document.createElement('div');
+  pop.id = 'calPop';
+  pop.className = 'cal-pop';
+  pop.innerHTML = `
+    <div class="cal-pop-tools"><button class="btn-icon" title="Cerrar" onclick="calClosePop()">✕</button></div>
+    <div class="cal-pop-h"><i class="google"></i><div><div class="cal-pop-name">${escHtml(g.title)}</div>
+      <div class="cal-pop-meta">${escHtml(formatDate(g.date))}${g.allDay ? ' · todo el día' : ' · ' + escHtml(g.time) + (g.endTime ? '–' + escHtml(g.endTime) : '')}</div></div></div>
+    ${g.location ? `<div class="cal-pop-meta">📍 ${escHtml(g.location)}</div>` : ''}
+    <div class="cal-pop-meta" style="color:#0f766e">Evento de Google Calendar (solo lectura). Para cambiarlo, edítalo en Google.</div>`;
+  calPlacePop(pop, anchor);
+}
+
+function calMore(dateStr) {
+  calClosePop();
+  selectCalDay(dateStr);
+  const el = document.getElementById('calEvents');
+  if (el) el.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+}
+
+async function calBellInit() {
+  const b = document.getElementById('calBell');
+  if (!b) return;
+  const P = window.gestipymePush;
+  if (!P || !P.supported) { b.style.display = 'none'; return; }
+  const paint = async () => {
+    const on = (await P.getStatus()) === 'subscribed';
+    b.classList.toggle('on', on);
+    b.textContent = on ? '🔔 Avisos activos (1 h antes)' : '🔔 Activar avisos al teléfono';
+  };
+  b.addEventListener('click', async () => {
+    if ((await P.getStatus()) === 'subscribed') { if (await appConfirm('¿Desactivar los avisos en este dispositivo?')) { await P.unsubscribe(); } }
+    else { try { await P.subscribe(); } catch (err) { await appConfirm(err.message); } }
+    paint();
+  });
+  paint();
+}
+
+document.addEventListener('mousedown', (e) => {
+  const p = document.getElementById('calPop');
+  if (p && !p.contains(e.target) && !e.target.closest('.gcal-day')) calClosePop();
+});
+document.addEventListener('keydown', (e) => { if (e.key === 'Escape') calClosePop(); });
 
 // ── Charts ───────────────────────────────────────────
 
@@ -1224,7 +2065,7 @@ function renderCharts() {
       scales: {
         y: {
           beginAtZero: true,
-          ticks: { callback: v => '$' + v.toLocaleString('es-CL') },
+          ticks: { callback: v => privacyMode ? '$***.***' : '$' + v.toLocaleString('es-CL') },
         },
       },
     },
@@ -1234,9 +2075,13 @@ function renderCharts() {
   destroyChart('category');
   const catTotals = {};
   expenses.forEach(e => { catTotals[e.category] = (catTotals[e.category] || 0) + e.amount; });
-  const catKeys  = Object.keys(catTotals).sort((a, b) => catTotals[b] - catTotals[a]).slice(0, 8);
+  const sortedCats = Object.keys(catTotals).sort((a, b) => catTotals[b] - catTotals[a]);
+  // Gatita siempre se muestra, aunque no esté entre las 8 más grandes
+  const catKeys  = sortedCats.slice(0, 8);
+  if (catTotals['Gatita'] && !catKeys.includes('Gatita')) { catKeys.pop(); catKeys.push('Gatita'); }
   const catVals  = catKeys.map(k => catTotals[k]);
-  const palette  = ['#2563eb','#7c3aed','#0891b2','#059669','#d97706','#dc2626','#db2777','#65a30d'];
+  const palette0 = ['#2563eb','#7c3aed','#0891b2','#059669','#d97706','#dc2626','#db2777','#65a30d'];
+  const palette  = catKeys.map((k, i) => k === 'Gatita' ? '#ec4899' : palette0[i % palette0.length]);
 
   state.charts.category = new Chart(document.getElementById('chartCategory'), {
     type: 'doughnut',
@@ -1272,7 +2117,45 @@ function renderCharts() {
       scales: {
         y: {
           beginAtZero: true,
-          ticks: { callback: v => '$' + v.toLocaleString('es-CL') },
+          ticks: { callback: v => privacyMode ? '$***.***' : '$' + v.toLocaleString('es-CL') },
+        },
+      },
+    },
+  });
+
+  // Commissions chart — 5% of pipeline lead prices per month
+  destroyChart('commissions');
+  const leads = getPipeline();
+  const monthlyComm = months.map(m => {
+    const sum = leads
+      .filter(l => l.price && l.date && l.date.startsWith(m))
+      .reduce((a, l) => a + (Number(l.price) || 0), 0);
+    return Math.round(sum * 0.05);
+  });
+  const totalComm = monthlyComm.reduce((a, v) => a + v, 0);
+  const commTotalEl = document.getElementById('chartCommTotal');
+  if (commTotalEl) commTotalEl.textContent = totalComm > 0 ? 'Total: ' + clp(totalComm) : '';
+  state.charts.commissions = new Chart(document.getElementById('chartCommissions'), {
+    type: 'bar',
+    data: {
+      labels: months.map(m => monthLabel(m + '-01')),
+      datasets: [{
+        label: 'Comisión 5%',
+        data: monthlyComm,
+        backgroundColor: 'rgba(22,163,74,.75)',
+        borderColor: '#16a34a',
+        borderWidth: 1,
+        borderRadius: 5,
+      }],
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: { legend: { display: false } },
+      scales: {
+        y: {
+          beginAtZero: true,
+          ticks: { callback: v => privacyMode ? '$***.***' : '$' + v.toLocaleString('es-CL') },
         },
       },
     },
@@ -1293,11 +2176,32 @@ function closeModal(id) {
   document.body.style.overflow = '';
 }
 
+function appConfirm(message) {
+  return new Promise((resolve) => {
+    document.getElementById('confirmModalMessage').textContent = message;
+    openModal('confirmModal');
+    const okBtn     = document.getElementById('confirmModalOk');
+    const cancelBtn = document.getElementById('confirmModalCancel');
+    const cleanup = (result) => {
+      closeModal('confirmModal');
+      okBtn.removeEventListener('click', onOk);
+      cancelBtn.removeEventListener('click', onCancel);
+      resolve(result);
+    };
+    const onOk     = () => cleanup(true);
+    const onCancel = () => cleanup(false);
+    okBtn.addEventListener('click', onOk);
+    cancelBtn.addEventListener('click', onCancel);
+  });
+}
+
 // ── Pipeline CRM ─────────────────────────────────────
 
 const PL_STAGES = ['lead','derivado','cotizado','minimo','oficial','facturado','recompra'];
 
-let plFilter = 'all';
+let plFilter     = 'all';
+let plMonthFrom  = ''; // 'YYYY-MM'
+let plMonthTo    = '';
 
 function seedCotizacionesOficiales() {
   let existing = getPipeline();
@@ -1410,7 +2314,7 @@ function renderPipelineBoard() {
       <div class="pipeline-col-total" id="plTotal-${escHtml(s.id)}" style="display:none"></div>
       <div class="pipeline-col-body" id="plCol-${escHtml(s.id)}"></div>
     </div>
-  `).join('') + `<button class="pipeline-add-col" id="pipelineAddCol">＋ Nueva columna</button>`;
+  `).join('');
 
   // Wire contenteditable titles
   stages.forEach(s => {
@@ -1426,29 +2330,36 @@ function renderPipelineBoard() {
     el.addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); el.blur(); } });
   });
 
-  // Color buttons (event delegation on board)
-  board.addEventListener('mousedown', boardMousedownHandler, { once: false });
+  // Color/delete buttons — use click (not mousedown) to avoid timing conflicts.
+  // Remove first to avoid duplicate listeners when board is re-rendered.
+  board.removeEventListener('click', boardClickHandler);
+  board.addEventListener('click', boardClickHandler);
 
-  // Add-col button
-  document.getElementById('pipelineAddCol')?.addEventListener('click', addPipelineCol);
+  // Add-col button lives OUTSIDE innerHTML — appended after column order is restored
+  // (see end of this function, after initColDrag)
 
   // Apply saved colors
   applyColColors();
 
-  // Init drag
+  // Init drag (may reorder columns via board.appendChild)
   initColDrag();
+
+  // Add-col button must go last — AFTER initColDrag potentially moves columns around
+  const addBtn = document.createElement('button');
+  addBtn.className = 'pipeline-add-col';
+  addBtn.id = 'pipelineAddCol';
+  addBtn.textContent = '＋ Nueva columna';
+  addBtn.addEventListener('click', addPipelineCol);
+  board.appendChild(addBtn);
 }
 
-function boardMousedownHandler(e) {
+function boardClickHandler(e) {
   const colorBtn = e.target.closest('.col-color-btn');
   const delBtn   = e.target.closest('.col-del-btn');
   if (colorBtn) {
-    e.preventDefault();
     e.stopPropagation();
     openColColorPicker(colorBtn.dataset.colstage, colorBtn);
-  }
-  if (delBtn) {
-    e.preventDefault();
+  } else if (delBtn) {
     e.stopPropagation();
     deletePipelineCol(delBtn.dataset.colstage);
   }
@@ -1489,9 +2400,8 @@ function openColColorPicker(stage, anchorEl) {
   popup.style.top  = (r.bottom + 6) + 'px';
   popup.style.left = Math.max(4, r.left - 50) + 'px';
 
-  // Use mousedown on popup to beat any close handler
-  popup.addEventListener('mousedown', e => {
-    e.preventDefault();
+  // Swatch / reset: use click + stopPropagation so the close handler (on document) never fires for popup clicks
+  popup.addEventListener('click', e => {
     e.stopPropagation();
     const sw = e.target.closest('.col-color-swatch');
     const rs = e.target.closest('.col-color-reset');
@@ -1504,8 +2414,9 @@ function openColColorPicker(stage, anchorEl) {
       applyColColors(); popup.remove();
     }
   });
-  // Close on click outside
-  const close = ev => { if (!popup.contains(ev.target)) { popup.remove(); document.removeEventListener('click', close); } };
+  // Close when clicking anywhere outside the popup.
+  // setTimeout ensures the click that opened the popup is already done before we register this.
+  const close = ev => { popup.remove(); document.removeEventListener('click', close); };
   setTimeout(() => document.addEventListener('click', close), 0);
 }
 
@@ -1518,12 +2429,12 @@ function addPipelineCol() {
   renderPipeline();
 }
 
-function deletePipelineCol(stageId) {
+async function deletePipelineCol(stageId) {
   const count = getPipeline().filter(l => l.stage === stageId).length;
   const msg = count > 0
     ? `Esta columna tiene ${count} lead(s). Al eliminarla los leads quedarán sin etapa. ¿Continuar?`
     : '¿Eliminar esta columna?';
-  if (!confirm(msg)) return;
+  if (!(await appConfirm(msg))) return;
   const stages = getActiveStages().filter(s => s.id !== stageId);
   saveActiveStages(stages);
   boardInited = false;
@@ -1556,6 +2467,9 @@ function initColDrag() {
     if (reordered.length) saveActiveStages(reordered);
     dragSrc = null;
     applyColColors();
+    // Keep add-col button at the very end after DOM reorder
+    const addBtn = document.getElementById('pipelineAddCol');
+    if (addBtn) board.appendChild(addBtn);
   });
   board.addEventListener('dragover', e => {
     e.preventDefault();
@@ -1739,10 +2653,13 @@ let boardInited = false;
 function renderPipeline() {
   seedPipelineLeads();
   seedCotizacionesOficiales();
+  renderPipelineFilters();
   if (!boardInited) { renderPipelineBoard(); boardInited = true; }
   else { applyColColors(); }
   const leads = getPipeline();
-  const filtered = plFilter === 'all' ? leads : leads.filter(l => l.biz === plFilter);
+  let filtered = plFilter === 'all' ? leads : leads.filter(l => l.biz === plFilter);
+  if (plMonthFrom) filtered = filtered.filter(l => l.date && l.date.slice(0,7) >= plMonthFrom);
+  if (plMonthTo)   filtered = filtered.filter(l => l.date && l.date.slice(0,7) <= plMonthTo);
 
   getActiveStages().forEach(({ id: stage }) => {
     const col = document.getElementById(`plCol-${stage}`);
@@ -1755,7 +2672,7 @@ function renderPipeline() {
     if (totalEl) {
       const sum = items.reduce((s, l) => s + (Number(l.price) || 0), 0);
       if (sum > 0) {
-        totalEl.textContent = fmtPesos(sum) + ' neto';
+        totalEl.textContent = fmtPesos(sum, true) + ' neto';
         totalEl.style.display = 'block';
       } else {
         totalEl.textContent = '';
@@ -1771,7 +2688,7 @@ function renderPipeline() {
     col.innerHTML = items.map(l => `
       <div class="pl-card" data-id="${l.id}">
         ${l.cotizRef ? `<div class="pl-card-cotiz-ref">N°${escHtml(l.cotizRef)}</div>` : ''}
-        ${l.price ? `<div class="pl-card-price">${fmtPesos(l.price)} <span class="pl-card-price-label">neto</span></div>` : ''}
+        ${l.price ? `<div class="pl-card-price">${fmtPesos(l.price, true)} <span class="pl-card-price-label">neto</span></div>` : ''}
         <div class="pl-card-name">${escHtml(l.name)}</div>
         ${l.company ? `<div class="pl-card-company">${escHtml(l.company)}</div>` : ''}
         ${l.product ? `<div class="pl-card-product">${escHtml(l.product)}</div>` : ''}
@@ -1797,7 +2714,6 @@ function renderPipeline() {
       </div>
     `).join('');
   });
-  initColDrag();
 }
 
 function openLeadModal(id) {
@@ -1806,7 +2722,7 @@ function openLeadModal(id) {
   document.getElementById('leadId').value = lead ? lead.id : '';
   document.getElementById('leadName').value = lead ? lead.name : '';
   document.getElementById('leadCompany').value = lead ? (lead.company || '') : '';
-  document.getElementById('leadBiz').value = lead ? (lead.biz || 'polimer') : 'polimer';
+  populateLeadBizSelect(lead?.biz || getEmpresas()[0]?.id || '');
   document.getElementById('leadPhone').value = lead ? (lead.phone || '') : '';
   document.getElementById('leadEmail').value = lead ? (lead.email || '') : '';
   document.getElementById('leadProduct').value = lead ? (lead.product || '') : '';
@@ -1832,8 +2748,7 @@ function openCotizModal(id) {
   if (!l) return;
   const titles = getPLTitles();
   const stageLabel = titles[l.stage] || PL_DEFAULT_TITLES[l.stage] || l.stage;
-  const bizNames = { polimer: 'Polimer SPA', fierros: 'Fierros Idini', otro: 'Empresa' };
-  const bizName = bizNames[l.biz] || 'Empresa';
+  const bizName = getEmpresas().find(e => e.id === l.biz)?.nombre || l.biz || 'Empresa';
   const quoteNum = 'COT-' + id.slice(-6).toUpperCase();
   const dateStr = l.date ? formatDate(l.date) : formatDate(today());
 
@@ -1978,8 +2893,8 @@ function saveLead(e) {
   renderPipeline();
 }
 
-function deleteLead(id) {
-  if (!confirm('¿Eliminar este lead?')) return;
+async function deleteLead(id) {
+  if (!(await appConfirm('¿Eliminar este lead?'))) return;
   savePipeline(getPipeline().filter(l => l.id !== id));
   renderPipeline();
 }
@@ -1998,6 +2913,107 @@ function moveLead(id, dir) {
 }
 
 // ── Init & Events ────────────────────────────────────
+
+// Tarjeta Visa Internacional ****3375 — movimientos may-jun 2026
+// USD convertido a CLP con TC ~950 (referencia mercado jun 2026)
+function importVisaInt26() {
+  const empresa = 'empresa', personal = 'personal';
+  const TC = 950; // tipo de cambio USD→CLP
+  const usd = v => Math.round(v * TC);
+  const entries = [
+    // WIX.COM x3 (29/05) — hosting/plataformas negocio
+    { date:'2026-05-29', description:'WIX.COM (hosting)', amount:usd(100), category:'Software', type:empresa, notes:'Visa Int ****3375 · $100 USD' },
+    { date:'2026-05-29', description:'WIX.COM (hosting)', amount:usd(100), category:'Software', type:empresa, notes:'Visa Int ****3375 · $100 USD' },
+    { date:'2026-05-29', description:'WIX.COM (hosting)', amount:usd(100), category:'Software', type:empresa, notes:'Visa Int ****3375 · $100 USD' },
+    // PARAMOUNT+ personal
+    { date:'2026-05-29', description:'Paramount+', amount:usd(6.38), category:'Entretenimiento', type:personal, notes:'Visa Int ****3375 · $6.38 USD' },
+    // WIX.COM (27/05)
+    { date:'2026-05-27', description:'WIX.COM (hosting)', amount:usd(100), category:'Software', type:empresa, notes:'Visa Int ****3375 · $100 USD' },
+    // Claude.ai subscription
+    { date:'2026-05-26', description:'Claude.ai (Anthropic)', amount:usd(23.80), category:'Software', type:empresa, notes:'Visa Int ****3375 · $23.80 USD' },
+    // BuilderBot mensual — herramienta de automatización
+    { date:'2026-05-01', description:'BuilderBot (mensual)', amount:usd(39), category:'Software', type:empresa, notes:'Suscripción mensual · $39 USD' },
+  ].map(e => ({ id: uid(), createdAt: new Date().toISOString(), notes: e.notes, source: 'visa_int', ...e }));
+  const existing = getExpenses();
+  saveExpenses([...existing, ...entries]);
+}
+
+function importBdcJun26() {
+  // Cartola Banco de Chile — cuenta corriente — cargos abril-junio 2026
+  const personal = 'personal', empresa = 'empresa';
+  const entries = [
+    // ── Junio 2026 ──
+    { date:'2026-06-08', description:'Traspaso A:Khipu Clbs E',              amount:54181,  category:'Servicios',       type:personal, notes:'Banco de Chile' },
+    { date:'2026-06-04', description:'Crunchyroll',                            amount:5490,   category:'Entretenimiento', type:personal, notes:'' },
+    { date:'2026-06-04', description:'El Colorado',                            amount:99000,  category:'Entretenimiento', type:personal, notes:'' },
+    { date:'2026-06-04', description:'Google YouTube',                         amount:3450,   category:'Entretenimiento', type:personal, notes:'' },
+    { date:'2026-06-04', description:'Traspaso A:Juan Carlos Jara',            amount:2611,   category:'Otro',            type:personal, notes:'' },
+    { date:'2026-06-02', description:'Recaudación Pagos de Servicios',         amount:3921,   category:'Servicios',       type:personal, notes:'Banco de Chile' },
+    { date:'2026-06-02', description:'Traspaso A:Jose Ignacio Espinoza',       amount:2645,   category:'Otro',            type:personal, notes:'' },
+    { date:'2026-06-01', description:'Impuesto Línea de Crédito',              amount:217,    category:'Banco',           type:personal, notes:'' },
+    { date:'2026-06-01', description:'Didi',                                   amount:20608,  category:'Transporte',      type:personal, notes:'' },
+    { date:'2026-06-01', description:'Didi',                                   amount:8076,   category:'Transporte',      type:personal, notes:'' },
+    { date:'2026-06-01', description:'Didi',                                   amount:6950,   category:'Transporte',      type:personal, notes:'' },
+    { date:'2026-06-01', description:'Los Viñedos Del C',                      amount:6350,   category:'Alimentación',    type:personal, notes:'Restaurante' },
+    // ── Mayo 2026 ──
+    { date:'2026-05-29', description:'Club Lo Cañas',                          amount:45000,  category:'Entretenimiento', type:personal, notes:'' },
+    { date:'2026-05-29', description:'Traspaso A:Kevin',                       amount:15000,  category:'Otro',            type:personal, notes:'' },
+    { date:'2026-05-27', description:'Recaudación Pagos de Servicios',         amount:15230,  category:'Servicios',       type:personal, notes:'Banco de Chile' },
+    { date:'2026-05-26', description:'MercadoPago',                            amount:592,    category:'Otro',            type:personal, notes:'' },
+    { date:'2026-05-25', description:'Traspaso A:Martin Eduardo Fuenzal',      amount:3685,   category:'Otro',            type:personal, notes:'' },
+    { date:'2026-05-20', description:'Copec Asistido',                         amount:20000,  category:'Transporte',      type:personal, notes:'Bencina' },
+    { date:'2026-05-20', description:'Traspaso A:Gonzalo Iguere',              amount:4360,   category:'Otro',            type:personal, notes:'' },
+    { date:'2026-05-18', description:'Seguro Protección',                      amount:3231,   category:'Banco',           type:personal, notes:'Banco de Chile' },
+    { date:'2026-05-18', description:'Comercial Los Molinos',                  amount:20140,  category:'Otro',            type:personal, notes:'' },
+    { date:'2026-05-18', description:'Uber Trip',                              amount:3250,   category:'Transporte',      type:personal, notes:'' },
+    { date:'2026-05-18', description:'Uber Trip',                              amount:3494,   category:'Transporte',      type:personal, notes:'' },
+    { date:'2026-05-18', description:'Los Viñedos Del C',                      amount:39120,  category:'Alimentación',    type:personal, notes:'Restaurante' },
+    { date:'2026-05-15', description:'Comisión Compras en el Exterior',        amount:148,    category:'Banco',           type:personal, notes:'' },
+    { date:'2026-05-13', description:'Spotify',                                amount:4950,   category:'Entretenimiento', type:personal, notes:'Suscripción mensual' },
+    { date:'2026-05-12', description:'Wix.com',                                amount:7711,   category:'Software',        type:empresa,  notes:'Hosting web' },
+    { date:'2026-05-11', description:'Didi',                                   amount:12408,  category:'Transporte',      type:personal, notes:'' },
+    { date:'2026-05-08', description:'Pago Línea de Crédito',                  amount:329175, category:'Banco',           type:personal, notes:'Banco de Chile' },
+    { date:'2026-05-08', description:'Traspaso A:Khipu Clbs E',               amount:50681,  category:'Servicios',       type:personal, notes:'Banco de Chile' },
+    { date:'2026-05-06', description:'Tottus Quilín',                          amount:4972,   category:'Alimentación',    type:personal, notes:'Supermercado' },
+    { date:'2026-05-05', description:'Universidad de Chile — NIC Chile',       amount:9990,   category:'Software',        type:empresa,  notes:'Dominio web' },
+    { date:'2026-05-04', description:'Intereses Línea de Crédito',             amount:294,    category:'Banco',           type:personal, notes:'' },
+    { date:'2026-05-04', description:'Impuesto Línea de Crédito',              amount:29,     category:'Banco',           type:personal, notes:'' },
+    { date:'2026-05-04', description:'Uber Trip',                              amount:12593,  category:'Transporte',      type:personal, notes:'' },
+    { date:'2026-05-04', description:'Crunchyroll',                            amount:5490,   category:'Entretenimiento', type:personal, notes:'' },
+    { date:'2026-05-04', description:'Google YouTube',                         amount:3450,   category:'Entretenimiento', type:personal, notes:'' },
+    { date:'2026-05-04', description:'Traspaso A:Juan Carlos Jara',            amount:3000,   category:'Otro',            type:personal, notes:'' },
+    { date:'2026-05-04', description:'Traspaso A:Vicente Mateo Aburto',        amount:17540,  category:'Otro',            type:personal, notes:'' },
+    { date:'2026-05-04', description:'Uber Trip',                              amount:3716,   category:'Transporte',      type:personal, notes:'' },
+    { date:'2026-05-04', description:'Danica Yanara Far',                      amount:7546,   category:'Otro',            type:personal, notes:'' },
+    { date:'2026-05-04', description:'Uber Trip',                              amount:3580,   category:'Transporte',      type:personal, notes:'' },
+    { date:'2026-05-04', description:'Patagonia Alimentos',                    amount:21560,  category:'Alimentación',    type:personal, notes:'' },
+    // ── Abril 2026 ──
+    { date:'2026-04-30', description:'Ventapormenor',                          amount:4000,   category:'Otro',            type:personal, notes:'' },
+    { date:'2026-04-30', description:'Uber Trip',                              amount:4290,   category:'Transporte',      type:personal, notes:'' },
+    { date:'2026-04-28', description:'Amortización Línea de Crédito',          amount:129880, category:'Banco',           type:personal, notes:'' },
+    { date:'2026-04-28', description:'Inv Los Leones C',                       amount:2250,   category:'Otro',            type:personal, notes:'' },
+    { date:'2026-04-27', description:'Flixbus',                                amount:70498,  category:'Transporte',      type:personal, notes:'' },
+    { date:'2026-04-27', description:'Uber Trip',                              amount:4082,   category:'Transporte',      type:personal, notes:'' },
+    { date:'2026-04-27', description:'Cai Weiguo',                             amount:18600,  category:'Alimentación',    type:personal, notes:'Restaurante' },
+    { date:'2026-04-27', description:'Uber Trip',                              amount:3793,   category:'Transporte',      type:personal, notes:'' },
+    { date:'2026-04-27', description:'Los Viñedos Del C',                      amount:5700,   category:'Alimentación',    type:personal, notes:'Restaurante' },
+    { date:'2026-04-27', description:'Little Caesars',                         amount:19500,  category:'Alimentación',    type:personal, notes:'' },
+    { date:'2026-04-24', description:'Pronto UAI Casino',                      amount:3690,   category:'Entretenimiento', type:personal, notes:'' },
+    { date:'2026-04-23', description:'FCLudus Limitada',                       amount:5500,   category:'Entretenimiento', type:personal, notes:'' },
+    { date:'2026-04-23', description:'Tottus Quilín',                          amount:7547,   category:'Alimentación',    type:personal, notes:'Supermercado' },
+    { date:'2026-04-23', description:'Recaudación Pagos de Servicios',         amount:14110,  category:'Servicios',       type:personal, notes:'Banco de Chile' },
+    { date:'2026-04-22', description:'Traspaso A:Martin Eduardo Fuenzal',      amount:2897,   category:'Otro',            type:personal, notes:'' },
+    { date:'2026-04-22', description:'Traspaso A:Martin Eduardo Fuenzal',      amount:2000,   category:'Otro',            type:personal, notes:'' },
+    { date:'2026-04-22', description:'Traspaso A:Sebastian Guajardo',          amount:2286,   category:'Otro',            type:personal, notes:'' },
+    { date:'2026-04-22', description:'Traspaso A:Martin Eduardo Fuenzal',      amount:33125,  category:'Otro',            type:personal, notes:'' },
+    { date:'2026-04-22', description:'Traspaso A:Renzo Vignola',               amount:3215,   category:'Otro',            type:personal, notes:'' },
+    { date:'2026-04-22', description:'Traspaso A:Martin Eduardo Fuenzal',      amount:9047,   category:'Otro',            type:personal, notes:'' },
+    { date:'2026-04-22', description:'La Tarta',                               amount:2200,   category:'Alimentación',    type:personal, notes:'' },
+  ].map(e => ({ id: uid(), createdAt: new Date().toISOString(), notes: '', source: 'bdc', ...e }));
+
+  const existing = getExpenses();
+  saveExpenses([...existing, ...entries]);
+}
 
 function importBdcApr26() {
   const entries = [
@@ -2023,30 +3039,119 @@ function importBdcApr26() {
     { description: 'Comisión mantención tarjeta',   amount: 4802,   category: 'Servicios Básicos', date: '2026-04-22', notes: 'Banco de Chile VISA' },
     { description: 'Intereses rotativos tarjeta',   amount: 34699,  category: 'Servicios Básicos', date: '2026-04-22', notes: 'Banco de Chile VISA' },
     { description: 'Impuesto DL 3475 tarjeta',      amount: 1442,   category: 'Otros Personal',    date: '2026-04-22', notes: '' },
-  ].map(e => ({ id: uid(), type: 'personal', createdAt: new Date().toISOString(), ...e }));
+  ].map(e => ({ id: uid(), type: 'personal', createdAt: new Date().toISOString(), source: 'bdc', ...e }));
 
   const existing = getExpenses();
   saveExpenses([...existing, ...entries]);
 }
 
-function init() {
+function deduplicateExpenses() {
+  const all = getExpenses();
+  const seen = new Set();
+  const deduped = all.filter(e => {
+    const key = `${e.date}|${e.description}|${e.amount}`;
+    if (seen.has(key)) return false;
+    seen.add(key);
+    return true;
+  });
+  if (deduped.length < all.length) saveExpenses(deduped);
+}
+
+// Abonos cartola Banco de Chile — abr-jun 2026
+// Excluidas: Transferencias desde Línea de Crédito (son deuda, no ingreso real)
+function importBdcAbonos() {
+  const entries = [
+    // ── Junio 2026 ──
+    { date:'2026-06-04', description:'Abono API En Línea 775009764',        amount:1182445, category:'Empresa',    notes:'BDC abono · probablemente pago cliente' },
+    { date:'2026-06-04', description:'Traspaso De: Martin Eduardo Fuenzal', amount:100000,  category:'Varios',     notes:'BDC abono' },
+    { date:'2026-06-04', description:'Traspaso De: Jose Ignacio Espinoza',  amount:3912,    category:'Varios',     notes:'BDC abono' },
+    { date:'2026-06-04', description:'Traspaso De: Jose Ignacio Espinoza',  amount:3912,    category:'Varios',     notes:'BDC abono' },
+    { date:'2026-06-02', description:'Traspaso De: Renzo Alessandro Vignola', amount:3214,  category:'Varios',     notes:'BDC abono' },
+    { date:'2026-06-01', description:'Traspaso De: Juan Carlos Jara Correa', amount:3214,   category:'Varios',     notes:'BDC abono' },
+    { date:'2026-06-01', description:'Traspaso De: Vicente Andres Gonzalez', amount:3213,   category:'Varios',     notes:'BDC abono' },
+    { date:'2026-06-01', description:'Traspaso De: Cesar Ivan Bayas Rojas', amount:160000,  category:'Familia',    notes:'BDC abono' },
+    // ── Mayo 2026 ──
+    { date:'2026-05-29', description:'Traspaso De: Marco Andres Munoz',     amount:22500,   category:'Varios',     notes:'BDC abono' },
+    { date:'2026-05-29', description:'Traspaso De: Alvarez Garrido Lucia',  amount:2500,    category:'Familia',    notes:'BDC abono' },
+    { date:'2026-05-27', description:'Traspaso De: Martin Eduardo Fuenzal', amount:7824,    category:'Varios',     notes:'BDC abono' },
+    { date:'2026-05-25', description:'Traspaso De: Alvarez Garrido Lucia',  amount:23000,   category:'Familia',    notes:'BDC abono' },
+    { date:'2026-05-25', description:'Traspaso De: Alvarez Garrido Lucia',  amount:10000,   category:'Familia',    notes:'BDC abono' },
+    { date:'2026-05-20', description:'Traspaso De: Benjamin Alejandro Gar', amount:2400,    category:'Varios',     notes:'BDC abono' },
+    { date:'2026-05-20', description:'Traspaso De: Vicente Mateo Aburto',   amount:3912,    category:'Varios',     notes:'BDC abono' },
+    { date:'2026-05-12', description:'Traspaso De: Alvarez Garrido Lucia',  amount:160000,  category:'Familia',    notes:'BDC abono' },
+    { date:'2026-05-08', description:'App-traspaso De: JPB Marketing Spa',  amount:555000,  category:'Empresa',    notes:'BDC abono · sueldo/retiro empresa' },
+    { date:'2026-05-04', description:'Traspaso De: Cesar Ivan Bayas Rojas', amount:160000,  category:'Familia',    notes:'BDC abono' },
+    // ── Abril 2026 ──
+    { date:'2026-04-28', description:'App-traspaso De: JPB Marketing Spa',  amount:1100000, category:'Empresa',    notes:'BDC abono · sueldo/retiro empresa' },
+    { date:'2026-04-27', description:'Traspaso De: Alvarez Garrido Lucia',  amount:12000,   category:'Familia',    notes:'BDC abono' },
+  ].map(e => ({ id: uid(), createdAt: new Date().toISOString(), source: 'bdc_abono', ...e }));
+  saveIncome([...getIncome(), ...entries]);
+}
+
+function deduplicateIncome() {
+  const all = getIncome();
+  const seen = new Set();
+  const deduped = all.filter(e => {
+    const key = `${e.date}|${e.description}|${e.amount}`;
+    if (seen.has(key)) return false;
+    seen.add(key);
+    return true;
+  });
+  if (deduped.length < all.length) saveIncome(deduped);
+}
+
+async function init() {
+  mailConfigInit();
+  if (window.gestipymePush && window.gestipymePush.supported) window.gestipymePush.register();
+
+  const syncedFromRemote = window.gestipymeSync ? await window.gestipymeSync.pullAndApply() : false;
+  if (syncedFromRemote) localStorage.setItem('gestipyme_version', APP_VERSION);
+
   if (localStorage.getItem('gestipyme_version') !== APP_VERSION) {
     Object.values(STORAGE).forEach(k => localStorage.removeItem(k));
     seedInitialData();
     localStorage.setItem('gestipyme_version', APP_VERSION);
   }
 
-  if (!localStorage.getItem('gestipyme_import_bdc_apr26')) {
+  // v2: full reset — wipe all expenses and reimport clean from scratch
+  if (!localStorage.getItem('gestipyme_full_reset_v3')) {
+    // clear all previous import flags
+    ['gestipyme_import_bdc_apr26','gestipyme_import_bdc_jun26','gestipyme_import_bdc_jun26b',
+     'gestipyme_import_bdc_jun26c','gestipyme_import_bdc_jun26d',
+     'gestipyme_import_visa_int_26','gestipyme_import_visa_int_26b','gestipyme_import_visa_int_26c',
+     'gestipyme_import_visa_int_26d','gestipyme_import_visa_int_26e'].forEach(k => localStorage.removeItem(k));
+    // wipe ALL expenses
+    saveExpenses([]);
+    // reimport everything fresh
     importBdcApr26();
+    importBdcJun26();
+    importVisaInt26();
     localStorage.setItem('gestipyme_import_bdc_apr26', '1');
+    localStorage.setItem('gestipyme_import_bdc_jun26d', '1');
+    localStorage.setItem('gestipyme_import_visa_int_26e', '1');
+    localStorage.setItem('gestipyme_full_reset_v3', '1');
   }
+
+  if (!localStorage.getItem('gestipyme_import_abonos_v1')) {
+    saveIncome([]);
+    importBdcAbonos();
+    localStorage.setItem('gestipyme_import_abonos_v1', '1');
+  }
+
+  deduplicateExpenses();
+  deduplicateIncome();
+  if (typeof notasSeed === 'function') notasSeed();
 
   // Date
   const now  = new Date();
   const days = ['domingo','lunes','martes','miércoles','jueves','viernes','sábado'];
   const months = ['enero','febrero','marzo','abril','mayo','junio','julio','agosto','septiembre','octubre','noviembre','diciembre'];
-  document.getElementById('topbarDate').textContent =
-    `${days[now.getDay()]}, ${now.getDate()} de ${months[now.getMonth()]} ${now.getFullYear()}`;
+  window.updateTopbarDate = () => {
+    const n = new Date();
+    document.getElementById('topbarDate').textContent =
+      `${days[n.getDay()]}, ${n.getDate()} de ${months[n.getMonth()]} ${n.getFullYear()}`;
+  };
+  window.updateTopbarDate();
 
   populateFilterCategories();
 
@@ -2225,6 +3330,20 @@ function init() {
     renderPipeline();
   });
 
+  // ── Privacy mode ──
+  if (privacyMode) {
+    document.getElementById('privacyToggle').checked = true;
+    document.getElementById('privacyLabel').textContent = 'Activado';
+  }
+
+  // ── Pipeline month range filter ──
+  populateMonthSelects();
+  document.getElementById('plMonthFrom')?.addEventListener('change', e => { plMonthFrom = e.target.value; renderPipeline(); });
+  document.getElementById('plMonthTo')?.addEventListener('change',   e => { plMonthTo   = e.target.value; renderPipeline(); });
+
+  // ── Empresas ──
+  document.getElementById('newEmpresaBtn')?.addEventListener('click', () => openEmpresaModal());
+
   // ── Videos page ──
   document.getElementById('newVideoBtn').addEventListener('click', () => openVideoModal());
   document.getElementById('videoForm').addEventListener('submit', saveVideoEntry);
@@ -2240,6 +3359,28 @@ function init() {
   });
 
   // ── Calendar nav ──
+  calBellInit();
+  document.getElementById('calRefreshBtn').addEventListener('click', async (e) => {
+    const btn = e.currentTarget;
+    btn.disabled = true; btn.textContent = 'Actualizando…';
+    try {
+      if (window.gestipymeSync) await window.gestipymeSync.pullAndApply();
+      if (typeof renderKanban === 'function') renderKanban();
+      if (typeof renderDashboard === 'function') renderDashboard();
+      calRefresh();
+    } finally {
+      btn.disabled = false; btn.textContent = '↻ Actualizar';
+    }
+  });
+  document.getElementById('sumGatitaChip').addEventListener('click', () => {
+    const sel = document.getElementById('filterCategory');
+    sel.value = state.expenseFilter.category === 'Gatita' ? '' : 'Gatita';
+    sel.dispatchEvent(new Event('change'));
+  });
+  document.getElementById('calToday').addEventListener('click', () => {
+    state.calDate = new Date();
+    renderCalendar();
+  });
   document.getElementById('calPrev').addEventListener('click', () => {
     state.calDate = new Date(state.calDate.getFullYear(), state.calDate.getMonth() - 1, 1);
     renderCalendar();
@@ -2256,8 +3397,8 @@ function init() {
 
   // ── Backdrop close ──
   document.getElementById('backdrop').addEventListener('click', () => {
-    ['expenseModal', 'taskModal', 'diaryModal', 'ruleModal', 'videoModal', 'videoDetailModal'].forEach(id => {
-      if (document.getElementById(id).classList.contains('open')) closeModal(id);
+    ['expenseModal', 'taskModal', 'diaryModal', 'ruleModal', 'videoModal', 'videoDetailModal', 'noteModal', 'noteDetailModal'].forEach(id => {
+      if (document.getElementById(id)?.classList.contains('open')) closeModal(id);
     });
     document.getElementById('sidebar').classList.remove('open');
   });
@@ -2356,29 +3497,147 @@ const AI = {
   history:  [],
   pending:  null,
   loading:  false,
+  queue:    [],
 };
 
-const AI_SYSTEM = () => `Eres el asistente financiero de GestiónPyme, una app para emprendedores chilenos.
-Tu único trabajo es ayudar a registrar gastos y tareas a través de lenguaje natural.
-Responde SOLO con JSON válido, sin texto adicional, sin markdown.
+const AI_SYSTEM = () => `Eres el asistente personal de GestiónPyme, una app para un emprendedor chileno. No sos un formulario ni un bot frío: sos como alguien de confianza con quien él conversa de noche para contarle cómo le fue el día, y vos lo ayudás a ordenar lo que dijo — tareas, gastos, recordatorios — mientras le contestás con calidez, en chileno informal (tú/vos, "cachai", tono cercano pero sin exagerar), corto y natural, nunca robótico ni acartonado.
+Responde SOLO con JSON válido, sin texto adicional, sin markdown, sin explicar que es JSON.
 
-Para un GASTO devuelve exactamente:
+El usuario puede contarte varias cosas de corrido (su día completo). Cuando detectes UNO O MÁS gastos/tareas en el mismo mensaje, devuelve:
+{"action":"multi","items":[ {"action":"expense",...} , {"action":"task",...} ],"reply":"tu respuesta conversacional y cálida, comentando su día, antes de listar lo que vas a registrar"}
+Cada elemento de "items" lleva su propio "action" ("expense" o "task") y el resto de sus campos, con el mismo formato exacto que se describe abajo para cada tipo.
+
+Si detectás solo UN gasto, devuelve directo (sin envolver en "multi"):
 {"action":"expense","description":"...","amount":50000,"expenseType":"empresa|personal","category":"...","date":"YYYY-MM-DD","notes":""}
 
-Para una TAREA devuelve exactamente:
-{"action":"task","title":"...","priority":"low|medium|high","category":"empresa|personal","dueDate":"YYYY-MM-DD|null","description":""}
+Si detectás solo UNA tarea o algo que recordarle, devuelve directo:
+{"action":"task","title":"...","priority":"low|medium|high","category":"empresa|personal","dueDate":"YYYY-MM-DD|null","description":"","dueTime":"HH:MM|null","reminders":[{"amount":1,"unit":"hours|minutes|days"}]}
+- "dueTime" y "reminders" son opcionales: solo los incluyes si el usuario mencionó una hora concreta o pidió explícitamente que le recuerdes algo ("avísame", "recuérdame", "mándame un recordatorio"). Si no, omite esos campos.
 
-Para consultas o dudas devuelve:
-{"action":"chat","message":"respuesta corta en español"}
+Para charla, preguntas, o cuando solo quiere contarte algo sin que registres nada, devuelve:
+{"action":"chat","message":"tu respuesta conversacional, cálida y breve, en tu personalidad"}
 
 Reglas importantes:
 - Hoy es ${today()}. Usa esta fecha si el usuario no especifica.
 - La moneda es CLP (pesos chilenos). "50k" o "50 mil" = 50000.
-- empresa = gasto laboral/negocio. personal = gasto personal.
+- empresa = gasto/tarea laboral o de negocio. personal = gasto/tarea personal.
 - Categorías empresa: Marketing, Tecnología, Oficina y Suministros, Personal / RRHH, Ventas, Logística, Impuestos y Contabilidad, Servicios Profesionales, Arriendo, Otros Empresa.
-- Categorías personal: Alimentación, Transporte, Vivienda, Salud, Educación, Entretenimiento, Ropa y Calzado, Servicios Básicos, Ahorro / Inversión, Otros Personal.
+- Categorías personal: Alimentación, Transporte, Vivienda, Salud, Educación, Entretenimiento, Ropa y Calzado, Servicios Básicos, Ahorro / Inversión, Gatita, Otros Personal.
 - Si el usuario dice "almuerzo", "comida" → Alimentación (personal) u Oficina y Suministros (empresa).
-- Si falta info esencial (monto, descripción), devuelve {"action":"chat","message":"..."} pidiendo el dato.`;
+- Si falta info esencial de un gasto/tarea puntual (monto, descripción), usa "chat" para pedir el dato — no inventes cifras.
+- Sé breve: 1-3 frases en "reply"/"message", nunca un párrafo largo.`;
+
+// ── Configuración de correo (recordatorios) ──────────
+
+let mailConfigCache = { gmailUser: '', gmailAppPassword: '', defaultRecipients: [] };
+
+function renderMailDefaultsList() {
+  const list = document.getElementById('mailDefaultsList');
+  list.innerHTML = mailConfigCache.defaultRecipients.map(email => `
+    <div style="display:flex; align-items:center; gap:8px">
+      <span style="flex:1; font-size:.85rem">${escHtml(email)}</span>
+      <button type="button" class="reminder-row-remove" onclick="removeMailDefault('${email}')">×</button>
+    </div>`).join('') || '<p class="config-block-sub" style="margin:0">Todavía no agregaste ningún correo.</p>';
+}
+
+async function mailConfigInit() {
+  const block = document.getElementById('mailConfigBlock');
+  if (!window.gestipyme) { block.style.display = 'none'; return; }
+  block.style.display = '';
+  mailConfigCache = await window.gestipyme.getMailConfig();
+  if (!Array.isArray(mailConfigCache.defaultRecipients)) mailConfigCache.defaultRecipients = [];
+  document.getElementById('mailGmailUser').value = mailConfigCache.gmailUser;
+  document.getElementById('mailGmailPass').value = mailConfigCache.gmailAppPassword;
+  renderMailDefaultsList();
+  refreshReminderAgentStatus();
+}
+
+async function persistMailConfig() {
+  await window.gestipyme.setMailConfig(mailConfigCache);
+}
+
+async function addMailDefault() {
+  const input = document.getElementById('mailDefaultsInput');
+  const email = input.value.trim();
+  if (!email) return;
+  if (!mailConfigCache.defaultRecipients.includes(email)) {
+    mailConfigCache.defaultRecipients.push(email);
+    await persistMailConfig();
+    renderMailDefaultsList();
+  }
+  input.value = '';
+}
+
+async function removeMailDefault(email) {
+  mailConfigCache.defaultRecipients = mailConfigCache.defaultRecipients.filter(e => e !== email);
+  await persistMailConfig();
+  renderMailDefaultsList();
+}
+
+async function mailConfigSave() {
+  mailConfigCache.gmailUser        = document.getElementById('mailGmailUser').value.trim();
+  mailConfigCache.gmailAppPassword = document.getElementById('mailGmailPass').value.trim();
+  await persistMailConfig();
+  alert('Configuración de correo guardada.');
+}
+
+async function mailConfigSendTest() {
+  await mailConfigSave();
+  const res = await window.gestipyme.sendTestMail(mailConfigCache);
+  alert(res.ok ? 'Correo de prueba enviado. Revisa tu bandeja de entrada.' : `Error al enviar: ${res.error}`);
+}
+
+async function refreshReminderAgentStatus() {
+  const { installed } = await window.gestipyme.reminderAgentStatus();
+  document.getElementById('reminderAgentStatus').textContent = installed
+    ? 'Activo — revisa recordatorios pendientes cada 15 minutos, aunque la app esté cerrada.'
+    : 'Inactivo — los recordatorios solo se marcan, pero no se envían solos.';
+  const btn = document.getElementById('reminderAgentBtn');
+  btn.textContent = installed ? 'Desactivar' : 'Activar';
+  btn.dataset.installed = installed ? '1' : '0';
+}
+
+async function toggleReminderAgent() {
+  const btn = document.getElementById('reminderAgentBtn');
+  const installed = btn.dataset.installed === '1';
+  const res = installed
+    ? await window.gestipyme.uninstallReminderAgent()
+    : await window.gestipyme.installReminderAgent();
+  if (res && res.error) alert(`Error: ${res.error}`);
+  refreshReminderAgentStatus();
+}
+
+// ── Notificaciones push (móvil) ───────────────────────
+
+async function pushConfigInit() {
+  const block = document.getElementById('pushConfigBlock');
+  if (!window.gestipymePush || !window.gestipymePush.supported) { block.style.display = 'none'; return; }
+  block.style.display = '';
+  await refreshPushStatus();
+}
+
+async function refreshPushStatus() {
+  const status = await window.gestipymePush.getStatus();
+  const subscribed = status === 'subscribed';
+  document.getElementById('pushStatusText').textContent = subscribed
+    ? 'Activadas — vas a recibir un aviso directo en este dispositivo cuando venza un recordatorio.'
+    : 'Recibí un aviso directo en este dispositivo cuando venza un recordatorio, además del correo.';
+  const btn = document.getElementById('pushToggleBtn');
+  btn.textContent = subscribed ? 'Desactivar' : 'Activar';
+  btn.dataset.subscribed = subscribed ? '1' : '0';
+}
+
+async function togglePushSubscription() {
+  const btn = document.getElementById('pushToggleBtn');
+  const subscribed = btn.dataset.subscribed === '1';
+  try {
+    if (subscribed) await window.gestipymePush.unsubscribe();
+    else await window.gestipymePush.subscribe();
+  } catch (err) {
+    alert(`Error: ${err.message}`);
+  }
+  refreshPushStatus();
+}
 
 function aiGetKey() {
   return localStorage.getItem('gestipyme_api_key') || '';
@@ -2386,6 +3645,45 @@ function aiGetKey() {
 
 function aiSetKey(key) {
   localStorage.setItem('gestipyme_api_key', key.trim());
+}
+
+function elGetKey()     { return localStorage.getItem('gestipyme_el_key') || ''; }
+function elSetKey(k)    { localStorage.setItem('gestipyme_el_key', k.trim()); }
+function elGetVoiceId() { return localStorage.getItem('gestipyme_el_voice') || ''; }
+function elSetVoiceId(v){ localStorage.setItem('gestipyme_el_voice', v.trim()); }
+function elGetEnabled() { return localStorage.getItem('gestipyme_el_enabled') === '1'; }
+function elSetEnabled(on) { localStorage.setItem('gestipyme_el_enabled', on ? '1' : '0'); }
+
+let aiCurrentAudio = null;
+
+async function aiSpeak(text) {
+  if (!elGetEnabled()) return;
+  const key = elGetKey();
+  const voiceId = elGetVoiceId();
+  if (!key || !voiceId || !text) return;
+
+  try {
+    if (aiCurrentAudio) { aiCurrentAudio.pause(); aiCurrentAudio = null; }
+    const res = await fetch(`https://api.elevenlabs.io/v1/text-to-speech/${voiceId}`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'xi-api-key': key,
+        'Accept': 'audio/mpeg',
+      },
+      body: JSON.stringify({
+        text,
+        model_id: 'eleven_multilingual_v2',
+        voice_settings: { stability: 0.5, similarity_boost: 0.75 },
+      }),
+    });
+    if (!res.ok) { console.warn('[voz] ElevenLabs respondió', res.status); return; }
+    const blob = await res.blob();
+    aiCurrentAudio = new Audio(URL.createObjectURL(blob));
+    aiCurrentAudio.play().catch(() => {});
+  } catch (err) {
+    console.warn('[voz] No se pudo generar el audio:', err.message);
+  }
 }
 
 function aiTimeStr() {
@@ -2427,6 +3725,10 @@ function aiShowPreview(data) {
   const card = document.getElementById('aiPreviewCard');
   AI.pending = data;
 
+  const queueBadge = AI.queue.length
+    ? `<div class="ai-preview-row"><span class="ai-preview-label">Quedan</span><span class="ai-preview-val">${AI.queue.length} más después de esto</span></div>`
+    : '';
+
   if (data.action === 'expense') {
     card.innerHTML = `
       <div class="ai-preview-type expense">Nuevo Gasto</div>
@@ -2436,16 +3738,20 @@ function aiShowPreview(data) {
       <div class="ai-preview-row"><span class="ai-preview-label">Categoría</span><span class="ai-preview-val">${escHtml(data.category)}</span></div>
       <div class="ai-preview-row"><span class="ai-preview-label">Fecha</span><span class="ai-preview-val">${formatDate(data.date)}</span></div>
       ${data.notes ? `<div class="ai-preview-row"><span class="ai-preview-label">Notas</span><span class="ai-preview-val">${escHtml(data.notes)}</span></div>` : ''}
+      ${queueBadge}
     `;
   } else if (data.action === 'task') {
     const pLabel = { high: 'Alta', medium: 'Media', low: 'Baja' };
+    const hasReminder = data.reminders && data.reminders.length;
     card.innerHTML = `
       <div class="ai-preview-type task">Nueva Tarea</div>
       <div class="ai-preview-row"><span class="ai-preview-label">Título</span><span class="ai-preview-val">${escHtml(data.title)}</span></div>
       <div class="ai-preview-row"><span class="ai-preview-label">Prioridad</span><span class="ai-preview-val">${pLabel[data.priority] || data.priority}</span></div>
       <div class="ai-preview-row"><span class="ai-preview-label">Tipo</span><span class="ai-preview-val">${data.category === 'empresa' ? 'Empresa' : 'Personal'}</span></div>
-      ${data.dueDate ? `<div class="ai-preview-row"><span class="ai-preview-label">Vence</span><span class="ai-preview-val">${formatDate(data.dueDate)}</span></div>` : ''}
+      ${data.dueDate ? `<div class="ai-preview-row"><span class="ai-preview-label">Vence</span><span class="ai-preview-val">${formatDate(data.dueDate)}${data.dueTime ? ' ' + data.dueTime : ''}</span></div>` : ''}
       ${data.description ? `<div class="ai-preview-row"><span class="ai-preview-label">Desc.</span><span class="ai-preview-val">${escHtml(data.description)}</span></div>` : ''}
+      ${hasReminder ? `<div class="ai-preview-row"><span class="ai-preview-label">🔔</span><span class="ai-preview-val">${data.reminders.map(r => `${r.amount} ${r.unit} antes`).join(', ')}</span></div>` : ''}
+      ${queueBadge}
     `;
   }
 
@@ -2479,8 +3785,8 @@ function aiConfirm() {
     if (state.currentPage === 'graficos') renderCharts();
     aiAppendMsg('bot', `✅ Gasto guardado: ${data.description} — ${clp(data.amount)}`);
   } else if (data.action === 'task') {
-    const tasks = getTasks();
-    tasks.push({
+    const hasReminder = Array.isArray(data.reminders) && data.reminders.length > 0;
+    const record = {
       id: uid(),
       title: data.title,
       description: data.description || '',
@@ -2489,20 +3795,33 @@ function aiConfirm() {
       dueDate: data.dueDate || '',
       status: 'pending',
       createdAt: new Date().toISOString(),
-    });
+      reminderEnabled: hasReminder && !!data.dueDate,
+      dueTime: data.dueTime || '09:00',
+      reminderEmail: (mailConfigCache.defaultRecipients || []).join(','),
+      reminders: hasReminder ? data.reminders : [],
+    };
+    const tasks = getTasks();
+    tasks.push(record);
     saveTasks(tasks);
+    if (window.gestipyme && record.reminderEnabled) window.gestipyme.syncReminder(record);
     renderKanban();
     renderDashboard();
-    aiAppendMsg('bot', `✅ Tarea agregada: "${data.title}"`);
+    aiAppendMsg('bot', `✅ Tarea agregada: "${data.title}"${record.reminderEnabled ? ' 🔔' : ''}`);
   }
 
   aiHidePreview();
+
+  if (AI.queue.length) {
+    const next = AI.queue.shift();
+    setTimeout(() => aiShowPreview(next), 300);
+  }
 }
 
 function aiEditBeforeConfirm() {
   const data = AI.pending;
   if (!data) return;
   aiHidePreview();
+  AI.queue = [];
 
   if (data.action === 'expense') {
     openExpenseModal();
@@ -2558,7 +3877,7 @@ async function aiSendMessage(text) {
       },
       body: JSON.stringify({
         model: 'claude-haiku-4-5-20251001',
-        max_tokens: 400,
+        max_tokens: 900,
         system: AI_SYSTEM(),
         messages: AI.history.slice(-8),
       }),
@@ -2589,14 +3908,22 @@ async function aiSendMessage(text) {
       return;
     }
 
-    if (parsed.action === 'expense' || parsed.action === 'task') {
+    if (parsed.action === 'multi' && Array.isArray(parsed.items) && parsed.items.length) {
+      const reply = parsed.reply || `Encontré ${parsed.items.length} cosas para registrar, vamos una por una.`;
+      aiAppendMsg('bot', reply);
+      aiSpeak(reply);
+      AI.queue = parsed.items.slice(1);
+      aiShowPreview(parsed.items[0]);
+    } else if (parsed.action === 'expense' || parsed.action === 'task') {
       const preview = parsed.action === 'expense'
         ? `Encontré un gasto de ${clp(parsed.amount)}. ¿Lo guardo?`
         : `Encontré una tarea: "${parsed.title}". ¿La agrego?`;
       aiAppendMsg('bot', preview);
       aiShowPreview(parsed);
     } else {
-      aiAppendMsg('bot', parsed.message || raw);
+      const msg = parsed.message || raw;
+      aiAppendMsg('bot', msg);
+      aiSpeak(msg);
     }
 
   } catch (e) {
@@ -2614,7 +3941,7 @@ function aiInit() {
   const panel  = document.getElementById('aiPanel');
 
   // Welcome message
-  aiAppendMsg('bot', '¡Hola! 👋 Puedo agregar gastos y tareas con lenguaje natural.\n\nEjemplos:\n• "gaste 45 mil en bencina personal"\n• "tarea revisar IVA de alta prioridad"\n• "almuerzo de empresa 28000"');
+  aiAppendMsg('bot', '¡Hola! 👋 Contame cómo te fue hoy y te voy ordenando gastos, tareas y recordatorios — podés contarme varias cosas de corrido.\n\nEjemplos:\n• "gasté 45 mil en bencina y mañana tengo que declarar el IVA"\n• "recuérdame a las 10 la reunión con la fábrica de pallets"\n• "almuerzo de empresa 28000"');
 
   bubble.addEventListener('click', () => {
     panel.classList.toggle('open');
@@ -2637,20 +3964,24 @@ function aiInit() {
     bubble.classList.remove('hidden');
   });
 
-  document.getElementById('aiSettingsBtn').addEventListener('click', () => {
-    document.getElementById('apiKeyInput').value = aiGetKey();
+  const openAiKeyModal = () => {
+    document.getElementById('apiKeyInput').value  = aiGetKey();
+    document.getElementById('elKeyInput').value     = elGetKey();
+    document.getElementById('elVoiceIdInput').value = elGetVoiceId();
+    document.getElementById('elVoiceEnabled').checked = elGetEnabled();
     openModal('aiKeyModal');
-  });
+  };
 
-  document.getElementById('aiGoSetKey').addEventListener('click', () => {
-    document.getElementById('apiKeyInput').value = aiGetKey();
-    openModal('aiKeyModal');
-  });
+  document.getElementById('aiSettingsBtn').addEventListener('click', openAiKeyModal);
+  document.getElementById('aiGoSetKey').addEventListener('click', openAiKeyModal);
 
   document.getElementById('saveApiKey').addEventListener('click', () => {
     const k = document.getElementById('apiKeyInput').value.trim();
     if (!k) { alert('Ingresa una API Key válida.'); return; }
     aiSetKey(k);
+    elSetKey(document.getElementById('elKeyInput').value);
+    elSetVoiceId(document.getElementById('elVoiceIdInput').value);
+    elSetEnabled(document.getElementById('elVoiceEnabled').checked);
     closeModal('aiKeyModal');
     document.getElementById('aiNoKey').style.display = 'none';
     document.getElementById('aiInputRow').style.display = 'flex';
@@ -2668,6 +3999,181 @@ function aiInit() {
 
   document.getElementById('aiPreviewConfirm').addEventListener('click', aiConfirm);
   document.getElementById('aiPreviewEdit').addEventListener('click', aiEditBeforeConfirm);
+
+  setupAiVoiceInput();
+}
+
+function setupAiVoiceInput() {
+  const SpeechRecognitionCtor = window.SpeechRecognition || window.webkitSpeechRecognition;
+  const micBtn = document.getElementById('aiMic');
+  if (!SpeechRecognitionCtor) { micBtn.style.display = 'none'; return; }
+  micBtn.style.display = 'flex';
+
+  const recognition = new SpeechRecognitionCtor();
+  recognition.lang = 'es-CL';
+  recognition.interimResults = false;
+  recognition.maxAlternatives = 1;
+
+  let listening = false;
+
+  recognition.addEventListener('result', (e) => {
+    const transcript = e.results[e.results.length - 1][0].transcript.trim();
+    if (transcript) {
+      document.getElementById('aiInput').value = transcript;
+      aiSendMessage(transcript);
+    }
+  });
+
+  recognition.addEventListener('end', () => {
+    listening = false;
+    micBtn.classList.remove('listening');
+  });
+
+  recognition.addEventListener('error', () => {
+    listening = false;
+    micBtn.classList.remove('listening');
+  });
+
+  micBtn.addEventListener('click', () => {
+    if (listening) { recognition.stop(); return; }
+    try {
+      recognition.start();
+      listening = true;
+      micBtn.classList.add('listening');
+    } catch {}
+  });
+}
+
+// ── Empresas ─────────────────────────────────────────
+
+const STORAGE_EMPRESAS = 'gestipyme_empresas';
+
+const DEFAULT_EMPRESAS = [
+  { id: 'polimer',  nombre: 'Polimer',      color: '#2563eb' },
+  { id: 'fierros',  nombre: 'Fierros Idini', color: '#b45309' },
+  { id: 'otro',     nombre: 'Otro',          color: '#6b7280' },
+];
+
+function getEmpresas() {
+  const saved = load(STORAGE_EMPRESAS);
+  return (saved && Array.isArray(saved) && saved.length) ? saved : DEFAULT_EMPRESAS;
+}
+function saveEmpresas(arr) { save(STORAGE_EMPRESAS, arr); }
+
+// Populate month selects with last 24 months
+function populateMonthSelects() {
+  const ids = ['plMonthFrom', 'plMonthTo'];
+  const names = ['Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic'];
+  const now = new Date();
+  ids.forEach(id => {
+    const sel = document.getElementById(id);
+    if (!sel) return;
+    // keep first "Sin límite" option, rebuild rest
+    sel.innerHTML = '<option value="">Sin límite</option>';
+    for (let i = 0; i < 24; i++) {
+      const d = new Date(now.getFullYear(), now.getMonth() - i, 1);
+      const val = `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}`;
+      const opt = document.createElement('option');
+      opt.value = val;
+      opt.textContent = `${names[d.getMonth()]} ${d.getFullYear()}`;
+      sel.appendChild(opt);
+    }
+  });
+}
+
+// Rebuild Pipeline filter tabs based on current empresas
+function renderPipelineFilters() {
+  const tabs = document.getElementById('pipelineFilterTabs');
+  if (!tabs) return;
+  const empresas = getEmpresas();
+  tabs.innerHTML = `<button class="ftab${plFilter==='all'?' active':''}" data-plfilter="all">Todos</button>` +
+    empresas.map(e => `<button class="ftab${plFilter===e.id?' active':''}" data-plfilter="${escHtml(e.id)}">${escHtml(e.nombre)}</button>`).join('');
+}
+
+// Populate leadBiz select with current empresas
+function populateLeadBizSelect(currentVal) {
+  const sel = document.getElementById('leadBiz');
+  if (!sel) return;
+  const empresas = getEmpresas();
+  sel.innerHTML = empresas.map(e => `<option value="${escHtml(e.id)}"${e.id===currentVal?' selected':''}>${escHtml(e.nombre)}</option>`).join('');
+}
+
+function renderEmpresas() {
+  const list = document.getElementById('empresaList');
+  if (!list) return;
+  const empresas = getEmpresas();
+  if (!empresas.length) {
+    list.innerHTML = '<p style="color:var(--light);padding:20px">No hay empresas.</p>';
+    return;
+  }
+  list.innerHTML = `<div class="empresa-grid">
+    ${empresas.map(e => `
+      <div class="empresa-card">
+        <div class="empresa-color-strip" style="background:${escHtml(e.color)}"></div>
+        <div class="empresa-info">
+          <div class="empresa-nombre">${escHtml(e.nombre)}</div>
+          <div class="empresa-id">${escHtml(e.id)}</div>
+        </div>
+        <div class="empresa-actions">
+          <button class="btn-icon" onclick="openEmpresaModal('${escHtml(e.id)}')" title="Editar">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+          </button>
+          ${e.id !== 'otro' ? `<button class="btn-icon danger" onclick="deleteEmpresa('${escHtml(e.id)}')" title="Eliminar">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a1 1 0 011-1h4a1 1 0 011 1v2"/></svg>
+          </button>` : ''}
+        </div>
+      </div>
+    `).join('')}
+  </div>`;
+}
+
+function openEmpresaModal(id) {
+  const e = id ? getEmpresas().find(x => x.id === id) : null;
+  document.getElementById('empresaModalTitle').textContent = e ? 'Editar Empresa' : 'Nueva Empresa';
+  document.getElementById('empresaId').value     = e?.id     || '';
+  document.getElementById('empresaNombre').value = e?.nombre || '';
+  document.getElementById('empresaColor').value  = e?.color  || '#2563eb';
+  const overlay = document.getElementById('modalEmpresa');
+  overlay.style.display = 'flex';
+  document.body.style.overflow = 'hidden';
+  setTimeout(() => document.getElementById('empresaNombre').focus(), 100);
+}
+
+function closeEmpresaModal() {
+  document.getElementById('modalEmpresa').style.display = 'none';
+  document.body.style.overflow = '';
+}
+
+function saveEmpresa() {
+  const nombre = document.getElementById('empresaNombre').value.trim();
+  if (!nombre) { alert('El nombre es requerido'); return; }
+  const empresas = getEmpresas();
+  const existingId = document.getElementById('empresaId').value;
+  const color = document.getElementById('empresaColor').value;
+  if (existingId) {
+    const idx = empresas.findIndex(e => e.id === existingId);
+    if (idx !== -1) { empresas[idx].nombre = nombre; empresas[idx].color = color; }
+  } else {
+    // Generate id from name
+    const newId = nombre.toLowerCase().replace(/[^a-z0-9]/g, '_').replace(/_+/g,'_').slice(0,20) + '_' + Date.now().toString(36);
+    empresas.push({ id: newId, nombre, color });
+  }
+  saveEmpresas(empresas);
+  closeEmpresaModal();
+  renderEmpresas();
+  renderPipelineFilters(); // sync pipeline tabs
+}
+
+async function deleteEmpresa(id) {
+  const count = getPipeline().filter(l => l.biz === id).length;
+  const msg = count > 0
+    ? `Esta empresa tiene ${count} lead(s) en Pipeline. Al eliminarla los leads quedarán sin empresa. ¿Continuar?`
+    : '¿Eliminar esta empresa?';
+  if (!(await appConfirm(msg))) return;
+  saveEmpresas(getEmpresas().filter(e => e.id !== id));
+  if (plFilter === id) plFilter = 'all';
+  renderEmpresas();
+  renderPipelineFilters();
 }
 
 // ── Start ────────────────────────────────────────────

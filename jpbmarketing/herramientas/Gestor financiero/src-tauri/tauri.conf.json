@@ -1,0 +1,24 @@
+{
+  "$schema": "https://schema.tauri.app/config/2",
+  "productName": "GestiónPyme",
+  "version": "1.0.0",
+  "identifier": "cl.jpbmarketing.gestipyme",
+  "build": {
+    "frontendDist": "../web"
+  },
+  "app": {
+    "withGlobalTauri": true,
+    "windows": [
+      {
+        "title": "GestiónPyme",
+        "width": 1440,
+        "height": 900
+      }
+    ]
+  },
+  "bundle": {
+    "active": true,
+    "targets": ["app"],
+    "icon": ["icons/icon.png"]
+  }
+}

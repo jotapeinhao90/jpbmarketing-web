@@ -1,0 +1,21 @@
+{
+  "name": "gestionpyme",
+  "productName": "GestiónPyme",
+  "version": "1.0.0",
+  "description": "GestiónPyme — Finanzas para Emprendedores (app de escritorio)",
+  "private": true,
+  "scripts": {
+    "start": "node scripts/sync-frontend.js && tauri dev",
+    "build": "node scripts/sync-frontend.js && tauri build"
+  },
+  "dependencies": {
+    "ical.js": "^2.2.1",
+    "imapflow": "^2.3.0",
+    "mailparser": "^3.9.37",
+    "nodemailer": "^6.9.14",
+    "web-push": "^3.6.7"
+  },
+  "devDependencies": {
+    "@tauri-apps/cli": "^2.5.0"
+  }
+}

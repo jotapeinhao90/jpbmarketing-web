@@ -1,0 +1,15 @@
+{
+  "name": "gestipyme-recordatorios",
+  "main": "src/index.js",
+  "compatibility_date": "2026-09-01",
+  "triggers": { "crons": ["*/5 * * * *"] },
+  "kv_namespaces": [
+    { "binding": "SUBSCRIPTIONS", "id": "8ac8c3a283724adea820045735aecdb3" }
+  ],
+  "vars": {
+    "VAPID_SUBJECT": "mailto:jpbayas@jpbmarketing.cl",
+    "VAPID_PUBLIC_KEY": "BD8cZbyPSHkWWo00xXDMR23mKeUMTWTdkXmzl5-26IKZBcIfIfkdRBDsfTZ85O2wcuhxNegR-DTiD3skBaSV5ls",
+    "LEAD_MINUTES": "60",
+    "TZ": "America/Santiago"
+  }
+}

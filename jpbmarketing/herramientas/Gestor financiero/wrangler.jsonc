@@ -1,0 +1,9 @@
+{
+  "name": "gestipyme-personal",
+  "pages_build_output_dir": "web",
+  "compatibility_date": "2026-09-01",
+  "compatibility_flags": ["nodejs_compat"],
+  "kv_namespaces": [
+    { "binding": "SUBSCRIPTIONS", "id": "8ac8c3a283724adea820045735aecdb3" }
+  ]
+}
