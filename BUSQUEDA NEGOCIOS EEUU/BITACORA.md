@@ -915,3 +915,7 @@ URLs revisadas:
 ## 2026-11-14 – Prospección Recepcia
 - Leads: 15 (calidad baja-media; solo snippets, WebFetch bloqueado). Rubros: psicología x5, dental x4, peluquería x3, gimnasios x3. Ciudades: Osorno, Valdivia, Iquique, Chillán (ciudades ya cubiertas antes; búsquedas en Osorno/Copiapó/Calama de talleres y veterinarias no dieron negocios verificables).
 - URLs: doctoralia.cl (Arriagada, Rantul, Vargas, Mancilla, Escobar, Acuña, Cárdenas), agendapro.com (Bludent, Riodent, peluquerías Tarapacá, Stronge Life, Top Line), fresha.com/cl-iquique, mercantil.com (O2 Training Center).
+
+## 2026-11-15 – Prospección Recepcia
+- Leads: 15 (calidad baja-media; solo snippets, WebFetch bloqueado). Rubros: barberías, inmobiliarias, dental, veterinarias, kinesiología. Ciudades: Temuco, Concepción, Maipú, San Miguel, La Reina/Macul. Búsqueda de talleres en Providencia sin negocios verificables.
+- URLs: agendapro.com (barba-temuco, clinicas-maipu, veterinarias San Miguel, centros kinesiológicos), yapo.cl (perfiles Concepción), 2x3.cl, mercantil.com (Maipú Dent), doctoralia.cl (Kinesic Work).
