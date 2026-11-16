@@ -573,6 +573,43 @@ const sWhats = (x, W, H, st, tt) => {
   x.fillStyle = '#25d366'; x.fillRect(0, H - 110, W, 110);
   setFont(x, 900, 40); x.fillStyle = '#ffffff'; x.textAlign = 'center'; x.fillText('WHATSAPP + IA', W / 2, H - 42); x.textAlign = 'left';
 };
+const sGoogle = (x, W, H, st, tt) => {
+  x.fillStyle = '#ffffff'; x.fillRect(0, 0, W, H);
+  setFont(x, 700, 22, 'JetBrains Mono', false); x.fillStyle = '#1a73e8'; x.fillText('01 · GOOGLE ADS', 26, 40);
+  x.fillStyle = '#f1f3f4'; x.beginPath(); x.roundRect ? x.roundRect(24, 60, W - 48, 64, 32) : x.rect(24, 60, W - 48, 64); x.fill();
+  const q = 'tubos pvc 110 mm proveedor', n = Math.min(q.length, Math.floor((tt % 10) * 9));
+  setFont(x, 500, 28, 'Archivo', false); x.fillStyle = '#202124'; x.fillText('🔍  ' + q.slice(0, n) + (Math.floor(tt * 2) % 2 ? '|' : ''), 46, 102);
+  if (n >= q.length) {
+    x.fillStyle = 'rgba(245,184,0,.16)'; x.fillRect(18, 144, W - 36, 150); x.fillStyle = '#f5b800'; x.fillRect(18, 144, 6, 150);
+    setFont(x, 800, 20, 'Archivo', false); x.fillStyle = '#202124'; x.fillText('Patrocinado · tuempresa.cl', 40, 178);
+    setFont(x, 700, 30, 'Archivo', false); x.fillStyle = '#1a0dab'; x.fillText('Tubos PVC al por mayor · Cotiza hoy', 40, 222, W - 70);
+    setFont(x, 500, 22, 'Archivo', false); x.fillStyle = '#4d5156'; x.fillText('Despacho a todo Chile. Escríbenos por WhatsApp.', 40, 262, W - 70);
+  }
+  setFont(x, 900, 64); x.fillStyle = '#202124'; x.fillText(String(64 + Math.floor(tt * .4)), 26, H - 28);
+  setFont(x, 600, 22, 'JetBrains Mono', false); x.fillStyle = '#5f6368'; x.fillText('CLICS HOY → ENTRAN A LA LÍNEA', 200, H - 40);
+};
+const sAds = (x, W, H, st, tt) => {
+  x.fillStyle = '#0b1220'; x.fillRect(0, 0, W, H);
+  setFont(x, 700, 20, 'JetBrains Mono', false); x.fillStyle = YEL; x.fillText('GOOGLE ADS · CAMPAÑA INDUSTRIAL', 22, 36);
+  [['CLICS', '1.284'], ['CONV.', '96'], ['COSTO/CONV.', '$8.900']].forEach(([k, v], i) => { const px = 22 + i * (W - 44) / 3; setFont(x, 500, 15, 'JetBrains Mono', false); x.fillStyle = 'rgba(238,240,244,.6)'; x.fillText(k, px, 74); setFont(x, 900, 36); x.fillStyle = INK; x.fillText(v, px, 116); });
+  x.strokeStyle = YEL; x.lineWidth = 4; x.beginPath();
+  for (let i = 0; i <= 20; i++) { const px = 22 + i * (W - 44) / 20, py = H - 40 - (i / 20) * (H * .38) - Math.sin(i * 1.3 + tt) * 10; i ? x.lineTo(px, py) : x.moveTo(px, py); } x.stroke();
+};
+const sKw = (x, W, H, st, tt) => {
+  x.fillStyle = '#0b1220'; x.fillRect(0, 0, W, H);
+  setFont(x, 700, 20, 'JetBrains Mono', false); x.fillStyle = YEL; x.fillText('PALABRAS CLAVE QUE COMPRAN', 22, 36);
+  [['tubos pvc 110 mm', 880], ['proveedor fierro construcción', 720], ['bolsas industriales precio', 590], ['cotizar perfiles metálicos', 410]].forEach(([k, v], i) => {
+    const y = 66 + i * 70; setFont(x, 600, 22, 'Archivo', false); x.fillStyle = INK; x.fillText(k, 22, y + 24);
+    x.fillStyle = 'rgba(238,240,244,.12)'; x.fillRect(22, y + 36, W - 44, 12); x.fillStyle = i === Math.floor(tt) % 4 ? YEL : 'rgba(238,240,244,.55)'; x.fillRect(22, y + 36, (W - 44) * v / 900, 12);
+  });
+};
+const sWeb = (x, W, H, st, tt) => {
+  x.fillStyle = '#eef0f4'; x.fillRect(0, 0, W, H);
+  x.fillStyle = '#0b1220'; x.fillRect(0, 0, W, 46); setFont(x, 800, 20, 'Archivo', false); x.fillStyle = '#fff'; x.fillText('tuempresa.cl', 18, 30);
+  x.fillStyle = YEL; x.fillRect(W - 170, 10, 152, 26); setFont(x, 700, 15, 'Archivo', false); x.fillStyle = '#0b1220'; x.fillText('Cotizar ahora', W - 158, 28);
+  setFont(x, 900, 34); x.fillStyle = '#0b1220'; x.fillText('Catálogo industrial', 18, 100);
+  for (let i = 0; i < 4; i++) { const px = 18 + i * (W - 36) / 4; x.fillStyle = '#ffffff'; x.fillRect(px, 124, (W - 36) / 4 - 12, H - 150); x.fillStyle = '#c9ced8'; x.fillRect(px + 10, 134, (W - 36) / 4 - 32, (H - 150) * .5); }
+};
 const sVentas = (x, W, H, st, tt) => {
   x.fillStyle = '#05080f'; x.fillRect(0, 0, W, H);
   setFont(x, 500, 18, 'JetBrains Mono', false); x.fillStyle = YEL; x.fillText('03 · VENTAS', 26, 40);
@@ -629,7 +666,7 @@ const ledG = grp(scene, LED.x, LED.y, -17.04);
 for (const sx of [-1, 1]) S(box(.12, .12, .9), M.steel, mtx(LED.x + sx * 4.2, LED.y + 1.6, -17.6), 30, false);
 const led = new Pantalla(ledG, LED.w, LED.h, 1536, [ledClientes], { led: true, dur: 6, label: 'Clientes · ver casos', href: '#clientes', delay: .5 });
 // pantallas de las estaciones 01 y 03, montadas sobre las máquinas
-for (const [kx, slides, label] of [[9.6, [sVentas], '03 · Ventas cerradas']]) {
+for (const [kx, slides, label] of [[-10.6, [sGoogle], '01 · Google Ads'], [9.6, [sVentas], '03 · Ventas cerradas']]) {
   const g = grp(scene, kx, 3.45, lineZ + 1.05);
   D(box(2.75, 1.6, .12), M.dark, g, 0, 0, -.07);
   for (const s of [-1, 1]) D(box(.08, .9, .08), M.dark, g, s * .9, -1.15, -.25);
@@ -685,63 +722,92 @@ rotulo(grua, 'JPB MARKETING', .3, 0, 10.25, .62 + .19);      // viga de la grúa
 rotulo(grua, 'JPB MARKETING', .3, 0, 10.25, -.62 - .19, Math.PI);
 { const B = mtx(13.6, 0, -10.6, 0, Math.PI * .92, 0), p = new THREE.Vector3(0, .82, -1.31).applyMatrix4(B); insignia(scene, p.x, p.y, p.z, Math.PI * .92 + Math.PI, .8); } // contrapeso grúa horquilla
 
-// trabajadores con proporciones reales, articulados
+// trabajadores: figura humana con proporciones reales, articulada y con cara
 const M2 = {
-  piel: std({ color: 0xb98563, roughness: .65 }), pant: std({ color: 0x1d2a44, roughness: .85 }), camisa: std({ color: 0x3b4252, roughness: .8 }),
-  chaleco: std({ color: 0xe9d31c, roughness: .6 }), reflect: std({ color: 0xcfd5de, roughness: .2, metalness: .6 }),
-  bota: std({ color: 0x2b1f17, roughness: .7 }), guante: std({ color: 0x6b6f78, roughness: .8 }), casco: std({ color: 0xf1f1ec, roughness: .3 }),
-  lente: std({ color: 0x0c0f14, roughness: .1, metalness: .5 }), pelo: std({ color: 0x1c1612, roughness: .9 })
+  pieles: [0xc6916b, 0xa06a48, 0xdcae8a, 0x8a5a3c, 0xbf8a62].map((c) => std({ color: c, roughness: .62 })),
+  pant: std({ color: 0x1d2a44, roughness: .85 }), camisa: std({ color: 0x3b4252, roughness: .8 }),
+  chaleco: std({ color: 0xe6d21f, roughness: .55 }), reflect: std({ color: 0xd7dde6, roughness: .18, metalness: .65 }),
+  bota: std({ color: 0x33241a, roughness: .7 }), suela: std({ color: 0x0d0d0f, roughness: .9 }), guante: std({ color: 0x5d636d, roughness: .85 }),
+  casco: std({ color: 0xf2f2ee, roughness: .28 }), lente: std({ color: 0x0c0f14, roughness: .1, metalness: .5 }),
+  pelo: std({ color: 0x1b1511, roughness: .95 }), ojo: std({ color: 0xf4f1ea, roughness: .3 }), pupila: std({ color: 0x15100c, roughness: .2 }),
+  labio: std({ color: 0x7a4637, roughness: .6 }), cinto: std({ color: 0x2a1c12, roughness: .6 }), hebilla: std({ color: 0xc9ccd2, metalness: .9, roughness: .3 }),
+  chaqueta: std({ color: 0x17223d, roughness: .75 })
 };
-const cap = (r, l) => new THREE.CapsuleGeometry(r, l, 4, 10);
+const cap = (r, l) => new THREE.CapsuleGeometry(r, l, 4, 12);
 const rbox = (w, h, d, r) => new RoundedBoxGeometry(w, h, d, 3, r);
+const taper = (rt, rb, h) => new THREE.CylinderGeometry(rt, rb, h, 16);
+const sph = (r, ws = 16, hs = 12) => new THREE.SphereGeometry(r, ws, hs);
+const torsoGeo = (k = 1) => new THREE.LatheGeometry([[0, 0], [.15, 0], [.162, .06], [.168, .18], [.185, .3], [.198, .4], [.19, .46], [.15, .51], [.06, .54], [0, .545]].map(([r, y]) => new THREE.Vector2(r * k, y)), 24);
+let pielN = 0;
 function trabajador(parent, px, pz, ry, opts = {}) {
   const g = grp(parent, px, opts.y || 0, pz, ry), E = 89;
+  const piel = M2.pieles[pielN++ % M2.pieles.length];
+  const camisa = opts.oficina ? opts.chaleco : opts.jefe ? M2.chaqueta : M2.camisa;
+  const mano = opts.oficina ? piel : M2.guante;
   const pierna = (x) => {
     const hip = grp(g, x, .93, 0);
-    D(cap(.082, .34), M2.pant, hip, 0, -.24, 0, 0, 0, 0, E);
-    const knee = grp(hip, 0, -.46, 0);
-    D(cap(.07, .34), M2.pant, knee, 0, -.21, 0, 0, 0, 0, E);
-    D(rbox(.13, .1, .27, .035), M2.bota, knee, 0, -.42, .045, 0, 0, 0, E);
+    D(taper(.086, .064, .45), M2.pant, hip, 0, -.225, 0, 0, 0, 0, E);
+    const knee = grp(hip, 0, -.45, 0);
+    D(sph(.064), M2.pant, knee, 0, 0, 0, 0, 0, 0, E);
+    D(taper(.06, .045, .42), M2.pant, knee, 0, -.21, 0, 0, 0, 0, E);
+    D(rbox(.12, .1, .27, .04), M2.bota, knee, 0, -.43, .045, 0, 0, 0, E);
+    D(box(.128, .025, .285), M2.suela, knee, 0, -.485, .045, 0, 0, 0, E);
     return { hip, knee };
   };
-  const L = pierna(-.1), R = pierna(.1);
-  D(rbox(.34, .16, .21, .06), M2.pant, g, 0, .97, 0, 0, 0, 0, E);                       // cadera
-  const camisa = opts.oficina ? opts.chaleco : M2.camisa;
-  D(rbox(.37, .5, .22, .09), camisa, g, 0, 1.26, 0, 0, 0, 0, E);                         // torso
+  const L = pierna(-.098), R = pierna(.098);
+  D(rbox(.32, .17, .21, .07), M2.pant, g, 0, .97, 0, 0, 0, 0, E);                                   // cadera
+  const pecho = grp(g, 0, 1.02, 0);
+  D(torsoGeo(), camisa, pecho, 0, 0, 0, 0, 0, 0, E).scale.set(1, 1, .62);                             // torso
+  D(taper(.172, .168, .045), M2.cinto, g, 0, 1.04, 0, 0, 0, 0, E).scale.set(1, 1, .64);              // cinturón
+  D(box(.05, .035, .012), M2.hebilla, g, 0, 1.04, .112, 0, 0, 0, E);
   if (!opts.oficina) {
-    D(rbox(.395, .44, .24, .09), opts.chaleco || M2.chaleco, g, 0, 1.25, 0, 0, 0, 0, E); // chaleco reflectante
-    for (const y of [1.12, 1.3]) D(rbox(.4, .035, .245, .015), M2.reflect, g, 0, y, 0, 0, 0, 0, E);
+    const c = opts.jefe ? M2.reflect : (opts.chaleco || M2.chaleco);
+    if (!opts.jefe) D(new THREE.LatheGeometry([[.168, .06], [.174, .18], [.19, .3], [.203, .4], [.196, .45]].map(([r, y]) => new THREE.Vector2(r, y)), 24), c, pecho, 0, 0, 0, 0, 0, 0, E).scale.set(1, 1, .66);
+    for (const y of [.17, .33]) D(taper(opts.jefe ? .18 : .195, opts.jefe ? .177 : .192, .032), M2.reflect, pecho, 0, y + (opts.jefe ? -.02 : 0), 0, 0, 0, 0, E).scale.set(1, 1, .66);
+    if (!opts.jefe) for (const s of [-1, 1]) { D(box(.05, .3, .012), M2.reflect, pecho, s * .07, .3, .126, 0, 0, 0, E); D(box(.07, .06, .015), opts.chaleco || M2.chaleco, pecho, s * .085, .22, .132, 0, 0, 0, E); }
   }
-  D(cyl(.05, .055, .08, 10), M2.piel, g, 0, 1.54, 0, 0, 0, 0, E);                        // cuello
-  const cab = grp(g, 0, 1.66, 0);
-  D(new THREE.SphereGeometry(.1, 18, 14), M2.piel, cab, 0, 0, 0, 0, 0, 0, E).scale.set(.92, 1.12, 1);
-  D(new THREE.SphereGeometry(.03, 8, 6), M2.piel, cab, 0, -.01, .1, 0, 0, 0, E);          // nariz
-  for (const s of [-1, 1]) D(new THREE.SphereGeometry(.025, 8, 6), M2.piel, cab, s * .093, 0, -.005, 0, 0, 0, E);
-  D(rbox(.17, .035, .03, .012), M2.lente, cab, 0, .025, .088, 0, 0, 0, E);              // lentes de seguridad
-  D(new THREE.SphereGeometry(.104, 16, 10, 0, Math.PI * 2, 0, Math.PI / 2), M2.pelo, cab, 0, .005, -.008, 0, 0, 0, E);
-  const casco = opts.casco || M2.casco;
+  D(taper(.046, .054, .1), piel, g, 0, 1.6, 0, 0, 0, 0, E);                                          // cuello
+  const cab = grp(g, 0, 1.72, 0);
+  D(sph(.098, 20, 16), piel, cab, 0, 0, 0, 0, 0, 0, E).scale.set(.9, 1.1, 1);                         // cráneo
+  D(sph(.075, 16, 12), piel, cab, 0, -.058, .016, 0, 0, 0, E).scale.set(1, .82, 1);                  // mandíbula
+  for (const s of [-1, 1]) {
+    D(sph(.024, 8, 6), piel, cab, s * .09, -.005, -.005, 0, 0, 0, E).scale.set(.55, 1, .9);           // orejas
+    D(sph(.013, 10, 8), M2.ojo, cab, s * .034, .014, .083, 0, 0, 0, E);                               // ojos
+    D(sph(.0075, 8, 6), M2.pupila, cab, s * .034, .014, .095, 0, 0, 0, E);
+    D(box(.034, .008, .01), M2.pelo, cab, s * .035, .04, .088, 0, 0, s * -.12, E);                   // cejas
+  }
+  D(new THREE.ConeGeometry(.017, .048, 8), piel, cab, 0, -.012, .1, Math.PI / 2, 0, 0, E);         // nariz
+  D(box(.038, .007, .01), M2.labio, cab, 0, -.06, .086, 0, 0, 0, E);                                 // boca
+  D(new THREE.SphereGeometry(.102, 18, 10, 0, Math.PI * 2, 0, Math.PI / 2.1), M2.pelo, cab, 0, .01, -.012, 0, 0, 0, E).scale.set(.94, 1.06, 1.02);
+  if (opts.barba) D(new THREE.SphereGeometry(.079, 16, 10, 0, Math.PI * 2, Math.PI / 2, Math.PI / 2), M2.pelo, cab, 0, -.05, .014, 0, 0, 0, E).scale.set(1.02, .9, 1.04);
+  if (!opts.oficina) D(rbox(.16, .03, .028, .01), M2.lente, cab, 0, .016, .094, 0, 0, 0, E);       // lentes de seguridad
   if (!opts.sinCasco) {
-  D(new THREE.SphereGeometry(.122, 18, 10, 0, Math.PI * 2, 0, Math.PI / 2), casco, cab, 0, .055, 0, 0, 0, 0, E).scale.set(1, .95, 1.08);
-  D(cyl(.145, .15, .018, 20), casco, cab, 0, .057, .012, 0, 0, 0, E).scale.set(1, 1, 1.12);
-  D(rbox(.03, .05, .2, .01), casco, cab, 0, .17, 0, 0, 0, 0, E);                       // nervio del casco
+    const casco = opts.casco || M2.casco;
+    D(new THREE.SphereGeometry(.122, 20, 10, 0, Math.PI * 2, 0, Math.PI / 2), casco, cab, 0, .045, 0, 0, 0, 0, E).scale.set(1, .92, 1.1);
+    D(taper(.148, .152, .014), casco, cab, 0, .046, .014, 0, 0, 0, E).scale.set(1, 1, 1.14);
+    D(rbox(.03, .045, .2, .01), casco, cab, 0, .155, 0, 0, 0, 0, E);
+    if (opts.jefe) D(taper(.124, .125, .025), M.yellow, cab, 0, .07, 0, 0, 0, 0, E).scale.set(1, 1, 1.1);
   }
   const brazo = (s) => {
-    const sh = grp(g, s * .215, 1.46, 0);
-    D(new THREE.SphereGeometry(.068, 10, 8), opts.chaleco || M2.chaleco, sh, 0, 0, 0, 0, 0, 0, E);
-    D(cap(.056, .22), camisa, sh, 0, -.15, 0, 0, 0, 0, E);
-    const el = grp(sh, 0, -.3, 0); el.rotation.x = -.25;
-    D(cap(.05, .2), camisa, el, 0, -.13, 0, 0, 0, 0, E);
-    D(rbox(.08, .11, .05, .02), opts.oficina ? M2.piel : M2.guante, el, 0, -.3, 0, 0, 0, 0, E);
-    return { sh, el };
+    const sh = grp(g, s * .2, 1.47, 0);
+    D(sph(.062), opts.jefe || opts.oficina ? camisa : (opts.chaleco || M2.chaleco), sh, 0, 0, 0, 0, 0, 0, E);
+    D(taper(.054, .045, .28), camisa, sh, 0, -.14, 0, 0, 0, 0, E);
+    const el = grp(sh, 0, -.29, 0); el.rotation.x = -.2;
+    D(sph(.045), camisa, el, 0, 0, 0, 0, 0, 0, E);
+    D(taper(.045, .036, .25), camisa, el, 0, -.125, 0, 0, 0, 0, E);
+    const mu = grp(el, 0, -.26, 0);
+    D(rbox(.066, .09, .032, .013), mano, mu, 0, -.045, 0, 0, 0, 0, E);
+    D(cap(.011, .03), mano, mu, s * -.034, -.025, .018, 0, 0, s * .5, E);
+    return { sh, el, mu };
   };
   const BL = brazo(-1), BR = brazo(1);
-  BL.sh.rotation.z = .08; BR.sh.rotation.z = -.08;
-  return { g, hipL: L.hip, hipR: R.hip, kneeL: L.knee, kneeR: R.knee, shL: BL.sh, shR: BR.sh, elL: BL.el, elR: BR.el, cab, ...opts };
+  BL.sh.rotation.z = .07; BR.sh.rotation.z = -.07;
+  return { g, hipL: L.hip, hipR: R.hip, kneeL: L.knee, kneeR: R.knee, shL: BL.sh, shR: BR.sh, elL: BL.el, elR: BR.el, muL: BL.mu, cab, pecho, ...opts };
 }
 const trabajadores = [
-  trabajador(scene, 2.2, .35, Math.PI, { idle: 0 }),                                     // de espaldas mirando la cinta
+  trabajador(scene, 2.2, .35, Math.PI, { idle: 0, barba: true }),                                     // de espaldas mirando la cinta
   trabajador(scene, -14, 3.35, Math.PI / 2, { camina: true, x0: -10, x1: 15, v: 1.05 }), // pasillo
-  trabajador(scene, 6.6, 1.9, -.5, { idle: 1.5, casco: M.yellow }) // jefe de planta junto a la embaladora
+  trabajador(scene, 2.5, 7.3, .12, { idle: 1.5, jefe: true, barba: true }) // Diego, jefe de planta: al frente
 ];
 // cada persona hace un trabajo concreto de JPB (nombres de ejemplo, se pueden cambiar por los reales)
 const ROLES = [
@@ -757,7 +823,7 @@ const ROLES = [
 ];
 trabajadores.forEach((w, i) => (w.rol = ROLES[i]));
 // segundo piso: equipo comercial sentado frente a sus computadores
-const ofiSlides = [[sChat], [sOficina], [sKpi('PROSPECCIÓN', 'CONTACTADOS HOY', 41, .05, 'CORREO · LINKEDIN')], [sOficina], [sChat], [sKpi('COTIZACIONES', 'ENVIADAS HOY', 18, .02, 'AGENTE IA + VENDEDOR')]];
+const ofiSlides = [[sOficina], [sAds], [sKw], [sWeb], [sChat], [sKpi('COTIZACIONES', 'ENVIADAS HOY', 18, .02, 'AGENTE IA + VENDEDOR')]];
 const camisas = [0xe9ecf1, 0x2f3a52, 0x8a9bb5, 0xdfe3e8, 0x3b4252, 0xb7c2d4].map((c) => std({ color: c, roughness: .8 }));
 OFI.forEach(([x, z], i) => {
   const w = trabajador(scene, x, z + .72, Math.PI, { idle: i * .9, y: 4.4 - .37, sentado: true, chaleco: camisas[i], sinCasco: true, oficina: true });
@@ -768,6 +834,14 @@ OFI.forEach(([x, z], i) => {
   D(box(.74, .46, .04), M.dark, g, 0, 0, -.025);
   new Pantalla(g, .7, .42, 640, ofiSlides[i], { off: i * 1.7, dur: 7, label: 'Oficina comercial · Panel JPB', href: '#panel', delay: .4 + i * .08 });
 });
+// Diego: tablet en la mano, foco propio y anillo en el piso
+const diego = trabajadores[2];
+diego.shL.rotation.x = -.55; diego.elL.rotation.x = -1.15; diego.elL.rotation.z = .25;
+{ const t = grp(diego.muL, 0, -.07, .06); t.rotation.x = -.5; D(rbox(.2, .27, .012, .012), M.dark, t, 0, 0, 0); const sm = basic({ color: 0x7fd4ff }); sm.toneMapped = false; D(new THREE.PlaneGeometry(.18, .25), sm, t, 0, 0, .0065); }
+const anillo = new THREE.Mesh(new THREE.RingGeometry(.5, .6, 48), new THREE.MeshBasicMaterial({ color: 0xf5b800, transparent: true, opacity: 0, blending: THREE.AdditiveBlending, depthWrite: false, side: THREE.DoubleSide }));
+anillo.rotation.x = -Math.PI / 2; anillo.position.set(diego.g.position.x, .02, diego.g.position.z); scene.add(anillo);
+const focoDiego = new THREE.SpotLight(0xfff1d6, 0, 14, .32, .55, 1.2); focoDiego.position.set(diego.g.position.x + .6, 7.5, diego.g.position.z + 1.2);
+focoDiego.target = diego.g; scene.add(focoDiego);
 const ofiLight = new THREE.PointLight(0xfff0d0, 0, 14, 1.3); ofiLight.position.set(-16.6, 8.2, -12.6); scene.add(ofiLight);
 
 
@@ -829,7 +903,7 @@ const polvo = (() => {
 /*  Estaciones interactivas: la planta es una fábrica de ventas         */
 /* ------------------------------------------------------------------ */
 const ESTACIONES = {
-  prospeccion: { kicker: 'PASO 01 · ENTRAN PROSPECTOS', titulo: 'Prospección B2B', texto: 'Llenamos la tolva con decisores de tu rubro: correo, LinkedIn y WhatsApp sobre una base de 200M+ negocios.', href: '/prospeccion', cta: 'Ver prospección', c: [-10.6, 1.8, lineZ], s: [3.8, 4, 3.2], pos: [-5.6, 2.9, 6.4], etiqueta: '01 · Prospección', ea: [-10.6, 3.05, lineZ + 1.3], corto: 'Llenamos tu embudo con decisores de tu rubro, por correo, LinkedIn y WhatsApp.', mpos: [-7.6, 3.3, 9.6], mlook: [-9.6, 1.9, -1] },
+  prospeccion: { kicker: 'NUESTRA ESPECIALIDAD · GOOGLE ADS', titulo: 'Te encuentran en Google', texto: 'Somos especialistas en Google Ads para empresas industriales: tu anuncio aparece cuando un comprador busca lo que vendes, y cada clic entra a la línea como un prospecto.', href: '/keyword-research-b2b-industrial-chile', cta: 'Ver Google Ads', c: [-10.6, 1.8, lineZ], s: [3.8, 4, 3.2], pos: [-5.6, 2.9, 6.4], etiqueta: '01 · Google Ads', ea: [-10.6, 4.55, lineZ + 1], corto: 'Especialistas en Google Ads: apareces cuando te buscan y cada clic entra como prospecto.', mpos: [-7.6, 3.3, 9.6], mlook: [-9.6, 1.9, -1] },
   ia: { kicker: 'PASO 02 · AGENTE IA EN WHATSAPP', titulo: 'Te escriben por WhatsApp, la IA vende', texto: 'Tus clientes escriben a tu WhatsApp y el agente responde en 2 segundos, cotiza con tu catálogo y califica, de día y de noche. Las cajas grises (leads) pasan por el agente y salen amarillas: ventas.', href: '/agente-ia', cta: 'Ver el agente IA', c: [-.7, 1.6, -.9], s: [11.5, 3.6, 5], pos: [.6, 2.6, 6.2], etiqueta: '02 · Agente IA en WhatsApp', ea: [-.7, 3.5, lineZ + 1.2], corto: 'Te escriben por WhatsApp y la IA responde, cotiza y califica al tiro. Los leads grises salen amarillos: ventas.', mpos: [.3, 2.7, 7.6], mlook: [-.7, 2.05, -.3] },
   oficina: { kicker: 'SEGUNDO PISO · OFICINA COMERCIAL', titulo: 'Tu equipo, con todo a la vista', texto: 'Aquí trabaja el equipo comercial: cada uno ve en su pantalla las conversaciones de WhatsApp, los prospectos y las cotizaciones del día. Toca a cada persona para ver qué hace por tu empresa.', href: '/outsourcing-fuerza-ventas-chile', cta: 'Ver el modelo', c: [-16.5, 5.7, -13], s: [11, 2.8, 10], pos: [-9.2, 7.6, -3.4], etiqueta: '2º piso · Oficina comercial', ea: [-16.5, 7.3, -8.6], corto: 'Tu equipo ve todo en el Panel JPB y nosotros nos sumamos como vendedor externo.', mpos: [-12.2, 8.2, -2.2], mlook: [-16.6, 5.3, -12.4] },
   ventas: { kicker: 'PASO 03 · SALEN VENTAS', titulo: 'Tu fábrica vende más', texto: 'Eso es lo que hacemos: que lleguen pedidos listos para cerrar, con seguimiento automático y el Panel JPB para ver cada venta.', href: '/contacto', cta: 'Quiero vender más', c: [9.6, 1.5, lineZ], s: [3.8, 3.6, 3.3], pos: [5.6, 2.7, 6.6], etiqueta: '03 · Ventas', ea: [9.6, 4.55, lineZ + 1], corto: 'Llegan pedidos listos para cerrar. Tu equipo solo vende.', mpos: [6.9, 3.2, 9.6], mlook: [8.6, 2.0, -1] },
@@ -859,6 +933,11 @@ for (const [k, e] of Object.entries(ESTACIONES)) if (e.etiqueta) {
   b.addEventListener('click', () => abrirEstacion(k)); b.addEventListener('mouseenter', () => (hoverEst = k)); b.addEventListener('mouseleave', () => (hoverEst = null));
   document.getElementById('etiquetas').appendChild(b); etiquetas.push([b, new THREE.Vector3(...e.ea)]);
 }
+{
+  const b = document.createElement('button'); b.type = 'button'; b.className = 'etq etq-diego'; b.textContent = '▶ Recorrido con Diego';
+  b.addEventListener('click', iniciarRecorrido); document.getElementById('etiquetas').appendChild(b);
+  etiquetas.push([b, null]);
+}
 // en móvil las etiquetas no caben en pantalla: fila de botones por estación
 for (const k of ['prospeccion', 'ia', 'ventas', 'oficina']) {
   const b = document.createElement('button'); b.type = 'button'; b.className = 'est-chip';
@@ -886,42 +965,72 @@ const views = {
 };
 let vista = 'planta';
 const MOVIL = () => innerWidth < 760;
-const TOUR = ['prospeccion', 'ia', 'ventas', 'oficina'];
-let tourI = 1, tourNext = 0, tourOn = false, rt = performance.now() / 1000;
+let rt = performance.now() / 1000, ri = 0, recOn = false, recNext = 0, recStartAt = 0;
+const poseEst = (k) => { const e = ESTACIONES[k]; return MOVIL() ? { pos: e.mpos, look: e.mlook, fov: 60 } : { pos: e.pos, look: e.c, fov: 50 }; };
+const RECORRIDO = [
+  { kicker: 'RECORRIDO · DIEGO, JEFE DE PLANTA', titulo: 'Hola, soy Diego. Te muestro cómo llevamos a tu empresa de una búsqueda en Google a una venta.', texto: 'Son cinco pasos: evaluamos, preparamos, posicionamos con Google Ads, guiamos cada contacto por WhatsApp y cerramos la venta.', corto: 'Cinco pasos: evaluamos, preparamos, posicionamos en Google, guiamos por WhatsApp y cerramos.', href: '#servicios', cta: 'Ver servicios',
+    pose: () => { const p = diego.g.position; return MOVIL() ? { pos: [p.x + .5, 1.75, p.z + 3.4], look: [p.x, 1.3, p.z], fov: 58 } : { pos: [p.x + 1.1, 1.85, p.z + 3.1], look: [p.x - .5, 1.45, p.z], fov: 46 }; } },
+  { key: 'oficina', kicker: 'PASO 1 · EVALUAMOS TU EMPRESA', titulo: 'Partimos por entender tu negocio', texto: 'Revisamos tu producto, tus clientes, tu competencia y qué buscan tus compradores en Google. Así sabemos dónde está la venta.', corto: 'Revisamos tu producto, tu competencia y qué buscan tus compradores en Google.', href: '/contacto', cta: 'Pedir evaluación' },
+  { key: 'oficina', kicker: 'PASO 2 · PREPARAMOS TU POSICIONAMIENTO', titulo: 'Palabras clave, web y medición', texto: 'Elegimos las búsquedas que compran, dejamos tu web lista para cotizar y medimos cada contacto desde el primer día.', corto: 'Elegimos las búsquedas que compran, dejamos tu web lista y medimos cada contacto.', href: '/pagina-web-empresa-industrial-chile', cta: 'Ver web industrial',
+    pose: () => MOVIL() ? { pos: [-13.6, 6.9, -7.4], look: [-16.2, 5.4, -13.6], fov: 58 } : { pos: [-12.6, 6.5, -8.4], look: [-16.4, 5.3, -13.4], fov: 46 } },
+  { key: 'prospeccion', kicker: 'PASO 3 · POSICIONAMOS CON GOOGLE ADS', titulo: 'Apareces cuando te buscan', texto: 'Es nuestra especialidad: campañas de Google Ads para empresas industriales, optimizadas por costo por cotización. Cada clic entra a la línea como un prospecto.', corto: 'Nuestra especialidad: Google Ads para industria. Cada clic entra como prospecto.' },
+  { key: 'ia', kicker: 'PASO 4 · TODO ENTRA POR WHATSAPP', titulo: 'La IA guía cada contacto', texto: 'Quien llega desde Google te escribe por WhatsApp: el agente IA responde al tiro, cotiza con tu catálogo y lo guía hasta la compra. Las cajas grises salen amarillas.', corto: 'Llegan desde Google a tu WhatsApp: la IA responde, cotiza y guía hasta la compra.' },
+  { key: 'ventas', kicker: 'PASO 5 · CERRAMOS LA VENTA', titulo: 'Pedidos listos para cerrar', texto: 'Tu equipo recibe clientes calientes, hacemos seguimiento a cada cotización y ves todo en el Panel JPB.', corto: 'Tu equipo recibe clientes calientes y seguimos cada cotización hasta cerrar.' },
+  { kicker: 'CLIENTES EN PLANTA', titulo: 'Empresas que ya venden más', texto: 'ETP Polimer, Fierros Idini, Plastiservi + Conflex y The Kem Barbershop ya trabajan con esta planta.', corto: 'ETP Polimer, Fierros Idini, Plastiservi + Conflex y The Kem ya trabajan con nosotros.', href: '#clientes', cta: 'Ver los casos',
+    pose: () => MOVIL() ? { pos: [-3.6, 6.4, 4.5], look: [-3.6, 6.9, -17], fov: 56 } : { pos: [-3.6, 6.3, -4], look: [-3.6, 6.9, -17], fov: 50 } },
+  { kicker: 'FIN DEL RECORRIDO', titulo: '¿Te posicionamos en Google?', texto: 'En 30 minutos revisamos tu empresa y te decimos cómo la pondríamos a vender con Google Ads y WhatsApp. Sin compromiso.', corto: 'En 30 minutos te decimos cómo pondríamos tu empresa a vender con Google Ads.', href: '/contacto', cta: 'Agenda una llamada',
+    pose: () => views.planta() }
+];
+views.recorrido = () => { const st = RECORRIDO[ri]; return st.pose ? st.pose() : poseEst(st.key); };
 const dbg = new URLSearchParams(location.search).get('cam');
 if (dbg) { const n = dbg.split(',').map(Number); views.debug = () => ({ pos: n.slice(0, 3), look: n.slice(3, 6), fov: n[6] || 55 }); vista = 'debug'; }
 const cam = { pos: new THREE.Vector3(...views[vista]().pos), look: new THREE.Vector3(...views[vista]().look), fov: views[vista]().fov };
 const mouse = { x: 0, y: 0, sx: 0, sy: 0 };
 const btnPant = document.getElementById('btn-pantallas');
 function setVista(v) {
-  vista = v; btnPant.hidden = v === 'planta';
+  vista = v; btnPant.hidden = v === 'planta' || v === 'recorrido';
   section.classList.toggle('en-estacion', v !== 'planta');
-  section.classList.toggle('tour', MOVIL() && v === 'estacion');
-  if (v !== 'estacion') { card.hidden = true; sel = null; selWorker = null; }
+  section.classList.toggle('recorrido', v === 'recorrido');
+  section.classList.toggle('tour', MOVIL() && v === 'recorrido');
+  if (v !== 'recorrido') recOn = false;
+  if (v === 'planta' || v === 'pantallas') { card.hidden = true; sel = null; selWorker = null; }
 }
-function abrirEstacion(k, w) {
-  sel = k; selWorker = w || (k === 'equipo' ? trabajadores[0] : null);
-  const r = k === 'equipo' && selWorker && selWorker.rol;
-  const e = r ? { kicker: 'EQUIPO JPB · ' + r.nombre.toUpperCase(), titulo: r.cargo, texto: r.texto, href: r.href, cta: r.cta } : ESTACIONES[k];
+function llenarCard(e) {
   card.querySelector('.est-kicker').textContent = e.kicker;
   card.querySelector('.est-titulo').textContent = e.titulo;
   card.querySelector('.est-texto').textContent = MOVIL() && e.corto ? e.corto : e.texto;
-  const ti = TOUR.indexOf(k); if (ti >= 0) tourI = ti;
-  card.querySelectorAll('.est-dots i').forEach((d, i) => d.classList.toggle('on', i === tourI));
   const a = card.querySelector('.est-cta'); a.href = e.href; a.textContent = e.cta + ' →';
-  card.hidden = false; setVista('estacion'); tip.hidden = true;
+  card.hidden = false; tip.hidden = true;
+}
+function irPaso(i, pausa) {
+  ri = (i + RECORRIDO.length) % RECORRIDO.length;
+  const st = RECORRIDO[ri], e = st.key ? { ...ESTACIONES[st.key], ...st } : st;
+  sel = st.key || null; selWorker = ri === 0 ? diego : null;
+  llenarCard(e);
+  card.querySelectorAll('.est-dots i').forEach((d, k) => d.classList.toggle('on', k === ri));
+  setVista('recorrido'); recOn = true;
+  recNext = rt + (pausa ? 18 : ri === 0 ? 8 : 7);
+}
+function iniciarRecorrido() { irPaso(0); }
+function abrirEstacion(k, w) {
+  if (w === diego) { iniciarRecorrido(); return; }
+  sel = k; selWorker = w || (k === 'equipo' ? trabajadores[0] : null);
+  const r = k === 'equipo' && selWorker && selWorker.rol;
+  llenarCard(r ? { kicker: 'EQUIPO JPB · ' + r.nombre.toUpperCase(), titulo: r.cargo, texto: r.texto, href: r.href, cta: r.cta } : ESTACIONES[k]);
+  setVista('estacion');
 }
 btnPant.addEventListener('click', () => setVista('planta'));
 card.querySelector('.est-cerrar').addEventListener('click', () => setVista('planta'));
 // recorrido en móvil: cambia sola de estación, y se puede deslizar o usar las flechas
-const dots = card.querySelector('.est-dots'); TOUR.forEach(() => dots.appendChild(document.createElement('i')));
-function paso(d, pausa) { tourI = (tourI + d + TOUR.length) % TOUR.length; abrirEstacion(TOUR[tourI]); tourNext = rt + (pausa ? 16 : 6.5); }
+const dots = card.querySelector('.est-dots'); RECORRIDO.forEach(() => dots.appendChild(document.createElement('i')));
+const paso = (d, pausa) => irPaso(ri + d, pausa);
 card.querySelector('.est-prev').addEventListener('click', () => paso(-1, true));
 card.querySelector('.est-next').addEventListener('click', () => paso(1, true));
+document.getElementById('btn-recorrido').addEventListener('click', iniciarRecorrido);
 let sw = null;
 canvas.addEventListener('pointerdown', (ev) => { sw = { x: ev.clientX, y: ev.clientY }; });
 canvas.addEventListener('pointerup', (ev) => {
-  if (!sw || !MOVIL() || !tourOn) return; const dx = ev.clientX - sw.x, dy = ev.clientY - sw.y; sw = null;
+  if (!sw || !recOn) return; const dx = ev.clientX - sw.x, dy = ev.clientY - sw.y; sw = null;
   if (Math.abs(dx) > 40 && Math.abs(dx) > Math.abs(dy) * 1.2) paso(dx < 0 ? 1 : -1, true);
 });
 addEventListener('keydown', (e) => { if (e.key === 'Escape' && vista !== 'planta') setVista('planta'); });
@@ -947,6 +1056,7 @@ function pick(ev) {
   return hit && U.uSolid.value > .9 ? hit.object : null;
 }
 function etiquetaDe(o) {
+  if (o.userData.w === diego) return 'Diego · Jefe de planta · ▶ Recorrido';
   if (o.userData.w && o.userData.w.rol) return o.userData.w.rol.nombre + ' · ' + o.userData.w.rol.cargo;
   if (o.userData.estacion) { const e = ESTACIONES[o.userData.estacion]; return (e.etiqueta || e.titulo) + ' · ver'; }
   return (vista === 'planta' && o.parent.parent === puesto ? 'Acercarse · ' : '') + o.userData.label + ' ↓';
@@ -996,7 +1106,7 @@ function frame(now) {
     hudEstado.textContent = pct < 100 ? (t < 1.6 ? 'TRAZANDO PLANOS' : 'LEVANTANDO PLANTA') : 'PLANTA OPERATIVA · 24/7';
     navStatus.textContent = pct < 100 ? 'En obra' : 'Planta';
     section.classList.toggle('operativa', pct >= 100);
-    if (pct >= 100 && MOVIL() && !tourOn && vista === 'planta') { msg.querySelector('p:last-child').textContent = 'Desliza para ver cada estación.'; tourOn = true; tourNext = rt + 2.5; }
+    if (pct >= 100 && MOVIL() && !recOn && vista === 'planta') { msg.querySelector('p:last-child').textContent = 'Desliza para ver cada estación.'; recStartAt = rt + 2.5; }
   }
   if (!visible || modo !== 'humano' || document.hidden) return;
   clock += dt;
@@ -1023,8 +1133,12 @@ function frame(now) {
   });
 
   rt = now / 1000;
-  if (tourOn && MOVIL() && rt > tourNext) { if (vista !== 'estacion') { abrirEstacion(TOUR[tourI]); tourNext = rt + 6.5; } else paso(1, false); }
-  if (tourOn && !MOVIL()) { tourOn = false; setVista('planta'); }
+  if (recStartAt && rt > recStartAt) { recStartAt = 0; if (vista === 'planta') iniciarRecorrido(); }
+  if (recOn && rt > recNext) { if (ri < RECORRIDO.length - 1 || MOVIL()) paso(1, false); else recNext = Infinity; }
+  // Diego destaca: anillo que late y foco propio
+  const lat = .5 + .5 * Math.sin(rt * 3);
+  anillo.material.opacity = (vista === 'planta' ? .55 : .2) * power * (.5 + .5 * lat); anillo.scale.setScalar(1 + .12 * lat);
+  focoDiego.intensity = 40 * power;
 
   // --- interacción: activación de estaciones ---
   const kA = 1 - Math.exp(-realDt * 6);
@@ -1037,7 +1151,7 @@ function frame(now) {
   }
   trabajadores.forEach((w) => {
     const target = hoverWorker === w || selWorker === w ? 1 : 0;
-    w.act += (target - w.act) * kA; w.outline.material.opacity = w.act * .85;
+    w.act += (target - w.act) * kA; w.hov = (w.hov || 0) + ((hoverWorker === w ? 1 : 0) - (w.hov || 0)) * kA; w.outline.material.opacity = w.hov * .85;
     if (w.act > focoAct) { focoAct = w.act; w.g.getWorldPosition(P); foco.position.set(P.x, P.y + 3, P.z + 1.5); }
   });
   foco.intensity = 30 * focoAct * power;
@@ -1091,7 +1205,9 @@ function frame(now) {
       const b = Math.sin(clock * 1.4 + w.idle) * .06;
       w.shL.rotation.x = b; w.shR.rotation.x = -b * (1 - w.act);
     }
-    w.shR.rotation.z = -.08 - w.act * (2.5 + Math.sin(clock * 9) * .3); // saludo
+    w.pecho.scale.y = 1 + Math.sin(clock * 1.9 + (w.idle || 0)) * .012;
+    if (w.jefe) { w.shL.rotation.x = -.55; w.elL.rotation.x = -1.15 + Math.sin(clock * .8) * .05; }
+    w.shR.rotation.z = -.07 - w.act * (2.5 + Math.sin(clock * 9) * .3); // saludo
     w.elR.rotation.z = -w.act * .5;
     w.cab.rotation.y = Math.sin(clock * .5 + (w.idle || 0)) * .35 * (1 - w.act);
   });
@@ -1113,7 +1229,8 @@ function frame(now) {
   const showEt = vista === 'planta' && pct >= 100;
   const W = section.clientWidth, H = section.clientHeight;
   etiquetas.forEach(([b, p3]) => {
-    P.copy(p3).project(camera);
+    if (p3) P.copy(p3); else diego.g.getWorldPosition(P).add(V.set(0, 2.25, 0));
+    P.project(camera);
     const on = showEt && P.z < 1 && Math.abs(P.x) < .95 && Math.abs(P.y) < .95;
     b.classList.toggle('on', on);
     if (on) b.style.transform = `translate(${((P.x + 1) / 2 * W).toFixed(1)}px, ${((1 - P.y) / 2 * H).toFixed(1)}px) translate(-50%, -100%)`;

@@ -11,7 +11,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..900&family=JetBrains+Mono:wght@400;500;700&family=Silkscreen:wght@400;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="v2.css?v=12">
+  <link rel="stylesheet" href="v2.css?v=15">
   <style>html,body{background:#070b16}</style>
   <script type="importmap">
   {"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"}}
@@ -53,8 +53,8 @@
       <img src="/Clientes/4413EF69-A08E-4B0B-96FA-4A9EE240617A.webp" alt="JPB Marketing en la planta de un cliente">
     </div>
     <div class="planta-msg" id="planta-msg">
-      <p class="mono">CÓMO FUNCIONA</p>
-      <h2>Entran prospectos.<br>Salen <em>ventas</em>.</h2>
+      <p class="mono">ESPECIALISTAS EN GOOGLE ADS</p>
+      <h2>De una búsqueda en Google<br>a una <em>venta</em>.</h2>
       <p>Toca cada estación.</p>
     </div>
     <div class="etiquetas" id="etiquetas"></div>
@@ -73,6 +73,7 @@
         <span class="hud-line hud-ventas">VENTAS HOY · <b id="hud-ventas">128</b></span>
       </div>
       <div class="hud-right">
+        <button type="button" class="hud-btn" id="btn-recorrido">▶ Recorrido con Diego</button>
         <button type="button" class="hud-btn" id="btn-pantallas" hidden>← Volver a la planta</button>
       </div>
     </div>
@@ -84,7 +85,7 @@
   <section class="hero" id="hero">
     <p class="mono kicker">JPB MARKETING · SANTIAGO DE CHILE</p>
     <h1 class="hero-title">Tu fábrica ya vende. Hagamos que venda <em>más</em>.</h1>
-    <p class="hero-sub">Nos sumamos a tu equipo comercial con prospección, agentes de IA en WhatsApp y una web que vende.</p>
+    <p class="hero-sub">Especialistas en Google Ads para empresas industriales. Te posicionamos donde te buscan y cada contacto llega a tu WhatsApp, donde la IA lo guía hasta la venta.</p>
     <div class="hero-actions">
       <a href="/contacto" class="btn btn-primary">Agenda una llamada</a>
       <a href="#servicios" class="btn btn-ghost">Entrar a servicios</a>
@@ -103,51 +104,51 @@
   <section class="servicios" id="servicios">
     <h2 class="sec-label">Lo que hacemos</h2>
     <div class="svc-list">
-      <a class="svc" href="/agente-ia">
+      <a class="svc svc-top" href="/keyword-research-b2b-industrial-chile">
         <span class="svc-num mono">01</span>
+        <h3 class="svc-title">Google Ads <span class="svc-tag">Nuestra especialidad</span></h3>
+        <div class="svc-body">
+          <p class="svc-desc">Campañas de Google Ads para empresas industriales: apareces cuando un comprador busca lo que vendes, y medimos el costo de cada cotización.</p>
+        </div>
+        <span class="svc-arrow" aria-hidden="true">↗</span>
+      </a>
+      <a class="svc" href="/agente-ia">
+        <span class="svc-num mono">02</span>
         <h3 class="svc-title">Agente IA en WhatsApp</h3>
         <div class="svc-body">
-          <p class="svc-desc">Atiende, califica y cotiza a tus clientes las 24 horas, y avisa a tu equipo cuando hay una venta real.</p>
+          <p class="svc-desc">Todo lo que llega desde Google te escribe por WhatsApp: la IA responde, cotiza y guía a cada cliente hasta la compra.</p>
+        </div>
+        <span class="svc-arrow" aria-hidden="true">↗</span>
+      </a>
+      <a class="svc" href="/pagina-web-empresa-industrial-chile">
+        <span class="svc-num mono">03</span>
+        <h3 class="svc-title">Web industrial que convierte</h3>
+        <div class="svc-body">
+          <p class="svc-desc">Sitios rápidos, con catálogo y cotización directa, listos para recibir el tráfico de tus campañas.</p>
+        </div>
+        <span class="svc-arrow" aria-hidden="true">↗</span>
+      </a>
+      <a class="svc" href="/keyword-research-b2b-industrial-chile">
+        <span class="svc-num mono">04</span>
+        <h3 class="svc-title">SEO</h3>
+        <div class="svc-body">
+          <p class="svc-desc">Hacemos que te encuentren también en los resultados orgánicos, sin depender solo de la pauta.</p>
         </div>
         <span class="svc-arrow" aria-hidden="true">↗</span>
       </a>
       <a class="svc" href="/prospeccion">
-        <span class="svc-num mono">02</span>
+        <span class="svc-num mono">05</span>
         <h3 class="svc-title">Prospección B2B</h3>
         <div class="svc-body">
           <p class="svc-desc">Llegamos a los decisores de tu rubro con mensajes directos y segmentados, y te agendamos reuniones.</p>
         </div>
         <span class="svc-arrow" aria-hidden="true">↗</span>
       </a>
-      <a class="svc" href="/servicios">
-        <span class="svc-num mono">03</span>
-        <h3 class="svc-title">Automatización con IA</h3>
-        <div class="svc-body">
-          <p class="svc-desc">Conectamos tus herramientas para que cotizaciones, seguimientos y reportes salgan solos.</p>
-        </div>
-        <span class="svc-arrow" aria-hidden="true">↗</span>
-      </a>
-      <a class="svc" href="/pagina-web-empresa-industrial-chile">
-        <span class="svc-num mono">04</span>
-        <h3 class="svc-title">Web industrial que convierte</h3>
-        <div class="svc-body">
-          <p class="svc-desc">Sitios rápidos, con catálogo y cotización directa, pensados para generar contactos, no solo para verse bien.</p>
-        </div>
-        <span class="svc-arrow" aria-hidden="true">↗</span>
-      </a>
       <a class="svc" href="/outsourcing-fuerza-ventas-chile">
-        <span class="svc-num mono">05</span>
-        <h3 class="svc-title">Vendedor externo</h3>
-        <div class="svc-body">
-          <p class="svc-desc">Un equipo comercial a tu medida, sin sueldos fijos ni seis meses de ramp-up. Trabajamos como parte de tu empresa.</p>
-        </div>
-        <span class="svc-arrow" aria-hidden="true">↗</span>
-      </a>
-      <a class="svc" href="/keyword-research-b2b-industrial-chile">
         <span class="svc-num mono">06</span>
-        <h3 class="svc-title">SEO y Google Ads</h3>
+        <h3 class="svc-title">Vendedor externo y automatización</h3>
         <div class="svc-body">
-          <p class="svc-desc">Hacemos que te encuentren cuando tu cliente busca a su proveedor, con orgánico y pauta bien medidos.</p>
+          <p class="svc-desc">Nos sumamos a tu equipo comercial y automatizamos cotizaciones, seguimientos y reportes.</p>
         </div>
         <span class="svc-arrow" aria-hidden="true">↗</span>
       </a>
@@ -218,12 +219,13 @@
   <!-- MÉTODO -->
   <section class="metodo" id="metodo">
     <p class="mono kicker">CÓMO TRABAJAMOS</p>
-    <h2 class="h2 metodo-title">Cuatro pasos, sin humo. Entendemos tu venta, armamos el sistema y lo dejamos funcionando en <em>14 días</em>.</h2>
-    <ol class="pasos">
-      <li><span class="mono">01</span><h3>Diagnóstico</h3><p>Entendemos tu producto, tu cliente ideal y por dónde se te está yendo la venta.</p></li>
-      <li><span class="mono">02</span><h3>Plan de acción</h3><p>Definimos canales, mensajes y metas concretas para los próximos 90 días.</p></li>
-      <li><span class="mono">03</span><h3>Ejecución</h3><p>Prospectamos, automatizamos y respondemos por ti. Tu equipo se enfoca en cerrar.</p></li>
-      <li><span class="mono">04</span><h3>Reporte</h3><p>Te mostramos qué funcionó, qué no y qué ajustamos, con números y sin rodeos.</p></li>
+    <h2 class="h2 metodo-title">Cinco pasos: de una búsqueda en Google a una venta cerrada, funcionando en <em>14 días</em>.</h2>
+    <ol class="pasos pasos-5">
+      <li><span class="mono">01</span><h3>Evaluamos</h3><p>Tu producto, tu competencia y qué buscan tus compradores en Google.</p></li>
+      <li><span class="mono">02</span><h3>Preparamos</h3><p>Palabras clave que compran, web lista para cotizar y medición desde el día uno.</p></li>
+      <li><span class="mono">03</span><h3>Posicionamos</h3><p>Campañas de Google Ads optimizadas por costo de cotización. Nuestra especialidad.</p></li>
+      <li><span class="mono">04</span><h3>Guiamos por WhatsApp</h3><p>Cada contacto llega a tu WhatsApp y la IA lo atiende, cotiza y guía.</p></li>
+      <li><span class="mono">05</span><h3>Cerramos</h3><p>Seguimiento a cada cotización hasta la venta, con todo visible en el Panel JPB.</p></li>
     </ol>
   </section>
 
@@ -269,6 +271,9 @@ JPB Marketing es una agencia de Santiago que se integra al equipo comercial de f
 
 ## Servicios
 
+Nuestra especialidad es Google Ads para empresas industriales.
+
+- Google Ads (especialidad) — Campañas para que aparezcas cuando un comprador busca lo que vendes, medidas por costo de cotización. /keyword-research-b2b-industrial-chile
 - Agente IA en WhatsApp — Atiende, califica y cotiza a tus clientes las 24 horas, y avisa a tu equipo cuando hay una venta real. /agente-ia
 - Prospección B2B — Llegamos a los decisores de tu rubro con mensajes directos y segmentados, y te agendamos reuniones. /prospeccion
 - Automatización con IA — Conectamos tus herramientas para que cotizaciones, seguimientos y reportes salgan solos. /servicios
@@ -310,6 +315,6 @@ App móvil para clientes: conversaciones de WhatsApp en vivo, seguimiento de cli
 </script>
 
 <script src="pagina.js?v=6" defer></script>
-<script type="module" src="fabrica.js?v=11"></script>
+<script type="module" src="fabrica.js?v=13"></script>
 </body>
 </html>

@@ -339,3 +339,33 @@ body.menu-abierto .nav-burger i:last-child{top:13.5px;transform:rotate(-45deg)}
   .est-nav{position:absolute;right:10px;bottom:12px;margin:0;border:0;padding:0;gap:4px}
   .est-nav button{width:38px;height:34px;font-size:24px}
 }
+
+/* ===== Recorrido con Diego ===== */
+.etq-diego{background:var(--yellow);color:#14181f;border-color:var(--yellow);font-weight:700;box-shadow:0 0 0 0 rgba(245,184,0,.6);animation:latido 2s infinite}
+.etq-diego::after{background:var(--yellow)}
+@keyframes latido{0%{box-shadow:0 0 0 0 rgba(245,184,0,.55)}70%{box-shadow:0 0 0 12px rgba(245,184,0,0)}100%{box-shadow:0 0 0 0 rgba(245,184,0,0)}}
+#btn-recorrido{opacity:0;pointer-events:none;transition:opacity .6s}
+.planta.operativa #btn-recorrido{opacity:1;pointer-events:auto}
+.planta.en-estacion #btn-recorrido{display:none}
+.planta.recorrido .est-nav{display:flex;align-items:center;justify-content:space-between;margin-top:14px;border-top:1px solid var(--line);padding-top:10px}
+.est-nav button{font-size:24px;line-height:1;width:40px;height:32px;color:var(--ink);border-radius:8px}
+.est-nav button:hover{background:rgba(245,184,0,.15)}
+.est-dots{display:flex;gap:7px}
+.est-dots i{width:7px;height:7px;border-radius:50%;background:rgba(238,240,244,.25);transition:background .3s,transform .3s}
+.est-dots i.on{background:var(--yellow);transform:scale(1.25)}
+.planta.recorrido .estacion{width:min(420px,calc(100% - 32px))}
+@media (max-width:760px){
+  #btn-recorrido{display:none}
+  .planta.recorrido .est-nav{position:absolute;right:10px;bottom:12px;margin:0;border:0;padding:0;gap:4px}
+}
+.svc-tag{display:inline-block;vertical-align:middle;margin-left:10px;font-family:var(--mono);font-size:10px;letter-spacing:.08em;text-transform:uppercase;padding:3px 8px;border-radius:999px;background:var(--yellow);color:#14181f;font-weight:700}
+.svc-top .svc-title{font-size:clamp(20px,1.8vw,26px)}
+.pasos-5{grid-template-columns:repeat(5,1fr)}
+@media (max-width:1100px){.pasos-5{grid-template-columns:repeat(3,1fr)}.pasos-5 li:nth-child(4){border-left:0;padding-left:0}.pasos-5 li:nth-child(n+4){border-top:1px solid var(--line)}}
+@media (max-width:520px){.pasos-5{grid-template-columns:1fr}.pasos-5 li{border-left:0!important;padding-left:0!important}.pasos-5 li+li{border-top:1px solid var(--line)}}
+@media (max-width:760px){
+  .planta.recorrido .est-nav{position:static;margin-top:10px;padding-top:6px;border-top:1px solid var(--line)}
+  .est-dots{gap:6px}
+  .est-dots i{width:6px;height:6px}
+  .planta-msg h2{font-size:23px}
+}
