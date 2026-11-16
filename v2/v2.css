@@ -408,3 +408,24 @@ body.menu-abierto .nav-burger i:last-child{top:13.5px;transform:rotate(-45deg)}
 .est-num{display:none}
 @media (max-width:760px){.planta.recorrido .est-num{display:inline-block}}
 @media (max-width:760px){.planta-msg{max-width:none;right:16px}.planta-msg h2{font-size:clamp(19px,5.6vw,23px)}}
+
+/* ===== Botones del recorrido: grandes, claros y con anillo de tiempo ===== */
+.est-nav button{width:44px;height:44px;border-radius:50%;display:grid;place-items:center;font-size:28px;line-height:1;padding:0;position:relative;transition:transform .15s,background .2s}
+.est-nav button span{display:block;transform:translateY(-2px)}
+.est-prev{border:1.5px solid rgba(238,240,244,.35);color:var(--ink)}
+.est-prev:hover{border-color:var(--ink);background:rgba(238,240,244,.06)}
+.est-next{background:var(--yellow);color:#14181f;font-weight:700;width:48px!important;height:48px!important}
+.est-next:hover{background:var(--yellow-2)}
+.est-nav button:active{transform:scale(.92)}
+.anillo{position:absolute;inset:-6px;width:calc(100% + 12px);height:calc(100% + 12px);transform:rotate(-90deg);pointer-events:none;overflow:visible}
+.anillo circle{fill:none;stroke:var(--yellow);stroke-width:2.6;stroke-linecap:round;stroke-dasharray:100;stroke-dashoffset:100;opacity:.95}
+.anillo.corre circle{animation:anillo var(--dur,7s) linear forwards}
+@keyframes anillo{to{stroke-dashoffset:0}}
+.planta.recorrido .est-nav{align-items:center;gap:10px}
+@media (max-width:760px){
+  .planta.recorrido .est-nav{right:14px;bottom:14px;gap:10px}
+  .planta.tour .est-cta{margin-top:12px;padding:11px 16px;font-size:14px}
+  .est-num{font-size:12px;min-width:34px}
+}
+@media (prefers-reduced-motion:reduce){.anillo.corre circle{animation:none;stroke-dashoffset:0}}
+@media (max-width:760px){.planta.recorrido .est-nav{right:20px;bottom:16px}}

@@ -40,7 +40,7 @@ const small = () => innerWidth < 760;
 
 let renderer;
 try {
-  renderer = new THREE.WebGLRenderer({ canvas, antialias: !LOW, powerPreference: 'high-performance' });
+  renderer = new THREE.WebGLRenderer({ canvas, antialias: true, powerPreference: 'high-performance' });
 } catch (e) {
   document.getElementById('planta-fallback').hidden = false;
   hudEstado.textContent = 'PLANTA JPB';
@@ -1120,6 +1120,13 @@ function irPaso(i, pausa) {
   card.querySelector('.est-num').textContent = (ri + 1) + '/' + RECORRIDO.length;
   setVista('recorrido'); recOn = true;
   recNext = rt + (pausa ? 18 : ri === 0 ? 8 : 7);
+  if (!MOVIL() && ri === RECORRIDO.length - 1) recNext = Infinity;
+  anilloTiempo(recNext - rt);
+}
+function anilloTiempo(seg) {
+  const a = card.querySelector('.anillo'); if (!a) return;
+  a.classList.remove('corre'); void a.getBoundingClientRect();
+  if (isFinite(seg) && seg > 0) { a.style.setProperty('--dur', seg + 's'); a.classList.add('corre'); }
 }
 function iniciarRecorrido() { irPaso(0); }
 function abrirEstacion(k, w) {
@@ -1249,7 +1256,7 @@ function frame(now) {
 
   rt = now / 1000;
   if (recStartAt && rt > recStartAt) { recStartAt = 0; if (vista === 'planta') iniciarRecorrido(); }
-  if (recOn && rt > recNext) { if (ri < RECORRIDO.length - 1 || MOVIL()) paso(1, false); else recNext = Infinity; }
+  if (recOn && rt > recNext) { if (ri < RECORRIDO.length - 1 || MOVIL()) paso(1, false); else { recNext = Infinity; anilloTiempo(0); } }
   // Diego destaca: anillo que late y foco propio
   const lat = .5 + .5 * Math.sin(rt * 3);
   anillo.material.opacity = (vista === 'planta' ? .55 : .2) * power * (.5 + .5 * lat); anillo.scale.setScalar(1 + .12 * lat);
@@ -1368,8 +1375,8 @@ function frame(now) {
   // resolución adaptativa: baja si el equipo no da, sube si sobra
   fpsN++; if (now - fpsT > 2500) {
     const fps = fpsN * 1000 / (now - fpsT); fpsN = 0; fpsT = now;
-    const meta = LOW ? 27 : 50, alto = LOW ? 29.5 : 58;
-    if (t > 10 && fps < meta && DPR > .75) { DPR = Math.max(.75, DPR - .25); renderer.setPixelRatio(DPR); resize(); U.uBlock.value = 7 * DPR; }
+    const meta = LOW ? 24 : 50, alto = LOW ? 29.5 : 58, piso = LOW ? 1.25 : .75;
+    if (t > 10 && fps < meta && DPR > piso) { DPR = Math.max(piso, DPR - .25); renderer.setPixelRatio(DPR); resize(); U.uBlock.value = 7 * DPR; }
     else if (t > 10 && fps > alto && DPR < DPR_MAX) { DPR = Math.min(DPR_MAX, DPR + .25); renderer.setPixelRatio(DPR); resize(); U.uBlock.value = 7 * DPR; }
   }
 }
