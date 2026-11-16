@@ -623,6 +623,46 @@ const sWeb = (x, W, H, st, tt) => {
   setFont(x, 900, 34); x.fillStyle = '#0b1220'; x.fillText('Catálogo industrial', 18, 100);
   for (let i = 0; i < 4; i++) { const px = 18 + i * (W - 36) / 4; x.fillStyle = '#ffffff'; x.fillRect(px, 124, (W - 36) / 4 - 12, H - 150); x.fillStyle = '#c9ced8'; x.fillRect(px + 10, 134, (W - 36) / 4 - 32, (H - 150) * .5); }
 };
+const cabecera = (x, W, n, titulo) => {
+  x.fillStyle = '#0b1220'; x.fillRect(0, 0, W, 64);
+  setFont(x, 700, 18, 'JetBrains Mono', false); x.fillStyle = YEL; x.fillText(n, 22, 26);
+  setFont(x, 900, 26); x.fillStyle = INK; x.fillText(titulo, 22, 54, W - 44);
+};
+const sKwDet = (x, W, H, st, tt) => {
+  x.fillStyle = '#05080f'; x.fillRect(0, 0, W, H); cabecera(x, W, '1 · PALABRAS CLAVE', 'Búsquedas que compran');
+  const rows = [['tubos pvc 110 mm', 880], ['proveedor fierro construcción', 720], ['bolsas industriales precio', 590], ['cotizar perfiles metálicos', 410]];
+  const hi = Math.floor(tt * .8) % rows.length;
+  rows.forEach(([k, v], i) => {
+    const y = 84 + i * 70, on = i === hi;
+    x.fillStyle = on ? 'rgba(245,184,0,.14)' : 'rgba(238,240,244,.05)'; x.fillRect(16, y, W - 32, 60);
+    setFont(x, 700, 22, 'Archivo', false); x.fillStyle = INK; x.fillText(k, 30, y + 26, W - 230);
+    setFont(x, 600, 15, 'JetBrains Mono', false); x.fillStyle = on ? YEL : 'rgba(238,240,244,.6)'; x.fillText(v + ' búsquedas/mes', W - 200, y + 26);
+    x.fillStyle = 'rgba(238,240,244,.12)'; x.fillRect(30, y + 40, W - 60, 8); x.fillStyle = on ? YEL : 'rgba(238,240,244,.5)'; x.fillRect(30, y + 40, (W - 60) * v / 900, 8);
+  });
+};
+const sWebDet = (x, W, H, st, tt) => {
+  x.fillStyle = '#05080f'; x.fillRect(0, 0, W, H); cabecera(x, W, '2 · WEB', 'Tu web, lista para cotizar');
+  x.fillStyle = '#eef0f4'; x.fillRect(16, 76, W - 32, H - 92);
+  x.fillStyle = '#0b1220'; x.fillRect(16, 76, W - 32, 34); setFont(x, 800, 16, 'Archivo', false); x.fillStyle = '#fff'; x.fillText('tuempresa.cl', 28, 99);
+  setFont(x, 900, 24); x.fillStyle = '#0b1220'; x.fillText('Tubos PVC al por mayor', 30, 146, W - 60);
+  setFont(x, 500, 15, 'Archivo', false); x.fillStyle = '#4d5156'; x.fillText('Stock inmediato · Despacho a todo Chile', 30, 170);
+  const pulso = .5 + .5 * Math.sin(tt * 4);
+  x.fillStyle = YEL; x.fillRect(30, 190, 200, 48); setFont(x, 800, 18, 'Archivo', false); x.fillStyle = '#0b1220'; x.fillText('Cotizar ahora →', 46, 221);
+  x.strokeStyle = `rgba(245,184,0,${.6 * pulso})`; x.lineWidth = 4; x.strokeRect(26, 186, 208, 56);
+  x.fillStyle = '#25d366'; x.fillRect(246, 190, 200, 48); x.fillStyle = '#fff'; x.fillText('WhatsApp', 290, 221);
+  for (let i = 0; i < 3; i++) { x.fillStyle = '#ffffff'; x.fillRect(30 + i * ((W - 60) / 3), 256, (W - 60) / 3 - 12, H - 290); x.fillStyle = '#c9ced8'; x.fillRect(40 + i * ((W - 60) / 3), 266, (W - 60) / 3 - 32, 50); }
+};
+const sMedDet = (x, W, H, st, tt) => {
+  x.fillStyle = '#05080f'; x.fillRect(0, 0, W, H); cabecera(x, W, '3 · MEDICIÓN', 'Cada contacto, medido');
+  const f = [['Clics desde Google', 1284], ['Escriben por WhatsApp', 214], ['Cotizaciones', 96], ['Ventas cerradas', 31]];
+  f.forEach(([k, v], i) => {
+    const y = 82 + i * 62, w = (W - 60) * Math.max(.16, Math.pow(v / 1284, .45));
+    x.fillStyle = i === 3 ? YEL : `rgba(238,240,244,${.85 - i * .15})`; x.fillRect(30, y, w, 46);
+    setFont(x, 800, 20, 'Archivo', false); x.fillStyle = i === 3 ? '#14181f' : '#0b1220'; x.fillText(v.toLocaleString('es-CL'), 42, y + 30);
+    setFont(x, 600, 16, 'Archivo', false); x.fillStyle = INK; x.fillText(k, 46 + w, y + 30, W - w - 70);
+  });
+  setFont(x, 700, 16, 'JetBrains Mono', false); x.fillStyle = '#25d366'; x.fillText('COSTO POR COTIZACIÓN: $8.900', 30, H - 18);
+};
 const sVentas = (x, W, H, st, tt) => {
   x.fillStyle = '#05080f'; x.fillRect(0, 0, W, H);
   setFont(x, 500, 18, 'JetBrains Mono', false); x.fillStyle = YEL; x.fillText('03 · VENTAS', 26, 40);
@@ -836,9 +876,9 @@ function personaReal(parent, px, pz, ry, opts = {}) {
   const piel = PIELES[nReal++ % PIELES.length];
   // overol azul de trabajo; el jefe con camisa celeste; la oficina con camisa y pantalón de vestir
   const camisa = opts.jefe ? 0x8fb3d9 : opts.oficina ? (opts.camisaHex || 0xe9ecf1) : 0x2c5d9e;
-  const pantalon = opts.jefe ? 0x1f2633 : opts.oficina ? 0x2f3a52 : 0x2c5d9e;
+  const pantalon = opts.jefe ? 0xa89068 : opts.oficina ? 0x6b7486 : 0x2c5d9e;
   const manos = opts.oficina ? piel : opts.jefe ? piel : 0x8a6a42;
-  const mat = matPersona([piel, camisa, pantalon, 0x121212, manos]);
+  const mat = matPersona([piel, camisa, pantalon, opts.oficina ? 0x3a2a20 : 0x6b4428, manos]);
   model.traverse((n) => { if (n.isSkinnedMesh) { n.material = mat; n.castShadow = !LOW; n.frustumCulled = false; } });
   const huesos = {}; const todos = [];
   model.traverse((n) => { if (n.isBone) { huesos[n.name.replace('mixamorig', '')] = n; todos.push(n); } });
@@ -849,10 +889,15 @@ function personaReal(parent, px, pz, ry, opts = {}) {
   if (!opts.oficina) { const l = new THREE.Mesh(new RoundedBoxGeometry(.15, .032, .03, 2, .01), Mreal.lente); l.position.set(0, .07, .09); cab.add(l); }
   if (!opts.sinCasco) {
     const cm = opts.jefe ? std({ color: 0xf2f2ee, roughness: .28 }) : std({ color: 0xf5b800, roughness: .3 });
-    const casco = new THREE.Group(); casco.position.set(0, .14, .02); cab.add(casco);
-    const dome = new THREE.Mesh(new THREE.SphereGeometry(.125, 24, 12, 0, Math.PI * 2, 0, Math.PI / 2), cm); dome.scale.set(1, .9, 1.12); casco.add(dome);
-    const ala = new THREE.Mesh(new THREE.CylinderGeometry(.15, .155, .012, 28), cm); ala.scale.set(1, 1, 1.18); ala.position.z = .015; casco.add(ala);
-    if (opts.jefe) { const f = new THREE.Mesh(new THREE.CylinderGeometry(.126, .127, .025, 28, 1, true), M.yellow); f.position.y = .03; f.scale.set(1, 1, 1.12); casco.add(f); }
+    // casco de seguridad: domo alto, nervio central, borde fino y visera corta adelante
+    const casco = new THREE.Group(); casco.position.set(0, .145, .012); cab.add(casco);
+    const dome = new THREE.Mesh(new THREE.SphereGeometry(.118, 28, 14, 0, Math.PI * 2, 0, Math.PI / 2), cm); dome.scale.set(1, 1.02, 1.16); casco.add(dome);
+    const borde = new THREE.Mesh(new THREE.TorusGeometry(.12, .008, 8, 36), cm); borde.rotation.x = Math.PI / 2; borde.scale.set(1, 1.16, 1); borde.position.y = .004; casco.add(borde);
+    const visera = new THREE.Mesh(new THREE.CylinderGeometry(.122, .124, .01, 28, 1, false, -Math.PI / 2.4, Math.PI / 1.2), cm);
+    visera.scale.set(1, 1, 1.5); visera.position.set(0, .002, .02); visera.rotation.x = .12; casco.add(visera);
+    const nervio = new THREE.Mesh(new RoundedBoxGeometry(.03, .03, .25, 2, .012), cm); nervio.position.y = .112; casco.add(nervio);
+    for (const sx of [-1, 1]) { const n2 = new THREE.Mesh(new RoundedBoxGeometry(.016, .022, .2, 2, .007), cm); n2.position.set(sx * .045, .1, 0); n2.rotation.z = sx * -.38; casco.add(n2); }
+    if (opts.jefe) { const f = new THREE.Mesh(new THREE.TorusGeometry(.117, .007, 6, 36), M.yellow); f.rotation.x = Math.PI / 2; f.scale.set(1, 1.16, 1); f.position.y = .03; casco.add(f); }
     casco.traverse((n) => n.isMesh && (n.castShadow = !LOW));
   }
   // chaleco reflectante (o huinchas sobre la chaqueta del jefe)
@@ -932,13 +977,14 @@ const ROLES = [
 ];
 trabajadores.forEach((w, i) => (w.rol = ROLES[i]));
 // segundo piso: equipo comercial sentado frente a sus computadores
-const ofiSlides = [[sOficina], [sAds], [sKw], [sWeb], [sChat], [sKpi('COTIZACIONES', 'ENVIADAS HOY', 18, .02, 'AGENTE IA + VENDEDOR')]];
+const ofiSlides = [[sKwDet], [sWebDet], [sMedDet], [sOficina], [sChat], [sKpi('COTIZACIONES', 'ENVIADAS HOY', 18, .02, 'AGENTE IA + VENDEDOR')]];
+const ofiRol = [5, 6, 4, 3, 7, 8]; // Fernanda (SEO), Joaquín (web), Tomás (Ads y medición), Valentina, Catalina, Benjamín
 const camisas = [0xe9ecf1, 0x2f3a52, 0x8a9bb5, 0xdfe3e8, 0x3b4252, 0xb7c2d4].map((c) => std({ color: c, roughness: .8 }));
 OFI.forEach(([x, z], i) => {
   const w = trabajadorX(scene, x, z + .72, Math.PI, { idle: i * .9, y: 4.4 - (persona ? .42 : .37), sentado: true, chaleco: camisas[i], camisaHex: [0xe9ecf1, 0x2f3a52, 0x8a9bb5, 0xdfe3e8, 0x3b4252, 0xb7c2d4][i], sinCasco: true, oficina: true });
   if (!w.real) { w.hipL.rotation.x = w.hipR.rotation.x = -1.45; w.kneeL.rotation.x = w.kneeR.rotation.x = 1.45;
   w.shL.rotation.x = w.shR.rotation.x = -.75; w.elL.rotation.x = w.elR.rotation.x = -.75; }
-  w.rol = ROLES[3 + i]; trabajadores.push(w);
+  w.rol = ROLES[ofiRol[i]]; trabajadores.push(w);
   const g = grp(scene, x, 5.66, z - .33);
   D(box(.74, .46, .04), M.dark, g, 0, 0, -.025);
   new Pantalla(g, .7, .42, 640, ofiSlides[i], { off: i * 1.7, dur: 7, label: 'Oficina comercial · Panel JPB', href: '#panel', delay: .4 + i * .08 });
@@ -1074,14 +1120,18 @@ const views = {
 };
 let vista = 'planta';
 const MOVIL = () => innerWidth < 760;
-let rt = performance.now() / 1000, ri = 0, recOn = false, recNext = 0, recStartAt = 0;
+let rt = performance.now() / 1000, ri = 0, recOn = false, recNext = 0, recStartAt = 0, pasoT0 = 0, cineI = -1;
 const poseEst = (k) => { const e = ESTACIONES[k]; return MOVIL() ? { pos: e.mpos, look: e.mlook, fov: 60 } : { pos: e.pos, look: e.c, fov: 50 }; };
 const RECORRIDO = [
   { kicker: 'RECORRIDO · DIEGO, JEFE DE PLANTA', titulo: 'Hola, soy Diego. Te muestro cómo hacemos que tu empresa venda más.', texto: 'Son cinco pasos: evaluamos, preparamos, posicionamos con Google Ads, guiamos cada contacto por WhatsApp y cerramos la venta.', corto: 'Cinco pasos: evaluamos, preparamos, posicionamos en Google, guiamos por WhatsApp y cerramos.', href: '#servicios', cta: 'Ver servicios',
     pose: () => { const p = diego.g.position; return MOVIL() ? { pos: [p.x + .5, 1.75, p.z + 3.4], look: [p.x, 1.3, p.z], fov: 58 } : { pos: [p.x + 1.1, 1.85, p.z + 3.1], look: [p.x - .5, 1.45, p.z], fov: 46 }; } },
   { key: 'oficina', kicker: 'PASO 1 · EVALUAMOS TU EMPRESA', titulo: 'Partimos por entender tu negocio', texto: 'Revisamos tu producto, tus clientes, tu competencia y qué buscan tus compradores en Google. Así sabemos dónde está la venta.', corto: 'Revisamos tu producto, tu competencia y qué buscan tus compradores en Google.', href: '/contacto', cta: 'Pedir evaluación' },
   { key: 'oficina', kicker: 'PASO 2 · PREPARAMOS TU POSICIONAMIENTO', titulo: 'Palabras clave, web y medición', texto: 'Elegimos las búsquedas que compran, dejamos tu web lista para cotizar y medimos cada contacto desde el primer día.', corto: 'Elegimos las búsquedas que compran, dejamos tu web lista y medimos cada contacto.', href: '/pagina-web-empresa-industrial-chile', cta: 'Ver web industrial',
-    pose: () => MOVIL() ? { pos: [-13.6, 6.9, -7.4], look: [-16.2, 5.4, -13.6], fov: 58 } : { pos: [-12.6, 6.5, -8.4], look: [-16.4, 5.3, -13.4], fov: 46 } },
+    cine: ['1/3 · PALABRAS CLAVE', '2/3 · WEB', '3/3 · MEDICIÓN'],
+    pose: () => { // la cámara pasa de pantalla en pantalla
+      const i = Math.min(2, Math.floor(Math.max(0, rt - pasoT0 - .4) / 3.1)), [x, z] = OFI[i];
+      return MOVIL() ? { pos: [x + .04, 6.22, z + 1.42], look: [x, 5.66, z - .33], fov: 52 } : { pos: [x - .05, 5.74, z + .66], look: [x - .24, 5.66, z - .33], fov: 50 };
+    } },
   { key: 'prospeccion', kicker: 'PASO 3 · POSICIONAMOS CON GOOGLE ADS', titulo: 'Apareces cuando te buscan', texto: 'Campañas de Google Ads para empresas industriales, optimizadas por costo por cotización. Cada clic entra a la línea como un prospecto.', corto: 'Google Ads para industria: cada clic entra como prospecto.' },
   { key: 'ia', kicker: 'PASO 4 · TODO ENTRA POR WHATSAPP', titulo: 'La IA guía cada contacto', texto: 'Quien llega desde Google te escribe por WhatsApp: el agente IA responde al tiro, cotiza con tu catálogo y lo guía hasta la compra. Las cajas grises salen amarillas.', corto: 'Llegan desde Google a tu WhatsApp: la IA responde, cotiza y guía hasta la compra.' },
   { key: 'ventas', kicker: 'PASO 5 · CERRAMOS LA VENTA', titulo: 'Pedidos listos para cerrar', texto: 'Tu equipo recibe clientes calientes, hacemos seguimiento a cada cotización y ves todo en el Panel JPB.', corto: 'Tu equipo recibe clientes calientes y seguimos cada cotización hasta cerrar.' },
@@ -1119,7 +1169,8 @@ function irPaso(i, pausa) {
   card.querySelectorAll('.est-dots i').forEach((d, k) => d.classList.toggle('on', k === ri));
   card.querySelector('.est-num').textContent = (ri + 1) + '/' + RECORRIDO.length;
   setVista('recorrido'); recOn = true;
-  recNext = rt + (pausa ? 18 : ri === 0 ? 8 : 7);
+  pasoT0 = rt; cineI = -1;
+  recNext = rt + (pausa ? 18 : ri === 0 ? 8 : st.cine ? 10.4 : 7);
   if (!MOVIL() && ri === RECORRIDO.length - 1) recNext = Infinity;
   anilloTiempo(recNext - rt);
 }
@@ -1256,18 +1307,35 @@ function iniciarSonido() {
   };
   fuente(hum, null, .06);
   fuente(cinta, [-.5, 1, -1], .4, 5);
-  fuente(teclas, [-16.6, 5.4, -12.8], .55, 3.5);
+  // tecleo de la oficina: una fuente por fila, fuerte de cerca y se apaga rápido al alejarse
+  for (const z of [-11.2, -14.7]) { const a = fuente(teclas, [-17, 5.3, z], .95, 2.2); a.setRolloffFactor(2.4); }
+  // el agente de WhatsApp teclea cada vez que aparece un mensaje
+  const tecleoIA = crearBuffer(ctx, .9, (d, sr) => { let t = .02; while (t < .8) { const i0 = Math.floor(t * sr), m = Math.floor(sr * .012), a = .4 + Math.random() * .4; let p = 0; for (let i = 0; i < m && i0 + i < d.length; i++) { const x = ruido(); d[i0 + i] += (x - p) * a * Math.exp(-i / sr * 420); p = x; } t += .06 + Math.random() * .07; } });
+  const aviso = crearBuffer(ctx, .35, (d, sr, n) => { for (let i = 0; i < n; i++) { const t = i / sr, f = t < .09 ? 880 : 1175; d[i] = Math.sin(2 * Math.PI * f * t) * Math.exp(-((t < .09 ? t : t - .09)) * 18) * .6; } });
+  SON.tecleoIA = fuente(tecleoIA, [TOTEM.x, 2, TOTEM.z], .8, 2.5, false); SON.tecleoIA.setRolloffFactor(2);
+  SON.aviso = fuente(aviso, [TOTEM.x, 2, TOTEM.z], .35, 2.5, false); SON.aviso.setRolloffFactor(2);
   fuente(martillo, [15.5, 1.4, -11.5], .5, 6);
   fuente(servo, [-4.2, 1.6, -2.6], .07, 3); fuente(servo, [2.8, 1.6, -2.6], .07, 3);
   SON.pop = fuente(pop, [TOTEM.x, 1.6, TOTEM.z], .22, 3, false);
 }
-function despertarSonido() { if (!SON.on) return; iniciarSonido(); if (SON.listener && SON.listener.context.state !== 'running') SON.listener.context.resume(); }
-['pointerdown', 'keydown', 'touchstart'].forEach((ev) => addEventListener(ev, despertarSonido, { passive: true }));
+// iPhone: que suene aunque el teléfono esté en modo silencio (como un video) y desbloquear con toques válidos
+try { if (navigator.audioSession) navigator.audioSession.type = 'playback'; } catch (e) {}
+function despertarSonido() {
+  if (!SON.on) return;
+  iniciarSonido();
+  const ctx = SON.listener && SON.listener.context; if (!ctx) return;
+  if (ctx.state !== 'running') ctx.resume();
+  if (!SON.desbloqueado) { // un sonido mudo dentro del gesto desbloquea el audio en iOS
+    SON.desbloqueado = true;
+    const b = ctx.createBuffer(1, 1, ctx.sampleRate), src = ctx.createBufferSource(); src.buffer = b; src.connect(ctx.destination); src.start(0);
+  }
+}
+['pointerdown', 'pointerup', 'touchend', 'click', 'keydown'].forEach((ev) => addEventListener(ev, despertarSonido, { passive: true, capture: true }));
 btnSon.addEventListener('click', () => { SON.on = !SON.on; try { localStorage.setItem('jpb-sonido', SON.on ? '1' : '0'); } catch (e) {} pintarSon(); if (SON.on) despertarSonido(); });
 document.addEventListener('visibilitychange', () => { if (SON.listener) { if (document.hidden) SON.listener.context.suspend(); else if (SON.on) SON.listener.context.resume(); } });
 function volumenSon(dt, activo) {
   if (!SON.listener) return;
-  const meta = SON.on && activo ? .55 : 0;
+  const meta = SON.on && activo ? .7 : 0;
   SON.master += (meta - SON.master) * Math.min(1, dt * 3);
   SON.listener.setMasterVolume(SON.master);
 }
@@ -1327,6 +1395,10 @@ function frame(now) {
   });
 
   rt = now / 1000;
+  if (vista === 'recorrido' && RECORRIDO[ri].cine) {
+    const ci = Math.min(2, Math.floor(Math.max(0, rt - pasoT0 - .4) / 3.1));
+    if (ci !== cineI) { cineI = ci; card.querySelector('.est-kicker').textContent = 'PASO 2 · ' + RECORRIDO[ri].cine[ci]; }
+  }
   if (recStartAt && rt > recStartAt) { recStartAt = 0; if (vista === 'planta') iniciarRecorrido(); }
   if (recOn && rt > recNext) { if (ri < RECORRIDO.length - 1 || MOVIL()) paso(1, false); else { recNext = Infinity; anilloTiempo(0); } }
   // Diego destaca: anillo que late y foco propio
@@ -1417,13 +1489,18 @@ function frame(now) {
     w.elR.rotation.z = w.act * (.6 + Math.sin(clock * 8) * .32);
     w.cab.rotation.y = Math.sin(clock * .5 + (w.idle || 0)) * .35 * (1 - w.act);
   });
+  if (SON.tecleoIA && SON.master > .05) {
+    const nMsg = Math.floor((clock % 14) / 1.8);
+    if (nMsg !== SON.nMsg) { SON.nMsg = nMsg; const bot = [0, 1, 0, 1, 0, 1][Math.min(nMsg, 5)];
+      if (nMsg <= 5) { const s = bot ? SON.tecleoIA : SON.aviso; if (s.isPlaying) s.stop(); s.play(); if (bot) setTimeout(() => { if (SON.aviso.isPlaying) SON.aviso.stop(); SON.aviso.play(); }, 900); } }
+  }
   const pp = polvo.geometry.attributes.position;
   for (let i = 0; i < pp.count; i += 7) { pp.array[i * 3 + 1] += dt * .06; if (pp.array[i * 3 + 1] > 11) pp.array[i * 3 + 1] = 0; }
   pp.needsUpdate = true;
 
   // --- cámara ---
   const v = views[vista]();
-  const k = 1 - Math.exp(-Math.min(.25, realDt) * 2);
+  const k = 1 - Math.exp(-Math.min(.25, realDt) * (vista === 'recorrido' && RECORRIDO[ri].cine ? 3.6 : 2));
   mouse.sx += (mouse.x - mouse.sx) * k; mouse.sy += (mouse.y - mouse.sy) * k;
   const drift = vista === 'planta' ? 1 : .25;
   cam.pos.lerp(V.set(...v.pos), k); cam.look.lerp(V.set(...v.look), k); cam.fov += (v.fov - cam.fov) * k;

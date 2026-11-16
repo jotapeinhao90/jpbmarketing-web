@@ -436,3 +436,4 @@ body.menu-abierto .nav-burger i:last-child{top:13.5px;transform:rotate(-45deg)}
 .nav-sonido.mute .ic-on{display:none}
 .nav-sonido.mute .ic-off{display:block}
 @media (max-width:820px){.nav-sonido{width:36px;height:36px;margin-right:2px}}
+.est-nav .est-next{background:var(--yellow);color:#14181f}.est-nav .est-next:hover{background:var(--yellow-2)}
