@@ -963,8 +963,8 @@ const trabajadorX = (parent, px, pz, ry, opts) => (persona ? personaReal(parent,
 const _qa = new THREE.Quaternion();
 // agarre del teléfono (ajustable por URL para calibrar: ?ag=a,b,c,t1x,t1y,t1z,t2x&tel=desplazamiento,profundidad)
 const _q = new URLSearchParams(location.search);
-const AG = (_q.get('ag') || '1.05,1.25,.85,.35,0,.6,.5').split(',').map(Number);
-const TEL = (_q.get('telp') || '.07,-.025,-.02').split(',').map(Number);
+const AG = (_q.get('ag') || '.3,.45,.3,.2,0,.4,.3').split(',').map(Number);
+const TEL = (_q.get('telp') || '.03,.075,-.02,.2').split(',').map(Number);
 function hueso(w, n, x, y, z) {
   const b = w.huesos[n]; if (!b) return;
   const k = w.idx[n];
@@ -990,14 +990,15 @@ function animarReal(w, clock, dt) {
     hueso(w, 'LeftForeArm', 0, 0, .28); hueso(w, 'RightForeArm', 0, 0, -.28);
     hueso(w, 'Spine2', resp * .018, 0, 0); hueso(w, 'Head', 0, Math.sin(clock * .5 + id) * .35, 0);
     if (w.jefe) {
-      const k = w.tel || 0;
-      if (k > .01) { // codo al costado, antebrazo adelante: muestra el teléfono a la altura del pecho
-        hueso(w, 'RightArm', 1.24 + (1.05 - 1.24) * k, 0, -.1 + (-.5 + .1) * k);
-        hueso(w, 'RightForeArm', 0, 0, -.28 + (-1.9 + .28) * k);
-        hueso(w, 'Head', .12 * k, -.15 * k, 0);
-        for (const f of ['Index', 'Middle', 'Ring', 'Pinky']) { hueso(w, 'RightHand' + f + '1', AG[0] * k, 0, 0); hueso(w, 'RightHand' + f + '2', AG[1] * k, 0, 0); hueso(w, 'RightHand' + f + '3', AG[2] * k, 0, 0); }
-        hueso(w, 'RightHandThumb1', AG[3] * k, AG[4] * k, AG[5] * k); hueso(w, 'RightHandThumb2', AG[6] * k, 0, 0);
-      }
+      const k = w.tel || 0, a = 1 - k, mix = (p, q) => p + (q - p) * k;
+      const ciclo = (clock + id) % 8, mira = ciclo > 6.4 ? Math.sin((ciclo - 6.4) / 1.6 * Math.PI) : 0; // de vez en cuando levanta la vista
+      const esc = Math.sin(clock * 7.5) * .07 * a, salto = Math.sin(clock * 1.3) > .85 ? .12 * a : 0;      // trazos y cambio de línea
+      // izquierda: sostiene el portapapeles (vuelve abajo al mostrar el teléfono)
+      hueso(w, 'LeftArm', mix(1.15, 1.24), 0, mix(.45, .1)); hueso(w, 'LeftForeArm', 0, 0, mix(1.55, .28));
+      // derecha: escribe sobre el portapapeles → o muestra el teléfono
+      hueso(w, 'RightArm', mix(1.1, 1.05), 0, mix(-.55, -.5)); hueso(w, 'RightForeArm', 0, mix(-.6 + esc, 0), mix(-1.85 + salto, -1.9));
+      hueso(w, 'Head', mix(.36 * (1 - mira), .12), mix(.18 * mira, -.15), 0);
+      for (const f of ['Index', 'Middle', 'Ring', 'Pinky']) { hueso(w, 'RightHand' + f + '1', mix(.9, AG[0]), 0, 0); hueso(w, 'RightHand' + f + '2', mix(1.1, AG[1]), 0, 0); hueso(w, 'RightHand' + f + '3', mix(.8, AG[2]), 0, 0); hueso(w, 'LeftHand' + f + '1', .5 * a, 0, 0); hueso(w, 'LeftHand' + f + '2', .6 * a, 0, 0); }
     }
   }
   // saludo real (animación de Mixamo) mezclado con la pose según cuánto está activo
@@ -1043,6 +1044,18 @@ OFI.forEach(([x, z], i) => {
 // Diego: tablet en la mano, foco propio y anillo en el piso
 const diego = trabajadores[2];
 // (Diego ya no lleva tablet: el teléfono aparece en el paso de la app)
+// portapapeles y lápiz con los que Diego anota
+const tabla = new THREE.Group(); scene.add(tabla);
+{
+  tabla.add(new THREE.Mesh(new RoundedBoxGeometry(.23, .31, .012, 2, .01), std({ color: 0x7a5634, roughness: .7 })));
+  const c = cv(128, 170), x = c.getContext('2d'); x.fillStyle = '#f7f5ef'; x.fillRect(0, 0, 128, 170);
+  x.fillStyle = '#16324f'; x.font = '700 13px Archivo, sans-serif'; x.fillText('Checklist planta', 10, 22);
+  for (let i = 0; i < 9; i++) { x.strokeStyle = 'rgba(22,50,79,.28)'; x.beginPath(); x.moveTo(10, 38 + i * 14); x.lineTo(118, 38 + i * 14); x.stroke(); if (i < 6) { x.fillStyle = i < 4 ? '#17874a' : '#c9ced8'; x.fillRect(10, 30 + i * 14, 7, 7); x.fillStyle = 'rgba(22,50,79,.55)'; x.fillRect(22, 32 + i * 14, 50 + (i * 23) % 40, 3); } }
+  const t = new THREE.CanvasTexture(c); t.colorSpace = THREE.SRGBColorSpace;
+  const hoja = new THREE.Mesh(new THREE.PlaneGeometry(.2, .265), std({ map: t, roughness: .9 })); hoja.position.set(0, -.015, .0065); tabla.add(hoja);
+  const clip = new THREE.Mesh(new RoundedBoxGeometry(.09, .03, .02, 2, .006), std({ color: 0xc9ccd2, metalness: .9, roughness: .3, envMap: envMetal })); clip.position.set(0, .14, .009); tabla.add(clip);
+}
+const lapiz = new THREE.Mesh(cyl(.0045, .0045, .14, 8).rotateX(Math.PI / 2), std({ color: 0xf5b800, roughness: .4 })); scene.add(lapiz);
 // teléfono que Diego levanta en el paso de la app
 const telefono = new THREE.Group(); telefono.visible = false; scene.add(telefono);
 {
@@ -1262,7 +1275,7 @@ function mostrarApp(on) {
   if (on) {
     appTimer = setTimeout(() => {
       if (!appOn) return;
-      if (!appIframe.src) appIframe.src = '/panel-jpb-demo';
+      if (!appIframe.src) appIframe.src = '/panel-jpb-demo?isla=1';
       appDemo.hidden = false; escalaDemo();
       requestAnimationFrame(() => requestAnimationFrame(() => appDemo.classList.add('on')));
     }, 1100);
@@ -1274,6 +1287,7 @@ function mostrarApp(on) {
 // la demo se dibuja a tamaño real de teléfono (390 px) y se escala al mockup
 function escalaDemo() {
   const caja = appIframe.parentElement, f = caja.clientWidth / 390;
+  caja.style.setProperty('--f', f);
   appIframe.style.transform = 'scale(' + f + ')'; appIframe.style.height = (caja.clientHeight / f) + 'px';
 }
 addEventListener('resize', () => { if (appOn) escalaDemo(); });
@@ -1468,10 +1482,10 @@ const robotPhase = robots.map(() => 0), P = new THREE.Vector3();
 let beltPhase = 0, gruaZ = -11, carroX = 0;
 
 const frustum = new THREE.Frustum(), PV = new THREE.Matrix4();
-let lastRender = 0, fpsN = 0, fpsT = 0;
+let lastRender = 0, fpsN = 0, fpsT = 0, capMs = LOW ? 31 : 0, okVentanas = 0;
 function frame(now) {
   requestAnimationFrame(frame);
-  if (LOW && now - lastRender < 31) return;
+  if (capMs && now - lastRender < capMs) return;
   lastRender = now;
   const realDt = Math.max(0, (now - last) / 1000); const dt = Math.min(.05, realDt); last = Math.max(last, now);
   // la obra avanza con el reloj real, aunque la escena no se esté dibujando
@@ -1627,12 +1641,20 @@ function frame(now) {
   if (diego.real) {
     diego.tel = (diego.tel || 0) + ((diego.telMeta || 0) - (diego.tel || 0)) * Math.min(1, realDt * 4);
     telefono.visible = diego.tel > .35;
+    tabla.visible = lapiz.visible = diego.tel < .3;
+    if (tabla.visible) {
+      const cab = new THREE.Vector3(); diego.huesos.Head.getWorldPosition(cab);
+      diego.huesos.LeftHand.getWorldPosition(P); diego.huesos.LeftHandMiddle1.getWorldPosition(V); P.lerp(V, .5);
+      tabla.position.copy(P).add(V.set(0, .05, 0)); tabla.lookAt(cab); tabla.rotateZ(.25);
+      diego.huesos.RightHand.getWorldPosition(P); diego.huesos.RightHandIndex1.getWorldPosition(V); P.lerp(V, .7);
+      lapiz.position.copy(P); lapiz.lookAt(tabla.position); lapiz.translateZ(.03);
+    }
     if (telefono.visible) {
       diego.huesos.RightHand.getWorldPosition(P); diego.huesos.RightHandMiddle1.getWorldPosition(V);
       P.lerp(V, .55); // palma
       const hacia = V.copy(camera.position).sub(P).normalize(), der = new THREE.Vector3().crossVectors(hacia, camera.up).normalize();
       telefono.position.copy(P).addScaledVector(camera.up, TEL[0]).addScaledVector(hacia, TEL[1]).addScaledVector(der, TEL[2] || 0);
-      telefono.lookAt(camera.position); telefono.scale.setScalar(1.1);
+      telefono.lookAt(camera.position); telefono.rotateX(-(TEL[3] || 0)); telefono.rotateZ(.08); telefono.scale.setScalar(1.3);
     }
 
   }
@@ -1666,9 +1688,16 @@ function frame(now) {
   // resolución adaptativa: baja si el equipo no da, sube si sobra
   fpsN++; if (now - fpsT > 2500) {
     const fps = fpsN * 1000 / (now - fpsT); fpsN = 0; fpsT = now;
-    const meta = LOW ? 24 : 50, alto = LOW ? 29.5 : 58, piso = LOW ? 1.25 : .75;
-    if (t > 10 && fps < meta && DPR > piso) { DPR = Math.max(piso, DPR - .25); renderer.setPixelRatio(DPR); resize(); U.uBlock.value = 7 * DPR; }
-    else if (t > 10 && fps > alto && DPR < DPR_MAX) { DPR = Math.min(DPR_MAX, DPR + .25); renderer.setPixelRatio(DPR); resize(); U.uBlock.value = 7 * DPR; }
+    const piso = LOW ? 1.25 : .75, ajustaDPR = (d) => { DPR = d; renderer.setPixelRatio(DPR); resize(); U.uBlock.value = 7 * DPR; };
+    if (LOW && t > 10) {
+      if (!capMs) { if (fps < 46) { capMs = 31; okVentanas = 0; } }              // a 60 fps no da: vuelve a 30 fluidos
+      else if (fps < 24 && DPR > piso) ajustaDPR(Math.max(piso, DPR - .25));    // a 30 tampoco: baja resolución
+      else if (fps > 29.3 && DPR < DPR_MAX) ajustaDPR(Math.min(DPR_MAX, DPR + .25));
+      else if (fps > 29.3 && ++okVentanas >= 2) capMs = 0;                       // va sobrado: prueba 60 fps
+    } else if (!LOW && t > 10) {
+      if (fps < 50 && DPR > piso) ajustaDPR(Math.max(piso, DPR - .25));
+      else if (fps > 58 && DPR < DPR_MAX) ajustaDPR(Math.min(DPR_MAX, DPR + .25));
+    }
   }
 }
 requestAnimationFrame(frame);

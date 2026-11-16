@@ -1186,6 +1186,12 @@ html.embed .bottom-nav { padding-bottom: 14px; }
 html.embed .inbox-chat { top: calc(var(--header-h) + 28px); }
 </style>
 <script>try { if (window.self !== window.top) document.documentElement.classList.add('embed'); } catch (e) { document.documentElement.classList.add('embed'); }</script>
+<style>
+/* Dentro del teléfono de la v2 (?isla=1): espacio real para la barra de estado y la isla dinámica */
+html.isla .topbar { padding-top: 54px; height: calc(var(--header-h) + 44px); }
+html.isla .inbox-chat { top: calc(var(--header-h) + 44px); }
+</style>
+<script>if (/[?&]isla=1/.test(location.search)) document.documentElement.classList.add('isla');</script>
 </head>
 <body>
 

@@ -507,3 +507,11 @@ body.menu-abierto .nav-burger i:last-child{top:13.5px;transform:rotate(-45deg)}
 }
 @media (prefers-reduced-motion:reduce){.baja i{animation:none}}
 @media (min-width:761px){.baja{left:auto;right:40px;transform:none;bottom:92px}}
+/* barra de estado e isla dinámica a escala real (la app empieza debajo) */
+.tel-pantalla{--f:.8}
+.tel-isla{top:calc(11px * var(--f));height:calc(36px * var(--f));width:calc(124px * var(--f))}
+.tel-status{position:absolute;z-index:2;top:calc(14px * var(--f));left:calc(34px * var(--f));right:calc(26px * var(--f));display:flex;justify-content:space-between;align-items:center;color:#fff;pointer-events:none;font:600 calc(16px * var(--f))/1 -apple-system,"SF Pro Text",Inter,sans-serif;letter-spacing:-.01em}
+.tel-status span{display:flex;align-items:center;gap:calc(5px * var(--f))}
+.tel-status svg{height:calc(11px * var(--f));width:auto;fill:#fff}
+.tel-status i{display:block;width:calc(24px * var(--f));height:calc(11.5px * var(--f));border:1.5px solid rgba(255,255,255,.55);border-radius:calc(3.5px * var(--f));position:relative}
+.tel-status i::after{content:"";position:absolute;inset:1.5px;right:22%;background:#fff;border-radius:2px}
