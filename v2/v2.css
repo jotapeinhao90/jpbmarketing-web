@@ -461,3 +461,10 @@ body.menu-abierto .nav-burger i:last-child{top:13.5px;transform:rotate(-45deg)}
   .app-demo.on{transform:translateX(-50%) scale(1)}
   .app-badge{font-size:10px;padding:6px 11px}
 }
+/* el teléfono grande sale desde la mano de Diego */
+.app-demo{transform:translate(calc(var(--dx,0px)),calc(-50% + var(--dy,0px))) scale(.06);transition:opacity .35s,transform .8s cubic-bezier(.2,.85,.25,1.05)}
+.app-demo.on{transform:translate(0,-50%) scale(1)}
+@media (max-width:760px){
+  .app-demo{transform:translate(calc(-50% + var(--dx,0px)),var(--dy,0px)) scale(.06)}
+  .app-demo.on{transform:translate(-50%,0) scale(1)}
+}

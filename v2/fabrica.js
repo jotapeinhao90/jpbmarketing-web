@@ -876,7 +876,7 @@ function personaReal(parent, px, pz, ry, opts = {}) {
   const piel = PIELES[nReal++ % PIELES.length];
   // overol azul de trabajo; el jefe con camisa celeste; la oficina con camisa y pantalón de vestir
   const camisa = opts.jefe ? 0x8fb3d9 : opts.oficina ? (opts.camisaHex || 0xe9ecf1) : 0x2c5d9e;
-  const pantalon = opts.jefe ? 0xa89068 : opts.oficina ? 0x6b7486 : 0x2c5d9e;
+  const pantalon = opts.jefe ? 0x3b5b86 : opts.oficina ? 0x6b7486 : 0x2c5d9e;
   const manos = opts.oficina ? piel : opts.jefe ? piel : 0x8a6a42;
   const mat = matPersona([piel, camisa, pantalon, opts.oficina ? 0x3a2a20 : 0x6b4428, manos]);
   model.traverse((n) => { if (n.isSkinnedMesh) { n.material = mat; n.castShadow = !LOW; n.frustumCulled = false; } });
@@ -948,9 +948,12 @@ function animarReal(w, clock, dt) {
     hueso(w, 'LeftForeArm', 0, 0, .28); hueso(w, 'RightForeArm', 0, 0, -.28);
     hueso(w, 'Spine2', resp * .018, 0, 0); hueso(w, 'Head', 0, Math.sin(clock * .5 + id) * .35, 0);
     if (w.jefe) {
-      hueso(w, 'LeftArm', .95, 0, .62); hueso(w, 'LeftForeArm', 0, 0, 1.35 + Math.sin(clock * .8) * .04);
       const k = w.tel || 0;
-      if (k > .01) { hueso(w, 'RightArm', 1.24 + (.55 - 1.24) * k, 0, -.1 + (-1.0 + .1) * k); hueso(w, 'RightForeArm', -1.3 * k, 0, -.28 * (1 - k)); hueso(w, 'Head', 0, .25 * k, 0); }
+      if (k > .01) { // codo al costado, antebrazo adelante: muestra el teléfono a la altura del pecho
+        hueso(w, 'RightArm', 1.24 + (1.05 - 1.24) * k, 0, -.1 + (-.5 + .1) * k);
+        hueso(w, 'RightForeArm', 0, 0, -.28 + (-1.9 + .28) * k);
+        hueso(w, 'Head', .12 * k, -.15 * k, 0);
+      }
     }
   }
   // saludo real (animación de Mixamo) mezclado con la pose según cuánto está activo
@@ -995,8 +998,7 @@ OFI.forEach(([x, z], i) => {
 });
 // Diego: tablet en la mano, foco propio y anillo en el piso
 const diego = trabajadores[2];
-if (!diego.real) { diego.shL.rotation.x = -.55; diego.elL.rotation.x = -1.15; diego.elL.rotation.z = .25; }
-{ const t = diego.real ? (() => { const a = new THREE.Group(); a.scale.setScalar(100); a.position.set(0, 10, 4); diego.huesos.LeftHand.add(a); return grp(a, 0, 0, 0); })() : grp(diego.muL, 0, -.07, .06); t.rotation.x = -.5; D(rbox(.2, .27, .012, .012), M.dark, t, 0, 0, 0); const sm = basic({ color: 0x7fd4ff }); sm.toneMapped = false; D(new THREE.PlaneGeometry(.18, .25), sm, t, 0, 0, .0065); }
+// (Diego ya no lleva tablet: el teléfono aparece en el paso de la app)
 // teléfono que Diego levanta en el paso de la app
 const telefono = new THREE.Group(); telefono.visible = false; scene.add(telefono);
 {
@@ -1011,7 +1013,7 @@ const telefono = new THREE.Group(); telefono.visible = false; scene.add(telefono
 }
 const anillo = new THREE.Mesh(new THREE.RingGeometry(.5, .6, 48), new THREE.MeshBasicMaterial({ color: 0xf5b800, transparent: true, opacity: 0, blending: THREE.AdditiveBlending, depthWrite: false, side: THREE.DoubleSide }));
 anillo.rotation.x = -Math.PI / 2; anillo.position.set(diego.g.position.x, .02, diego.g.position.z); scene.add(anillo);
-const focoDiego = LOW ? new THREE.PointLight(0xfff1d6, 0, 6, 1.4) : new THREE.SpotLight(0xfff1d6, 0, 14, .32, .55, 1.2); focoDiego.position.set(diego.g.position.x + .6, 7.5, diego.g.position.z + 1.2);
+const focoDiego = LOW ? new THREE.PointLight(0xfff1d6, 0, 6, 1.4) : new THREE.SpotLight(0xfff1d6, 0, 14, .32, .55, 1.2); focoDiego.position.set(diego.g.position.x + .5, 4.6, diego.g.position.z + 3.6);
 if (focoDiego.isSpotLight) focoDiego.target = diego.g; else focoDiego.position.set(diego.g.position.x + .3, 2.3, diego.g.position.z + 1.5); scene.add(focoDiego);
 const ofiLight = new THREE.PointLight(0xfff0d0, 0, 14, 1.3); ofiLight.position.set(-16.6, 8.2, -12.6); scene.add(ofiLight);
 
@@ -1212,7 +1214,14 @@ function mostrarApp(on) {
     appTimer = setTimeout(() => {
       if (!appOn) return;
       if (!appIframe.src) appIframe.src = '/panel-jpb-demo';
-      appDemo.hidden = false; requestAnimationFrame(() => appDemo.classList.add('on'));
+      appDemo.hidden = false;
+      // punto de partida: la mano de Diego en pantalla
+      const r = appDemo.getBoundingClientRect(), sr = section.getBoundingClientRect();
+      diego.huesos.RightHand.getWorldPosition(P).project(camera);
+      const hx = (P.x + 1) / 2 * sr.width, hy = (1 - P.y) / 2 * sr.height;
+      appDemo.style.setProperty('--dx', (hx - (r.left - sr.left + r.width / 2)) + 'px');
+      appDemo.style.setProperty('--dy', (hy - (r.top - sr.top + r.height / 2)) + 'px');
+      requestAnimationFrame(() => requestAnimationFrame(() => appDemo.classList.add('on')));
     }, 1100);
   } else {
     demoPausa = false; appBadge.classList.remove('pausa'); appBadge.querySelector('span').textContent = 'Toca para probar la demo';
@@ -1546,7 +1555,7 @@ function frame(now) {
   if (diego.real) {
     diego.tel = (diego.tel || 0) + ((diego.telMeta || 0) - (diego.tel || 0)) * Math.min(1, realDt * 4);
     telefono.visible = diego.tel > .35;
-    if (telefono.visible) { diego.huesos.RightHand.getWorldPosition(P); telefono.position.copy(P).add(V.set(0, .09, .02)); telefono.lookAt(camera.position); }
+    if (telefono.visible) { diego.huesos.RightHand.getWorldPosition(P); telefono.position.copy(P).add(V.set(0, .07, 0)); telefono.lookAt(camera.position); telefono.scale.setScalar(1.25); }
   }
   const pp = polvo.geometry.attributes.position;
   for (let i = 0; i < pp.count; i += 7) { pp.array[i * 3 + 1] += dt * .06; if (pp.array[i * 3 + 1] > 11) pp.array[i * 3 + 1] = 0; }
