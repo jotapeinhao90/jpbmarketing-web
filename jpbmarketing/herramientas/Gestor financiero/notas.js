@@ -90,52 +90,91 @@ Idea de la skill free-tools de https://github.com/coreyhaines31/marketingskills
   },
   {
     id: 'seed-idea-plataforma-pago-deudas-2026-11-16',
-    title: 'Idea de negocio — Plataforma para donar y pagar deudas públicas (con verificación transparente)',
-    tags: ['idea', 'negocio', 'donaciones', 'fintech'],
+    title: 'Idea de negocio — Plataforma de pago de deudas (Chile → internacional)',
+    tags: ['idea', 'negocio', 'donaciones', 'fintech', 'deudas'],
     createdAt: '2026-11-16T12:00:00.000Z',
-    content: `Idea: una plataforma donde cualquier persona (multimillonarios, empresas y gente normal) puede donar para pagar la deuda pública de alguien (multas, TAG, deudas con el Estado, etc.), con verificación automática y total transparencia.
+    content: `Una plataforma web gratuita donde personas endeudadas en Chile cuentan su historia (idealmente en video) y suben los documentos de su deuda. Donantes (multimillonarios, empresas o personas comunes) revisan los casos y pagan toda la deuda o una parte. Cada pago queda publicado, por ejemplo: "A esta familia se le pagó el 50% de su deuda".
 
-## El problema
-Hay familias con deudas públicas que no pueden pagar. Hay gente que quiere ayudar, pero no confía en las campañas de donación: no sabe si la deuda es real, de cuánto es ni a quién se le debe.
+La idea viene de un reel viral que atribuía a Elon Musk una app de este tipo. Eso es falso: Musk no está construyendo esa app. Pero el concepto se viralizó y ya hay plataformas pequeñas probando algo parecido.
 
-## Cómo funciona
-1. **Juanito** (la persona con la deuda) se registra y cuenta su historia.
-2. La app consulta una **API oficial** y verifica automáticamente que la deuda existe, su monto y a qué institución está asociada.
-3. La campaña se publica con la deuda verificada, el monto exacto y el acreedor.
-4. Cualquiera dona **lo que quiera**: desde mil pesos hasta millones.
-5. Al llegar al monto, la plataforma **paga directo al acreedor** (nunca pasa la plata por la persona).
-6. Se publica el comprobante de pago y la deuda queda como "pagada".
+## Objetivos
+- Ayudar a la gente a reducir sus deudas.
+- Ganar plata. Ambas cosas son válidas: es un modelo de empresa social.
+- Ser transparente, incluso poniendo mi foto en la plataforma.
+- Llegar a nivel internacional: donantes de EE.UU., Argentina, Colombia, etc.
+- Atraer multimillonarios: una sola donación grande podría financiar todo el proyecto.
 
-## Transparencia (lo central)
-- Deuda verificada por API, no por lo que diga la persona.
-- Se ve el monto, el tipo de deuda y el acreedor.
-- Se ve cuánto se ha recaudado y quién donó (con opción de donar anónimo).
-- Comprobante público del pago al acreedor.
-- Si sobra plata, se devuelve o pasa a otra campaña (definir regla).
+## Cómo funcionaría (flujo)
+1. La persona se inscribe de forma voluntaria y con consentimiento explícito. Sube su video, su historia y el Informe de Deudas de la CMF.
+2. La plataforma verifica el informe con el código QR y la validación de la CMF, y aprueba el perfil.
+3. Los donantes revisan los casos y eligen uno.
+4. El donante paga directo al acreedor (banco o tarjeta) con el RUT del deudor y sube el comprobante. Puede pagar solo una parte.
+5. El caso muestra una barra de progreso ("lleva 50% pagado") y luego queda marcado como "Deuda pagada ✓". Sirve como contenido para redes.
+6. Propina opcional para la plataforma.
 
-## Quiénes donan
-- Personas normales: donaciones chicas, muchas.
-- Multimillonarios y grandes donantes: pueden financiar campañas completas y tener su vitrina.
-- **Empresas grandes**: alianzas de RSE y marketing; patrocinan campañas o un fondo común.
+## Verificación de deudas
+- El documento clave es el **Informe de Deudas de la CMF**: es gratis, se obtiene con ClaveÚnica, trae código QR y se puede validar en la web de la CMF. Cubre bancos, cooperativas y otras entidades fiscalizadas.
+- Al principio se aceptan solo deudas que aparezcan en ese informe, para reducir el fraude. Más adelante se podrían sumar el CAE, deudas hospitalarias, etc.
+- Para confirmar un pago se pide un informe nuevo después del pago. Es un proceso manual.
+- **Hoy no existe una API pública de deudas.** El SII ve impuestos, no deudas bancarias.
+- A futuro está el **Sistema de Finanzas Abiertas (Ley Fintec 21.521)**. Con autorización de la persona permitirá consultar datos financieros por API, pero su entrada en vigor se postergó a julio de 2027 y para usarlo hay que inscribirse como participante.
+- Estrategia: partir manual y dejar la plataforma lista para conectarse cuando el sistema abra.
 
-## Cómo ganaría plata
-- Comisión de 3–8% sobre cada donación.
-- Patrocinio de empresas (RSE).
-- Posible beneficio tributario para el donante (ley de donaciones) — consultar con un contador.
+## Modelo de ingresos
+- **Propinas opcionales** a la plataforma o a JPB, como en GoFundMe. Es legal: entran como ingreso de la SPA y tributan con boleta o factura.
+- **Donaciones directas** de donantes grandes que valoren el trabajo. Son un bonus, no la base del plan.
+- **Marcas patrocinadoras (lo más sólido):** bancos, retail o fintechs que pagan deudas reales como campaña de impacto social. JPB cobra por producir y difundir el contenido. Calza con lo que JPB ya hace.
+- Recomendación: modelo doble. Las marcas pagan las cuentas y si cae un multimillonario, mejor.
 
-## Riesgos y puntos a resolver
-- **Qué API hay**: ver qué entrega Tesorería, municipalidades, Juzgados de Policía Local, autopistas y si se puede consultar con Clave Única y consentimiento.
-- **Privacidad**: la ley de datos personales (21.719) exige consentimiento y mostrar solo lo mínimo. Dejar anonimato parcial para la persona.
-- **Fraude**: pagar siempre al acreedor, nunca a la persona; verificar identidad (RUT) y que la deuda sea realmente de quien pide.
-- **Historias falsas**: la deuda es verificable, pero la historia no. Moderar.
-- **Aspecto legal**: manejar plata de terceros puede requerir una figura legal (fundación, corporación o alianza con un procesador de pagos). Consultar con un abogado.
-- Partir solo con multas y deudas públicas, que son fáciles de verificar y de pagar directo.
+## ¿Quién dona?
+- Empresas que buscan imagen social o RSE.
+- Influencers que buscan contenido emotivo.
+- Chilenos que viven en el extranjero y quieren ayudar a su país.
+- Gente común con aportes chicos (micro-donaciones).
+- Multimillonarios: sirven más como golpe mediático. Uno solo que done y se viralice puede atraer miles de donantes normales.
+
+## Ideas para la plataforma
+- Video corto por caso, con la historia contada de forma emotiva.
+- Barra de progreso y pagos parciales para bajar la barrera de entrada.
+- Sello "Deuda verificada con el regulador financiero de Chile".
+- Comprobante de pago público al final de cada caso.
+- Subtítulos o doblaje al inglés con IA para donantes extranjeros.
+- Gancho internacional: "Tu dólar rinde más en Chile".
+- Opción de anonimato parcial para cuidar la dignidad de las personas.
+
+## Temas legales
+- **Pago directo al acreedor:** es el modelo más simple. La plataforma no toca la plata de la deuda.
+- **Si la plata pasa por la plataforma** (sobre todo desde el extranjero vía Stripe o PayPal): aparecen controles antilavado, verificación de identidad de los donantes y posible regulación de pagos. Se puede evaluar trabajar con partners de pago.
+- **Beneficio tributario para donantes:** requiere una fundación o corporación sin fines de lucro.
+- **Datos personales:** se necesita consentimiento explícito para publicar el video, la historia y la deuda. La nueva Ley 21.719 rige desde diciembre de 2026 y los datos financieros están protegidos. No se puede "buscar" endeudados en bases de datos.
+- Consultar con un abogado fintech y un contador antes de recibir plata de terceros.
+
+## Riesgos y opinión honesta
+- Como causa: atractiva y con potencial viral.
+- Como negocio puro de propinas: débil (6/10). Las propinas dejan poca plata y habrá muchos más endeudados que donantes, con riesgo de que se acumulen casos sin financiar.
+- Depender de un multimillonario es como jugar a la lotería.
+- El fraude es el riesgo principal. Se mitiga con verificación CMF y pago directo al acreedor.
+- Donde sí hay negocio: como formato de marketing de impacto con marcas patrocinadoras.
+
+## Plan por fases
+### Fase 1 — Chile (MVP)
+- Landing, formulario de inscripción y catálogo de casos.
+- Verificación manual de unos 10 casos con el Informe CMF.
+- Donantes chilenos y empresas patrocinadoras con pago directo al acreedor.
+- Campaña en redes con los casos pagados.
+
+### Fase 2 — Internacional
+- Pagos en dólares con un partner de pagos y cumplimiento legal resuelto.
+- Contenido en inglés y expansión a donantes de EE.UU., Argentina y Colombia.
+
+### Fase 3 — Automatización
+- Integración con el Sistema de Finanzas Abiertas (desde julio de 2027) para verificar deudas y pagos por API.
 
 ## Próximos pasos
-1. Investigar qué APIs oficiales permiten verificar una deuda.
-2. Definir la figura legal para recibir y pagar donaciones.
-3. Hacer una prueba chica con 3–5 casos reales.
-4. Buscar una empresa grande para la primera alianza.`,
+1. Validar la estructura legal y tributaria con un abogado y un contador.
+2. Definir el modelo: plataforma con propinas más marcas patrocinadoras.
+3. Construir el prototipo de la fase 1.
+4. Conseguir los primeros casos y una o dos marcas piloto.`,
   },
 ];
 
