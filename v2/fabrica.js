@@ -24,23 +24,26 @@ const navStatus = document.getElementById('nav-status-txt');
 const tip = document.getElementById('hud-tip');
 const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
 const touch = matchMedia('(hover: none)').matches;
+// celulares y tablets: modo liviano (sin sombras, menos luces, menos detalle, 30 fps y resolución adaptativa)
+const LOW = touch || innerWidth < 760 || (navigator.hardwareConcurrency || 8) <= 4;
 const small = () => innerWidth < 760;
 
 let renderer;
 try {
-  renderer = new THREE.WebGLRenderer({ canvas, antialias: true, powerPreference: 'high-performance' });
+  renderer = new THREE.WebGLRenderer({ canvas, antialias: !LOW, powerPreference: 'high-performance' });
 } catch (e) {
   document.getElementById('planta-fallback').hidden = false;
   hudEstado.textContent = 'PLANTA JPB';
   hudPct.textContent = '';
   throw e;
 }
-const DPR = Math.min(devicePixelRatio || 1, touch ? 1.5 : 2);
+const DPR_MAX = Math.min(devicePixelRatio || 1, 2);
+let DPR = DPR_MAX;
 renderer.setPixelRatio(DPR);
 renderer.outputColorSpace = THREE.SRGBColorSpace;
 renderer.toneMapping = THREE.ACESFilmicToneMapping;
 renderer.toneMappingExposure = 1.0;
-renderer.shadowMap.enabled = true;
+renderer.shadowMap.enabled = !LOW;
 renderer.shadowMap.type = THREE.PCFSoftShadowMap;
 
 const scene = new THREE.Scene();
@@ -71,12 +74,12 @@ const VERT = /* glsl */`
   vBP = (modelMatrix * bpw).xyz;`;
 const FRAG = {
   solid: /* glsl */`
-  { float k = bkey(vBP); float r = h21(floor(gl_FragCoord.xy / uBlock));
+  if (uSolid < 1.09) { float k = bkey(vBP); float r = h21(floor(gl_FragCoord.xy / uBlock));
     float d = uSolid - (k*0.72 + r*0.28);
     if (d < 0.0) discard;
     if (d < 0.045) gl_FragColor = vec4(vec3(0.07 + 0.30*r), 1.0); }`,
   line: /* glsl */`
-  { float k = bkey(vBP); float d = uLine - k;
+  if (uSolid < 1.09) { float k = bkey(vBP); float d = uLine - k;
     if (d < 0.0) discard;
     gl_FragColor.rgb = mix(gl_FragColor.rgb, vec3(1.0,0.96,0.82), smoothstep(0.05, 0.0, d));
     float s = uSolid - (k*0.72 + 0.3);
@@ -208,8 +211,7 @@ function D(geo, mat, parent, px = 0, py = 0, pz = 0, rx = 0, ry = 0, rz = 0, edg
   const m = new THREE.Mesh(geo, mat);
   m.position.set(px, py, pz); m.rotation.set(rx, ry, rz);
   m.castShadow = true; m.receiveShadow = true;
-  const l = new THREE.LineSegments(new THREE.EdgesGeometry(geo, edgeAngle), lineMat);
-  m.add(l); dynLines.push(l);
+  if (edgeAngle !== null) { const l = new THREE.LineSegments(new THREE.EdgesGeometry(geo, edgeAngle), lineMat); m.add(l); dynLines.push(l); }
   parent.add(m);
   return m;
 }
@@ -487,10 +489,10 @@ class Pantalla {
     this.slides = slides; this.dur = opts.dur || 5.5; this.off = opts.off || 0; this.led = opts.led; this.on = 0; this.delay = opts.delay || 0;
     this.mesh.userData = { pantalla: this, label: opts.label, href: opts.href };
     this.scan = this.x.createPattern((() => { const p = cv(4, this.led ? 5 : 4), q = p.getContext('2d'); q.fillStyle = this.led ? 'rgba(0,0,0,.5)' : 'rgba(0,0,0,.2)'; q.fillRect(0, 0, 4, 1); if (this.led) q.fillRect(0, 0, 1, 5); return p; })(), 'repeat');
-    this.acc = 1; pantallas.push(this);
+    this.fps = opts.fps || (LOW ? 8 : 20); this.acc = 1; pantallas.push(this);
   }
   update(t, dt) {
-    this.acc += dt; if (this.acc < 1 / 20) return; this.acc = 0;
+    this.acc += dt; if (this.acc < 1 / this.fps) return; this.acc = 0;
     const x = this.x, W = this.W, H = this.H, tt = t + this.off;
     const idx = Math.max(0, Math.floor(tt / this.dur)) % this.slides.length, st = Math.max(0, tt) % this.dur;
     x.save(); x.fillStyle = '#04060b'; x.fillRect(0, 0, W, H);
@@ -664,7 +666,7 @@ const LED = { x: -3.6, y: 7.2, w: 10.4, h: 3.9 };
 S(box(LED.w + .5, LED.h + .5, .3), M.dark, mtx(LED.x, LED.y, -17.2));
 const ledG = grp(scene, LED.x, LED.y, -17.04);
 for (const sx of [-1, 1]) S(box(.12, .12, .9), M.steel, mtx(LED.x + sx * 4.2, LED.y + 1.6, -17.6), 30, false);
-const led = new Pantalla(ledG, LED.w, LED.h, 1536, [ledClientes], { led: true, dur: 6, label: 'Clientes · ver casos', href: '#clientes', delay: .5 });
+const led = new Pantalla(ledG, LED.w, LED.h, 1536, [ledClientes], { led: true, fps: 1, dur: 6, label: 'Clientes · ver casos', href: '#clientes', delay: .5 });
 // pantallas de las estaciones 01 y 03, montadas sobre las máquinas
 for (const [kx, slides, label] of [[-10.6, [sGoogle], '01 · Google Ads'], [9.6, [sVentas], '03 · Ventas cerradas']]) {
   const g = grp(scene, kx, 3.45, lineZ + 1.05);
@@ -740,7 +742,7 @@ const sph = (r, ws = 16, hs = 12) => new THREE.SphereGeometry(r, ws, hs);
 const torsoGeo = (k = 1) => new THREE.LatheGeometry([[0, 0], [.15, 0], [.162, .06], [.168, .18], [.185, .3], [.198, .4], [.19, .46], [.15, .51], [.06, .54], [0, .545]].map(([r, y]) => new THREE.Vector2(r * k, y)), 24);
 let pielN = 0;
 function trabajador(parent, px, pz, ry, opts = {}) {
-  const g = grp(parent, px, opts.y || 0, pz, ry), E = 89;
+  const g = grp(parent, px, opts.y || 0, pz, ry), E = LOW ? null : 89, cara = !LOW || opts.jefe;
   const piel = M2.pieles[pielN++ % M2.pieles.length];
   const camisa = opts.oficina ? opts.chaleco : opts.jefe ? M2.chaqueta : M2.camisa;
   const mano = opts.oficina ? piel : M2.guante;
@@ -770,16 +772,16 @@ function trabajador(parent, px, pz, ry, opts = {}) {
   const cab = grp(g, 0, 1.72, 0);
   D(sph(.098, 20, 16), piel, cab, 0, 0, 0, 0, 0, 0, E).scale.set(.9, 1.1, 1);                         // cráneo
   D(sph(.075, 16, 12), piel, cab, 0, -.058, .016, 0, 0, 0, E).scale.set(1, .82, 1);                  // mandíbula
-  for (const s of [-1, 1]) {
+  if (cara) for (const s of [-1, 1]) {
     D(sph(.024, 8, 6), piel, cab, s * .09, -.005, -.005, 0, 0, 0, E).scale.set(.55, 1, .9);           // orejas
     D(sph(.013, 10, 8), M2.ojo, cab, s * .034, .014, .083, 0, 0, 0, E);                               // ojos
     D(sph(.0075, 8, 6), M2.pupila, cab, s * .034, .014, .095, 0, 0, 0, E);
     D(box(.034, .008, .01), M2.pelo, cab, s * .035, .04, .088, 0, 0, s * -.12, E);                   // cejas
   }
-  D(new THREE.ConeGeometry(.017, .048, 8), piel, cab, 0, -.012, .1, Math.PI / 2, 0, 0, E);         // nariz
-  D(box(.038, .007, .01), M2.labio, cab, 0, -.06, .086, 0, 0, 0, E);                                 // boca
+  if (cara) D(new THREE.ConeGeometry(.017, .048, 8), piel, cab, 0, -.012, .1, Math.PI / 2, 0, 0, E);         // nariz
+  if (cara) D(box(.038, .007, .01), M2.labio, cab, 0, -.06, .086, 0, 0, 0, E);                                 // boca
   D(new THREE.SphereGeometry(.102, 18, 10, 0, Math.PI * 2, 0, Math.PI / 2.1), M2.pelo, cab, 0, .01, -.012, 0, 0, 0, E).scale.set(.94, 1.06, 1.02);
-  if (opts.barba) D(new THREE.SphereGeometry(.079, 16, 10, 0, Math.PI * 2, Math.PI / 2, Math.PI / 2), M2.pelo, cab, 0, -.05, .014, 0, 0, 0, E).scale.set(1.02, .9, 1.04);
+  if (opts.barba) D(new THREE.SphereGeometry(.074, 16, 10, 0, Math.PI * 2, Math.PI * .62, Math.PI * .38), M2.pelo, cab, 0, -.052, .018, 0, 0, 0, E).scale.set(1.02, .8, 1.04);
   if (!opts.oficina) D(rbox(.16, .03, .028, .01), M2.lente, cab, 0, .016, .094, 0, 0, 0, E);       // lentes de seguridad
   if (!opts.sinCasco) {
     const casco = opts.casco || M2.casco;
@@ -840,8 +842,8 @@ diego.shL.rotation.x = -.55; diego.elL.rotation.x = -1.15; diego.elL.rotation.z 
 { const t = grp(diego.muL, 0, -.07, .06); t.rotation.x = -.5; D(rbox(.2, .27, .012, .012), M.dark, t, 0, 0, 0); const sm = basic({ color: 0x7fd4ff }); sm.toneMapped = false; D(new THREE.PlaneGeometry(.18, .25), sm, t, 0, 0, .0065); }
 const anillo = new THREE.Mesh(new THREE.RingGeometry(.5, .6, 48), new THREE.MeshBasicMaterial({ color: 0xf5b800, transparent: true, opacity: 0, blending: THREE.AdditiveBlending, depthWrite: false, side: THREE.DoubleSide }));
 anillo.rotation.x = -Math.PI / 2; anillo.position.set(diego.g.position.x, .02, diego.g.position.z); scene.add(anillo);
-const focoDiego = new THREE.SpotLight(0xfff1d6, 0, 14, .32, .55, 1.2); focoDiego.position.set(diego.g.position.x + .6, 7.5, diego.g.position.z + 1.2);
-focoDiego.target = diego.g; scene.add(focoDiego);
+const focoDiego = LOW ? new THREE.PointLight(0xfff1d6, 0, 6, 1.4) : new THREE.SpotLight(0xfff1d6, 0, 14, .32, .55, 1.2); focoDiego.position.set(diego.g.position.x + .6, 7.5, diego.g.position.z + 1.2);
+if (focoDiego.isSpotLight) focoDiego.target = diego.g; else focoDiego.position.set(diego.g.position.x + .3, 2.3, diego.g.position.z + 1.5); scene.add(focoDiego);
 const ofiLight = new THREE.PointLight(0xfff0d0, 0, 14, 1.3); ofiLight.position.set(-16.6, 8.2, -12.6); scene.add(ofiLight);
 
 
@@ -851,23 +853,23 @@ const ofiLight = new THREE.PointLight(0xfff0d0, 0, 14, 1.3); ofiLight.position.s
 const hemi = new THREE.HemisphereLight(0x8fa6d6, 0x1a140c, 0); scene.add(hemi);
 const sun = new THREE.SpotLight(0xe4ecff, 0, 120, .4, .35, 0);
 sun.position.set(-40, 21, -7); sun.target.position.set(-7, 0, -1);
-sun.map = texVentana(); sun.castShadow = true; sun.shadow.mapSize.set(touch ? 1024 : 2048, touch ? 1024 : 2048); sun.shadow.bias = -.0004; sun.shadow.camera.near = 10; sun.shadow.camera.far = 90;
+if (!LOW) sun.map = texVentana(); sun.castShadow = !LOW; sun.shadow.mapSize.set(touch ? 1024 : 2048, touch ? 1024 : 2048); sun.shadow.bias = -.0004; sun.shadow.camera.near = 10; sun.shadow.camera.far = 90;
 scene.add(sun, sun.target);
-const lampLights = [[-5, -5], [4, 3], [-14, -13], [13, -13]].map(([x, z]) => { const l = new THREE.PointLight(0xffd9a0, 0, 26, 1.6); l.position.set(x, 8.7, z); scene.add(l); return l; });
-const ledLight = new THREE.PointLight(0xffd36a, 0, 18, 1.5); ledLight.position.set(LED.x, LED.y, -14.5); scene.add(ledLight);
-const fillLight = new THREE.PointLight(0x9fb6e8, 0, 11, 1.4); fillLight.position.set(-8.4, 3.2, 2.6); scene.add(fillLight);
-const deskLight = new THREE.PointLight(0xffe2a0, 0, 8, 1.4); deskLight.position.set(PUESTO.x, 1.9, PUESTO.z + .6); scene.add(deskLight);
+const lampLights = (LOW ? [[-5, -5], [4, 3]] : [[-5, -5], [4, 3], [-14, -13], [13, -13]]).map(([x, z]) => { const l = new THREE.PointLight(0xffd9a0, 0, 26, 1.6); l.position.set(x, 8.7, z); scene.add(l); return l; });
+const ledLight = new THREE.PointLight(0xffd36a, 0, 18, 1.5); ledLight.position.set(LED.x, LED.y, -14.5); if (!LOW) scene.add(ledLight);
+const fillLight = new THREE.PointLight(0x9fb6e8, 0, 11, 1.4); fillLight.position.set(-8.4, 3.2, 2.6); if (!LOW) scene.add(fillLight);
+const deskLight = { intensity: 0 }; // (el puesto de monitores ya no existe)
 
 const additive = (map, color, op) => new THREE.MeshBasicMaterial({ color, alphaMap: map, transparent: true, opacity: op, depthWrite: false, blending: THREE.AdditiveBlending, side: THREE.DoubleSide, fog: false });
 const beams = [];
 const coneMap = texGrad([[0, 0], [.6, 60], [1, 255]]);
-for (const [x, z] of [[-5, -5], [4, 3], [-14, -13], [13, -13]]) {
+for (const [x, z] of (LOW ? [[-5, -5], [4, 3]] : [[-5, -5], [4, 3], [-14, -13], [13, -13]])) {
   const m = new THREE.Mesh(cyl(.55, 2.8, 8.9, 24, true), additive(coneMap, 0xffdca0, 0)); m.position.set(x, 4.6, z); m.renderOrder = 2; scene.add(m); beams.push([m, .085]);
 }
 const shaftMap = texGrad([[0, 0], [.55, 40], [1, 200]]);
 {
   const d = new THREE.Vector3().subVectors(sun.target.position, sun.position).normalize();
-  for (const z of [-14.5, -9.5, -4.5, .5, 5.5]) {
+  for (const z of (LOW ? [] : [-14.5, -9.5, -4.5, .5, 5.5])) {
     const L = 8.6 / -d.y + 2, start = new THREE.Vector3(-21.9, 8.6, z);
     const m = new THREE.Mesh(cyl(1.8, 1.25, L, 4, true), additive(shaftMap, 0xcfe0ff, 0));
     m.quaternion.setFromUnitVectors(new THREE.Vector3(0, -1, 0), d); m.rotateY(Math.PI / 4);
@@ -892,7 +894,7 @@ const shaftMap = texGrad([[0, 0], [.55, 40], [1, 200]]);
   m.position.set(1, 6.6, -17.55); m.renderOrder = 3; scene.add(m); beams.push([m, .12]);
 }
 const polvo = (() => {
-  const n = touch ? 350 : 800, p = new Float32Array(n * 3);
+  const n = LOW ? 140 : 800, p = new Float32Array(n * 3);
   for (let i = 0; i < n; i++) { p[i * 3] = -21 + rnd() * 42; p[i * 3 + 1] = rnd() * 11; p[i * 3 + 2] = -17 + rnd() * 30; }
   const g = new THREE.BufferGeometry(); g.setAttribute('position', new THREE.BufferAttribute(p, 3));
   const m = new THREE.PointsMaterial({ color: 0xffe6b0, size: .045, transparent: true, opacity: 0, depthWrite: false, blending: THREE.AdditiveBlending });
@@ -923,7 +925,7 @@ trabajadores.forEach((w, i) => {
   const h = new THREE.Mesh(box(.8, 1.9, .8), hitMat); h.position.y = .95; h.userData.estacion = 'equipo'; h.userData.w = w; w.g.add(h); hits.push(h);
   w.outline = new THREE.LineSegments(new THREE.EdgesGeometry(box(.8, 1.95, .8)), outlineMat()); w.outline.position.y = .97; w.g.add(w.outline); w.act = 0;
 });
-const foco = new THREE.PointLight(0xffd36a, 0, 9, 1.3); scene.add(foco);
+const foco = new THREE.PointLight(0xffd36a, 0, 9, 1.3); if (!LOW) scene.add(foco);
 
 // HTML: mensaje, etiquetas flotantes, tarjeta y contador
 const msg = document.getElementById('planta-msg'), card = document.getElementById('estacion'), hudVentas = document.getElementById('hud-ventas');
@@ -1092,8 +1094,12 @@ let clock = 0, last = performance.now(), buildStart = performance.now() - (reduc
 const robotPhase = robots.map(() => 0), P = new THREE.Vector3();
 let beltPhase = 0, gruaZ = -11, carroX = 0;
 
+const frustum = new THREE.Frustum(), PV = new THREE.Matrix4();
+let lastRender = 0, fpsN = 0, fpsT = 0;
 function frame(now) {
   requestAnimationFrame(frame);
+  if (LOW && now - lastRender < 31) return;
+  lastRender = now;
   const realDt = Math.max(0, (now - last) / 1000); const dt = Math.min(.05, realDt); last = Math.max(last, now);
   // la obra avanza con el reloj real, aunque la escena no se esté dibujando
   const t = (now - buildStart) / 1000;
@@ -1108,14 +1114,15 @@ function frame(now) {
     section.classList.toggle('operativa', pct >= 100);
     if (pct >= 100 && MOVIL() && !recOn && vista === 'planta') { msg.querySelector('p:last-child').textContent = 'Desliza para ver cada estación.'; recStartAt = rt + 2.5; }
   }
-  if (!visible || modo !== 'humano' || document.hidden) return;
+  if (!visible || modo !== 'humano' || document.hidden) { fpsT = now; fpsN = 0; return; }
   clock += dt;
   const power = ease((t - 3) / 4.5);
   const done = t > 9.5;
   if (done !== linesOff) { linesOff = done; staticLines.visible = !done; dynLines.forEach((l) => (l.visible = !done)); }
 
   hemi.intensity = .1 * power;
-  sun.intensity = 4.2 * power;
+  sun.intensity = (LOW ? 2.2 : 4.2) * power;
+  hemi.intensity = (LOW ? .32 : .1) * power;
   lampLights.forEach((l, i) => { const fl = t < 8 ? (Math.sin(t * 40 + i * 9) > .2 ? 1 : .2) : 1; l.intensity = 48 * ease((t - 3.4 - i * .25) / 1.2) * fl; });
   ledLight.intensity = 55 * led.on; fillLight.intensity = 14 * power; ofiLight.intensity = 22 * power; deskLight.intensity = 0;
   beams.forEach(([m, o]) => (m.material.opacity = o * power));
@@ -1129,7 +1136,7 @@ function frame(now) {
     p.gris = (p.gris || 0) + ((hover && hover.userData.pantalla === p ? 1 : 0) - (p.gris || 0)) * Math.min(1, realDt * 10);
     const gv = p.on * (1 - .5 * p.gris);
     p.mat.color.setRGB(gv, gv, gv * (1 + .04 * p.gris));
-    if (p.on > 0) p.update(clock, dt);
+    if (p.on > 0 && (p.acc > 5 || frustum.intersectsObject(p.mesh))) p.update(clock, dt);
   });
 
   rt = now / 1000;
@@ -1138,7 +1145,7 @@ function frame(now) {
   // Diego destaca: anillo que late y foco propio
   const lat = .5 + .5 * Math.sin(rt * 3);
   anillo.material.opacity = (vista === 'planta' ? .55 : .2) * power * (.5 + .5 * lat); anillo.scale.setScalar(1 + .12 * lat);
-  focoDiego.intensity = 40 * power;
+  focoDiego.intensity = (LOW ? 6 : 40) * power;
 
   // --- interacción: activación de estaciones ---
   const kA = 1 - Math.exp(-realDt * 6);
@@ -1236,6 +1243,14 @@ function frame(now) {
     if (on) b.style.transform = `translate(${((P.x + 1) / 2 * W).toFixed(1)}px, ${((1 - P.y) / 2 * H).toFixed(1)}px) translate(-50%, -100%)`;
   });
 
+  PV.multiplyMatrices(camera.projectionMatrix, camera.matrixWorldInverse); frustum.setFromProjectionMatrix(PV);
   renderer.render(scene, camera);
+  // resolución adaptativa: baja si el equipo no da, sube si sobra
+  fpsN++; if (now - fpsT > 2500) {
+    const fps = fpsN * 1000 / (now - fpsT); fpsN = 0; fpsT = now;
+    const meta = LOW ? 27 : 50, alto = LOW ? 29.5 : 58;
+    if (t > 10 && fps < meta && DPR > .75) { DPR = Math.max(.75, DPR - .25); renderer.setPixelRatio(DPR); resize(); U.uBlock.value = 7 * DPR; }
+    else if (t > 10 && fps > alto && DPR < DPR_MAX) { DPR = Math.min(DPR_MAX, DPR + .25); renderer.setPixelRatio(DPR); resize(); U.uBlock.value = 7 * DPR; }
+  }
 }
 requestAnimationFrame(frame);
