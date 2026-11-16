@@ -45,3 +45,16 @@ wrangler.jsonc
 .gitignore
 whatsapp-agente-polimer/
 jpb-panel/
+
+# proyectos con deploy propio o internos: no publicar como assets del sitio
+Proyecto Barberias/
+odoo-idini-app/
+Aplicacion llamadas/
+sii-mcp/
+whatsapp-barberia-demo/
+closet-ai/
+JPB BOTS/
+Produc metal/
+BUSQUEDA NEGOCIOS EEUU/
+*.sql
+*.md
