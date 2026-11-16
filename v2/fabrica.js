@@ -1214,8 +1214,9 @@ function frame(now) {
     }
     w.pecho.scale.y = 1 + Math.sin(clock * 1.9 + (w.idle || 0)) * .012;
     if (w.jefe) { w.shL.rotation.x = -.55; w.elL.rotation.x = -1.15 + Math.sin(clock * .8) * .05; }
-    w.shR.rotation.z = -.07 - w.act * (2.5 + Math.sin(clock * 9) * .3); // saludo
-    w.elR.rotation.z = -w.act * .5;
+    // saludo: el brazo sube hacia afuera (nunca cruza la cabeza) y el antebrazo se mueve
+    w.shR.rotation.z = -.07 + w.act * 2.3;
+    w.elR.rotation.z = w.act * (.6 + Math.sin(clock * 8) * .32);
     w.cab.rotation.y = Math.sin(clock * .5 + (w.idle || 0)) * .35 * (1 - w.act);
   });
   const pp = polvo.geometry.attributes.position;
