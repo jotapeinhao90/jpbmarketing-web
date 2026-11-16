@@ -59,4 +59,19 @@
   new IntersectionObserver(function (e) { enPlanta = e[0].intersectionRatio > .35; pintarBarra(); }, { threshold: [0, .35, 1] }).observe(planta);
   new IntersectionObserver(function (e) { enCta = e[0].isIntersecting; pintarBarra(); }).observe(cta);
   addEventListener('jpb-modo', pintarBarra);
+
+  /* ---------- Teléfono de la sección Panel: la demo a tamaño real de teléfono, escalada ---------- */
+  var marco = document.querySelector('.phone-frame'), ifr = marco && marco.querySelector('iframe');
+  function escalaPanel() { if (!ifr) return; var f = marco.clientWidth / 390; ifr.style.transform = 'scale(' + f + ')'; ifr.style.height = (marco.clientHeight / f) + 'px'; }
+  escalaPanel(); addEventListener('resize', escalaPanel);
+
+  /* ---------- Indicador "Baja para ver más": se va al bajar ---------- */
+  var baja = document.getElementById('baja'), tarjeta = document.getElementById('estacion');
+  function pintarBaja() {
+    if (!baja) return;
+    baja.classList.toggle('fuera', scrollY > 120);
+    var h = tarjeta && !tarjeta.hidden ? tarjeta.offsetHeight : 0;
+    document.documentElement.style.setProperty('--card-h', h + 'px');
+  }
+  addEventListener('scroll', pintarBaja, { passive: true }); setInterval(pintarBaja, 600); pintarBaja();
 })();

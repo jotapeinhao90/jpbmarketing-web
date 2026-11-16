@@ -679,12 +679,29 @@ const ledHero = (x, W, H, st) => {
   const sx = (st * 520) % (W + 400) - 200; const g = x.createLinearGradient(sx - 160, 0, sx + 160, 0);
   g.addColorStop(0, 'rgba(255,255,255,0)'); g.addColorStop(.5, 'rgba(255,255,255,.12)'); g.addColorStop(1, 'rgba(255,255,255,0)'); x.fillStyle = g; x.fillRect(0, 0, W, H);
 };
-const ledClientes = (x, W, H) => {
+const CLIENTES_ACTIVOS = [ // hasta 10: solo clientes reales con su resultado
+  ['lPolimer', true, 'ETP POLIMER', 'De cero a competidor activo'],
+  ['lIdini', false, 'FIERROS IDINI', '1.700 productos online'],
+  ['lPlasti', true, 'PLASTISERVI', 'Cliente histórico, años juntos'],
+  ['lConflex', true, 'CONFLEX', 'Empresa creada junto a JPB'],
+  ['lKem', false, 'THE KEM', 'Fidelización por WhatsApp']
+];
+const ledClientes = (x, W, H, st, tt) => {
   x.fillStyle = '#04060b'; x.fillRect(0, 0, W, H);
-  setFont(x, 500, 22, 'JetBrains Mono', false); x.fillStyle = YEL; x.fillText('● CLIENTES QUE YA VENDEN MÁS', 48, 58);
-  const items = [['polimer', 'ETP POLIMER'], ['idini', 'FIERROS IDINI'], ['conflex', 'PLASTISERVI + CONFLEX'], ['kem', 'THE KEM BARBERSHOP']];
-  const cw = (W - 96 - 3 * 18) / 4;
-  items.forEach(([k, n], i) => { const px = 48 + i * (cw + 18); cover(x, IMG[k], px, 86, cw, H - 170); setFont(x, 800, 24); x.fillStyle = INK; x.fillText(n, px, H - 44, cw); });
+  setFont(x, 600, 22, 'JetBrains Mono', false); x.fillStyle = YEL; x.fillText('● CLIENTES ACTIVOS', 48, 62);
+  setFont(x, 900, 46); x.fillStyle = INK; x.fillText('Empresas que ya venden más con nosotros', 46, 118, W - 92);
+  const n = CLIENTES_ACTIVOS.length, cols = Math.min(5, n), filas = Math.ceil(n / cols), gap = 18;
+  const cw = (W - 96 - gap * (cols - 1)) / cols, ch = (H - 170 - 30 - gap * (filas - 1)) / filas;
+  CLIENTES_ACTIVOS.forEach(([logo, claro, nombre, logro], i) => {
+    const c = i % cols, f = (i / cols) | 0, px = 48 + c * (cw + gap), py = 160 + f * (ch + gap);
+    const on = Math.floor(tt * .7) % n === i;
+    x.fillStyle = '#f4f2ee'; x.beginPath(); x.roundRect ? x.roundRect(px, py, cw, ch, 18) : x.rect(px, py, cw, ch); x.fill();
+    if (on) { x.strokeStyle = YEL; x.lineWidth = 6; x.stroke(); }
+    if (!claro) { x.fillStyle = '#0b1220'; x.beginPath(); x.roundRect ? x.roundRect(px + 14, py + 14, cw - 28, ch * .52, 12) : x.rect(px + 14, py + 14, cw - 28, ch * .52); x.fill(); }
+    contain(x, IMG[logo], px + 26, py + 22, cw - 52, ch * .52 - 16);
+    setFont(x, 800, 21, 'JetBrains Mono', false); x.fillStyle = '#0b1220'; x.fillText(nombre, px + 18, py + ch * .52 + 54, cw - 36);
+    setFont(x, 600, 23, 'Archivo', false); x.fillStyle = '#3d4552'; wrap(x, logro, cw - 36).slice(0, 2).forEach((l, k) => x.fillText(l, px + 18, py + ch * .52 + 88 + k * 28));
+  });
 };
 const ledServicios = (x, W, H) => {
   x.fillStyle = '#04060b'; x.fillRect(0, 0, W, H);
@@ -717,7 +734,7 @@ const LED = { x: -3.6, y: 7.2, w: 10.4, h: 3.9 };
 S(box(LED.w + .5, LED.h + .5, .3), M.dark, mtx(LED.x, LED.y, -17.2));
 const ledG = grp(scene, LED.x, LED.y, -17.04);
 for (const sx of [-1, 1]) S(box(.12, .12, .9), M.steel, mtx(LED.x + sx * 4.2, LED.y + 1.6, -17.6), 30, false);
-const led = new Pantalla(ledG, LED.w, LED.h, 1536, [ledClientes], { led: true, fps: 1, dur: 6, label: 'Clientes · ver casos', href: '#clientes', delay: .5 });
+const led = new Pantalla(ledG, LED.w, LED.h, 1536, [ledClientes], { led: true, fps: 2, dur: 6, label: 'Clientes · ver casos', href: '#clientes', delay: .5 });
 // pantallas de las estaciones 01 y 03, montadas sobre las máquinas
 for (const [kx, slides, label] of [[-10.6, [sGoogle], '01 · Google Ads'], [9.6, [sVentas], '03 · Ventas cerradas']]) {
   const g = grp(scene, kx, 3.45, lineZ + 1.05);
@@ -953,6 +970,7 @@ function animarReal(w, clock, dt) {
         hueso(w, 'RightArm', 1.24 + (1.05 - 1.24) * k, 0, -.1 + (-.5 + .1) * k);
         hueso(w, 'RightForeArm', 0, 0, -.28 + (-1.9 + .28) * k);
         hueso(w, 'Head', .12 * k, -.15 * k, 0);
+        for (const f of ['Index', 'Middle', 'Ring', 'Pinky']) { hueso(w, 'RightHand' + f + '1', .55 * k, 0, 0); hueso(w, 'RightHand' + f + '2', .85 * k, 0, 0); hueso(w, 'RightHand' + f + '3', .6 * k, 0, 0); }
       }
     }
   }
@@ -1154,8 +1172,8 @@ const RECORRIDO = [
   { key: 'ia', kicker: 'PASO 4 · TODO ENTRA POR WHATSAPP', titulo: 'La IA guía cada contacto', texto: 'Quien llega desde Google te escribe por WhatsApp: el agente IA responde al tiro, cotiza con tu catálogo y lo guía hasta la compra. Las cajas grises salen amarillas.', corto: 'Llegan desde Google a tu WhatsApp: la IA responde, cotiza y guía hasta la compra.' },
   { key: 'ventas', kicker: 'PASO 5 · CERRAMOS LA VENTA', titulo: 'Pedidos listos para cerrar', texto: 'Tu equipo recibe clientes calientes, hacemos seguimiento a cada cotización y ves todo en el Panel JPB.', corto: 'Tu equipo recibe clientes calientes y seguimos cada cotización hasta cerrar.' },
   { app: true, kicker: 'PASO 6 · TU APP PANEL JPB', titulo: 'Sigues todo desde tu teléfono', texto: 'Con la app Panel JPB ves en vivo las conversaciones de WhatsApp, quién dejó de responder, cada cotización y lo que gastas en Google y en IA.', corto: 'En la app Panel JPB ves en vivo tus chats, cotizaciones, seguimientos y gastos.', href: '/panel-jpb-demo', cta: 'Abrir demo completa',
-    pose: () => { const p = diego.g.position; return MOVIL() ? { pos: [p.x + .25, 1.95, p.z + 2.9], look: [p.x + .05, 1.55, p.z], fov: 56 } : { pos: [p.x + 1.9, 1.85, p.z + 3.2], look: [p.x + 1.15, 1.5, p.z], fov: 44 }; } },
-  { kicker: 'CLIENTES EN PLANTA', titulo: 'Empresas que ya venden más', texto: 'ETP Polimer, Fierros Idini, Plastiservi + Conflex y The Kem Barbershop ya trabajan con esta planta.', corto: 'ETP Polimer, Fierros Idini, Plastiservi + Conflex y The Kem ya trabajan con nosotros.', href: '#clientes', cta: 'Ver los casos',
+    pose: () => { const p = diego.g.position; return MOVIL() ? { pos: [p.x + .58, 1.62, p.z + 3.3], look: [p.x + .5, 1.42, p.z], fov: 56 } : { pos: [p.x + .95, 1.72, p.z + 3.1], look: [p.x + .95, 1.42, p.z], fov: 44 }; } },
+  { kicker: 'CLIENTES ACTIVOS', titulo: 'Empresas que ya venden más con nosotros', texto: 'ETP Polimer, Fierros Idini, Plastiservi, Conflex y The Kem: relaciones activas de años, con resultados medibles.', corto: 'Polimer, Fierros Idini, Plastiservi, Conflex y The Kem: clientes activos con resultados.', href: '#clientes', cta: 'Ver los casos',
     pose: () => MOVIL() ? { pos: [-3.6, 6.4, 4.5], look: [-3.6, 6.9, -17], fov: 56 } : { pos: [-3.6, 6.3, -4], look: [-3.6, 6.9, -17], fov: 50 } },
   { kicker: 'FIN DEL RECORRIDO', titulo: '¿Hacemos que tu empresa venda más?', texto: 'En 30 minutos revisamos tu situación comercial y te decimos qué haríamos primero. Sin compromiso.', corto: 'En 30 minutos vemos tu situación y te decimos qué haríamos primero.', href: '/contacto', cta: 'Agenda una llamada',
     pose: () => views.planta() }
@@ -1214,19 +1232,31 @@ function mostrarApp(on) {
     appTimer = setTimeout(() => {
       if (!appOn) return;
       if (!appIframe.src) appIframe.src = '/panel-jpb-demo';
-      appDemo.hidden = false;
-      // punto de partida: la mano de Diego en pantalla
-      const r = appDemo.getBoundingClientRect(), sr = section.getBoundingClientRect();
-      diego.huesos.RightHand.getWorldPosition(P).project(camera);
-      const hx = (P.x + 1) / 2 * sr.width, hy = (1 - P.y) / 2 * sr.height;
-      appDemo.style.setProperty('--dx', (hx - (r.left - sr.left + r.width / 2)) + 'px');
-      appDemo.style.setProperty('--dy', (hy - (r.top - sr.top + r.height / 2)) + 'px');
+      appDemo.hidden = false; escalaDemo();
       requestAnimationFrame(() => requestAnimationFrame(() => appDemo.classList.add('on')));
     }, 1100);
   } else {
     demoPausa = false; appBadge.classList.remove('pausa'); appBadge.querySelector('span').textContent = 'Toca para probar la demo';
     appDemo.classList.remove('on'); appTimer = setTimeout(() => { if (!appOn) appDemo.hidden = true; }, 450);
   }
+}
+// la demo se dibuja a tamaño real de teléfono (390 px) y se escala al mockup
+function escalaDemo() {
+  const caja = appIframe.parentElement, f = caja.clientWidth / 390;
+  appIframe.style.transform = 'scale(' + f + ')'; appIframe.style.height = (caja.clientHeight / f) + 'px';
+}
+addEventListener('resize', () => { if (appOn) escalaDemo(); });
+// en escritorio el teléfono grande queda pegado a la mano de Diego y lo sigue
+function posicionarApp() {
+  if (MOVIL()) { appDemo.style.left = ''; appDemo.style.top = ''; appDemo.classList.remove('izq'); return; }
+  diego.huesos.RightHand.getWorldPosition(P).project(camera);
+  const W = section.clientWidth, H = section.clientHeight, hx = (P.x + 1) / 2 * W, hy = (1 - P.y) / 2 * H;
+  const w = appDemo.offsetWidth, h = appDemo.offsetHeight, gap = 18;
+  const izq = hx + gap + w > W - 16;
+  const x = izq ? hx - gap - w : hx + gap;
+  const y = Math.max(52 + h / 2, Math.min(H - 16 - h / 2, hy - h * .18));
+  appDemo.classList.toggle('izq', izq);
+  appDemo.style.left = Math.round(x) + 'px'; appDemo.style.top = Math.round(y) + 'px';
 }
 function pausaDemo() {
   if (!appOn || demoPausa) return;
@@ -1555,7 +1585,12 @@ function frame(now) {
   if (diego.real) {
     diego.tel = (diego.tel || 0) + ((diego.telMeta || 0) - (diego.tel || 0)) * Math.min(1, realDt * 4);
     telefono.visible = diego.tel > .35;
-    if (telefono.visible) { diego.huesos.RightHand.getWorldPosition(P); telefono.position.copy(P).add(V.set(0, .07, 0)); telefono.lookAt(camera.position); telefono.scale.setScalar(1.25); }
+    if (telefono.visible) {
+      diego.huesos.RightHand.getWorldPosition(P); diego.huesos.RightHandMiddle1.getWorldPosition(V);
+      P.lerp(V, .85); const hacia = V.copy(camera.position).sub(P).normalize();
+      telefono.position.copy(P).addScaledVector(hacia, .025); telefono.lookAt(camera.position); telefono.scale.setScalar(1.15);
+    }
+
   }
   const pp = polvo.geometry.attributes.position;
   for (let i = 0; i < pp.count; i += 7) { pp.array[i * 3 + 1] += dt * .06; if (pp.array[i * 3 + 1] > 11) pp.array[i * 3 + 1] = 0; }

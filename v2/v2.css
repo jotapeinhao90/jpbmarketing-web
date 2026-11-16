@@ -468,3 +468,42 @@ body.menu-abierto .nav-burger i:last-child{top:13.5px;transform:rotate(-45deg)}
   .app-demo{transform:translate(calc(-50% + var(--dx,0px)),var(--dy,0px)) scale(.06)}
   .app-demo.on{transform:translate(-50%,0) scale(1)}
 }
+
+/* ===== Teléfono de la demo v3: más grande, pegado a Diego, contenido a escala real ===== */
+.app-demo{--tw:min(340px,calc((100svh - 150px) * .45));left:0;top:0;right:auto;transform:translateY(-50%)!important;opacity:1;transition:none;gap:0}
+.app-demo .app-anim{display:flex;flex-direction:column;align-items:center;gap:12px;transform-origin:0% 60%;transform:scale(.06);opacity:0;transition:transform .8s cubic-bezier(.2,.85,.25,1.05),opacity .35s}
+.app-demo.izq .app-anim{transform-origin:100% 60%}
+.app-demo.on .app-anim{transform:scale(1);opacity:1}
+.tel-pantalla iframe{position:absolute;inset:auto;top:0;left:0;width:390px!important;height:844px;border-radius:0;transform-origin:0 0}
+.tel-pantalla{overflow:hidden}
+.phone-frame{position:relative}
+.phone-frame iframe{position:absolute;top:0;left:0;width:390px;height:844px;transform-origin:0 0}
+@media (max-width:760px){
+  .app-demo{--tw:min(66vw,262px,calc((100svh - 300px) * .483));left:50%!important;top:calc(var(--nav-h) + 10px)!important;transform:translateX(-50%)!important}
+  .app-demo .app-anim{transform-origin:50% 100%}
+}
+
+/* ===== Paso app: Diego a la izquierda, demo grande a la derecha ===== */
+.app-demo{left:39%!important;top:52%!important}
+.app-demo .app-anim{transform-origin:-20% 62%}
+@media (max-width:760px){
+  .app-demo{--tw:min(54vw,232px,calc((100svh - var(--card-h,190px) - 150px) * .483));left:auto!important;right:12px;top:calc(var(--nav-h) + 12px)!important;transform:none!important}
+  .app-demo .app-anim{transform-origin:-60% 70%}
+  .app-badge{font-size:9.5px;padding:6px 9px;letter-spacing:.03em}
+}
+
+/* ===== Indicador de scroll ===== */
+.baja{position:absolute;z-index:4;left:50%;bottom:86px;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center;gap:6px;font-family:var(--mono);font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink);text-shadow:0 1px 6px rgba(0,0,0,.6);transition:opacity .4s}
+.baja i{width:38px;height:38px;border-radius:50%;display:grid;place-items:center;border:1.5px solid rgba(245,184,0,.75);background:rgba(7,11,22,.7);color:var(--yellow);animation:rebote 1.6s ease-in-out infinite}
+@keyframes rebote{0%,100%{transform:translateY(0)}50%{transform:translateY(7px)}}
+.baja.fuera,.planta.en-estacion:not(.tour) .baja{opacity:0;pointer-events:none}
+.planta:not(.operativa) .baja{opacity:0}
+@media (min-width:761px){.planta.en-estacion .baja{left:auto;right:28px;transform:none;bottom:96px}}
+@media (max-width:760px){
+  .baja{left:auto;right:14px;transform:none;bottom:calc(14px + env(safe-area-inset-bottom) + var(--card-h,0px) + 10px);flex-direction:row-reverse;gap:8px;font-size:9.5px}
+  .planta:not(.tour) .baja{bottom:calc(70px + env(safe-area-inset-bottom))}
+  .baja i{width:34px;height:34px}
+  .planta.paso-app .baja{opacity:0}
+}
+@media (prefers-reduced-motion:reduce){.baja i{animation:none}}
+@media (min-width:761px){.baja{left:auto;right:40px;transform:none;bottom:92px}}
