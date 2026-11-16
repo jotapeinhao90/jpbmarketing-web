@@ -429,3 +429,10 @@ body.menu-abierto .nav-burger i:last-child{top:13.5px;transform:rotate(-45deg)}
 }
 @media (prefers-reduced-motion:reduce){.anillo.corre circle{animation:none;stroke-dashoffset:0}}
 @media (max-width:760px){.planta.recorrido .est-nav{right:20px;bottom:16px}}
+/* botón de sonido */
+.nav-sonido{width:34px;height:34px;display:grid;place-items:center;border-radius:50%;color:var(--ink-2);transition:color .2s,background .2s}
+.nav-sonido:hover{color:var(--ink);background:rgba(238,240,244,.08)}
+.nav-sonido .ic-off{display:none}
+.nav-sonido.mute .ic-on{display:none}
+.nav-sonido.mute .ic-off{display:block}
+@media (max-width:820px){.nav-sonido{width:36px;height:36px;margin-right:2px}}

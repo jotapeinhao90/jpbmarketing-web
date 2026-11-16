@@ -1200,6 +1200,77 @@ canvas.addEventListener('click', (ev) => {
 });
 
 let visible = true, modo = 'humano';
+
+/* ------------------------------------------------------------------ */
+/*  Sonido: sintetizado en el navegador (sin archivos), bajo y posicional */
+/* ------------------------------------------------------------------ */
+const SON = { on: (() => { try { return localStorage.getItem('jpb-sonido') !== '0'; } catch (e) { return true; } })(), listo: false, listener: null, master: 0, pop: null };
+const btnSon = document.getElementById('btn-sonido');
+function pintarSon() { btnSon.classList.toggle('mute', !SON.on); btnSon.setAttribute('aria-pressed', SON.on); btnSon.setAttribute('aria-label', SON.on ? 'Silenciar sonido' : 'Activar sonido'); }
+pintarSon();
+function crearBuffer(ctx, seg, fill) { const sr = ctx.sampleRate, n = Math.floor(seg * sr), b = ctx.createBuffer(1, n, sr); fill(b.getChannelData(0), sr, n); return b; }
+const ruido = () => Math.random() * 2 - 1;
+function golpe(d, sr, t0, partes, amp, caida) { // golpe metálico: parciales inarmónicos + transiente
+  const i0 = Math.floor(t0 * sr), n = Math.floor(sr * 1.6);
+  for (let i = 0; i < n && i0 + i < d.length; i++) {
+    const t = i / sr; let v = 0;
+    partes.forEach(([f, a, k]) => (v += a * Math.sin(2 * Math.PI * f * t) * Math.exp(-t * k)));
+    if (t < .006) v += ruido() * (1 - t / .006) * .8;
+    d[i0 + i] += v * amp * Math.exp(-t * caida);
+  }
+}
+function iniciarSonido() {
+  if (SON.listo) return; SON.listo = true;
+  const L = new THREE.AudioListener(); camera.add(L); SON.listener = L; L.setMasterVolume(0);
+  const ctx = L.context;
+  // murmullo de nave: ruido café grave + zumbido eléctrico (bucle de 6 s)
+  const hum = crearBuffer(ctx, 6, (d, sr, n) => { let u = 0; for (let i = 0; i < n; i++) { u = (u + .02 * ruido()) / 1.02; const t = i / sr; d[i] = u * 2.4 + .05 * Math.sin(2 * Math.PI * 50 * t) + .025 * Math.sin(2 * Math.PI * 100 * t); } });
+  // cinta: retumbe + golpecitos de rodillos
+  const cinta = crearBuffer(ctx, 4, (d, sr, n) => { let u = 0; for (let i = 0; i < n; i++) { u = (u + .05 * ruido()) / 1.05; const t = i / sr, k = (t % .27) / .27; d[i] = u * 1.6 + (k < .04 ? ruido() * (1 - k / .04) * .18 : 0); } });
+  // tecleo: ráfagas de teclas con pausas (bucle de 7 s, varias personas)
+  const teclas = crearBuffer(ctx, 7, (d, sr) => {
+    let t = .1; while (t < 6.9) {
+      const rafaga = .6 + Math.random() * 1.6, fin = Math.min(6.9, t + rafaga);
+      while (t < fin) { const i0 = Math.floor(t * sr), m = Math.floor(sr * .014), a = .35 + Math.random() * .45, tono = 2600 + Math.random() * 1600; let p = 0;
+        for (let i = 0; i < m && i0 + i < d.length; i++) { const x = ruido(); d[i0 + i] += ((x - p) * .7 + .3 * Math.sin(2 * Math.PI * tono * i / sr)) * a * Math.exp(-i / sr * 380); p = x; }
+        t += .07 + Math.random() * .12; }
+      t += .4 + Math.random() * 1.3;
+    }
+  });
+  // martillazos lejanos sobre metal, con eco de nave
+  const martillo = crearBuffer(ctx, 8, (d, sr) => {
+    const P = [[420, .5, 9], [1180, .35, 14], [2050, .22, 20], [3110, .12, 26]];
+    for (const t0 of [.5, 1.15, 1.8, 2.45, 5.6, 6.3]) golpe(d, sr, t0, P, .55 + Math.random() * .25, 2);
+    const eco = Math.floor(sr * .085); for (let i = d.length - 1; i >= eco; i--) d[i] += d[i - eco] * .35;
+  });
+  // servos de los robots: zumbido que sube y baja
+  const servo = crearBuffer(ctx, 4, (d, sr, n) => { let ph = 0; for (let i = 0; i < n; i++) { const t = i / sr, f = 160 + 70 * Math.sin(2 * Math.PI * t / 4); ph += 2 * Math.PI * f / sr; d[i] = (Math.sin(ph) * .5 + Math.sin(ph * 2.02) * .25) * (.4 + .6 * Math.abs(Math.sin(Math.PI * t / 2))); } });
+  // pop suave cuando un lead se convierte en venta
+  const pop = crearBuffer(ctx, .3, (d, sr, n) => { let ph = 0; for (let i = 0; i < n; i++) { const t = i / sr, f = 620 + 520 * Math.min(1, t / .06); ph += 2 * Math.PI * f / sr; d[i] = Math.sin(ph) * Math.exp(-t * 16) * .8; } });
+  const fuente = (buffer, pos, vol, ref = 4, loop = true) => {
+    const a = pos ? new THREE.PositionalAudio(L) : new THREE.Audio(L);
+    a.setBuffer(buffer); a.setLoop(loop); a.setVolume(vol);
+    if (pos) { a.setRefDistance(ref); a.setRolloffFactor(1.6); a.panner.panningModel = 'equalpower'; const o = new THREE.Object3D(); o.position.set(...pos); scene.add(o); o.add(a); }
+    if (loop) { a.offset = Math.random() * buffer.duration; a.play(); }
+    return a;
+  };
+  fuente(hum, null, .06);
+  fuente(cinta, [-.5, 1, -1], .4, 5);
+  fuente(teclas, [-16.6, 5.4, -12.8], .55, 3.5);
+  fuente(martillo, [15.5, 1.4, -11.5], .5, 6);
+  fuente(servo, [-4.2, 1.6, -2.6], .07, 3); fuente(servo, [2.8, 1.6, -2.6], .07, 3);
+  SON.pop = fuente(pop, [TOTEM.x, 1.6, TOTEM.z], .22, 3, false);
+}
+function despertarSonido() { if (!SON.on) return; iniciarSonido(); if (SON.listener && SON.listener.context.state !== 'running') SON.listener.context.resume(); }
+['pointerdown', 'keydown', 'touchstart'].forEach((ev) => addEventListener(ev, despertarSonido, { passive: true }));
+btnSon.addEventListener('click', () => { SON.on = !SON.on; try { localStorage.setItem('jpb-sonido', SON.on ? '1' : '0'); } catch (e) {} pintarSon(); if (SON.on) despertarSonido(); });
+document.addEventListener('visibilitychange', () => { if (SON.listener) { if (document.hidden) SON.listener.context.suspend(); else if (SON.on) SON.listener.context.resume(); } });
+function volumenSon(dt, activo) {
+  if (!SON.listener) return;
+  const meta = SON.on && activo ? .55 : 0;
+  SON.master += (meta - SON.master) * Math.min(1, dt * 3);
+  SON.listener.setMasterVolume(SON.master);
+}
 new IntersectionObserver((e) => { visible = e[0].isIntersecting; }, { threshold: .01 }).observe(section);
 addEventListener('jpb-modo', (e) => { modo = e.detail; });
 
@@ -1229,6 +1300,7 @@ function frame(now) {
     section.classList.toggle('operativa', pct >= 100);
     if (pct >= 30 && MOVIL() && !recOn && !recStartAt && vista === 'planta') { msg.querySelector('p:last-child').textContent = 'Desliza para ver cada estación.'; recStartAt = rt + .4; }
   }
+  volumenSon(realDt || .03, visible && modo === 'humano' && !document.hidden && t > 3);
   if (!visible || modo !== 'humano' || document.hidden) { fpsT = now; fpsN = 0; return; }
   clock += dt;
   const power = LOW ? ease((t - 1.8) / 3.2) : ease((t - 3) / 4.5);
@@ -1284,7 +1356,7 @@ function frame(now) {
   beltTex.offset.x -= dt * vel / (17 / 26);
   cajas.forEach((c) => {
     c.position.x += dt * vel;
-    if (c.material === M.lead && c.position.x > TOTEM.x) { c.material = M.venta; c.scale.setScalar(1.12); }
+    if (c.material === M.lead && c.position.x > TOTEM.x) { c.material = M.venta; c.scale.setScalar(1.12); if (SON.pop && SON.master > .05) { if (SON.pop.isPlaying) SON.pop.stop(); SON.pop.play(); } }
     c.scale.lerp(V.set(1, 1, 1), kA * .5);
     if (c.position.x > beltX1 + .4) { c.position.x -= (beltX1 - beltX0) + 1.2; c.material = M.lead; ventas++; hudVentas.textContent = ventas; }
     c.position.y = beltY + .24 + (act.prospeccion > .1 && c.position.x < -7 ? Math.abs(Math.sin(clock * 14 + c.position.x)) * .05 * act.prospeccion : 0);

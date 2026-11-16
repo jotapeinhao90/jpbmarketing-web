@@ -11,7 +11,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..900&family=JetBrains+Mono:wght@400;500;700&family=Silkscreen:wght@400;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="v2.css?v=20">
+  <link rel="stylesheet" href="v2.css?v=21">
   <style>html,body{background:#070b16}</style>
   <script type="importmap">
   {"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"}}
@@ -30,6 +30,10 @@
   </nav>
   <div class="nav-right">
     <span class="nav-status"><i></i><span id="nav-status-txt">Planta</span><sup>(1)</sup></span>
+    <button type="button" class="nav-sonido" id="btn-sonido" aria-label="Silenciar sonido" aria-pressed="true" title="Sonido">
+      <svg class="ic-on" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M11 5 6 9H3v6h3l5 4z"/><path d="M15.5 8.5a5 5 0 0 1 0 7"/><path d="M18.5 5.5a9 9 0 0 1 0 13"/></svg>
+      <svg class="ic-off" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M11 5 6 9H3v6h3l5 4z"/><path d="m16 9 5 6M21 9l-5 6"/></svg>
+    </button>
     <a href="/contacto" class="nav-cta">Hablemos</a>
     <button type="button" class="nav-burger" id="nav-burger" aria-label="Abrir menú" aria-expanded="false" aria-controls="nav-menu"><i></i><i></i></button>
   </div>
@@ -320,6 +324,6 @@ App móvil para clientes: conversaciones de WhatsApp en vivo, seguimiento de cli
 </script>
 
 <script src="pagina.js?v=7" defer></script>
-<script type="module" src="fabrica.js?v=23"></script>
+<script type="module" src="fabrica.js?v=24"></script>
 </body>
 </html>
