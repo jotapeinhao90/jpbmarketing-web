@@ -829,10 +829,10 @@ const polvo = (() => {
 /*  Estaciones interactivas: la planta es una fábrica de ventas         */
 /* ------------------------------------------------------------------ */
 const ESTACIONES = {
-  prospeccion: { kicker: 'PASO 01 · ENTRAN PROSPECTOS', titulo: 'Prospección B2B', texto: 'Llenamos la tolva con decisores de tu rubro: correo, LinkedIn y WhatsApp sobre una base de 200M+ negocios.', href: '/prospeccion', cta: 'Ver prospección', c: [-10.6, 1.8, lineZ], s: [3.8, 4, 3.2], pos: [-5.6, 2.9, 6.4], etiqueta: '01 · Prospección', ea: [-10.6, 3.05, lineZ + 1.3] },
-  ia: { kicker: 'PASO 02 · AGENTE IA EN WHATSAPP', titulo: 'Te escriben por WhatsApp, la IA vende', texto: 'Tus clientes escriben a tu WhatsApp y el agente responde en 2 segundos, cotiza con tu catálogo y califica, de día y de noche. Las cajas grises (leads) pasan por el agente y salen amarillas: ventas.', href: '/agente-ia', cta: 'Ver el agente IA', c: [-.7, 1.6, -.9], s: [11.5, 3.6, 5], pos: [.6, 2.6, 6.2], etiqueta: '02 · Agente IA en WhatsApp', ea: [-.7, 3.5, lineZ + 1.2] },
-  oficina: { kicker: 'SEGUNDO PISO · OFICINA COMERCIAL', titulo: 'Tu equipo, con todo a la vista', texto: 'Aquí trabaja el equipo comercial: cada uno ve en su pantalla las conversaciones de WhatsApp, los prospectos y las cotizaciones del día. Toca a cada persona para ver qué hace por tu empresa.', href: '/outsourcing-fuerza-ventas-chile', cta: 'Ver el modelo', c: [-16.5, 5.7, -13], s: [11, 2.8, 10], pos: [-9.2, 7.6, -3.4], etiqueta: '2º piso · Oficina comercial', ea: [-16.5, 7.3, -8.6] },
-  ventas: { kicker: 'PASO 03 · SALEN VENTAS', titulo: 'Tu fábrica vende más', texto: 'Eso es lo que hacemos: que lleguen pedidos listos para cerrar, con seguimiento automático y el Panel JPB para ver cada venta.', href: '/contacto', cta: 'Quiero vender más', c: [9.6, 1.5, lineZ], s: [3.8, 3.6, 3.3], pos: [5.6, 2.7, 6.6], etiqueta: '03 · Ventas', ea: [9.6, 4.55, lineZ + 1] },
+  prospeccion: { kicker: 'PASO 01 · ENTRAN PROSPECTOS', titulo: 'Prospección B2B', texto: 'Llenamos la tolva con decisores de tu rubro: correo, LinkedIn y WhatsApp sobre una base de 200M+ negocios.', href: '/prospeccion', cta: 'Ver prospección', c: [-10.6, 1.8, lineZ], s: [3.8, 4, 3.2], pos: [-5.6, 2.9, 6.4], etiqueta: '01 · Prospección', ea: [-10.6, 3.05, lineZ + 1.3], corto: 'Llenamos tu embudo con decisores de tu rubro, por correo, LinkedIn y WhatsApp.', mpos: [-7.6, 3.3, 9.6], mlook: [-9.6, 1.9, -1] },
+  ia: { kicker: 'PASO 02 · AGENTE IA EN WHATSAPP', titulo: 'Te escriben por WhatsApp, la IA vende', texto: 'Tus clientes escriben a tu WhatsApp y el agente responde en 2 segundos, cotiza con tu catálogo y califica, de día y de noche. Las cajas grises (leads) pasan por el agente y salen amarillas: ventas.', href: '/agente-ia', cta: 'Ver el agente IA', c: [-.7, 1.6, -.9], s: [11.5, 3.6, 5], pos: [.6, 2.6, 6.2], etiqueta: '02 · Agente IA en WhatsApp', ea: [-.7, 3.5, lineZ + 1.2], corto: 'Te escriben por WhatsApp y la IA responde, cotiza y califica al tiro. Los leads grises salen amarillos: ventas.', mpos: [.3, 2.7, 7.6], mlook: [-.7, 2.05, -.3] },
+  oficina: { kicker: 'SEGUNDO PISO · OFICINA COMERCIAL', titulo: 'Tu equipo, con todo a la vista', texto: 'Aquí trabaja el equipo comercial: cada uno ve en su pantalla las conversaciones de WhatsApp, los prospectos y las cotizaciones del día. Toca a cada persona para ver qué hace por tu empresa.', href: '/outsourcing-fuerza-ventas-chile', cta: 'Ver el modelo', c: [-16.5, 5.7, -13], s: [11, 2.8, 10], pos: [-9.2, 7.6, -3.4], etiqueta: '2º piso · Oficina comercial', ea: [-16.5, 7.3, -8.6], corto: 'Tu equipo ve todo en el Panel JPB y nosotros nos sumamos como vendedor externo.', mpos: [-12.2, 8.2, -2.2], mlook: [-16.6, 5.3, -12.4] },
+  ventas: { kicker: 'PASO 03 · SALEN VENTAS', titulo: 'Tu fábrica vende más', texto: 'Eso es lo que hacemos: que lleguen pedidos listos para cerrar, con seguimiento automático y el Panel JPB para ver cada venta.', href: '/contacto', cta: 'Quiero vender más', c: [9.6, 1.5, lineZ], s: [3.8, 3.6, 3.3], pos: [5.6, 2.7, 6.6], etiqueta: '03 · Ventas', ea: [9.6, 4.55, lineZ + 1], corto: 'Llegan pedidos listos para cerrar. Tu equipo solo vende.', mpos: [6.9, 3.2, 9.6], mlook: [8.6, 2.0, -1] },
   despacho: { kicker: 'ABIERTA 24/7 · WEB + SEO', titulo: 'Que te encuentren', texto: 'Web industrial con catálogo y cotizador, SEO y Google Ads: los pedidos llegan aunque nadie salga a buscarlos.', href: '/pagina-web-empresa-industrial-chile', cta: 'Ver web industrial', c: [15, 2.4, -13], s: [10.5, 5, 7], pos: [8.4, 3.6, -3.2] },
   equipo: { kicker: 'EQUIPO JPB EN TU PLANTA', titulo: 'Vendedor externo', texto: 'Nos integramos a tu equipo comercial con portafolio permanente, sin sueldos fijos ni seis meses de ramp-up.', href: '/outsourcing-fuerza-ventas-chile', cta: 'Ver el modelo' }
 };
@@ -877,6 +877,7 @@ const views = {
     return { pos: pos.toArray(), look: look.toArray(), fov: small() ? 66 : 50 };
   },
   estacion: () => {
+    if (MOVIL() && sel && ESTACIONES[sel].mpos) return { pos: ESTACIONES[sel].mpos, look: ESTACIONES[sel].mlook, fov: 60 };
     if (sel === 'equipo' && selWorker) { const p = selWorker.g.getWorldPosition(new THREE.Vector3()), f = small() ? 1.5 : 1; return { pos: [p.x + 1.6 * f, p.y + 1.9 * f, p.z + 3.2 * f], look: [p.x, p.y + 1.1, p.z - (selWorker.sentado ? .5 : 0)], fov: small() ? 62 : 48 }; }
     const e = ESTACIONES[sel]; const back = small() ? 1.6 : 1;
     const c = new THREE.Vector3(...e.c), pos = new THREE.Vector3(...e.pos).sub(c).multiplyScalar(back).add(c);
@@ -884,6 +885,9 @@ const views = {
   }
 };
 let vista = 'planta';
+const MOVIL = () => innerWidth < 760;
+const TOUR = ['prospeccion', 'ia', 'ventas', 'oficina'];
+let tourI = 1, tourNext = 0, tourOn = false, rt = performance.now() / 1000;
 const dbg = new URLSearchParams(location.search).get('cam');
 if (dbg) { const n = dbg.split(',').map(Number); views.debug = () => ({ pos: n.slice(0, 3), look: n.slice(3, 6), fov: n[6] || 55 }); vista = 'debug'; }
 const cam = { pos: new THREE.Vector3(...views[vista]().pos), look: new THREE.Vector3(...views[vista]().look), fov: views[vista]().fov };
@@ -892,6 +896,7 @@ const btnPant = document.getElementById('btn-pantallas');
 function setVista(v) {
   vista = v; btnPant.hidden = v === 'planta';
   section.classList.toggle('en-estacion', v !== 'planta');
+  section.classList.toggle('tour', MOVIL() && v === 'estacion');
   if (v !== 'estacion') { card.hidden = true; sel = null; selWorker = null; }
 }
 function abrirEstacion(k, w) {
@@ -900,12 +905,25 @@ function abrirEstacion(k, w) {
   const e = r ? { kicker: 'EQUIPO JPB · ' + r.nombre.toUpperCase(), titulo: r.cargo, texto: r.texto, href: r.href, cta: r.cta } : ESTACIONES[k];
   card.querySelector('.est-kicker').textContent = e.kicker;
   card.querySelector('.est-titulo').textContent = e.titulo;
-  card.querySelector('.est-texto').textContent = e.texto;
+  card.querySelector('.est-texto').textContent = MOVIL() && e.corto ? e.corto : e.texto;
+  const ti = TOUR.indexOf(k); if (ti >= 0) tourI = ti;
+  card.querySelectorAll('.est-dots i').forEach((d, i) => d.classList.toggle('on', i === tourI));
   const a = card.querySelector('.est-cta'); a.href = e.href; a.textContent = e.cta + ' →';
   card.hidden = false; setVista('estacion'); tip.hidden = true;
 }
 btnPant.addEventListener('click', () => setVista('planta'));
 card.querySelector('.est-cerrar').addEventListener('click', () => setVista('planta'));
+// recorrido en móvil: cambia sola de estación, y se puede deslizar o usar las flechas
+const dots = card.querySelector('.est-dots'); TOUR.forEach(() => dots.appendChild(document.createElement('i')));
+function paso(d, pausa) { tourI = (tourI + d + TOUR.length) % TOUR.length; abrirEstacion(TOUR[tourI]); tourNext = rt + (pausa ? 16 : 6.5); }
+card.querySelector('.est-prev').addEventListener('click', () => paso(-1, true));
+card.querySelector('.est-next').addEventListener('click', () => paso(1, true));
+let sw = null;
+canvas.addEventListener('pointerdown', (ev) => { sw = { x: ev.clientX, y: ev.clientY }; });
+canvas.addEventListener('pointerup', (ev) => {
+  if (!sw || !MOVIL() || !tourOn) return; const dx = ev.clientX - sw.x, dy = ev.clientY - sw.y; sw = null;
+  if (Math.abs(dx) > 40 && Math.abs(dx) > Math.abs(dy) * 1.2) paso(dx < 0 ? 1 : -1, true);
+});
 addEventListener('keydown', (e) => { if (e.key === 'Escape' && vista !== 'planta') setVista('planta'); });
 
 function resize() {
@@ -947,6 +965,7 @@ canvas.addEventListener('pointermove', (ev) => {
 });
 canvas.addEventListener('pointerleave', () => { tip.hidden = true; mouse.x = mouse.y = 0; hoverEst = null; hoverWorker = null; });
 canvas.addEventListener('click', (ev) => {
+  if (MOVIL()) return;
   const o = pick(ev); if (!o) return;
   if (o.userData.estacion) { abrirEstacion(o.userData.estacion, o.userData.w); return; }
   if (vista !== 'pantallas' && o.parent.parent === puesto) { setVista('pantallas'); tip.hidden = true; return; }
@@ -977,6 +996,7 @@ function frame(now) {
     hudEstado.textContent = pct < 100 ? (t < 1.6 ? 'TRAZANDO PLANOS' : 'LEVANTANDO PLANTA') : 'PLANTA OPERATIVA · 24/7';
     navStatus.textContent = pct < 100 ? 'En obra' : 'Planta';
     section.classList.toggle('operativa', pct >= 100);
+    if (pct >= 100 && MOVIL() && !tourOn && vista === 'planta') { msg.querySelector('p:last-child').textContent = 'Desliza para ver cada estación.'; tourOn = true; tourNext = rt + 2.5; }
   }
   if (!visible || modo !== 'humano' || document.hidden) return;
   clock += dt;
@@ -1001,6 +1021,10 @@ function frame(now) {
     p.mat.color.setRGB(gv, gv, gv * (1 + .04 * p.gris));
     if (p.on > 0) p.update(clock, dt);
   });
+
+  rt = now / 1000;
+  if (tourOn && MOVIL() && rt > tourNext) { if (vista !== 'estacion') { abrirEstacion(TOUR[tourI]); tourNext = rt + 6.5; } else paso(1, false); }
+  if (tourOn && !MOVIL()) { tourOn = false; setVista('planta'); }
 
   // --- interacción: activación de estaciones ---
   const kA = 1 - Math.exp(-realDt * 6);

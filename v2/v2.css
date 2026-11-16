@@ -314,3 +314,28 @@ body.menu-abierto .nav-burger i:last-child{top:13.5px;transform:rotate(-45deg)}
 @media (max-width:760px){.est-chips{bottom:96px}}
 .etq.hot{background:var(--yellow);color:#14181f}
 .planta-msg{max-width:460px}
+
+/* ===== Móvil: recorrido por estaciones ===== */
+.est-nav{display:none}
+@media (max-width:760px){
+  .est-chips{display:none!important}
+  .planta.tour .planta-msg{opacity:1}
+  .planta.tour .est-cerrar{display:none}
+  .planta.tour .estacion{bottom:64px;padding:14px 16px 12px;border-radius:12px}
+  .planta.tour .est-kicker{font-size:10px;margin-bottom:6px}
+  .planta.tour .est-titulo{font-size:18px;margin-bottom:6px;padding-right:0}
+  .planta.tour .est-texto{font-size:13.5px;min-height:3em}
+  .planta.tour .est-cta{margin-top:10px;padding:8px 14px;font-size:13px}
+  .est-nav{display:flex;align-items:center;justify-content:space-between;margin-top:10px;border-top:1px solid var(--line);padding-top:8px}
+  .est-nav button{font-size:26px;line-height:1;width:44px;height:34px;color:var(--ink);border-radius:8px}
+  .est-nav button:active{background:rgba(245,184,0,.2)}
+  .est-dots{display:flex;gap:7px}
+  .est-dots i{width:7px;height:7px;border-radius:50%;background:rgba(238,240,244,.25);transition:background .3s,transform .3s}
+  .est-dots i.on{background:var(--yellow);transform:scale(1.25)}
+  .planta-msg h2{font-size:26px}
+}
+@media (max-width:760px){
+  .planta.tour .estacion{padding-bottom:14px}
+  .est-nav{position:absolute;right:10px;bottom:12px;margin:0;border:0;padding:0;gap:4px}
+  .est-nav button{width:38px;height:34px;font-size:24px}
+}
