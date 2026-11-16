@@ -88,6 +88,55 @@ Idea de la skill free-tools de https://github.com/coreyhaines31/marketingskills
 - https://github.com/saraivaruas/mercado-publico-api — cliente de la API (licitaciones y órdenes de compra)
 - https://github.com/santifer/santifer-irepair — ejemplo de SEO programático (15.500 páginas desde un ERP)`,
   },
+  {
+    id: 'seed-idea-plataforma-pago-deudas-2026-11-16',
+    title: 'Idea de negocio — Plataforma para donar y pagar deudas públicas (con verificación transparente)',
+    tags: ['idea', 'negocio', 'donaciones', 'fintech'],
+    createdAt: '2026-11-16T12:00:00.000Z',
+    content: `Idea: una plataforma donde cualquier persona (multimillonarios, empresas y gente normal) puede donar para pagar la deuda pública de alguien (multas, TAG, deudas con el Estado, etc.), con verificación automática y total transparencia.
+
+## El problema
+Hay familias con deudas públicas que no pueden pagar. Hay gente que quiere ayudar, pero no confía en las campañas de donación: no sabe si la deuda es real, de cuánto es ni a quién se le debe.
+
+## Cómo funciona
+1. **Juanito** (la persona con la deuda) se registra y cuenta su historia.
+2. La app consulta una **API oficial** y verifica automáticamente que la deuda existe, su monto y a qué institución está asociada.
+3. La campaña se publica con la deuda verificada, el monto exacto y el acreedor.
+4. Cualquiera dona **lo que quiera**: desde mil pesos hasta millones.
+5. Al llegar al monto, la plataforma **paga directo al acreedor** (nunca pasa la plata por la persona).
+6. Se publica el comprobante de pago y la deuda queda como "pagada".
+
+## Transparencia (lo central)
+- Deuda verificada por API, no por lo que diga la persona.
+- Se ve el monto, el tipo de deuda y el acreedor.
+- Se ve cuánto se ha recaudado y quién donó (con opción de donar anónimo).
+- Comprobante público del pago al acreedor.
+- Si sobra plata, se devuelve o pasa a otra campaña (definir regla).
+
+## Quiénes donan
+- Personas normales: donaciones chicas, muchas.
+- Multimillonarios y grandes donantes: pueden financiar campañas completas y tener su vitrina.
+- **Empresas grandes**: alianzas de RSE y marketing; patrocinan campañas o un fondo común.
+
+## Cómo ganaría plata
+- Comisión de 3–8% sobre cada donación.
+- Patrocinio de empresas (RSE).
+- Posible beneficio tributario para el donante (ley de donaciones) — consultar con un contador.
+
+## Riesgos y puntos a resolver
+- **Qué API hay**: ver qué entrega Tesorería, municipalidades, Juzgados de Policía Local, autopistas y si se puede consultar con Clave Única y consentimiento.
+- **Privacidad**: la ley de datos personales (21.719) exige consentimiento y mostrar solo lo mínimo. Dejar anonimato parcial para la persona.
+- **Fraude**: pagar siempre al acreedor, nunca a la persona; verificar identidad (RUT) y que la deuda sea realmente de quien pide.
+- **Historias falsas**: la deuda es verificable, pero la historia no. Moderar.
+- **Aspecto legal**: manejar plata de terceros puede requerir una figura legal (fundación, corporación o alianza con un procesador de pagos). Consultar con un abogado.
+- Partir solo con multas y deudas públicas, que son fáciles de verificar y de pagar directo.
+
+## Próximos pasos
+1. Investigar qué APIs oficiales permiten verificar una deuda.
+2. Definir la figura legal para recibir y pagar donaciones.
+3. Hacer una prueba chica con 3–5 casos reales.
+4. Buscar una empresa grande para la primera alianza.`,
+  },
 ];
 
 function notasSeed() {
