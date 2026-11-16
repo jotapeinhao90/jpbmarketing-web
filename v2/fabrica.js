@@ -6,6 +6,15 @@ import { FontLoader } from 'three/addons/loaders/FontLoader.js';
 import { TextGeometry } from 'three/addons/geometries/TextGeometry.js';
 import { RoundedBoxGeometry } from 'three/addons/geometries/RoundedBoxGeometry.js';
 import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js';
+import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
+import * as SkeletonUtils from 'three/addons/utils/SkeletonUtils.js';
+
+// persona real: maniquí de Mixamo con esqueleto, optimizado (0,6 MB) y con zonas del cuerpo para vestirlo
+let persona = null;
+const cargaPersona = new GLTFLoader().loadAsync('modelos/trabajador.glb?v=1').then((g) => {
+  g.scene.traverse((n) => { if (n.isSkinnedMesh) { const a = n.geometry.getAttribute('__zona'); if (a) n.geometry.setAttribute('zona', a); } });
+  persona = g; return g;
+}).catch(() => null);
 
 let font3D = null;
 const fuente3D = new FontLoader().loadAsync('https://cdn.jsdelivr.net/npm/three@0.160.0/examples/fonts/helvetiker_bold.typeface.json').then((f) => (font3D = f)).catch(() => null);
@@ -15,6 +24,7 @@ try {
     new Promise((r) => setTimeout(r, 2500))
   ]);
 } catch (e) { /* sin fuentes: se usa la de respaldo */ }
+await Promise.race([cargaPersona, new Promise((r) => setTimeout(r, 4000))]);
 
 const canvas = document.getElementById('fabrica');
 const section = canvas.parentElement;
@@ -85,13 +95,14 @@ const FRAG = {
     float s = uSolid - (k*0.72 + 0.3);
     gl_FragColor.a *= 1.0 - smoothstep(0.0, 0.1, s); }`
 };
-function patch(mat, kind = 'solid') {
+function patch(mat, kind = 'solid', extra = null) {
   mat.onBeforeCompile = (sh) => {
+    if (extra) extra(sh);
     Object.assign(sh.uniforms, U);
     sh.vertexShader = 'varying vec3 vBP;\n' + sh.vertexShader.replace('#include <project_vertex>', '#include <project_vertex>' + VERT);
     sh.fragmentShader = GLSL + sh.fragmentShader.replace('#include <dithering_fragment>', '#include <dithering_fragment>' + FRAG[kind]);
   };
-  mat.customProgramCacheKey = () => 'jpb-' + kind;
+  mat.customProgramCacheKey = () => 'jpb-' + kind + (extra ? '-x' : '');
   return mat;
 }
 
@@ -806,10 +817,89 @@ function trabajador(parent, px, pz, ry, opts = {}) {
   BL.sh.rotation.z = .07; BR.sh.rotation.z = -.07;
   return { g, hipL: L.hip, hipR: R.hip, kneeL: L.knee, kneeR: R.knee, shL: BL.sh, shR: BR.sh, elL: BL.el, elR: BR.el, muL: BL.mu, cab, pecho, ...opts };
 }
+const _e = new THREE.Euler();
+function matPersona(cols) {
+  const m = new THREE.MeshStandardMaterial({ roughness: .74, metalness: .04 });
+  const lin = cols.map((c) => new THREE.Color(c));
+  return patch(m, 'solid', (sh) => {
+    sh.uniforms.uCol = { value: lin };
+    sh.vertexShader = 'attribute float zona; varying float vZona;\n' + sh.vertexShader.replace('#include <begin_vertex>', '#include <begin_vertex>\n vZona = zona;');
+    sh.fragmentShader = 'uniform vec3 uCol[5]; varying float vZona;\n' + sh.fragmentShader.replace('#include <color_fragment>', '#include <color_fragment>\n { int zi = int(vZona + .5); vec3 zc = uCol[0]; if (zi == 1) zc = uCol[1]; else if (zi == 2) zc = uCol[2]; else if (zi == 3) zc = uCol[3]; else if (zi == 4) zc = uCol[4]; diffuseColor.rgb = zc; }');
+  });
+}
+const PIELES = [0xc6916b, 0x9c6a4a, 0xdcae8a, 0x8a5a3c, 0xbf8a62, 0xe0b48f];
+const Mreal = { reflect: std({ color: 0xd7dde6, roughness: .2, metalness: .6 }), chaleco: std({ color: 0xe6d21f, roughness: .55 }), lente: std({ color: 0x0c0f14, roughness: .1, metalness: .5 }), pelo: std({ color: 0x1b1511, roughness: .95 }) };
+let nReal = 0;
+function personaReal(parent, px, pz, ry, opts = {}) {
+  const g = grp(parent, px, opts.y || 0, pz, ry);
+  const model = SkeletonUtils.clone(persona.scene); model.scale.setScalar(.01); g.add(model);
+  const piel = PIELES[nReal++ % PIELES.length];
+  const camisa = opts.jefe ? 0x17223d : opts.oficina ? (opts.camisaHex || 0xe9ecf1) : 0x4a5568;
+  const manos = opts.oficina ? piel : 0x5d636d;
+  const mat = matPersona([piel, camisa, opts.oficina ? 0x2f3a52 : 0x24324f, 0x2b1f17, manos]);
+  model.traverse((n) => { if (n.isSkinnedMesh) { n.material = mat; n.castShadow = !LOW; n.frustumCulled = false; } });
+  const huesos = {}; const todos = [];
+  model.traverse((n) => { if (n.isBone) { huesos[n.name.replace('mixamorig', '')] = n; todos.push(n); } });
+  const anclar = (hueso, px = 0, py = 0, pz = 0) => { const a = new THREE.Group(); a.scale.setScalar(100); a.position.set(px, py, pz); huesos[hueso].add(a); return a; };
+  // cabeza: pelo, lentes y casco (en metros, anclados al hueso)
+  const cab = anclar('Head');
+  const pelo = new THREE.Mesh(new THREE.SphereGeometry(.1, 18, 10, 0, Math.PI * 2, 0, Math.PI / 1.8), Mreal.pelo); pelo.position.set(0, .1, -.012); pelo.scale.set(.95, .9, 1.02); cab.add(pelo);
+  if (!opts.oficina) { const l = new THREE.Mesh(new RoundedBoxGeometry(.15, .032, .03, 2, .01), Mreal.lente); l.position.set(0, .07, .09); cab.add(l); }
+  if (!opts.sinCasco) {
+    const cm = opts.jefe ? std({ color: 0xf2f2ee, roughness: .28 }) : std({ color: 0xf5b800, roughness: .3 });
+    const casco = new THREE.Group(); casco.position.set(0, .14, .02); cab.add(casco);
+    const dome = new THREE.Mesh(new THREE.SphereGeometry(.125, 24, 12, 0, Math.PI * 2, 0, Math.PI / 2), cm); dome.scale.set(1, .9, 1.12); casco.add(dome);
+    const ala = new THREE.Mesh(new THREE.CylinderGeometry(.15, .155, .012, 28), cm); ala.scale.set(1, 1, 1.18); ala.position.z = .015; casco.add(ala);
+    if (opts.jefe) { const f = new THREE.Mesh(new THREE.CylinderGeometry(.126, .127, .025, 28, 1, true), M.yellow); f.position.y = .03; f.scale.set(1, 1, 1.12); casco.add(f); }
+    casco.traverse((n) => n.isMesh && (n.castShadow = !LOW));
+  }
+  // chaleco reflectante (o huinchas sobre la chaqueta del jefe)
+  if (!opts.oficina) {
+    const tor = anclar('Spine1');
+    if (!opts.jefe) { const v = new THREE.Mesh(new THREE.LatheGeometry([[.17, -.16], [.175, -.05], [.186, .06], [.192, .15], [.172, .2]].map(([a, b]) => new THREE.Vector2(a, b)), 24, 0, Math.PI * 2), Mreal.chaleco); v.scale.set(1, 1, .8); v.position.z = .02; tor.add(v); }
+    for (const y of (opts.jefe ? [] : [-.07, .06])) { const b = new THREE.Mesh(new THREE.CylinderGeometry(opts.jefe ? .182 : .193, opts.jefe ? .179 : .19, .026, 24, 1, true), Mreal.reflect); b.scale.set(1, 1, .81); b.position.set(0, y, .02); tor.add(b); }
+  }
+  const restQ = todos.map((b) => b.quaternion.clone()), restHip = huesos.Hips.position.clone(), procQ = todos.map(() => new THREE.Quaternion());
+  const mixer = new THREE.AnimationMixer(model);
+  if (persona.animations[0]) { const a = mixer.clipAction(persona.animations[0]); a.timeScale = .75; a.play(); }
+  return { g, real: true, model, huesos, todos, restQ, restHip, procQ, mixer, cab, ...opts };
+}
+const trabajadorX = (parent, px, pz, ry, opts) => (persona ? personaReal(parent, px, pz, ry, opts) : trabajador(parent, px, pz, ry, opts));
+function hueso(w, n, x, y, z) { const b = w.huesos[n]; if (b) b.quaternion.setFromEuler(_e.set(x, y, z)); }
+function animarReal(w, clock, dt) {
+  w.todos.forEach((b, i) => b.quaternion.copy(w.restQ[i])); w.huesos.Hips.position.copy(w.restHip);
+  const ph = clock * 6.2, id = w.idle || 0, resp = Math.sin(clock * 1.9 + id);
+  if (w.sentado) {
+    hueso(w, 'LeftUpLeg', 1.5, 0, .06); hueso(w, 'RightUpLeg', 1.5, 0, -.06); hueso(w, 'LeftLeg', -1.45, 0, 0); hueso(w, 'RightLeg', -1.45, 0, 0);
+    hueso(w, 'LeftArm', 1.3, 0, .4); hueso(w, 'RightArm', 1.3, 0, -.4);
+    hueso(w, 'LeftForeArm', 0, 0, 1.35 + Math.sin(clock * 13 + id) * .05); hueso(w, 'RightForeArm', 0, 0, -1.35 - Math.sin(clock * 11 + id * 2) * .05);
+    hueso(w, 'Head', .12, Math.sin(clock * .4 + id) * .12, 0);
+  } else if (w.camina && w.act < .5) {
+    const s = Math.sin(ph);
+    hueso(w, 'LeftUpLeg', .42 * s, 0, 0); hueso(w, 'RightUpLeg', -.42 * s, 0, 0);
+    hueso(w, 'LeftLeg', -.85 * Math.max(0, Math.sin(ph + 1.9)), 0, 0); hueso(w, 'RightLeg', -.85 * Math.max(0, Math.sin(ph + 1.9 + Math.PI)), 0, 0);
+    hueso(w, 'LeftArm', 1.25, 0, .1 - .34 * s); hueso(w, 'RightArm', 1.25, 0, -.1 - .34 * s);
+    hueso(w, 'LeftForeArm', 0, 0, .3); hueso(w, 'RightForeArm', 0, 0, -.3);
+    w.huesos.Hips.position.y = w.restHip.y + Math.abs(Math.cos(ph)) * 2.2;
+  } else {
+    hueso(w, 'LeftArm', 1.24, 0, .1 + resp * .02); hueso(w, 'RightArm', 1.24, 0, -.1 - resp * .02);
+    hueso(w, 'LeftForeArm', 0, 0, .28); hueso(w, 'RightForeArm', 0, 0, -.28);
+    hueso(w, 'Spine2', resp * .018, 0, 0); hueso(w, 'Head', 0, Math.sin(clock * .5 + id) * .35, 0);
+    if (w.jefe) { hueso(w, 'LeftArm', .95, 0, .62); hueso(w, 'LeftForeArm', 0, 0, 1.35 + Math.sin(clock * .8) * .04); }
+  }
+  // saludo real (animación de Mixamo) mezclado con la pose según cuánto está activo
+  if (w.act > .02 && !w.sentado && persona.animations[0]) {
+    w.todos.forEach((b, i) => w.procQ[i].copy(b.quaternion));
+    const hy = w.huesos.Hips.position.clone();
+    w.mixer.update(dt);
+    w.todos.forEach((b, i) => b.quaternion.slerp(w.procQ[i], 1 - w.act));
+    w.huesos.Hips.position.lerp(hy, 1 - w.act);
+  }
+}
 const trabajadores = [
-  trabajador(scene, 2.2, .35, Math.PI, { idle: 0, barba: true }),                                     // de espaldas mirando la cinta
-  trabajador(scene, -14, 3.35, Math.PI / 2, { camina: true, x0: -10, x1: 15, v: 1.05 }), // pasillo
-  trabajador(scene, 2.5, 7.3, .12, { idle: 1.5, jefe: true, barba: true }) // Diego, jefe de planta: al frente
+  trabajadorX(scene, 2.2, .35, Math.PI, { idle: 0, barba: true }),                                     // de espaldas mirando la cinta
+  trabajadorX(scene, -14, 3.35, Math.PI / 2, { camina: true, x0: -10, x1: 15, v: 1.05 }), // pasillo
+  trabajadorX(scene, 2.5, 7.3, .12, { idle: 1.5, jefe: true, barba: true }) // Diego, jefe de planta: al frente
 ];
 // cada persona hace un trabajo concreto de JPB (nombres de ejemplo, se pueden cambiar por los reales)
 const ROLES = [
@@ -828,9 +918,9 @@ trabajadores.forEach((w, i) => (w.rol = ROLES[i]));
 const ofiSlides = [[sOficina], [sAds], [sKw], [sWeb], [sChat], [sKpi('COTIZACIONES', 'ENVIADAS HOY', 18, .02, 'AGENTE IA + VENDEDOR')]];
 const camisas = [0xe9ecf1, 0x2f3a52, 0x8a9bb5, 0xdfe3e8, 0x3b4252, 0xb7c2d4].map((c) => std({ color: c, roughness: .8 }));
 OFI.forEach(([x, z], i) => {
-  const w = trabajador(scene, x, z + .72, Math.PI, { idle: i * .9, y: 4.4 - .37, sentado: true, chaleco: camisas[i], sinCasco: true, oficina: true });
-  w.hipL.rotation.x = w.hipR.rotation.x = -1.45; w.kneeL.rotation.x = w.kneeR.rotation.x = 1.45;
-  w.shL.rotation.x = w.shR.rotation.x = -.75; w.elL.rotation.x = w.elR.rotation.x = -.75;
+  const w = trabajadorX(scene, x, z + .72, Math.PI, { idle: i * .9, y: 4.4 - (persona ? .42 : .37), sentado: true, chaleco: camisas[i], camisaHex: [0xe9ecf1, 0x2f3a52, 0x8a9bb5, 0xdfe3e8, 0x3b4252, 0xb7c2d4][i], sinCasco: true, oficina: true });
+  if (!w.real) { w.hipL.rotation.x = w.hipR.rotation.x = -1.45; w.kneeL.rotation.x = w.kneeR.rotation.x = 1.45;
+  w.shL.rotation.x = w.shR.rotation.x = -.75; w.elL.rotation.x = w.elR.rotation.x = -.75; }
   w.rol = ROLES[3 + i]; trabajadores.push(w);
   const g = grp(scene, x, 5.66, z - .33);
   D(box(.74, .46, .04), M.dark, g, 0, 0, -.025);
@@ -838,8 +928,8 @@ OFI.forEach(([x, z], i) => {
 });
 // Diego: tablet en la mano, foco propio y anillo en el piso
 const diego = trabajadores[2];
-diego.shL.rotation.x = -.55; diego.elL.rotation.x = -1.15; diego.elL.rotation.z = .25;
-{ const t = grp(diego.muL, 0, -.07, .06); t.rotation.x = -.5; D(rbox(.2, .27, .012, .012), M.dark, t, 0, 0, 0); const sm = basic({ color: 0x7fd4ff }); sm.toneMapped = false; D(new THREE.PlaneGeometry(.18, .25), sm, t, 0, 0, .0065); }
+if (!diego.real) { diego.shL.rotation.x = -.55; diego.elL.rotation.x = -1.15; diego.elL.rotation.z = .25; }
+{ const t = diego.real ? (() => { const a = new THREE.Group(); a.scale.setScalar(100); a.position.set(0, 10, 4); diego.huesos.LeftHand.add(a); return grp(a, 0, 0, 0); })() : grp(diego.muL, 0, -.07, .06); t.rotation.x = -.5; D(rbox(.2, .27, .012, .012), M.dark, t, 0, 0, 0); const sm = basic({ color: 0x7fd4ff }); sm.toneMapped = false; D(new THREE.PlaneGeometry(.18, .25), sm, t, 0, 0, .0065); }
 const anillo = new THREE.Mesh(new THREE.RingGeometry(.5, .6, 48), new THREE.MeshBasicMaterial({ color: 0xf5b800, transparent: true, opacity: 0, blending: THREE.AdditiveBlending, depthWrite: false, side: THREE.DoubleSide }));
 anillo.rotation.x = -Math.PI / 2; anillo.position.set(diego.g.position.x, .02, diego.g.position.z); scene.add(anillo);
 const focoDiego = LOW ? new THREE.PointLight(0xfff1d6, 0, 6, 1.4) : new THREE.SpotLight(0xfff1d6, 0, 14, .32, .55, 1.2); focoDiego.position.set(diego.g.position.x + .6, 7.5, diego.g.position.z + 1.2);
@@ -1195,6 +1285,17 @@ function frame(now) {
   });
   // trabajadores: uno camina por el pasillo, los demás se mueven en su lugar y saludan si los tocas
   trabajadores.forEach((w, i) => {
+    if (w.real) {
+      if (w.camina) {
+        w.dir = w.dir || 1;
+        const x = w.g.position.x + dt * w.v * w.dir * (w.act > .5 ? 0 : 1);
+        if (x > w.x1 || x < w.x0) w.dir *= -1;
+        w.g.position.x = Math.min(w.x1, Math.max(w.x0, x));
+        w.g.rotation.y += ((w.dir > 0 ? Math.PI / 2 : -Math.PI / 2) - w.g.rotation.y) * kA;
+      }
+      animarReal(w, clock, dt);
+      return;
+    }
     if (w.camina) {
       w.dir = w.dir || 1;
       const x = w.g.position.x + dt * w.v * w.dir * (w.act > .5 ? 0 : 1);
