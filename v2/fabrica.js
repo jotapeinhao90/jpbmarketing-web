@@ -828,15 +828,17 @@ function matPersona(cols) {
   });
 }
 const PIELES = [0xc6916b, 0x9c6a4a, 0xdcae8a, 0x8a5a3c, 0xbf8a62, 0xe0b48f];
-const Mreal = { reflect: std({ color: 0xd7dde6, roughness: .2, metalness: .6 }), chaleco: std({ color: 0xe6d21f, roughness: .55 }), lente: std({ color: 0x0c0f14, roughness: .1, metalness: .5 }), pelo: std({ color: 0x1b1511, roughness: .95 }) };
+const Mreal = { reflect: std({ color: 0xd7dde6, roughness: .2, metalness: .6 }), chaleco: std({ color: 0xe6d21f, roughness: .55 }), chalecoJefe: std({ color: 0xf07a1a, roughness: .55 }), lente: std({ color: 0x0c0f14, roughness: .1, metalness: .5 }), pelo: std({ color: 0x1b1511, roughness: .95 }) };
 let nReal = 0;
 function personaReal(parent, px, pz, ry, opts = {}) {
   const g = grp(parent, px, opts.y || 0, pz, ry);
   const model = SkeletonUtils.clone(persona.scene); model.scale.setScalar(.01); g.add(model);
   const piel = PIELES[nReal++ % PIELES.length];
-  const camisa = opts.jefe ? 0x17223d : opts.oficina ? (opts.camisaHex || 0xe9ecf1) : 0x4a5568;
-  const manos = opts.oficina ? piel : 0x5d636d;
-  const mat = matPersona([piel, camisa, opts.oficina ? 0x2f3a52 : 0x24324f, 0x2b1f17, manos]);
+  // overol azul de trabajo; el jefe con camisa celeste; la oficina con camisa y pantalón de vestir
+  const camisa = opts.jefe ? 0x8fb3d9 : opts.oficina ? (opts.camisaHex || 0xe9ecf1) : 0x2c5d9e;
+  const pantalon = opts.jefe ? 0x1f2633 : opts.oficina ? 0x2f3a52 : 0x2c5d9e;
+  const manos = opts.oficina ? piel : opts.jefe ? piel : 0x8a6a42;
+  const mat = matPersona([piel, camisa, pantalon, 0x121212, manos]);
   model.traverse((n) => { if (n.isSkinnedMesh) { n.material = mat; n.castShadow = !LOW; n.frustumCulled = false; } });
   const huesos = {}; const todos = [];
   model.traverse((n) => { if (n.isBone) { huesos[n.name.replace('mixamorig', '')] = n; todos.push(n); } });
@@ -856,16 +858,32 @@ function personaReal(parent, px, pz, ry, opts = {}) {
   // chaleco reflectante (o huinchas sobre la chaqueta del jefe)
   if (!opts.oficina) {
     const tor = anclar('Spine1');
-    if (!opts.jefe) { const v = new THREE.Mesh(new THREE.LatheGeometry([[.17, -.16], [.175, -.05], [.186, .06], [.192, .15], [.172, .2]].map(([a, b]) => new THREE.Vector2(a, b)), 24, 0, Math.PI * 2), Mreal.chaleco); v.scale.set(1, 1, .8); v.position.z = .02; tor.add(v); }
-    for (const y of (opts.jefe ? [] : [-.07, .06])) { const b = new THREE.Mesh(new THREE.CylinderGeometry(opts.jefe ? .182 : .193, opts.jefe ? .179 : .19, .026, 24, 1, true), Mreal.reflect); b.scale.set(1, 1, .81); b.position.set(0, y, .02); tor.add(b); }
+    if (true) { const v = new THREE.Mesh(new THREE.LatheGeometry([[.17, -.16], [.175, -.05], [.186, .06], [.192, .15], [.172, .2]].map(([a, b]) => new THREE.Vector2(a, b)), 24, 0, Math.PI * 2), opts.jefe ? Mreal.chalecoJefe : Mreal.chaleco); v.scale.set(1, 1, .8); v.position.z = .02; tor.add(v); }
+    for (const y of [-.07, .06]) { const b = new THREE.Mesh(new THREE.CylinderGeometry(.193, .19, .026, 24, 1, true), Mreal.reflect); b.scale.set(1, 1, .81); b.position.set(0, y, .02); tor.add(b); }
+  }
+  if (!opts.oficina && !opts.jefe) {
+    for (const [hb, y, r] of [['LeftLeg', .3, .062], ['RightLeg', .3, .062], ['LeftForeArm', .13, .047], ['RightForeArm', .13, .047]]) {
+      const a = anclar(hb); const band = new THREE.Mesh(new THREE.CylinderGeometry(r, r, .028, 18, 1, true), Mreal.reflect); band.position.y = y; a.add(band);
+    }
   }
   const restQ = todos.map((b) => b.quaternion.clone()), restHip = huesos.Hips.position.clone(), procQ = todos.map(() => new THREE.Quaternion());
+  // orientación de reposo del padre de cada hueso, relativa al cuerpo
+  const idx = {}; todos.forEach((b, i) => (idx[b.name.replace('mixamorig', '')] = i));
+  const mundo = new Map(), pw = [], pwInv = [];
+  const wq = (o) => { if (!o || o === model) return new THREE.Quaternion(); if (mundo.has(o)) return mundo.get(o); const q = wq(o.parent).clone().multiply(o.quaternion); mundo.set(o, q); return q; };
+  todos.forEach((b) => { const q = wq(b.parent).clone(); pw.push(q); pwInv.push(q.clone().invert()); });
   const mixer = new THREE.AnimationMixer(model);
   if (persona.animations[0]) { const a = mixer.clipAction(persona.animations[0]); a.timeScale = .75; a.play(); }
-  return { g, real: true, model, huesos, todos, restQ, restHip, procQ, mixer, cab, ...opts };
+  return { g, real: true, model, huesos, todos, restQ, restHip, procQ, mixer, cab, idx, pw, pwInv, ...opts };
 }
 const trabajadorX = (parent, px, pz, ry, opts) => (persona ? personaReal(parent, px, pz, ry, opts) : trabajador(parent, px, pz, ry, opts));
-function hueso(w, n, x, y, z) { const b = w.huesos[n]; if (b) b.quaternion.setFromEuler(_e.set(x, y, z)); }
+const _qa = new THREE.Quaternion();
+function hueso(w, n, x, y, z) {
+  const b = w.huesos[n]; if (!b) return;
+  const k = w.idx[n];
+  _qa.setFromEuler(_e.set(x, y, z));
+  b.quaternion.copy(w.restQ[k]).multiply(_qa); // movimiento local sobre la pose de reposo del hueso
+}
 function animarReal(w, clock, dt) {
   w.todos.forEach((b, i) => b.quaternion.copy(w.restQ[i])); w.huesos.Hips.position.copy(w.restHip);
   const ph = clock * 6.2, id = w.idle || 0, resp = Math.sin(clock * 1.9 + id);
@@ -880,7 +898,6 @@ function animarReal(w, clock, dt) {
     hueso(w, 'LeftLeg', -.85 * Math.max(0, Math.sin(ph + 1.9)), 0, 0); hueso(w, 'RightLeg', -.85 * Math.max(0, Math.sin(ph + 1.9 + Math.PI)), 0, 0);
     hueso(w, 'LeftArm', 1.25, 0, .1 - .34 * s); hueso(w, 'RightArm', 1.25, 0, -.1 - .34 * s);
     hueso(w, 'LeftForeArm', 0, 0, .3); hueso(w, 'RightForeArm', 0, 0, -.3);
-    w.huesos.Hips.position.y = w.restHip.y + Math.abs(Math.cos(ph)) * 2.2;
   } else {
     hueso(w, 'LeftArm', 1.24, 0, .1 + resp * .02); hueso(w, 'RightArm', 1.24, 0, -.1 - resp * .02);
     hueso(w, 'LeftForeArm', 0, 0, .28); hueso(w, 'RightForeArm', 0, 0, -.28);
@@ -995,7 +1012,7 @@ const polvo = (() => {
 /*  Estaciones interactivas: la planta es una fábrica de ventas         */
 /* ------------------------------------------------------------------ */
 const ESTACIONES = {
-  prospeccion: { kicker: 'NUESTRA ESPECIALIDAD · GOOGLE ADS', titulo: 'Te encuentran en Google', texto: 'Somos especialistas en Google Ads para empresas industriales: tu anuncio aparece cuando un comprador busca lo que vendes, y cada clic entra a la línea como un prospecto.', href: '/keyword-research-b2b-industrial-chile', cta: 'Ver Google Ads', c: [-10.6, 1.8, lineZ], s: [3.8, 4, 3.2], pos: [-5.6, 2.9, 6.4], etiqueta: '01 · Google Ads', ea: [-10.6, 4.55, lineZ + 1], corto: 'Especialistas en Google Ads: apareces cuando te buscan y cada clic entra como prospecto.', mpos: [-7.6, 3.3, 9.6], mlook: [-9.6, 1.9, -1] },
+  prospeccion: { kicker: 'PASO 01 · GOOGLE ADS', titulo: 'Te encuentran en Google', texto: 'Campañas de Google Ads para empresas industriales: tu anuncio aparece cuando un comprador busca lo que vendes, y cada clic entra a la línea como un prospecto.', href: '/keyword-research-b2b-industrial-chile', cta: 'Ver Google Ads', c: [-10.6, 1.8, lineZ], s: [3.8, 4, 3.2], pos: [-5.6, 2.9, 6.4], etiqueta: '01 · Google Ads', ea: [-10.6, 4.55, lineZ + 1], corto: 'Con Google Ads apareces cuando te buscan y cada clic entra como prospecto.', mpos: [-7.6, 3.3, 9.6], mlook: [-9.6, 1.9, -1] },
   ia: { kicker: 'PASO 02 · AGENTE IA EN WHATSAPP', titulo: 'Te escriben por WhatsApp, la IA vende', texto: 'Tus clientes escriben a tu WhatsApp y el agente responde en 2 segundos, cotiza con tu catálogo y califica, de día y de noche. Las cajas grises (leads) pasan por el agente y salen amarillas: ventas.', href: '/agente-ia', cta: 'Ver el agente IA', c: [-.7, 1.6, -.9], s: [11.5, 3.6, 5], pos: [.6, 2.6, 6.2], etiqueta: '02 · Agente IA en WhatsApp', ea: [-.7, 3.5, lineZ + 1.2], corto: 'Te escriben por WhatsApp y la IA responde, cotiza y califica al tiro. Los leads grises salen amarillos: ventas.', mpos: [.3, 2.7, 7.6], mlook: [-.7, 2.05, -.3] },
   oficina: { kicker: 'SEGUNDO PISO · OFICINA COMERCIAL', titulo: 'Tu equipo, con todo a la vista', texto: 'Aquí trabaja el equipo comercial: cada uno ve en su pantalla las conversaciones de WhatsApp, los prospectos y las cotizaciones del día. Toca a cada persona para ver qué hace por tu empresa.', href: '/outsourcing-fuerza-ventas-chile', cta: 'Ver el modelo', c: [-16.5, 5.7, -13], s: [11, 2.8, 10], pos: [-9.2, 7.6, -3.4], etiqueta: '2º piso · Oficina comercial', ea: [-16.5, 7.3, -8.6], corto: 'Tu equipo ve todo en el Panel JPB y nosotros nos sumamos como vendedor externo.', mpos: [-12.2, 8.2, -2.2], mlook: [-16.6, 5.3, -12.4] },
   ventas: { kicker: 'PASO 03 · SALEN VENTAS', titulo: 'Tu fábrica vende más', texto: 'Eso es lo que hacemos: que lleguen pedidos listos para cerrar, con seguimiento automático y el Panel JPB para ver cada venta.', href: '/contacto', cta: 'Quiero vender más', c: [9.6, 1.5, lineZ], s: [3.8, 3.6, 3.3], pos: [5.6, 2.7, 6.6], etiqueta: '03 · Ventas', ea: [9.6, 4.55, lineZ + 1], corto: 'Llegan pedidos listos para cerrar. Tu equipo solo vende.', mpos: [6.9, 3.2, 9.6], mlook: [8.6, 2.0, -1] },
@@ -1060,17 +1077,17 @@ const MOVIL = () => innerWidth < 760;
 let rt = performance.now() / 1000, ri = 0, recOn = false, recNext = 0, recStartAt = 0;
 const poseEst = (k) => { const e = ESTACIONES[k]; return MOVIL() ? { pos: e.mpos, look: e.mlook, fov: 60 } : { pos: e.pos, look: e.c, fov: 50 }; };
 const RECORRIDO = [
-  { kicker: 'RECORRIDO · DIEGO, JEFE DE PLANTA', titulo: 'Hola, soy Diego. Te muestro cómo llevamos a tu empresa de una búsqueda en Google a una venta.', texto: 'Son cinco pasos: evaluamos, preparamos, posicionamos con Google Ads, guiamos cada contacto por WhatsApp y cerramos la venta.', corto: 'Cinco pasos: evaluamos, preparamos, posicionamos en Google, guiamos por WhatsApp y cerramos.', href: '#servicios', cta: 'Ver servicios',
+  { kicker: 'RECORRIDO · DIEGO, JEFE DE PLANTA', titulo: 'Hola, soy Diego. Te muestro cómo hacemos que tu empresa venda más.', texto: 'Son cinco pasos: evaluamos, preparamos, posicionamos con Google Ads, guiamos cada contacto por WhatsApp y cerramos la venta.', corto: 'Cinco pasos: evaluamos, preparamos, posicionamos en Google, guiamos por WhatsApp y cerramos.', href: '#servicios', cta: 'Ver servicios',
     pose: () => { const p = diego.g.position; return MOVIL() ? { pos: [p.x + .5, 1.75, p.z + 3.4], look: [p.x, 1.3, p.z], fov: 58 } : { pos: [p.x + 1.1, 1.85, p.z + 3.1], look: [p.x - .5, 1.45, p.z], fov: 46 }; } },
   { key: 'oficina', kicker: 'PASO 1 · EVALUAMOS TU EMPRESA', titulo: 'Partimos por entender tu negocio', texto: 'Revisamos tu producto, tus clientes, tu competencia y qué buscan tus compradores en Google. Así sabemos dónde está la venta.', corto: 'Revisamos tu producto, tu competencia y qué buscan tus compradores en Google.', href: '/contacto', cta: 'Pedir evaluación' },
   { key: 'oficina', kicker: 'PASO 2 · PREPARAMOS TU POSICIONAMIENTO', titulo: 'Palabras clave, web y medición', texto: 'Elegimos las búsquedas que compran, dejamos tu web lista para cotizar y medimos cada contacto desde el primer día.', corto: 'Elegimos las búsquedas que compran, dejamos tu web lista y medimos cada contacto.', href: '/pagina-web-empresa-industrial-chile', cta: 'Ver web industrial',
     pose: () => MOVIL() ? { pos: [-13.6, 6.9, -7.4], look: [-16.2, 5.4, -13.6], fov: 58 } : { pos: [-12.6, 6.5, -8.4], look: [-16.4, 5.3, -13.4], fov: 46 } },
-  { key: 'prospeccion', kicker: 'PASO 3 · POSICIONAMOS CON GOOGLE ADS', titulo: 'Apareces cuando te buscan', texto: 'Es nuestra especialidad: campañas de Google Ads para empresas industriales, optimizadas por costo por cotización. Cada clic entra a la línea como un prospecto.', corto: 'Nuestra especialidad: Google Ads para industria. Cada clic entra como prospecto.' },
+  { key: 'prospeccion', kicker: 'PASO 3 · POSICIONAMOS CON GOOGLE ADS', titulo: 'Apareces cuando te buscan', texto: 'Campañas de Google Ads para empresas industriales, optimizadas por costo por cotización. Cada clic entra a la línea como un prospecto.', corto: 'Google Ads para industria: cada clic entra como prospecto.' },
   { key: 'ia', kicker: 'PASO 4 · TODO ENTRA POR WHATSAPP', titulo: 'La IA guía cada contacto', texto: 'Quien llega desde Google te escribe por WhatsApp: el agente IA responde al tiro, cotiza con tu catálogo y lo guía hasta la compra. Las cajas grises salen amarillas.', corto: 'Llegan desde Google a tu WhatsApp: la IA responde, cotiza y guía hasta la compra.' },
   { key: 'ventas', kicker: 'PASO 5 · CERRAMOS LA VENTA', titulo: 'Pedidos listos para cerrar', texto: 'Tu equipo recibe clientes calientes, hacemos seguimiento a cada cotización y ves todo en el Panel JPB.', corto: 'Tu equipo recibe clientes calientes y seguimos cada cotización hasta cerrar.' },
   { kicker: 'CLIENTES EN PLANTA', titulo: 'Empresas que ya venden más', texto: 'ETP Polimer, Fierros Idini, Plastiservi + Conflex y The Kem Barbershop ya trabajan con esta planta.', corto: 'ETP Polimer, Fierros Idini, Plastiservi + Conflex y The Kem ya trabajan con nosotros.', href: '#clientes', cta: 'Ver los casos',
     pose: () => MOVIL() ? { pos: [-3.6, 6.4, 4.5], look: [-3.6, 6.9, -17], fov: 56 } : { pos: [-3.6, 6.3, -4], look: [-3.6, 6.9, -17], fov: 50 } },
-  { kicker: 'FIN DEL RECORRIDO', titulo: '¿Te posicionamos en Google?', texto: 'En 30 minutos revisamos tu empresa y te decimos cómo la pondríamos a vender con Google Ads y WhatsApp. Sin compromiso.', corto: 'En 30 minutos te decimos cómo pondríamos tu empresa a vender con Google Ads.', href: '/contacto', cta: 'Agenda una llamada',
+  { kicker: 'FIN DEL RECORRIDO', titulo: '¿Hacemos que tu empresa venda más?', texto: 'En 30 minutos revisamos tu situación comercial y te decimos qué haríamos primero. Sin compromiso.', corto: 'En 30 minutos vemos tu situación y te decimos qué haríamos primero.', href: '/contacto', cta: 'Agenda una llamada',
     pose: () => views.planta() }
 ];
 views.recorrido = () => { const st = RECORRIDO[ri]; return st.pose ? st.pose() : poseEst(st.key); };
