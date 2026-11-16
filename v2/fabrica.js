@@ -963,8 +963,9 @@ const trabajadorX = (parent, px, pz, ry, opts) => (persona ? personaReal(parent,
 const _qa = new THREE.Quaternion();
 // agarre del teléfono (ajustable por URL para calibrar: ?ag=a,b,c,t1x,t1y,t1z,t2x&tel=desplazamiento,profundidad)
 const _q = new URLSearchParams(location.search);
-const AG = (_q.get('ag') || '.3,.45,.3,.2,0,.4,.3').split(',').map(Number);
-const TEL = (_q.get('telp') || '.03,.075,-.02,.2').split(',').map(Number);
+const AG = (_q.get('ag') || '.75,.95,.7,.2,0,.4,.3').split(',').map(Number);
+const TEL = (_q.get('telp') || '.045,.02,.02,-1,3.1416').split(',').map(Number);
+const MU = (_q.get('mu') || '1.2,0,0,.85').split(',').map(Number); // giro de antebrazo (y) y muñeca (x,y,z) al mostrar el teléfono
 function hueso(w, n, x, y, z) {
   const b = w.huesos[n]; if (!b) return;
   const k = w.idx[n];
@@ -996,7 +997,8 @@ function animarReal(w, clock, dt) {
       // izquierda: sostiene el portapapeles (vuelve abajo al mostrar el teléfono)
       hueso(w, 'LeftArm', mix(1.15, 1.24), 0, mix(.45, .1)); hueso(w, 'LeftForeArm', 0, 0, mix(1.55, .28));
       // derecha: escribe sobre el portapapeles → o muestra el teléfono
-      hueso(w, 'RightArm', mix(1.1, 1.05), 0, mix(-.55, -.5)); hueso(w, 'RightForeArm', 0, mix(-.6 + esc, 0), mix(-1.85 + salto, -1.9));
+      hueso(w, 'RightArm', mix(1.1, 1.05), 0, mix(-.55, -.5)); hueso(w, 'RightForeArm', 0, mix(-.6 + esc, MU[0]), mix(-1.85 + salto, -1.9));
+      if (k > .01) hueso(w, 'RightHand', MU[1] * k, MU[2] * k, MU[3] * k);
       hueso(w, 'Head', mix(.36 * (1 - mira), .12), mix(.18 * mira, -.15), 0);
       for (const f of ['Index', 'Middle', 'Ring', 'Pinky']) { hueso(w, 'RightHand' + f + '1', mix(.9, AG[0]), 0, 0); hueso(w, 'RightHand' + f + '2', mix(1.1, AG[1]), 0, 0); hueso(w, 'RightHand' + f + '3', mix(.8, AG[2]), 0, 0); hueso(w, 'LeftHand' + f + '1', .5 * a, 0, 0); hueso(w, 'LeftHand' + f + '2', .6 * a, 0, 0); }
     }
@@ -1649,12 +1651,17 @@ function frame(now) {
       diego.huesos.RightHand.getWorldPosition(P); diego.huesos.RightHandIndex1.getWorldPosition(V); P.lerp(V, .7);
       lapiz.position.copy(P); lapiz.lookAt(tabla.position); lapiz.translateZ(.03);
     }
-    if (telefono.visible) {
-      diego.huesos.RightHand.getWorldPosition(P); diego.huesos.RightHandMiddle1.getWorldPosition(V);
-      P.lerp(V, .55); // palma
-      const hacia = V.copy(camera.position).sub(P).normalize(), der = new THREE.Vector3().crossVectors(hacia, camera.up).normalize();
-      telefono.position.copy(P).addScaledVector(camera.up, TEL[0]).addScaledVector(hacia, TEL[1]).addScaledVector(der, TEL[2] || 0);
-      telefono.lookAt(camera.position); telefono.rotateX(-(TEL[3] || 0)); telefono.rotateZ(.08); telefono.scale.setScalar(1.3);
+    if (telefono.visible) { // teléfono anclado a la mano: espalda en la palma, dedos rodeando un borde
+      const h = diego.huesos, muneca = new THREE.Vector3(), medio = new THREE.Vector3(), indice = new THREE.Vector3(), menique = new THREE.Vector3();
+      h.RightHand.getWorldPosition(muneca); h.RightHandMiddle1.getWorldPosition(medio); h.RightHandIndex1.getWorldPosition(indice); h.RightHandPinky1.getWorldPosition(menique);
+      const dedos = medio.clone().sub(muneca).normalize();                                   // hacia dónde apuntan los dedos
+      const ancho = indice.clone().sub(menique).normalize();                                 // de meñique a índice
+      const palma = new THREE.Vector3().crossVectors(dedos, ancho).normalize().multiplyScalar(TEL[3] || 1); // normal de la palma
+      const largo = new THREE.Vector3().crossVectors(palma, dedos).normalize();              // eje largo del teléfono (perpendicular a los dedos)
+      const m = new THREE.Matrix4().makeBasis(dedos, largo, palma);
+      telefono.quaternion.setFromRotationMatrix(m); if (TEL[4]) telefono.rotateZ(TEL[4]);
+      telefono.position.copy(muneca).addScaledVector(dedos, TEL[0]).addScaledVector(palma, TEL[1]).addScaledVector(largo, TEL[2]);
+      telefono.scale.setScalar(1.2);
     }
 
   }
