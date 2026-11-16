@@ -11,7 +11,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..900&family=JetBrains+Mono:wght@400;500;700&family=Silkscreen:wght@400;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="v2.css?v=15">
+  <link rel="stylesheet" href="v2.css?v=18">
   <style>html,body{background:#070b16}</style>
   <script type="importmap">
   {"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"}}
@@ -42,6 +42,7 @@
   <a href="#metodo"><span class="mono">04</span>Cómo trabajamos</a>
   <a href="/contacto" class="nav-menu-cta">Agenda una llamada →</a>
   <a href="https://wa.me/56944843503" target="_blank" rel="noopener noreferrer" class="mono nav-menu-wa">WhatsApp · +56 9 4484 3503</a>
+  <button type="button" class="mono nav-menu-maq" data-modo="maquina">Ver la página en modo máquina (para IA)</button>
 </nav>
 
 <main id="humano">
@@ -65,7 +66,7 @@
       <h3 class="est-titulo"></h3>
       <p class="est-texto"></p>
       <a class="est-cta" href="/contacto">Ver más →</a>
-      <div class="est-nav"><button type="button" class="est-prev" aria-label="Estación anterior">‹</button><span class="est-dots"></span><button type="button" class="est-next" aria-label="Estación siguiente">›</button></div>
+      <div class="est-nav"><button type="button" class="est-prev" aria-label="Estación anterior">‹</button><span class="est-dots"></span><span class="est-num mono">1/8</span><button type="button" class="est-next" aria-label="Estación siguiente">›</button></div>
     </div>
     <div class="planta-hud">
       <div class="hud-left">
@@ -257,6 +258,12 @@
   <pre id="maq-md"></pre>
 </section>
 
+<!-- BARRA DE CONTACTO EN CELULAR -->
+<div class="barra-movil" id="barra-movil" aria-hidden="true">
+  <a href="/contacto" class="btn btn-primary">Agenda una llamada</a>
+  <a href="https://wa.me/56944843503" class="barra-wa" target="_blank" rel="noopener noreferrer" aria-label="Escríbenos por WhatsApp"><svg viewBox="0 0 24 24" width="24" height="24" fill="currentColor" aria-hidden="true"><path d="M17.47 14.38c-.3-.15-1.76-.87-2.03-.97-.27-.1-.47-.15-.67.15-.2.3-.77.97-.94 1.16-.17.2-.35.22-.64.07-.3-.15-1.26-.46-2.39-1.48-.88-.79-1.48-1.76-1.65-2.06-.17-.3-.02-.46.13-.6.13-.14.3-.35.45-.52.15-.17.2-.3.3-.5.1-.2.05-.37-.03-.52-.07-.15-.67-1.61-.92-2.2-.24-.58-.49-.5-.67-.51h-.57c-.2 0-.52.07-.79.37-.27.3-1.04 1.02-1.04 2.48s1.07 2.88 1.21 3.07c.15.2 2.1 3.2 5.08 4.49.71.31 1.26.49 1.7.63.71.23 1.36.2 1.87.12.57-.09 1.76-.72 2-1.41.25-.7.25-1.29.18-1.41-.08-.13-.27-.2-.57-.35M12.05 21.79h-.01a9.87 9.87 0 0 1-5.03-1.38l-.36-.21-3.74.98 1-3.65-.24-.37a9.86 9.86 0 0 1-1.51-5.26c0-5.45 4.44-9.88 9.89-9.88a9.83 9.83 0 0 1 6.99 2.9 9.82 9.82 0 0 1 2.89 6.99c0 5.45-4.44 9.88-9.88 9.88m8.41-18.3A11.81 11.81 0 0 0 12.05 0C5.5 0 .16 5.34.16 11.89c0 2.1.55 4.14 1.59 5.95L.06 24l6.3-1.65a11.88 11.88 0 0 0 5.69 1.45h.01c6.55 0 11.89-5.34 11.89-11.89 0-3.18-1.24-6.17-3.48-8.41"/></svg></a>
+</div>
+
 <!-- TOGGLE HUMANO / MÁQUINA -->
 <div class="modo" role="group" aria-label="Modo de vista">
   <button type="button" class="on" data-modo="humano" aria-pressed="true">HUMANO</button>
@@ -312,7 +319,7 @@ App móvil para clientes: conversaciones de WhatsApp en vivo, seguimiento de cli
 - Santiago, Chile
 </script>
 
-<script src="pagina.js?v=6" defer></script>
-<script type="module" src="fabrica.js?v=21"></script>
+<script src="pagina.js?v=7" defer></script>
+<script type="module" src="fabrica.js?v=22"></script>
 </body>
 </html>

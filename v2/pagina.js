@@ -32,12 +32,13 @@
   pre.textContent = md;
   document.getElementById('maq-bytes').textContent = new Blob([md]).size;
   var maq = document.getElementById('maquina');
-  document.querySelectorAll('.modo button').forEach(function (b) {
+  document.querySelectorAll('[data-modo]').forEach(function (b) {
     b.addEventListener('click', function () {
       var m = b.dataset.modo === 'maquina';
+      if (typeof setMenu === 'function' && !menu.hidden) setMenu(false);
       document.body.classList.toggle('modo-maquina', m);
       maq.hidden = !m;
-      document.querySelectorAll('.modo button').forEach(function (o) { var on = o === b; o.classList.toggle('on', on); o.setAttribute('aria-pressed', on); });
+      document.querySelectorAll('.modo button').forEach(function (o) { var on = (o.dataset.modo === 'maquina') === m; o.classList.toggle('on', on); o.setAttribute('aria-pressed', on); });
       window.scrollTo(0, 0);
       window.dispatchEvent(new CustomEvent('jpb-modo', { detail: m ? 'maquina' : 'humano' }));
     });
@@ -50,4 +51,12 @@
     a.href = URL.createObjectURL(new Blob([md], { type: 'text/markdown' }));
     a.download = 'jpbmarketing.md'; a.click();
   });
+
+  /* ---------- Barra de contacto en celular: aparece al bajar de la planta ---------- */
+  var barra = document.getElementById('barra-movil'), planta = document.getElementById('inicio'), cta = document.getElementById('contacto');
+  var enPlanta = true, enCta = false;
+  function pintarBarra() { var on = !enPlanta && !enCta && !document.body.classList.contains('modo-maquina'); barra.classList.toggle('on', on); barra.setAttribute('aria-hidden', !on); }
+  new IntersectionObserver(function (e) { enPlanta = e[0].intersectionRatio > .35; pintarBarra(); }, { threshold: [0, .35, 1] }).observe(planta);
+  new IntersectionObserver(function (e) { enCta = e[0].isIntersecting; pintarBarra(); }).observe(cta);
+  addEventListener('jpb-modo', pintarBarra);
 })();

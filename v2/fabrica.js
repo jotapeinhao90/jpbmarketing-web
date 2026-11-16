@@ -1117,6 +1117,7 @@ function irPaso(i, pausa) {
   sel = st.key || null; selWorker = ri === 0 ? diego : null;
   llenarCard(e);
   card.querySelectorAll('.est-dots i').forEach((d, k) => d.classList.toggle('on', k === ri));
+  card.querySelector('.est-num').textContent = (ri + 1) + '/' + RECORRIDO.length;
   setVista('recorrido'); recOn = true;
   recNext = rt + (pausa ? 18 : ri === 0 ? 8 : 7);
 }
@@ -1210,8 +1211,8 @@ function frame(now) {
   const realDt = Math.max(0, (now - last) / 1000); const dt = Math.min(.05, realDt); last = Math.max(last, now);
   // la obra avanza con el reloj real, aunque la escena no se esté dibujando
   const t = (now - buildStart) / 1000;
-  U.uLine.value = easeOut((t - .15) / 1.7) * 1.06;
-  U.uSolid.value = ease((t - 1.5) / 6.2) * 1.1;
+  U.uLine.value = easeOut((t - .15) / (LOW ? 1.2 : 1.7)) * 1.06;
+  U.uSolid.value = LOW ? ease((t - 1.0) / 4.2) * 1.1 : ease((t - 1.5) / 6.2) * 1.1;
   const pct = Math.round(Math.min(1, U.uSolid.value / 1.06) * 100);
   if (pct !== lastPct) {
     lastPct = pct;
@@ -1219,18 +1220,18 @@ function frame(now) {
     hudEstado.textContent = pct < 100 ? (t < 1.6 ? 'TRAZANDO PLANOS' : 'LEVANTANDO PLANTA') : 'PLANTA OPERATIVA · 24/7';
     navStatus.textContent = pct < 100 ? 'En obra' : 'Planta';
     section.classList.toggle('operativa', pct >= 100);
-    if (pct >= 100 && MOVIL() && !recOn && vista === 'planta') { msg.querySelector('p:last-child').textContent = 'Desliza para ver cada estación.'; recStartAt = rt + 2.5; }
+    if (pct >= 30 && MOVIL() && !recOn && !recStartAt && vista === 'planta') { msg.querySelector('p:last-child').textContent = 'Desliza para ver cada estación.'; recStartAt = rt + .4; }
   }
   if (!visible || modo !== 'humano' || document.hidden) { fpsT = now; fpsN = 0; return; }
   clock += dt;
-  const power = ease((t - 3) / 4.5);
-  const done = t > 9.5;
+  const power = LOW ? ease((t - 1.8) / 3.2) : ease((t - 3) / 4.5);
+  const done = t > (LOW ? 6.5 : 9.5);
   if (done !== linesOff) { linesOff = done; staticLines.visible = !done; dynLines.forEach((l) => (l.visible = !done)); }
 
   hemi.intensity = .1 * power;
   sun.intensity = (LOW ? 2.2 : 4.2) * power;
   hemi.intensity = (LOW ? .32 : .1) * power;
-  lampLights.forEach((l, i) => { const fl = t < 8 ? (Math.sin(t * 40 + i * 9) > .2 ? 1 : .2) : 1; l.intensity = 48 * ease((t - 3.4 - i * .25) / 1.2) * fl; });
+  lampLights.forEach((l, i) => { const fl = t < 8 ? (Math.sin(t * 40 + i * 9) > .2 ? 1 : .2) : 1; l.intensity = 48 * ease((t - (LOW ? 2.2 : 3.4) - i * .25) / 1.2) * fl; });
   ledLight.intensity = 55 * led.on; fillLight.intensity = 14 * power; ofiLight.intensity = 22 * power; deskLight.intensity = 0;
   beams.forEach(([m, o]) => (m.material.opacity = o * power));
   polvo.material.opacity = .55 * power;
@@ -1238,7 +1239,7 @@ function frame(now) {
 
   // --- pantallas ---
   pantallas.forEach((p) => {
-    const k = (t - 6.2 - p.delay);
+    const k = (t - (LOW ? 4.2 : 6.2) - p.delay);
     p.on = k < 0 ? 0 : k < .5 ? (Math.random() > .45 ? 1 : .15) : 1;
     p.gris = (p.gris || 0) + ((hover && hover.userData.pantalla === p ? 1 : 0) - (p.gris || 0)) * Math.min(1, realDt * 10);
     const gv = p.on * (1 - .5 * p.gris);
