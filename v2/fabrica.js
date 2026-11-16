@@ -947,7 +947,11 @@ function animarReal(w, clock, dt) {
     hueso(w, 'LeftArm', 1.24, 0, .1 + resp * .02); hueso(w, 'RightArm', 1.24, 0, -.1 - resp * .02);
     hueso(w, 'LeftForeArm', 0, 0, .28); hueso(w, 'RightForeArm', 0, 0, -.28);
     hueso(w, 'Spine2', resp * .018, 0, 0); hueso(w, 'Head', 0, Math.sin(clock * .5 + id) * .35, 0);
-    if (w.jefe) { hueso(w, 'LeftArm', .95, 0, .62); hueso(w, 'LeftForeArm', 0, 0, 1.35 + Math.sin(clock * .8) * .04); }
+    if (w.jefe) {
+      hueso(w, 'LeftArm', .95, 0, .62); hueso(w, 'LeftForeArm', 0, 0, 1.35 + Math.sin(clock * .8) * .04);
+      const k = w.tel || 0;
+      if (k > .01) { hueso(w, 'RightArm', 1.24 + (.55 - 1.24) * k, 0, -.1 + (-1.0 + .1) * k); hueso(w, 'RightForeArm', -1.3 * k, 0, -.28 * (1 - k)); hueso(w, 'Head', 0, .25 * k, 0); }
+    }
   }
   // saludo real (animación de Mixamo) mezclado con la pose según cuánto está activo
   if (w.act > .02 && !w.sentado && persona.animations[0]) {
@@ -993,6 +997,18 @@ OFI.forEach(([x, z], i) => {
 const diego = trabajadores[2];
 if (!diego.real) { diego.shL.rotation.x = -.55; diego.elL.rotation.x = -1.15; diego.elL.rotation.z = .25; }
 { const t = diego.real ? (() => { const a = new THREE.Group(); a.scale.setScalar(100); a.position.set(0, 10, 4); diego.huesos.LeftHand.add(a); return grp(a, 0, 0, 0); })() : grp(diego.muL, 0, -.07, .06); t.rotation.x = -.5; D(rbox(.2, .27, .012, .012), M.dark, t, 0, 0, 0); const sm = basic({ color: 0x7fd4ff }); sm.toneMapped = false; D(new THREE.PlaneGeometry(.18, .25), sm, t, 0, 0, .0065); }
+// teléfono que Diego levanta en el paso de la app
+const telefono = new THREE.Group(); telefono.visible = false; scene.add(telefono);
+{
+  const marco = new THREE.Mesh(new RoundedBoxGeometry(.078, .16, .009, 3, .008), std({ color: 0x8b8e93, metalness: .9, roughness: .3, envMap: envMetal })); telefono.add(marco);
+  const c = cv(256, 512), x = c.getContext('2d');
+  x.fillStyle = '#0b1220'; x.fillRect(0, 0, 256, 512); x.fillStyle = '#f5b800'; x.fillRect(0, 0, 256, 70);
+  x.fillStyle = '#0b1220'; x.font = '800 30px Archivo, sans-serif'; x.fillText('Panel JPB', 18, 48);
+  for (let i = 0; i < 6; i++) { x.fillStyle = 'rgba(238,240,244,.1)'; x.fillRect(14, 90 + i * 66, 228, 56); x.fillStyle = i % 3 ? '#30d158' : '#f5b800'; x.beginPath(); x.arc(40, 118 + i * 66, 12, 0, 6.283); x.fill(); x.fillStyle = 'rgba(238,240,244,.75)'; x.fillRect(62, 108 + i * 66, 140, 9); x.fillStyle = 'rgba(238,240,244,.35)'; x.fillRect(62, 124 + i * 66, 100, 7); }
+  const t = new THREE.CanvasTexture(c); t.colorSpace = THREE.SRGBColorSpace;
+  const pm = new THREE.MeshBasicMaterial({ map: t }); pm.toneMapped = false;
+  const pantalla = new THREE.Mesh(new THREE.PlaneGeometry(.07, .15), pm); pantalla.position.z = .0047; telefono.add(pantalla);
+}
 const anillo = new THREE.Mesh(new THREE.RingGeometry(.5, .6, 48), new THREE.MeshBasicMaterial({ color: 0xf5b800, transparent: true, opacity: 0, blending: THREE.AdditiveBlending, depthWrite: false, side: THREE.DoubleSide }));
 anillo.rotation.x = -Math.PI / 2; anillo.position.set(diego.g.position.x, .02, diego.g.position.z); scene.add(anillo);
 const focoDiego = LOW ? new THREE.PointLight(0xfff1d6, 0, 6, 1.4) : new THREE.SpotLight(0xfff1d6, 0, 14, .32, .55, 1.2); focoDiego.position.set(diego.g.position.x + .6, 7.5, diego.g.position.z + 1.2);
@@ -1123,7 +1139,7 @@ const MOVIL = () => innerWidth < 760;
 let rt = performance.now() / 1000, ri = 0, recOn = false, recNext = 0, recStartAt = 0, pasoT0 = 0, cineI = -1;
 const poseEst = (k) => { const e = ESTACIONES[k]; return MOVIL() ? { pos: e.mpos, look: e.mlook, fov: 60 } : { pos: e.pos, look: e.c, fov: 50 }; };
 const RECORRIDO = [
-  { kicker: 'RECORRIDO · DIEGO, JEFE DE PLANTA', titulo: 'Hola, soy Diego. Te muestro cómo hacemos que tu empresa venda más.', texto: 'Son cinco pasos: evaluamos, preparamos, posicionamos con Google Ads, guiamos cada contacto por WhatsApp y cerramos la venta.', corto: 'Cinco pasos: evaluamos, preparamos, posicionamos en Google, guiamos por WhatsApp y cerramos.', href: '#servicios', cta: 'Ver servicios',
+  { kicker: 'RECORRIDO · DIEGO, JEFE DE PLANTA', titulo: 'Hola, soy Diego. Te muestro cómo hacemos que tu empresa venda más.', texto: 'Evaluamos, preparamos, posicionamos, guiamos cada contacto por WhatsApp y cerramos la venta. Y tú lo sigues todo desde tu app.', corto: 'Evaluamos, preparamos, posicionamos, guiamos por WhatsApp, cerramos y lo sigues en tu app.', href: '#servicios', cta: 'Ver servicios',
     pose: () => { const p = diego.g.position; return MOVIL() ? { pos: [p.x + .5, 1.75, p.z + 3.4], look: [p.x, 1.3, p.z], fov: 58 } : { pos: [p.x + 1.1, 1.85, p.z + 3.1], look: [p.x - .5, 1.45, p.z], fov: 46 }; } },
   { key: 'oficina', kicker: 'PASO 1 · EVALUAMOS TU EMPRESA', titulo: 'Partimos por entender tu negocio', texto: 'Revisamos tu producto, tus clientes, tu competencia y qué buscan tus compradores en Google. Así sabemos dónde está la venta.', corto: 'Revisamos tu producto, tu competencia y qué buscan tus compradores en Google.', href: '/contacto', cta: 'Pedir evaluación' },
   { key: 'oficina', kicker: 'PASO 2 · PREPARAMOS TU POSICIONAMIENTO', titulo: 'Palabras clave, web y medición', texto: 'Elegimos las búsquedas que compran, dejamos tu web lista para cotizar y medimos cada contacto desde el primer día.', corto: 'Elegimos las búsquedas que compran, dejamos tu web lista y medimos cada contacto.', href: '/pagina-web-empresa-industrial-chile', cta: 'Ver web industrial',
@@ -1135,6 +1151,8 @@ const RECORRIDO = [
   { key: 'prospeccion', kicker: 'PASO 3 · POSICIONAMOS CON GOOGLE ADS', titulo: 'Apareces cuando te buscan', texto: 'Campañas de Google Ads para empresas industriales, optimizadas por costo por cotización. Cada clic entra a la línea como un prospecto.', corto: 'Google Ads para industria: cada clic entra como prospecto.' },
   { key: 'ia', kicker: 'PASO 4 · TODO ENTRA POR WHATSAPP', titulo: 'La IA guía cada contacto', texto: 'Quien llega desde Google te escribe por WhatsApp: el agente IA responde al tiro, cotiza con tu catálogo y lo guía hasta la compra. Las cajas grises salen amarillas.', corto: 'Llegan desde Google a tu WhatsApp: la IA responde, cotiza y guía hasta la compra.' },
   { key: 'ventas', kicker: 'PASO 5 · CERRAMOS LA VENTA', titulo: 'Pedidos listos para cerrar', texto: 'Tu equipo recibe clientes calientes, hacemos seguimiento a cada cotización y ves todo en el Panel JPB.', corto: 'Tu equipo recibe clientes calientes y seguimos cada cotización hasta cerrar.' },
+  { app: true, kicker: 'PASO 6 · TU APP PANEL JPB', titulo: 'Sigues todo desde tu teléfono', texto: 'Con la app Panel JPB ves en vivo las conversaciones de WhatsApp, quién dejó de responder, cada cotización y lo que gastas en Google y en IA.', corto: 'En la app Panel JPB ves en vivo tus chats, cotizaciones, seguimientos y gastos.', href: '/panel-jpb-demo', cta: 'Abrir demo completa',
+    pose: () => { const p = diego.g.position; return MOVIL() ? { pos: [p.x + .25, 1.95, p.z + 2.9], look: [p.x + .05, 1.55, p.z], fov: 56 } : { pos: [p.x + 1.9, 1.85, p.z + 3.2], look: [p.x + 1.15, 1.5, p.z], fov: 44 }; } },
   { kicker: 'CLIENTES EN PLANTA', titulo: 'Empresas que ya venden más', texto: 'ETP Polimer, Fierros Idini, Plastiservi + Conflex y The Kem Barbershop ya trabajan con esta planta.', corto: 'ETP Polimer, Fierros Idini, Plastiservi + Conflex y The Kem ya trabajan con nosotros.', href: '#clientes', cta: 'Ver los casos',
     pose: () => MOVIL() ? { pos: [-3.6, 6.4, 4.5], look: [-3.6, 6.9, -17], fov: 56 } : { pos: [-3.6, 6.3, -4], look: [-3.6, 6.9, -17], fov: 50 } },
   { kicker: 'FIN DEL RECORRIDO', titulo: '¿Hacemos que tu empresa venda más?', texto: 'En 30 minutos revisamos tu situación comercial y te decimos qué haríamos primero. Sin compromiso.', corto: 'En 30 minutos vemos tu situación y te decimos qué haríamos primero.', href: '/contacto', cta: 'Agenda una llamada',
@@ -1170,7 +1188,9 @@ function irPaso(i, pausa) {
   card.querySelector('.est-num').textContent = (ri + 1) + '/' + RECORRIDO.length;
   setVista('recorrido'); recOn = true;
   pasoT0 = rt; cineI = -1;
-  recNext = rt + (pausa ? 18 : ri === 0 ? 8 : st.cine ? 10.4 : 7);
+  mostrarApp(!!st.app);
+  recNext = rt + (pausa ? 18 : ri === 0 ? 8 : st.cine ? 10.4 : st.app ? 15 : 7);
+  if (st.app && demoPausa) recNext = Infinity;
   if (!MOVIL() && ri === RECORRIDO.length - 1) recNext = Infinity;
   anilloTiempo(recNext - rt);
 }
@@ -1180,6 +1200,35 @@ function anilloTiempo(seg) {
   if (isFinite(seg) && seg > 0) { a.style.setProperty('--dur', seg + 's'); a.classList.add('corre'); }
 }
 function iniciarRecorrido() { irPaso(0); }
+// --- demo real de la app en un teléfono ---
+const appDemo = document.getElementById('app-demo'), appIframe = document.getElementById('app-iframe'), appBadge = document.getElementById('app-badge');
+let appOn = false, demoPausa = false, appTimer = 0;
+function mostrarApp(on) {
+  clearTimeout(appTimer);
+  section.classList.toggle('paso-app', on);
+  if (on === appOn && on) return;
+  appOn = on; diego.telMeta = on ? 1 : 0;
+  if (on) {
+    appTimer = setTimeout(() => {
+      if (!appOn) return;
+      if (!appIframe.src) appIframe.src = '/panel-jpb-demo';
+      appDemo.hidden = false; requestAnimationFrame(() => appDemo.classList.add('on'));
+    }, 1100);
+  } else {
+    demoPausa = false; appBadge.classList.remove('pausa'); appBadge.querySelector('span').textContent = 'Toca para probar la demo';
+    appDemo.classList.remove('on'); appTimer = setTimeout(() => { if (!appOn) appDemo.hidden = true; }, 450);
+  }
+}
+function pausaDemo() {
+  if (!appOn || demoPausa) return;
+  demoPausa = true; recNext = Infinity; anilloTiempo(0);
+  appBadge.classList.add('pausa'); appBadge.querySelector('span').textContent = 'Demo en pausa · toca › para seguir';
+}
+appIframe.addEventListener('load', () => {
+  try { const d = appIframe.contentDocument; ['pointerdown', 'touchstart', 'wheel', 'keydown', 'scroll'].forEach((ev) => d.addEventListener(ev, pausaDemo, { passive: true, capture: true })); } catch (e) {}
+});
+addEventListener('blur', () => { setTimeout(() => { if (document.activeElement === appIframe) pausaDemo(); }, 0); });
+appDemo.addEventListener('pointerdown', pausaDemo);
 function abrirEstacion(k, w) {
   if (w === diego) { iniciarRecorrido(); return; }
   sel = k; selWorker = w || (k === 'equipo' ? trabajadores[0] : null);
@@ -1493,6 +1542,11 @@ function frame(now) {
     const nMsg = Math.floor((clock % 14) / 1.8);
     if (nMsg !== SON.nMsg) { SON.nMsg = nMsg; const bot = [0, 1, 0, 1, 0, 1][Math.min(nMsg, 5)];
       if (nMsg <= 5) { const s = bot ? SON.tecleoIA : SON.aviso; if (s.isPlaying) s.stop(); s.play(); if (bot) setTimeout(() => { if (SON.aviso.isPlaying) SON.aviso.stop(); SON.aviso.play(); }, 900); } }
+  }
+  if (diego.real) {
+    diego.tel = (diego.tel || 0) + ((diego.telMeta || 0) - (diego.tel || 0)) * Math.min(1, realDt * 4);
+    telefono.visible = diego.tel > .35;
+    if (telefono.visible) { diego.huesos.RightHand.getWorldPosition(P); telefono.position.copy(P).add(V.set(0, .09, .02)); telefono.lookAt(camera.position); }
   }
   const pp = polvo.geometry.attributes.position;
   for (let i = 0; i < pp.count; i += 7) { pp.array[i * 3 + 1] += dt * .06; if (pp.array[i * 3 + 1] > 11) pp.array[i * 3 + 1] = 0; }

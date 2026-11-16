@@ -11,7 +11,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..900&family=JetBrains+Mono:wght@400;500;700&family=Silkscreen:wght@400;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="v2.css?v=22">
+  <link rel="stylesheet" href="v2.css?v=23">
   <style>html,body{background:#070b16}</style>
   <script type="importmap">
   {"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"}}
@@ -63,6 +63,13 @@
       <p>Toca cada estación.</p>
     </div>
     <div class="etiquetas" id="etiquetas"></div>
+    <div class="app-demo" id="app-demo" hidden>
+      <p class="app-badge" id="app-badge"><i></i><span>Toca para probar la demo</span></p>
+      <div class="tel">
+        <span class="tel-btn tel-accion"></span><span class="tel-btn tel-vol1"></span><span class="tel-btn tel-vol2"></span><span class="tel-btn tel-power"></span>
+        <div class="tel-pantalla"><div class="tel-isla"></div><iframe id="app-iframe" title="Demo interactiva de la app Panel JPB"></iframe></div>
+      </div>
+    </div>
     <div class="est-chips" id="est-chips" aria-label="Estaciones de la planta"></div>
     <div class="estacion" id="estacion" hidden>
       <button type="button" class="est-cerrar" aria-label="Volver a la planta">×</button>
@@ -324,6 +331,6 @@ App móvil para clientes: conversaciones de WhatsApp en vivo, seguimiento de cli
 </script>
 
 <script src="pagina.js?v=7" defer></script>
-<script type="module" src="fabrica.js?v=29"></script>
+<script type="module" src="fabrica.js?v=30"></script>
 </body>
 </html>
