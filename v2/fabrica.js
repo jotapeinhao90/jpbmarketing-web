@@ -321,10 +321,33 @@ S(box(.08, .9, 1.2), M.dark, mtx(-8.98, 1.1, lineZ), 30, false);
 S(box(3.24, .06, 2.64), M.yellow, mtx(-10.6, 2.62, lineZ), 30, false);
 for (const [dx, dz] of [[-1.6, 1.3], [1.6, 1.3]]) S(box(.05, 2.6, .05), M.yellow, mtx(-10.6 + dx, 1.3, lineZ + dz), 30, false);
 S(box(.9, .14, .02), M.lamp, mtx(-11.2, 2.1, lineZ + 1.31), 30, false);
-// embaladora (fin)
-S(box(3.2, 2.4, 2.8), M.machine, mtx(9.6, 1.2, lineZ));
-S(box(.06, 1.1, 1.25), M.rubber, mtx(7.98, 1.25, lineZ), 30, false);
-S(box(3.25, .25, 2.85), M.dark, mtx(9.6, 2.5, lineZ)); S(box(3.27, .06, 2.87), M.yellow, mtx(9.6, 2.36, lineZ), 30, false);
+// 03 · despacho: arco con franjas de seguridad, rampa de rodillos, pallet y camión de reparto
+const franjas = (() => { const c = document.createElement('canvas'); c.width = 256; c.height = 32; const x = c.getContext('2d'); x.fillStyle = '#f5b800'; x.fillRect(0, 0, 256, 32); x.fillStyle = '#111'; for (let i = -32; i < 256; i += 32) { x.beginPath(); x.moveTo(i, 32); x.lineTo(i + 16, 32); x.lineTo(i + 32, 0); x.lineTo(i + 16, 0); x.fill(); } const t = new THREE.CanvasTexture(c); t.colorSpace = THREE.SRGBColorSpace; t.wrapS = THREE.RepeatWrapping; t.repeat.set(3, 1); return t; })();
+M.franjas = std({ map: franjas, roughness: .5 });
+const ARCO_X = 8.45;
+for (const sz of [-1, 1]) { S(box(.22, 2.75, .22), M.franjas, mtx(ARCO_X, 1.375, lineZ + sz * .95)); S(box(.5, .06, .5), M.dark, mtx(ARCO_X, .03, lineZ + sz * .95)); }
+S(box(.3, .32, 2.2), M.franjas, mtx(ARCO_X, 2.86, lineZ));
+// rampa de rodillos que baja de la cinta al pallet
+const RAMPA = { x0: beltX1, y0: beltY + .24, x1: 10.05, y1: .62 };
+{ const L = Math.hypot(RAMPA.x1 - RAMPA.x0, RAMPA.y0 - RAMPA.y1 - .24), a = Math.atan2(RAMPA.y0 - .24 - (RAMPA.y1 - .21), RAMPA.x1 - RAMPA.x0);
+  for (const sz of [-1, 1]) S(box(L + .2, .1, .06), M.steel, mtx((RAMPA.x0 + RAMPA.x1) / 2, (RAMPA.y0 - .24 + RAMPA.y1 - .21) / 2, lineZ + sz * .5, 0, 0, -a));
+  for (let i = 0; i <= 9; i++) { const t = i / 9; S(cyl(.035, .035, .96, 10), M.pvc, mtx(RAMPA.x0 + (RAMPA.x1 - RAMPA.x0) * t, RAMPA.y0 - .26 + (RAMPA.y1 - .21 - RAMPA.y0 + .26) * t, lineZ, Math.PI / 2, 0, 0), 50, false); }
+  for (const xx of [RAMPA.x0 + .3, RAMPA.x1 - .2]) for (const sz of [-1, 1]) S(box(.06, 1, .06), M.dark, mtx(xx, .45, lineZ + sz * .5), 30, false);
+}
+const PALLET = { x: 10.85, z: lineZ };
+S(box(1.25, .14, 1.05), M.wood, mtx(PALLET.x, .07, PALLET.z));
+// camión de reparto con las puertas traseras abiertas hacia el pallet
+{ const B = mtx(14.15, 0, lineZ + .2, 0, 0, 0);
+  S(box(3.4, 2.05, 1.95), M.white, at(B, 0, 1.5, 0));                                  // furgón
+  S(box(3.42, .22, 1.97), M.yellow, at(B, 0, .95, 0), 30, false);                      // franja
+  S(box(.05, 1.85, 1.75), M.dark, at(B, -1.71, 1.5, 0), 30, false);                     // interior oscuro
+  S(box(1.45, 1.55, 1.9), M.white, at(B, 2.42, 1.25, 0));                               // cabina
+  S(box(.04, .7, 1.6), M.glass, at(B, 3.15, 1.6, 0), 30, false);                         // parabrisas
+  S(box(1.45, .5, 1.92), M.dark, at(B, 2.42, .55, 0), 30, false);
+  for (const [wx, wz] of [[-1, .9], [-1, -.9], [2.5, .9], [2.5, -.9]]) S(cyl(.42, .42, .3, 18), M.rubber, at(B, wx, .42, wz, Math.PI / 2, 0, 0), 40);
+  for (const sz of [-1, 1]) S(box(.04, 1.95, .95), M.white, at(B, -1.72 - .45, 1.5, sz * 1.4, 0, sz * -1.35, 0), 30);  // puertas abiertas
+  for (let k = 0; k < 4; k++) S(box(.55, .42, .5), M.carton, at(B, -1.0 + (k % 2) * .6, .73 + ((k / 2) | 0) * .43, -.45), 30, false);
+}
 // palletizado detrás de cada robot
 for (const px of [-6.2, .8]) {
   S(box(1.2, .14, 1.0), M.wood, mtx(px, .07, -3.7));
@@ -404,6 +427,7 @@ scene.add(staticLines);
 /* ------------------------------------------------------------------ */
 /*  Dinámicos: cajas en la cinta, robots, puente grúa, balizas         */
 /* ------------------------------------------------------------------ */
+const pila = []; let pilaN = 0, pilaVacia = 0;
 const cajas = [];
 const cajaGeo = box(.56, .42, .5);
 function texCaja(txt, bg, ink) {
@@ -446,9 +470,10 @@ for (const s of [-1, 1]) D(cyl(.025, .025, 1.1, 4), M.dark, carro, s * .18, 10.1
 D(box(.56, .5, .36), M.yellow, carro, 0, 9.35, 0);
 D(new THREE.TorusGeometry(.14, .04, 8, 16, Math.PI * 1.4), M.steel, carro, 0, 8.98, 0, 0, 0, Math.PI * .8, 40);
 
+for (let k = 0; k < 8; k++) { const b = D(box(.52, .4, .46), M.venta, scene, PALLET.x - .28 + (k % 2) * .56, .35 + ((k / 4) | 0) * .42, PALLET.z - .25 + (((k / 2) | 0) % 2) * .5); b.visible = false; pila.push(b); }
 const baliza = [0xff3b30, 0xffb800, 0x30d158].map((c, i) => {
   const mat = basic({ color: c }); mat.toneMapped = false;
-  const m = D(cyl(.11, .11, .2, 14), mat, scene, 10.9, 2.75 + i * .21, lineZ + 1.1, 0, 0, 0, 40);
+  const m = D(cyl(.1, .1, .19, 14), mat, scene, ARCO_X, 3.12 + i * .2, lineZ - .85, 0, 0, 0, 40);
   m.userData.c = new THREE.Color(c); return m;
 });
 
@@ -663,12 +688,25 @@ const sMedDet = (x, W, H, st, tt) => {
   });
   setFont(x, 700, 16, 'JetBrains Mono', false); x.fillStyle = '#25d366'; x.fillText('COSTO POR COTIZACIÓN: $8.900', 30, H - 18);
 };
+const ULTIMAS = [['Constructora Maipú', 2940000], ['Metalúrgica Ríos', 1180000], ['Agrícola Los Olmos', 3200000], ['Ferretería El Tornillo', 640000], ['Taller Mecánico Vega', 890000], ['Maestranza Ñuble', 1460000]];
 const sVentas = (x, W, H, st, tt) => {
   x.fillStyle = '#05080f'; x.fillRect(0, 0, W, H);
-  setFont(x, 500, 18, 'JetBrains Mono', false); x.fillStyle = YEL; x.fillText('03 · VENTAS', 26, 40);
-  x.fillStyle = 'rgba(238,240,244,.6)'; x.fillText('CERRADAS HOY', 26, 68);
-  setFont(x, 900, Math.round(H * .4)); x.fillStyle = INK; x.fillText(String(typeof ventas === 'number' ? ventas : 128), 22, H * .66);
-  setFont(x, 600, 20, 'JetBrains Mono', false); x.fillStyle = '#25d366'; x.fillText('▲ +3x vs. el mes pasado', 26, H - 28);
+  const v = typeof ventas === 'number' ? ventas : 128, recien = typeof SON === 'object' && SON.ultimaVenta && (clock - SON.ultimaVenta) < .8;
+  setFont(x, 600, 17, 'JetBrains Mono', false); x.fillStyle = YEL; x.fillText('03 · VENTAS CERRADAS HOY', 24, 34);
+  setFont(x, 900, 112); x.fillStyle = recien ? YEL : INK; x.fillText(String(v), 20, 140);
+  setFont(x, 700, 18, 'JetBrains Mono', false); x.fillStyle = '#25d366'; x.fillText('▲ 3x vs. mes pasado', 26, 170);
+  // meta del mes
+  const meta = Math.min(1, .62 + (v % 40) / 100);
+  x.fillStyle = 'rgba(238,240,244,.12)'; x.fillRect(24, 196, 330, 14); x.fillStyle = YEL; x.fillRect(24, 196, 330 * meta, 14);
+  setFont(x, 600, 15, 'JetBrains Mono', false); x.fillStyle = 'rgba(238,240,244,.7)'; x.fillText('META DEL MES ' + Math.round(meta * 100) + '%', 24, 232);
+  // últimas ventas
+  setFont(x, 600, 15, 'JetBrains Mono', false); x.fillStyle = 'rgba(238,240,244,.55)'; x.fillText('ÚLTIMAS VENTAS', 400, 34);
+  for (let k = 0; k < 4; k++) {
+    const [n, m] = ULTIMAS[(v + k) % ULTIMAS.length], y = 50 + k * 72;
+    x.fillStyle = k === 0 ? 'rgba(245,184,0,.16)' : 'rgba(238,240,244,.05)'; x.fillRect(396, y, W - 416, 62);
+    setFont(x, 700, 21, 'Archivo', false); x.fillStyle = INK; x.fillText(n, 412, y + 27, W - 440);
+    setFont(x, 700, 19, 'JetBrains Mono', false); x.fillStyle = k === 0 ? YEL : '#25d366'; x.fillText('$' + m.toLocaleString('es-CL') + (k === 0 ? '  ✓ recién' : ''), 412, y + 52);
+  }
 };
 // LED gigante
 const ledHero = (x, W, H, st) => {
@@ -679,29 +717,12 @@ const ledHero = (x, W, H, st) => {
   const sx = (st * 520) % (W + 400) - 200; const g = x.createLinearGradient(sx - 160, 0, sx + 160, 0);
   g.addColorStop(0, 'rgba(255,255,255,0)'); g.addColorStop(.5, 'rgba(255,255,255,.12)'); g.addColorStop(1, 'rgba(255,255,255,0)'); x.fillStyle = g; x.fillRect(0, 0, W, H);
 };
-const CLIENTES_ACTIVOS = [ // hasta 10: solo clientes reales con su resultado
-  ['lPolimer', true, 'ETP POLIMER', 'De cero a competidor activo'],
-  ['lIdini', false, 'FIERROS IDINI', '1.700 productos online'],
-  ['lPlasti', true, 'PLASTISERVI', 'Cliente histórico, años juntos'],
-  ['lConflex', true, 'CONFLEX', 'Empresa creada junto a JPB'],
-  ['lKem', false, 'THE KEM', 'Fidelización por WhatsApp']
-];
-const ledClientes = (x, W, H, st, tt) => {
+const ledClientes = (x, W, H) => {
   x.fillStyle = '#04060b'; x.fillRect(0, 0, W, H);
-  setFont(x, 600, 22, 'JetBrains Mono', false); x.fillStyle = YEL; x.fillText('● CLIENTES ACTIVOS', 48, 62);
-  setFont(x, 900, 46); x.fillStyle = INK; x.fillText('Empresas que ya venden más con nosotros', 46, 118, W - 92);
-  const n = CLIENTES_ACTIVOS.length, cols = Math.min(5, n), filas = Math.ceil(n / cols), gap = 18;
-  const cw = (W - 96 - gap * (cols - 1)) / cols, ch = (H - 170 - 30 - gap * (filas - 1)) / filas;
-  CLIENTES_ACTIVOS.forEach(([logo, claro, nombre, logro], i) => {
-    const c = i % cols, f = (i / cols) | 0, px = 48 + c * (cw + gap), py = 160 + f * (ch + gap);
-    const on = Math.floor(tt * .7) % n === i;
-    x.fillStyle = '#f4f2ee'; x.beginPath(); x.roundRect ? x.roundRect(px, py, cw, ch, 18) : x.rect(px, py, cw, ch); x.fill();
-    if (on) { x.strokeStyle = YEL; x.lineWidth = 6; x.stroke(); }
-    if (!claro) { x.fillStyle = '#0b1220'; x.beginPath(); x.roundRect ? x.roundRect(px + 14, py + 14, cw - 28, ch * .52, 12) : x.rect(px + 14, py + 14, cw - 28, ch * .52); x.fill(); }
-    contain(x, IMG[logo], px + 26, py + 22, cw - 52, ch * .52 - 16);
-    setFont(x, 800, 21, 'JetBrains Mono', false); x.fillStyle = '#0b1220'; x.fillText(nombre, px + 18, py + ch * .52 + 54, cw - 36);
-    setFont(x, 600, 23, 'Archivo', false); x.fillStyle = '#3d4552'; wrap(x, logro, cw - 36).slice(0, 2).forEach((l, k) => x.fillText(l, px + 18, py + ch * .52 + 88 + k * 28));
-  });
+  setFont(x, 500, 22, 'JetBrains Mono', false); x.fillStyle = YEL; x.fillText('● CLIENTES QUE YA VENDEN MÁS', 48, 58);
+  const items = [['polimer', 'ETP POLIMER'], ['idini', 'FIERROS IDINI'], ['conflex', 'PLASTISERVI + CONFLEX']];
+  const cw = (W - 96 - 2 * 22) / 3;
+  items.forEach(([k, n], i) => { const px = 48 + i * (cw + 22); cover(x, IMG[k], px, 86, cw, H - 170); setFont(x, 800, 26); x.fillStyle = INK; x.fillText(n, px, H - 44, cw); });
 };
 const ledServicios = (x, W, H) => {
   x.fillStyle = '#04060b'; x.fillRect(0, 0, W, H);
@@ -736,8 +757,8 @@ const ledG = grp(scene, LED.x, LED.y, -17.04);
 for (const sx of [-1, 1]) S(box(.12, .12, .9), M.steel, mtx(LED.x + sx * 4.2, LED.y + 1.6, -17.6), 30, false);
 const led = new Pantalla(ledG, LED.w, LED.h, 1536, [ledClientes], { led: true, fps: 2, dur: 6, label: 'Clientes · ver casos', href: '#clientes', delay: .5 });
 // pantallas de las estaciones 01 y 03, montadas sobre las máquinas
-for (const [kx, slides, label] of [[-10.6, [sGoogle], '01 · Google Ads'], [9.6, [sVentas], '03 · Ventas cerradas']]) {
-  const g = grp(scene, kx, 3.45, lineZ + 1.05);
+for (const [kx, slides, label] of [[-10.6, [sGoogle], '01 · Google Ads'], [ARCO_X, [sVentas], '03 · Ventas cerradas']]) {
+  const g = grp(scene, kx, kx === ARCO_X ? 3.95 : 3.45, kx === ARCO_X ? lineZ + .05 : lineZ + 1.05);
   D(box(2.75, 1.6, .12), M.dark, g, 0, 0, -.07);
   for (const s of [-1, 1]) D(box(.08, .9, .08), M.dark, g, s * .9, -1.15, -.25);
   new Pantalla(g, 2.6, 1.46, 768, slides, { dur: 9, label, href: '#servicios', delay: .3 });
@@ -787,7 +808,7 @@ function rotulo(parent, texto, size, px, py, pz, ry = 0) {
   return g;
 }
 insignia(scene, -11.15, 1.62, lineZ + 1.3);                 // dosificadora
-insignia(scene, 9.95, 1.5, lineZ + 1.4, 0, 1.15);            // embaladora
+rotulo(scene, 'JPB MARKETING', .26, 13.95, 1.62, lineZ + 1.2);             // costado del camión
 rotulo(grua, 'JPB MARKETING', .3, 0, 10.25, .62 + .19);      // viga de la grúa
 rotulo(grua, 'JPB MARKETING', .3, 0, 10.25, -.62 - .19, Math.PI);
 { const B = mtx(13.6, 0, -10.6, 0, Math.PI * .92, 0), p = new THREE.Vector3(0, .82, -1.31).applyMatrix4(B); insignia(scene, p.x, p.y, p.z, Math.PI * .92 + Math.PI, .8); } // contrapeso grúa horquilla
@@ -940,6 +961,10 @@ function personaReal(parent, px, pz, ry, opts = {}) {
 }
 const trabajadorX = (parent, px, pz, ry, opts) => (persona ? personaReal(parent, px, pz, ry, opts) : trabajador(parent, px, pz, ry, opts));
 const _qa = new THREE.Quaternion();
+// agarre del teléfono (ajustable por URL para calibrar: ?ag=a,b,c,t1x,t1y,t1z,t2x&tel=desplazamiento,profundidad)
+const _q = new URLSearchParams(location.search);
+const AG = (_q.get('ag') || '1.05,1.25,.85,.35,0,.6,.5').split(',').map(Number);
+const TEL = (_q.get('telp') || '.07,-.025,-.02').split(',').map(Number);
 function hueso(w, n, x, y, z) {
   const b = w.huesos[n]; if (!b) return;
   const k = w.idx[n];
@@ -970,7 +995,8 @@ function animarReal(w, clock, dt) {
         hueso(w, 'RightArm', 1.24 + (1.05 - 1.24) * k, 0, -.1 + (-.5 + .1) * k);
         hueso(w, 'RightForeArm', 0, 0, -.28 + (-1.9 + .28) * k);
         hueso(w, 'Head', .12 * k, -.15 * k, 0);
-        for (const f of ['Index', 'Middle', 'Ring', 'Pinky']) { hueso(w, 'RightHand' + f + '1', .55 * k, 0, 0); hueso(w, 'RightHand' + f + '2', .85 * k, 0, 0); hueso(w, 'RightHand' + f + '3', .6 * k, 0, 0); }
+        for (const f of ['Index', 'Middle', 'Ring', 'Pinky']) { hueso(w, 'RightHand' + f + '1', AG[0] * k, 0, 0); hueso(w, 'RightHand' + f + '2', AG[1] * k, 0, 0); hueso(w, 'RightHand' + f + '3', AG[2] * k, 0, 0); }
+        hueso(w, 'RightHandThumb1', AG[3] * k, AG[4] * k, AG[5] * k); hueso(w, 'RightHandThumb2', AG[6] * k, 0, 0);
       }
     }
   }
@@ -1029,6 +1055,7 @@ const telefono = new THREE.Group(); telefono.visible = false; scene.add(telefono
   const pm = new THREE.MeshBasicMaterial({ map: t }); pm.toneMapped = false;
   const pantalla = new THREE.Mesh(new THREE.PlaneGeometry(.07, .15), pm); pantalla.position.z = .0047; telefono.add(pantalla);
 }
+if (_q.has('tel')) diego.telMeta = 1;
 const anillo = new THREE.Mesh(new THREE.RingGeometry(.5, .6, 48), new THREE.MeshBasicMaterial({ color: 0xf5b800, transparent: true, opacity: 0, blending: THREE.AdditiveBlending, depthWrite: false, side: THREE.DoubleSide }));
 anillo.rotation.x = -Math.PI / 2; anillo.position.set(diego.g.position.x, .02, diego.g.position.z); scene.add(anillo);
 const focoDiego = LOW ? new THREE.PointLight(0xfff1d6, 0, 6, 1.4) : new THREE.SpotLight(0xfff1d6, 0, 14, .32, .55, 1.2); focoDiego.position.set(diego.g.position.x + .5, 4.6, diego.g.position.z + 3.6);
@@ -1097,7 +1124,7 @@ const ESTACIONES = {
   prospeccion: { kicker: 'PASO 01 · GOOGLE ADS', titulo: 'Te encuentran en Google', texto: 'Campañas de Google Ads para empresas industriales: tu anuncio aparece cuando un comprador busca lo que vendes, y cada clic entra a la línea como un prospecto.', href: '/keyword-research-b2b-industrial-chile', cta: 'Ver Google Ads', c: [-10.6, 1.8, lineZ], s: [3.8, 4, 3.2], pos: [-5.6, 2.9, 6.4], etiqueta: '01 · Google Ads', ea: [-10.6, 4.55, lineZ + 1], corto: 'Con Google Ads apareces cuando te buscan y cada clic entra como prospecto.', mpos: [-7.6, 3.3, 9.6], mlook: [-9.6, 1.9, -1] },
   ia: { kicker: 'PASO 02 · AGENTE IA EN WHATSAPP', titulo: 'Te escriben por WhatsApp, la IA vende', texto: 'Tus clientes escriben a tu WhatsApp y el agente responde en 2 segundos, cotiza con tu catálogo y califica, de día y de noche. Las cajas grises (leads) pasan por el agente y salen amarillas: ventas.', href: '/agente-ia', cta: 'Ver el agente IA', c: [-.7, 1.6, -.9], s: [11.5, 3.6, 5], pos: [.6, 2.6, 6.2], etiqueta: '02 · Agente IA en WhatsApp', ea: [-.7, 3.5, lineZ + 1.2], corto: 'Te escriben por WhatsApp y la IA responde, cotiza y califica al tiro. Los leads grises salen amarillos: ventas.', mpos: [.3, 2.7, 7.6], mlook: [-.7, 2.05, -.3] },
   oficina: { kicker: 'SEGUNDO PISO · OFICINA COMERCIAL', titulo: 'Tu equipo, con todo a la vista', texto: 'Aquí trabaja el equipo comercial: cada uno ve en su pantalla las conversaciones de WhatsApp, los prospectos y las cotizaciones del día. Toca a cada persona para ver qué hace por tu empresa.', href: '/outsourcing-fuerza-ventas-chile', cta: 'Ver el modelo', c: [-16.5, 5.7, -13], s: [11, 2.8, 10], pos: [-9.2, 7.6, -3.4], etiqueta: '2º piso · Oficina comercial', ea: [-16.5, 7.3, -8.6], corto: 'Tu equipo ve todo en el Panel JPB y nosotros nos sumamos como vendedor externo.', mpos: [-12.2, 8.2, -2.2], mlook: [-16.6, 5.3, -12.4] },
-  ventas: { kicker: 'PASO 03 · SALEN VENTAS', titulo: 'Tu fábrica vende más', texto: 'Eso es lo que hacemos: que lleguen pedidos listos para cerrar, con seguimiento automático y el Panel JPB para ver cada venta.', href: '/contacto', cta: 'Quiero vender más', c: [9.6, 1.5, lineZ], s: [3.8, 3.6, 3.3], pos: [5.6, 2.7, 6.6], etiqueta: '03 · Ventas', ea: [9.6, 4.55, lineZ + 1], corto: 'Llegan pedidos listos para cerrar. Tu equipo solo vende.', mpos: [6.9, 3.2, 9.6], mlook: [8.6, 2.0, -1] },
+  ventas: { kicker: 'PASO 03 · SALEN VENTAS', titulo: 'Tu fábrica despacha más', texto: 'Cada caja amarilla es una venta cerrada: baja al pallet y sale en el camión. Llegan pedidos listos para cerrar y ves cada venta en el Panel JPB.', href: '/contacto', cta: 'Quiero vender más', c: [11.2, 1.6, lineZ], s: [8.4, 3.8, 4.2], pos: [7.2, 3.1, 7.8], etiqueta: '03 · Ventas', ea: [ARCO_X, 4.95, lineZ], corto: 'Cada caja amarilla es una venta cerrada que sale a despacho.', mpos: [9.1, 3.2, 8.6], mlook: [9.7, 2.4, -1] },
   despacho: { kicker: 'ABIERTA 24/7 · WEB + SEO', titulo: 'Que te encuentren', texto: 'Web industrial con catálogo y cotizador, SEO y Google Ads: los pedidos llegan aunque nadie salga a buscarlos.', href: '/pagina-web-empresa-industrial-chile', cta: 'Ver web industrial', c: [15, 2.4, -13], s: [10.5, 5, 7], pos: [8.4, 3.6, -3.2] },
   equipo: { kicker: 'EQUIPO JPB EN TU PLANTA', titulo: 'Vendedor externo', texto: 'Nos integramos a tu equipo comercial con portafolio permanente, sin sueldos fijos ni seis meses de ramp-up.', href: '/outsourcing-fuerza-ventas-chile', cta: 'Ver el modelo' }
 };
@@ -1173,7 +1200,7 @@ const RECORRIDO = [
   { key: 'ventas', kicker: 'PASO 5 · CERRAMOS LA VENTA', titulo: 'Pedidos listos para cerrar', texto: 'Tu equipo recibe clientes calientes, hacemos seguimiento a cada cotización y ves todo en el Panel JPB.', corto: 'Tu equipo recibe clientes calientes y seguimos cada cotización hasta cerrar.' },
   { app: true, kicker: 'PASO 6 · TU APP PANEL JPB', titulo: 'Sigues todo desde tu teléfono', texto: 'Con la app Panel JPB ves en vivo las conversaciones de WhatsApp, quién dejó de responder, cada cotización y lo que gastas en Google y en IA.', corto: 'En la app Panel JPB ves en vivo tus chats, cotizaciones, seguimientos y gastos.', href: '/panel-jpb-demo', cta: 'Abrir demo completa',
     pose: () => { const p = diego.g.position; return MOVIL() ? { pos: [p.x + .58, 1.62, p.z + 3.3], look: [p.x + .5, 1.42, p.z], fov: 56 } : { pos: [p.x + .95, 1.72, p.z + 3.1], look: [p.x + .95, 1.42, p.z], fov: 44 }; } },
-  { kicker: 'CLIENTES ACTIVOS', titulo: 'Empresas que ya venden más con nosotros', texto: 'ETP Polimer, Fierros Idini, Plastiservi, Conflex y The Kem: relaciones activas de años, con resultados medibles.', corto: 'Polimer, Fierros Idini, Plastiservi, Conflex y The Kem: clientes activos con resultados.', href: '#clientes', cta: 'Ver los casos',
+  { kicker: 'CLIENTES ACTIVOS', titulo: 'Empresas que ya venden más con nosotros', texto: 'ETP Polimer, Fierros Idini y Plastiservi + Conflex: relaciones activas de años, con resultados medibles.', corto: 'ETP Polimer, Fierros Idini y Plastiservi + Conflex: clientes activos con resultados.', href: '#clientes', cta: 'Ver los casos',
     pose: () => MOVIL() ? { pos: [-3.6, 6.4, 4.5], look: [-3.6, 6.9, -17], fov: 56 } : { pos: [-3.6, 6.3, -4], look: [-3.6, 6.9, -17], fov: 50 } },
   { kicker: 'FIN DEL RECORRIDO', titulo: '¿Hacemos que tu empresa venda más?', texto: 'En 30 minutos revisamos tu situación comercial y te decimos qué haríamos primero. Sin compromiso.', corto: 'En 30 minutos vemos tu situación y te decimos qué haríamos primero.', href: '/contacto', cta: 'Agenda una llamada',
     pose: () => views.planta() }
@@ -1181,6 +1208,10 @@ const RECORRIDO = [
 views.recorrido = () => { const st = RECORRIDO[ri]; return st.pose ? st.pose() : poseEst(st.key); };
 const dbg = new URLSearchParams(location.search).get('cam');
 if (dbg) { const n = dbg.split(',').map(Number); views.debug = () => ({ pos: n.slice(0, 3), look: n.slice(3, 6), fov: n[6] || 55 }); vista = 'debug'; }
+if (new URLSearchParams(location.search).has('mano')) { // depuración: encuadre de la mano derecha de Diego
+  const lado = Number(new URLSearchParams(location.search).get('mano')) || 0;
+  views.debug = () => { const h = new THREE.Vector3(); diego.huesos.RightHand.getWorldPosition(h); return { pos: [h.x + lado * .35, h.y + .08, h.z + .75], look: [h.x, h.y + .05, h.z], fov: 34 }; }; vista = 'debug';
+}
 const cam = { pos: new THREE.Vector3(...views[vista]().pos), look: new THREE.Vector3(...views[vista]().look), fov: views[vista]().fov };
 const mouse = { x: 0, y: 0, sx: 0, sy: 0 };
 const btnPant = document.getElementById('btn-pantallas');
@@ -1515,12 +1546,23 @@ function frame(now) {
   const vel = .9 * (1 + 1.6 * flujo);
   beltTex.offset.x -= dt * vel / (17 / 26);
   cajas.forEach((c) => {
-    c.position.x += dt * vel;
+    if (c.userData.rampa == null) c.position.x += dt * vel;
     if (c.material === M.lead && c.position.x > TOTEM.x) { c.material = M.venta; c.scale.setScalar(1.12); if (SON.pop && SON.master > .05) { if (SON.pop.isPlaying) SON.pop.stop(); SON.pop.play(); } }
     c.scale.lerp(V.set(1, 1, 1), kA * .5);
-    if (c.position.x > beltX1 + .4) { c.position.x -= (beltX1 - beltX0) + 1.2; c.material = M.lead; ventas++; hudVentas.textContent = ventas; }
+    if (c.userData.rampa != null) { // bajando por la rampa hacia el pallet
+      c.userData.rampa += dt * 1.3;
+      const t = Math.min(1, c.userData.rampa);
+      c.position.set(RAMPA.x0 + (RAMPA.x1 - RAMPA.x0) * t, RAMPA.y0 + (RAMPA.y1 - RAMPA.y0) * t, lineZ);
+      if (t >= 1) {
+        c.userData.rampa = null; c.position.set(beltX0 - .4, beltY + .24, lineZ); c.material = M.lead;
+        ventas++; hudVentas.textContent = ventas; SON.ultimaVenta = clock;
+        if (pilaN < pila.length) pila[pilaN++].visible = true;
+        if (pilaN >= pila.length && !pilaVacia) pilaVacia = clock + 1.4; // el camión carga el pallet completo
+      }
+    } else if (c.position.x > beltX1 - .1) c.userData.rampa = 0;
     c.position.y = beltY + .24 + (act.prospeccion > .1 && c.position.x < -7 ? Math.abs(Math.sin(clock * 14 + c.position.x)) * .05 * act.prospeccion : 0);
   });
+  if (pilaVacia && clock > pilaVacia) { pilaVacia = 0; pilaN = 0; pila.forEach((b) => (b.visible = false)); }
   robots.forEach((r, i) => {
     robotPhase[i] += dt * 1.3 * (1 + 2.2 * act.ia);
     const a = robotPhase[i] + r.off;
@@ -1587,8 +1629,10 @@ function frame(now) {
     telefono.visible = diego.tel > .35;
     if (telefono.visible) {
       diego.huesos.RightHand.getWorldPosition(P); diego.huesos.RightHandMiddle1.getWorldPosition(V);
-      P.lerp(V, .85); const hacia = V.copy(camera.position).sub(P).normalize();
-      telefono.position.copy(P).addScaledVector(hacia, .025); telefono.lookAt(camera.position); telefono.scale.setScalar(1.15);
+      P.lerp(V, .55); // palma
+      const hacia = V.copy(camera.position).sub(P).normalize(), der = new THREE.Vector3().crossVectors(hacia, camera.up).normalize();
+      telefono.position.copy(P).addScaledVector(camera.up, TEL[0]).addScaledVector(hacia, TEL[1]).addScaledVector(der, TEL[2] || 0);
+      telefono.lookAt(camera.position); telefono.scale.setScalar(1.1);
     }
 
   }

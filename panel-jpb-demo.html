@@ -5,6 +5,9 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, maximum-scale=1.0">
 <title>Panel JPB — Demo interactiva</title>
 <meta name="robots" content="noindex, nofollow">
+<meta name="robots" content="noindex, nofollow">
+
+<link rel="apple-touch-icon" href="/assets/logo.png">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="theme-color" content="#16324f">
@@ -331,6 +334,9 @@
   .inbox-chat-head.estado-parcial { background: #fff3d1; box-shadow: inset 0 -4px 0 #e0a11b; }
   .inbox-item-badges { flex-wrap: wrap; }
   .badge { white-space: nowrap; }
+  #toast { position: fixed; left: 50%; bottom: calc(var(--nav-h, 64px) + 18px); transform: translateX(-50%); background: var(--navy); color: #fff; font-size: 13.5px; font-weight: 600; padding: 10px 16px; border-radius: 999px; box-shadow: 0 6px 20px rgba(0,0,0,.25); z-index: 60; max-width: 88vw; text-align: center; opacity: 0; pointer-events: none; transition: opacity .2s; }
+  #toast.visible { opacity: 1; }
+  .btn-desarchivar { background: var(--orange); color: #fff; border-radius: 999px; padding: 4px 12px; font-size: 11.5px; font-weight: 800; }
   .badge.est-respondido { background: #e3ecfb; color: #1f4fa8; }
   .badge.est-ninguna { background: #eef1f6; color: var(--text2); }
   .badge.est-cumple { background: var(--success-bg); color: var(--success-fg); }
@@ -340,7 +346,6 @@
   .inbox-chat-head.estado-no_cumple { box-shadow: inset 0 -3px 0 #c23c34; }
   .inbox-chat-head.estado-parcial { box-shadow: inset 0 -3px 0 #e0a11b; }
 
-  /* Chips para filtrar la lista de chats por si el pedido cumple el mínimo (Polimer) —
      mismos colores que las franjas/badges de arriba para que se reconozcan de un vistazo. */
   .inbox-item.sin-leer .inbox-item-name, .inbox-item.sin-leer .inbox-item-preview { font-weight: 800; color: var(--navy); }
   .badge-nuevo { background: var(--orange); color: #fff; }
@@ -376,6 +381,95 @@
   .filtro-chip[data-estado="cumple"].activo { background: #17874a; }
   .filtro-chip[data-estado="parcial"].activo { background: #e0a11b; }
   .filtro-chip[data-estado="no_cumple"].activo { background: #c23c34; }
+
+  .chat-dia { text-align: center; margin: 12px 0 6px; }
+  .chat-dia span { background: #e4e9f0; color: var(--text2); font-size: 12px; font-weight: 700; padding: 4px 12px; border-radius: 999px; }
+  /* ---- Precios y precotización (solo escritorio) ---- */
+  #view-precios { max-width: 1250px; margin: 0 auto; }
+  #precios-grid { display: grid; grid-template-columns: 330px minmax(0, 1fr); gap: 16px; align-items: start; }
+  #precios-grid > .panel { min-width: 0; padding-bottom: 16px; }
+  #precios-grid > .panel > :not(.panel-title) { margin-left: 18px; margin-right: 18px; }
+  #precios-grid > .panel > .panel-title + * { margin-top: 12px; }
+  .precios-ayuda { font-size: 13px; color: var(--text2); margin: 0 0 12px; }
+  .precios-fila { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-bottom: 8px; font-size: 14px; font-weight: 700; color: var(--navy); }
+  .precios-fila input { width: 110px; padding: 7px 9px; border: 1px solid var(--border); border-radius: 8px; font-size: 14px; text-align: right; background: var(--card); }
+  #precios-guardar { margin-top: 8px; }
+  .precios-nuevo { border-top: 1px dashed var(--border); padding-top: 10px; margin-top: 4px; }
+  .precios-nuevo { flex-wrap: wrap; }
+  .precios-nuevo > input { width: 120px; text-align: left; padding: 7px 9px; border: 1px solid var(--border); border-radius: 8px; font-size: 13px; }
+  .precot-tipo { margin-top: 4px; font-size: 12px; padding: 3px 6px; border: 1px solid var(--border); border-radius: 6px; background: var(--card); max-width: 170px; }
+  .precot-nota-calc { color: var(--text2); font-size: 11px; }
+  .precios-nota { font-size: 12px; color: var(--text2); margin-top: 8px; }
+  #precot-layout { display: grid; grid-template-columns: 230px minmax(0, 1fr); gap: 12px; align-items: start; }
+  #precot-izq { min-width: 0; }
+  #precot-detalle { min-width: 0; }
+  .precot-scroll { overflow-x: auto; }
+  #precot-lista { max-height: 560px; overflow-y: auto; border: 1px solid var(--border); border-radius: 10px; }
+  .precot-item { padding: 10px 12px; border-bottom: 1px solid var(--border); cursor: pointer; font-size: 13.5px; }
+  .precot-item:last-child { border-bottom: 0; }
+  .precot-item b { display: block; color: var(--navy); font-size: 14px; }
+  .precot-item small { color: var(--text2); }
+  .precot-item.sel { background: #fdf1e8; }
+  .precot-item.pend { border-left: 5px solid #f2b705; background: #fff8dc; }
+  .precot-item.hecha { border-left: 5px solid #2e9e5b; background: #e6f6ec; }
+  .precot-item.sel { box-shadow: inset 0 0 0 2px var(--navy); }
+  .precot-item .precot-est { float: right; font-size: 11px; font-weight: 700; }
+  .precot-item.pend .precot-est { color: #8a6500; }
+  .precot-item.hecha .precot-est { color: #1d7a43; }
+  .precot-filtro { border: 1px solid var(--border); background: #fff; border-radius: 999px; padding: 4px 10px; font-size: 12.5px; cursor: pointer; color: var(--navy); }
+  .precot-filtro.on { background: var(--navy); color: #fff; border-color: var(--navy); }
+  .btn-cotizado { background: #2e9e5b; color: #fff; border: 0; }
+  .precot-precio { width: 74px; padding: 7px 8px; border: 1px solid var(--border); border-radius: 8px; font-size: 14px; text-align: right; background: var(--card); }
+  .precot-cliente { display: grid; grid-template-columns: 1fr 1fr; gap: 8px 16px; background: #f6f8fb; border: 1px solid var(--border); border-radius: 10px; padding: 12px 14px; margin-bottom: 12px; }
+  .precot-dato span { display: block; font-size: 11px; text-transform: uppercase; letter-spacing: .4px; color: var(--text2); }
+  .precot-dato b { font-size: 14px; color: var(--navy); overflow-wrap: anywhere; }
+  .precot-dato i { color: var(--text2); font-weight: 500; }
+  .precot-tabla { width: 100%; border-collapse: collapse; font-size: 13.5px; }
+  .precot-tabla th { text-align: left; font-size: 11px; text-transform: uppercase; letter-spacing: .4px; color: var(--text2); padding: 6px 8px; border-bottom: 2px solid var(--border); }
+  .precot-tabla td { padding: 9px 6px; border-bottom: 1px solid var(--border); vertical-align: middle; }
+  .precot-tabla .num { text-align: right; white-space: nowrap; }
+  .precot-aviso { font-size: 12px; color: #c23c34; font-weight: 700; }
+  .precot-interno { margin: 12px 0 0 auto; width: 280px; font-size: 13px; background: #fff8ec; border: 1px dashed #e0a11b; border-radius: 10px; padding: 8px 12px; color: var(--text2); }
+  .precot-interno b { display: block; font-size: 11px; text-transform: uppercase; letter-spacing: .4px; margin-bottom: 4px; }
+  .precot-interno div { display: flex; justify-content: space-between; padding: 2px 0; }
+  .precot-totales { margin: 14px 0 0 auto; width: 280px; font-size: 14px; }
+  .precot-totales div { display: flex; justify-content: space-between; padding: 4px 0; }
+  .precot-totales .total { font-size: 19px; font-weight: 800; color: var(--navy); border-top: 2px solid var(--navy); margin-top: 4px; padding-top: 8px; }
+  .precot-acciones { display: flex; gap: 8px; margin-top: 14px; justify-content: flex-end; }
+  @media (max-width: 759px) { #nav-precios, #view-precios { display: none !important; } }
+  @media (max-width: 1100px) { #precios-grid, #precot-layout { grid-template-columns: minmax(0, 1fr); } }
+
+  /* ---- Cotizaciones: letra clara y cómoda (no gigante); en pantalla ancha, tarjetas en columnas ---- */
+  #view-cotizaciones { max-width: 1100px; margin: 0 auto; }
+  #cotiz-resumen { font-size: 17px; line-height: 1.4; font-weight: 700; color: var(--navy); background: var(--card); border: 1px solid var(--border); border-radius: var(--r-sm); padding: 14px 16px; margin-bottom: 12px; }
+  #cotiz-resumen strong { font-size: 22px; color: var(--orange-dark); }
+  #cotiz-resumen .alerta { color: #c23c34; display: block; margin-top: 2px; font-size: 15px; }
+  #cotiz-tabs { display: flex; gap: 8px; margin-bottom: 10px; max-width: 460px; }
+  .cotiz-tab { flex: 1; min-height: 46px; border: 2px solid var(--border); background: var(--card); color: var(--navy); font-size: 16px; font-weight: 800; border-radius: 12px; cursor: pointer; }
+  .cotiz-tab.activo { background: var(--navy); color: #fff; border-color: var(--navy); }
+  #cotiz-buscar { width: 100%; max-width: 460px; box-sizing: border-box; min-height: 44px; padding: 10px 14px; border: 2px solid var(--border); border-radius: 12px; background: var(--card); font-size: 16px; margin-bottom: 8px; display: block; }
+  #cotiz-lista { display: grid; grid-template-columns: 1fr; gap: 12px; align-items: start; }
+  .cotiz-seccion { grid-column: 1 / -1; font-size: 18px; font-weight: 800; color: var(--navy); margin: 14px 2px 0; }
+  .cotiz-seccion small { display: block; font-size: 14px; font-weight: 600; color: var(--text2); margin-top: 1px; }
+  .cotiz-card { background: var(--card); border: 1px solid var(--border); border-left: 8px solid #17874a; border-radius: 12px; padding: 14px 16px; }
+  .cotiz-card.espera-media { border-left-color: #e0a11b; }
+  .cotiz-card.espera-alta { border-left-color: #c23c34; }
+  .cotiz-card.hecha { border-left-color: #8a93a3; }
+  .cotiz-nombre { font-weight: 800; font-size: 19px; color: var(--navy); overflow-wrap: anywhere; }
+  .cotiz-cuando { font-size: 16px; font-weight: 800; margin-top: 2px; color: #17874a; }
+  .cotiz-card.espera-media .cotiz-cuando { color: #b97f00; }
+  .cotiz-card.espera-alta .cotiz-cuando { color: #c23c34; }
+  .cotiz-card.hecha .cotiz-cuando { color: var(--text2); }
+  .cotiz-via { font-size: 14px; color: var(--text2); margin-top: 2px; }
+  .cotiz-msg { font-size: 16px; line-height: 1.4; color: var(--text); margin-top: 8px; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+  .cotiz-acciones { display: flex; gap: 8px; margin-top: 12px; }
+  .cotiz-acciones button { flex: 1; min-height: 48px; border-radius: 12px; font-size: 16px; font-weight: 800; cursor: pointer; border: 2px solid var(--navy); background: var(--card); color: var(--navy); padding: 0 8px; }
+  .cotiz-acciones .principal { background: var(--navy); color: #fff; }
+  .cotiz-vacio { grid-column: 1 / -1; text-align: center; color: var(--text2); font-size: 18px; padding: 30px 12px; }
+  .cotiz-antiguos-btn { grid-column: 1 / -1; min-height: 48px; border-radius: 12px; border: 2px dashed var(--border); background: transparent; color: var(--navy); font-size: 16px; font-weight: 800; cursor: pointer; margin-top: 6px; }
+  @media (max-width: 480px) { .cotiz-acciones { flex-direction: column; } }
+  @media (min-width: 760px) { #cotiz-lista { grid-template-columns: repeat(2, 1fr); } }
+  @media (min-width: 1250px) { #cotiz-lista { grid-template-columns: repeat(3, 1fr); } }
 
   @media (max-width: 759px) {
     .inbox-chat {
@@ -690,10 +784,402 @@
     .sheet-title { font-size: 19px; margin-bottom: 18px; }
   }
 
+  /* ---- Mejoras y pasos a seguir · Resultado de cotizaciones ---- */
+  .field select, #mejoras-filtro-area {
+    font-size: 15px; border: 1px solid var(--border); border-radius: var(--r-sm);
+    padding: 10px 12px; background: #fff; color: var(--text); width: 100%;
+  }
+  .field textarea { font-family: inherit; resize: vertical; }
+  .mj-intro { margin-bottom: 6px; }
+  .mj-h { font-size: 18px; color: var(--navy); margin: 0 0 4px; }
+  .mj-sub { font-size: 13px; color: var(--text2); margin: 0 0 6px; line-height: 1.45; }
+  .mj-kpis { grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); }
+  .mj-kpis .stat { align-items: flex-start; }
+  .mj-kpis .stat-body { flex: 1; }
+  .mj-kpis .value { font-size: 16px; white-space: normal; overflow: visible; }
+  .mj-kpis .stat-sub {
+    font-size: 11px; color: var(--text2); margin-top: 2px; line-height: 1.35;
+    display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;
+  }
+  @media (max-width: 480px) { .mj-kpis { grid-template-columns: 1fr 1fr; } }
+  .mj-mas { background: none; color: var(--navy); font-size: 12.5px; padding: 10px 0 2px; text-decoration: underline; }
+  .mj-kpis .value.ok { color: var(--success-fg); }
+  .mj-kpis .value.mal { color: var(--danger-fg); }
+  .mj-panel { margin-bottom: 16px; }
+  .mj-panel-body { padding: 4px 16px 14px; }
+  .mj-chips { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 10px; }
+  .mj-chips .filtro-chip.activo { background: var(--navy); }
+  .mj-toolbar { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin: 6px 0 10px; }
+  .mj-toolbar .mj-chips { margin: 0; flex: 1 1 auto; }
+  #mejoras-filtro-area { width: auto; font-size: 13px; padding: 7px 10px; border-radius: 999px; color: var(--navy); }
+  .mj-grupo { font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: .5px; color: var(--text2); margin: 16px 0 8px; }
+  .mj-card {
+    background: var(--card); border: 1px solid var(--border); border-left: 5px solid var(--border);
+    border-radius: var(--r-md); padding: 13px 14px; margin-bottom: 10px; box-shadow: var(--shadow-sm);
+  }
+  .mj-card.imp-Alto { border-left-color: var(--orange); }
+  .mj-card.imp-Medio { border-left-color: #e0a11b; }
+  .mj-card.imp-Bajo { border-left-color: #9aa3b0; }
+  .mj-card.est-hecho, .mj-card.est-descartado { opacity: .62; }
+  .mj-card.est-hecho .mj-titulo { text-decoration: line-through; text-decoration-color: rgba(0,0,0,.25); }
+  .mj-card-top { display: flex; align-items: flex-start; gap: 10px; }
+  .mj-titulo { flex: 1; font-size: 14.5px; font-weight: 800; color: var(--navy); line-height: 1.35; }
+  .mj-tags { display: flex; flex-wrap: wrap; gap: 5px; margin: 7px 0 0; }
+  .mj-tag { font-size: 10px; font-weight: 800; padding: 2px 8px; border-radius: 999px; background: #eef1f6; color: var(--text2); text-transform: uppercase; letter-spacing: .3px; }
+  .mj-tag.resp-JPB { background: #e8eef7; color: var(--navy); }
+  .mj-tag.resp-Empresa, .mj-tag.resp-Cliente { background: #fdf1e8; color: var(--orange-dark); }
+  .mj-tag.resp-Ambos { background: #f1ecfb; color: #6a3fb5; }
+  .mj-detalle { font-size: 12.5px; color: var(--text2); line-height: 1.5; margin: 8px 0 0; }
+  .mj-paso { font-size: 12.5px; color: var(--text); line-height: 1.5; margin: 6px 0 0; }
+  .mj-paso b { color: var(--navy); }
+  .mj-avance { font-size: 12px; color: var(--success-fg); margin-top: 6px; }
+  .mj-estado-sel { font-size: 12px; font-weight: 700; padding: 5px 8px; border-radius: 999px; border: 1px solid var(--border); background: #fff; color: var(--navy); max-width: 120px; }
+  .mj-estado-sel.est-en_curso { background: #fff6e0; border-color: #f1d48a; }
+  .mj-estado-sel.est-hecho { background: var(--success-bg); color: var(--success-fg); border-color: transparent; }
+  .mj-edit { background: none; color: #9aa3b0; padding: 4px; }
+  .mj-vacio { padding: 26px 16px; color: var(--text2); font-size: 13px; text-align: center; }
+  .mj-motivo { display: flex; align-items: center; gap: 10px; font-size: 12.5px; padding: 5px 0; }
+  .mj-motivo span:first-child { flex: 0 0 150px; color: var(--text); }
+  .mj-motivo .bar { height: 8px; border-radius: 4px; background: var(--danger-fg); opacity: .75; }
+  .mj-lic { padding: 10px 0; border-bottom: 1px solid #eef0f3; font-size: 13px; }
+  .mj-lic:last-child { border-bottom: none; }
+  .mj-lic a { color: var(--navy); font-weight: 700; text-decoration: none; }
+  .mj-lic a:hover { text-decoration: underline; }
+  .mj-lic-meta { font-size: 11px; color: var(--text2); margin-top: 3px; }
+  .mj-lic .nueva { font-size: 9.5px; font-weight: 800; background: var(--orange); color: #fff; border-radius: 999px; padding: 1px 6px; margin-left: 6px; text-transform: uppercase; }
+  .mj-nota-chica { font-size: 11.5px; color: var(--text2); margin: 6px 0 0; }
+  .mj-seg { display: flex; gap: 6px; }
+  .mj-seg button { flex: 1; padding: 10px 6px; border-radius: var(--r-sm); border: 1px solid var(--border); background: #fff; color: var(--text2); font-size: 13px; }
+  .mj-seg button.on[data-estado="ganada"] { background: var(--success-bg); color: var(--success-fg); border-color: transparent; }
+  .mj-seg button.on[data-estado="perdida"] { background: var(--danger-bg); color: var(--danger-fg); border-color: transparent; }
+  .mj-seg button.on[data-estado="abierta"] { background: #e8eef7; color: var(--navy); border-color: transparent; }
+  .mj-grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 0 10px; }
+  .tag.res-ganada { background: var(--success-bg); color: var(--success-fg); }
+  .tag.res-perdida { background: var(--danger-bg); color: var(--danger-fg); }
+  .tag.res-reactivar { background: #fff6e0; color: #9a6b00; }
+  .client-roster-res { display: inline-flex; margin-top: 5px; margin-right: 6px; font-size: 10.5px; font-weight: 800; color: var(--navy); background: #eef1f6; border-radius: 999px; padding: 3px 8px; }
+
+  /* ======================================================================
+     REDISEÑO 2026 — capa final de estilos (solo CSS; el markup y el JS no cambian).
+     Criterios (guía Apple HIG): tipografía del sistema con escala clara y mínimos de
+     tamaño, objetivos táctiles de 44 px en celular, vidrio/desenfoque SOLO en la capa
+     flotante (barras y ventanas), el naranja de marca reservado para acciones principales
+     y estados, tarjetas sólidas en el contenido, y respuesta a transparencia/contraste/
+     movimiento reducidos.
+     ====================================================================== */
+  :root {
+    --navy: #0f2b4a; --navy-2: #1c4a76;
+    --orange: #f07a2b; --orange-dark: #c4560f;
+    --bg: #f2f4f8; --card: #ffffff; --border: #e4e8ef;
+    --text: #111822; --text2: #5d6877;
+    --success-bg: #e4f5eb; --success-fg: #13763f;
+    --danger-bg: #fdecec; --danger-fg: #b4332c;
+    --r-sm: 12px; --r-md: 16px; --r-lg: 22px;
+    --shadow-sm: 0 1px 2px rgba(16,24,40,.04), 0 4px 16px -6px rgba(16,24,40,.09);
+    --shadow-md: 0 14px 34px -12px rgba(16,24,40,.28);
+    --ring: 0 0 0 4px rgba(240,122,43,.18);
+  }
+  body {
+    font-family: ui-sans-serif, -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    letter-spacing: -.011em; font-feature-settings: "cv11", "ss01";
+  }
+  .stat .value, .factura-monto, .gasto-row-valor, .client-roster-total .v, .campaign-gasto, .precot-tabla .num, .precot-totales, #cotiz-resumen strong { font-variant-numeric: tabular-nums; }
+  .sheet-title, .mj-h, .empty-state h2, .topbar-titulo { letter-spacing: -.022em; }
+
+  /* ---- Foco visible y entradas ---- */
+  button:focus-visible, .btn:focus-visible, .nav-btn:focus-visible, .filtro-chip:focus-visible, .cotiz-tab:focus-visible { outline: 2px solid var(--orange); outline-offset: 2px; }
+  input, textarea, .field select, #mejoras-filtro-area { border-color: #dde2ea; border-radius: var(--r-sm); transition: border-color .15s, box-shadow .15s; }
+  input:focus, textarea:focus, .field select:focus { outline: none; border-color: var(--orange); box-shadow: var(--ring); }
+
+  /* ---- Botones ---- */
+  .btn { border-radius: 12px; font-weight: 650; letter-spacing: -.005em; }
+  .btn:active { transform: scale(.985); }
+  .btn-primary { background: linear-gradient(180deg, #ef7d2d, #dd6417); box-shadow: inset 0 1px 0 rgba(255,255,255,.22), 0 6px 14px -7px rgba(221,100,23,.7); }
+  .btn-primary:active { background: linear-gradient(180deg, #dd6417, #cc5a12); }
+  .btn-navy { background: linear-gradient(180deg, #1c4a76, #0f2b4a); box-shadow: 0 6px 14px -8px rgba(15,43,74,.7); }
+  .btn-outline { border-color: #dde2ea; box-shadow: 0 1px 1px rgba(16,24,40,.04); }
+  .btn-cotizado { background: linear-gradient(180deg, #34ab66, #258a4d); box-shadow: 0 6px 14px -8px rgba(37,138,77,.7); }
+  .btn-sm { border-radius: 10px; }
+
+  /* ---- Tarjetas y paneles (capa de contenido: sólidas, sin vidrio) ---- */
+  .panel, .stat, .inbox-list, .analisis-card, .client-roster-card, .pipeline-card, .mj-card, .cotiz-card, #cotiz-resumen, .ads-mes-selector {
+    border-color: var(--border); box-shadow: var(--shadow-sm);
+  }
+  .panel, .stat, .analisis-card, .mj-card { border-radius: var(--r-md); }
+  .panel-title { padding: 15px 18px; font-size: 12px; letter-spacing: .06em; }
+  .stat { padding: 15px 16px; gap: 13px; }
+  .stat-icon { width: 38px; height: 38px; border-radius: 12px; background: linear-gradient(145deg, #eef3fa, #e3ebf6); color: var(--navy); }
+  .stat .label { font-size: 11.5px; letter-spacing: .05em; font-weight: 600; }
+  .stat .value { font-size: 19px; letter-spacing: -.02em; }
+  .stat .value.orange { color: var(--orange-dark); }
+  .gasto-row, .factura-row { padding: 15px 18px; }
+  thead th { background: #f7f9fc; font-size: 11px; letter-spacing: .06em; }
+  tbody td { padding: 12px 14px; }
+  .ads-mes-selector { box-shadow: var(--shadow-sm); }
+  .ads-mes-nav { width: 34px; height: 34px; background: #eef1f6; }
+
+  /* Etiquetas (mínimo 11 px) */
+  .badge, .tag, .analisis-badge, .mj-tag, .pipeline-section-count, .nav-badge { font-size: 11px; }
+  .badge { padding: 3px 9px; letter-spacing: .02em; }
+  .tag { padding: 3px 8px; }
+  .client-label, .campaign-meta-clicks, .inbox-item-time, .pipeline-card-time, .analisis-card-time, .client-roster-total .n, .metrica-sem, .calendar-dow, .campaign-detail-stat .l, .mj-lic-meta, .factura-desglose-sub, .stat-sub { font-size: 11px; }
+  .nav-btn { font-size: 11px; }
+
+  /* Avatares con relieve sutil */
+  .inbox-avatar, .client-roster-avatar, .client-row-avatar, .pipeline-card-avatar { background: linear-gradient(145deg, #2b5f93, #0f2b4a); box-shadow: inset 0 1px 0 rgba(255,255,255,.18); }
+  .client-avatar { background: linear-gradient(145deg, #f58a3e, #dd6417); box-shadow: inset 0 1px 0 rgba(255,255,255,.3); }
+
+  /* ---- Bandeja de chats ---- */
+  .inbox { border-radius: var(--r-lg); background: var(--card); }
+  .inbox-item { padding: 14px 16px; }
+  .inbox-item-name { letter-spacing: -.015em; }
+  .inbox-chat-head { background: rgba(255,255,255,.92); }
+  .inbox-reanudar { background: #eef1f6; font-weight: 650; }
+  .inbox-reanudar:hover { background: #e3e8f0; }
+  .inbox-input-row { padding: 12px 14px; gap: 10px; }
+  .inbox-input-row input { background: #f2f4f8; border-color: transparent; padding: 12px 16px; }
+  .inbox-input-row input:focus { background: #fff; }
+  .send-btn { background: linear-gradient(180deg, #ef7d2d, #dd6417); box-shadow: 0 6px 14px -6px rgba(221,100,23,.8); }
+  .bubble { box-shadow: 0 1px 1px rgba(0,0,0,.1); }
+
+  /* ---- Chips y filtros ---- */
+  .filtro-chip, .filtro-accion, .precot-filtro { padding: 7px 14px; font-weight: 650; font-size: 12.5px; border-color: #dde2ea; transition: background-color .15s, color .15s, border-color .15s; }
+  .filtro-chip:not(.activo):hover, .precot-filtro:not(.on):hover { background: #f2f4f8; }
+  #chats-herramientas input, #chats-herramientas select { border-color: #dde2ea; }
+
+  /* ---- Cotizar: control segmentado + tarjetas ---- */
+  #cotiz-resumen { border-radius: var(--r-md); }
+  #cotiz-tabs { background: #e6eaf1; padding: 4px; border-radius: 14px; gap: 4px; max-width: 420px; }
+  .cotiz-tab { border: none; background: transparent; color: var(--text2); border-radius: 11px; min-height: 42px; font-size: 15px; transition: background-color .15s, color .15s, box-shadow .15s; }
+  .cotiz-tab.activo { background: #fff; color: var(--navy); box-shadow: 0 1px 3px rgba(16,24,40,.14), 0 1px 1px rgba(16,24,40,.06); }
+  #cotiz-buscar { border: 1px solid #dde2ea; border-radius: 14px; max-width: 420px; }
+  .cotiz-card { border-radius: var(--r-md); border-left-width: 6px; padding: 15px 18px; }
+  .cotiz-acciones button { border-width: 1.5px; border-color: #d3dae5; border-radius: 12px; }
+  .cotiz-acciones .principal { background: linear-gradient(180deg, #1c4a76, #0f2b4a); border-color: transparent; }
+  .cotiz-antiguos-btn { border-radius: 14px; }
+
+  /* ---- Precios y precotización ---- */
+  #precot-lista { border-radius: 14px; border-color: var(--border); }
+  .precot-item { padding: 12px 14px; }
+  .precot-cliente { border-radius: 14px; background: #f6f8fc; }
+  .precot-tabla th { font-size: 11px; letter-spacing: .06em; }
+  .precot-interno { border-radius: 14px; }
+  .precot-precio, .precios-fila input, .precios-nuevo > input, .precot-tipo { border-color: #dde2ea; border-radius: 10px; }
+
+  /* ---- Gráficos, calendario, campañas ---- */
+  .chart-bar { background: linear-gradient(180deg, #f58a3e, #f2a26a); border-radius: 5px 5px 2px 2px; }
+  .calendar-day { border-radius: 10px; }
+  .campaign-budget-fill { background: linear-gradient(90deg, #ef7d2d, #f5a064); }
+  .campaign-detail-stat { border-radius: 12px; }
+
+  /* ---- Ventanas (sheets): capa flotante, único lugar con desenfoque ---- */
+  .sheet-overlay { background: rgba(10,18,30,.42); -webkit-backdrop-filter: blur(6px); backdrop-filter: blur(6px); }
+  .sheet { border-radius: 26px 26px 0 0; box-shadow: 0 -20px 50px -12px rgba(10,18,30,.35); }
+  .sheet-handle { width: 40px; height: 5px; background: #d5dae3; }
+  .field label { letter-spacing: .06em; }
+  .field-group { border-radius: var(--r-md); border-color: var(--border); background: #fbfcfe; }
+  .client-row { border-radius: var(--r-sm); background: #fbfcfe; }
+  .client-row.active { background: #fff4ec; border-color: var(--orange); }
+  #toast { background: rgba(15,43,74,.94); -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px); font-weight: 650; padding: 12px 18px; }
+
+  /* ---- Entrada suave de cada vista ---- */
+  @keyframes view-in { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+  .view.active { animation: view-in .3s cubic-bezier(.2,.7,.2,1); }
+
+  /* ================= CELULAR (< 1024 px) ================= */
+  @media (max-width: 1023px) {
+    :root { --nav-h: calc(84px + env(safe-area-inset-bottom)); }
+    .topbar {
+      background: radial-gradient(120% 140% at 100% 0%, rgba(240,122,43,.28), transparent 55%), linear-gradient(160deg, #1c4a76, #0f2b4a);
+      border-radius: 0 0 26px 26px; box-shadow: 0 10px 28px -14px rgba(15,43,74,.7);
+    }
+    .client-pill { background: rgba(255,255,255,.12); min-height: 44px; }
+    .icon-btn { width: 44px; height: 44px; background: rgba(255,255,255,.14); }
+    .icon-btn-accent { background: linear-gradient(180deg, #f58a3e, #e0681b); box-shadow: 0 6px 14px -6px rgba(0,0,0,.4); }
+    .content { padding-top: 20px; }
+
+    /* Barra de pestañas flotante (capa funcional con desenfoque) */
+    .bottom-nav {
+      left: 10px; right: 10px; bottom: calc(10px + env(safe-area-inset-bottom)); padding: 6px; gap: 2px;
+      border: 1px solid rgba(228,232,239,.9); border-radius: 24px;
+      background: rgba(255,255,255,.86); -webkit-backdrop-filter: saturate(180%) blur(20px); backdrop-filter: saturate(180%) blur(20px);
+      box-shadow: 0 14px 34px -10px rgba(15,43,74,.38), 0 2px 6px rgba(15,43,74,.08);
+    }
+    .nav-btn { min-height: 54px; justify-content: center; padding: 6px 0 5px; border-radius: 18px; letter-spacing: -.02em; transition: background-color .18s, color .18s; }
+    .nav-btn.active { background: rgba(15,43,74,.07); color: var(--navy); }
+    .nav-btn.active .nav-icon { color: var(--orange-dark); }
+    .nav-badge { top: 3px; border: 2px solid #fff; box-sizing: content-box; }
+    .nav-btn { flex: 1 1 0; min-width: 0; padding-left: 0; padding-right: 0; }
+    /* "Conversaciones" no cabe en 1/7 del ancho: en celular se muestra "Chats" */
+    .nav-btn[data-view="chats"] > span:last-child { font-size: 0; }
+    .nav-btn[data-view="chats"] > span:last-child::after { content: "Chats"; font-size: 11px; }
+    .stat { padding: 14px; }
+    .inbox-chat { border-radius: 0; }
+    .sheet { padding-top: 12px; }
+    @media (prefers-reduced-transparency: reduce) {
+      .bottom-nav { background: #fff; -webkit-backdrop-filter: none; backdrop-filter: none; }
+    }
+  }
+
+  /* ================= ESCRITORIO (>= 1024 px) ================= */
+  @media (min-width: 1024px) {
+    body { font-size: 14.5px; }
+    .topbar {
+      background: rgba(255,255,255,.84); -webkit-backdrop-filter: saturate(180%) blur(18px); backdrop-filter: saturate(180%) blur(18px);
+      box-shadow: 0 1px 0 var(--border); border-radius: 0;
+    }
+    .client-pill { background: #eef1f6; color: var(--navy); }
+    .client-pill:hover { background: #e3e8f0; }
+    .client-label { color: var(--text2); }
+    .chevron path { stroke: currentColor; }
+    .topbar-titulo { color: var(--navy); border-left-color: var(--border); font-size: 20px; }
+    .icon-btn { background: #eef1f6; color: var(--navy); width: 40px; height: 40px; }
+    .icon-btn:hover { background: #e2e7ef; }
+    .icon-btn-accent { background: linear-gradient(180deg, #f58a3e, #e0681b); color: #fff; box-shadow: 0 6px 14px -6px rgba(221,100,23,.8); }
+    .icon-btn-accent:hover { background: linear-gradient(180deg, #e97b2c, #cf5c14); }
+
+    /* Menú lateral oscuro: la marca vive en el menú, el contenido queda limpio */
+    .bottom-nav {
+      flex-basis: 252px; width: 252px; padding: 22px 14px; gap: 3px;
+      background: linear-gradient(185deg, #12335a 0%, #0c2442 60%, #0a1f3a 100%); border-right: none;
+    }
+    .nav-brand { padding: 2px 8px 20px; margin-bottom: 12px; border-bottom: 1px solid rgba(255,255,255,.1); }
+    .nav-brand img { width: 46px; background: #fff; border-radius: 13px; padding: 6px; box-shadow: 0 6px 16px rgba(0,0,0,.28); }
+    .nav-brand span { color: #fff; letter-spacing: -.02em; }
+    .nav-brand small { color: rgba(255,255,255,.62); letter-spacing: 0; }
+    .nav-btn { position: relative; padding: 11px 14px; border-radius: 12px; font-size: 14.5px; font-weight: 600; color: rgba(255,255,255,.74); transition: background-color .15s, color .15s; }
+    .nav-btn:hover { background: rgba(255,255,255,.08); color: #fff; }
+    .nav-btn.active { background: rgba(255,255,255,.13); color: #fff; }
+    .nav-btn.active::before { content: ""; position: absolute; left: -14px; top: 10px; bottom: 10px; width: 4px; border-radius: 0 4px 4px 0; background: var(--orange); }
+    .nav-btn.active .nav-icon { color: #ffa465; }
+    .nav-badge { top: 9px; left: auto; right: 12px; border: none; }
+
+    .content { padding: 34px 44px 56px; }
+    .panel, .stat { border-radius: 18px; }
+    .panel-title { padding: 17px 22px; }
+    .stat { padding: 17px 19px; }
+    .stat .value { font-size: 21px; }
+    @media (hover: hover) {
+      .client-roster-card:hover, .analisis-card:hover, .pipeline-card:hover { box-shadow: var(--shadow-md); transform: translateY(-2px); }
+      .stat:hover { box-shadow: var(--shadow-md); }
+      .cotiz-card:hover { box-shadow: var(--shadow-md); }
+      .cotiz-tab:not(.activo):hover { color: var(--navy); }
+    }
+    .inbox { border-radius: 20px; }
+    .inbox-list { width: 372px; }
+    .sheet { border-radius: 22px; box-shadow: 0 30px 80px -20px rgba(10,18,30,.5); }
+    @media (prefers-reduced-transparency: reduce) {
+      .topbar { background: #fff; -webkit-backdrop-filter: none; backdrop-filter: none; }
+    }
+  }
+
+  /* ---- Accesibilidad: contraste, transparencia y movimiento ---- */
+  @media (prefers-contrast: more) {
+    :root { --border: #b3bcc9; --text2: #3b4554; }
+    .panel, .stat, .cotiz-card, .inbox { border-color: #8d98a8; }
+  }
+  @media (prefers-reduced-transparency: reduce) {
+    .sheet-overlay, #toast { -webkit-backdrop-filter: none; backdrop-filter: none; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .view.active { animation: none; }
+    .tap-pop { animation: none; }
+    * { transition-duration: .01ms !important; }
+  }
+
+  /* ---- Movimiento (criterios de la skill de Emil Kowalski): ease-out fuerte, <300 ms en lo
+     frecuente, presionar = scale(.97), nada de "transition: all", sin elevar tarjetas al pasar
+     el mouse (se usa decenas de veces al día), ventanas con entrada desde su origen. ---- */
+  :root { --ease-out: cubic-bezier(.23, 1, .32, 1); --ease-drawer: cubic-bezier(.32, .72, 0, 1); }
+  .btn, .send-btn, .nav-btn, .filtro-chip, .filtro-accion, .cotiz-tab, .cotiz-acciones button, .precot-filtro, .icon-btn, .inbox-reanudar, .client-pill {
+    transition: transform .16s var(--ease-out), background-color .15s var(--ease-out), color .15s var(--ease-out), border-color .15s var(--ease-out), box-shadow .15s var(--ease-out);
+  }
+  .btn:active, .send-btn:active, .filtro-chip:active, .filtro-accion:active, .cotiz-acciones button:active, .precot-filtro:active, .icon-btn:active, .inbox-reanudar:active, .client-pill:active { transform: scale(.97); }
+  .nav-btn:active { transform: scale(.96); }
+  @keyframes view-in { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: none; } }
+  .view.active { animation: view-in .18s var(--ease-out); }
+  @media (min-width: 1024px) and (hover: hover) and (pointer: fine) {
+    .client-roster-card:hover, .analisis-card:hover, .pipeline-card:hover { transform: none; }
+  }
+  @keyframes fade-in { from { opacity: 0; } to { opacity: 1; } }
+  @keyframes sheet-up { from { transform: translateY(100%); } to { transform: none; } }
+  @keyframes sheet-pop { from { opacity: 0; transform: translate(-50%, -48%) scale(.96); } to { opacity: 1; transform: translate(-50%, -50%) scale(1); } }
+  .sheet-overlay.open { animation: fade-in .2s ease-out; }
+  .sheet.open { animation: sheet-up .34s var(--ease-drawer); }
+  @media (min-width: 640px) { .sheet.open { animation: sheet-pop .2s var(--ease-out); } }
+  #toast { transform: translate(-50%, 8px); transition: opacity .2s var(--ease-out), transform .3s var(--ease-out); }
+  #toast.visible { transform: translate(-50%, 0); }
+  @media (prefers-reduced-motion: reduce) { .sheet.open, .sheet-overlay.open { animation: none; } #toast { transform: translate(-50%, 0); } }
+
+  /* ================= INICIO ================= */
+  #view-inicio.active { display: block; max-width: 1180px; margin: 0 auto; }
+  #view-inicio .panel { margin-bottom: 0 !important; }
+  .inicio-head { margin: 2px 2px 16px; }
+  .inicio-head h2 { margin: 0; font-size: 26px; line-height: 1.15; letter-spacing: -.03em; color: var(--navy); }
+  .inicio-head p { margin: 4px 0 0; color: var(--text2); font-size: 14px; }
+  .inicio-kpis { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; margin-bottom: 18px; }
+  .inicio-kpi {
+    position: relative; display: flex; flex-direction: column; align-items: flex-start; text-align: left; gap: 2px;
+    background: var(--card); border: 1px solid var(--border); border-radius: var(--r-md); padding: 14px 15px 13px;
+    box-shadow: var(--shadow-sm); font-weight: 400; color: var(--text);
+  }
+  .inicio-kpi:active { transform: scale(.98); }
+  .inicio-kpi-ico { width: 34px; height: 34px; border-radius: 11px; display: flex; align-items: center; justify-content: center; background: #eef2f8; color: var(--navy); margin-bottom: 8px; }
+  .inicio-kpi-v { font-size: 30px; line-height: 1; font-weight: 800; letter-spacing: -.035em; color: var(--navy); font-variant-numeric: tabular-nums; }
+  .inicio-kpi-v.texto { font-size: 22px; padding: 4px 0; }
+  .inicio-kpi-l { font-size: 13.5px; font-weight: 700; color: var(--navy); margin-top: 4px; }
+  .inicio-kpi-sub { font-size: 12px; color: var(--text2); }
+  .inicio-kpi.tono-marca .inicio-kpi-ico { background: #fdeee1; color: var(--orange-dark); }
+  .inicio-kpi.tono-marca .inicio-kpi-v { color: var(--orange-dark); }
+  .inicio-kpi.tono-alerta { border-color: #f0c4c0; background: linear-gradient(180deg, #fff, #fff6f5); }
+  .inicio-kpi.tono-alerta .inicio-kpi-ico { background: #fde4e2; color: var(--danger-fg); }
+  .inicio-kpi.tono-alerta .inicio-kpi-v, .inicio-kpi.tono-alerta .inicio-kpi-sub { color: var(--danger-fg); }
+  .inicio-kpi.tono-aviso .inicio-kpi-ico { background: #fff1cf; color: #8a5a00; }
+  .inicio-kpi.tono-ok .inicio-kpi-ico { background: var(--success-bg); color: var(--success-fg); }
+  .inicio-kpi.tono-ok .inicio-kpi-v { color: var(--text2); font-weight: 700; }
+  .inicio-kpi.cargando { opacity: .55; }
+  .inicio-cols { display: grid; grid-template-columns: minmax(0, 1fr); gap: 16px; align-items: start; }
+  .inicio-side { display: flex; flex-direction: column; gap: 16px; min-width: 0; }
+  .inicio-count { min-width: 24px; height: 22px; padding: 0 8px; border-radius: 999px; background: var(--orange); color: #fff; font-size: 12px; font-weight: 800; display: inline-flex; align-items: center; justify-content: center; letter-spacing: 0; }
+  .inicio-count:empty { display: none; }
+  .accion-fila {
+    display: flex; align-items: center; gap: 12px; width: 100%; padding: 12px 16px; background: none; border-bottom: 1px solid var(--border);
+    text-align: left; font-weight: 400; color: var(--text); min-height: 64px;
+  }
+  .accion-fila:last-of-type { border-bottom: none; }
+  .accion-fila:active { background: #f6f8fb; }
+  .accion-av { width: 40px; height: 40px; border-radius: 50%; flex-shrink: 0; display: flex; align-items: center; justify-content: center; background: linear-gradient(145deg, #2b5f93, #0f2b4a); color: #fff; font-size: 12.5px; font-weight: 800; }
+  .accion-cuerpo { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px; }
+  .accion-nombre { font-weight: 700; font-size: 14.5px; color: var(--navy); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; letter-spacing: -.015em; }
+  .accion-msg { font-size: 13px; color: var(--text2); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .accion-lado { display: flex; flex-direction: column; align-items: flex-end; gap: 4px; flex-shrink: 0; }
+  .accion-chip { font-size: 11px; font-weight: 800; padding: 3px 9px; border-radius: 999px; white-space: nowrap; letter-spacing: .01em; }
+  .accion-chip.tipo-cotizar { background: #fdeee1; color: var(--orange-dark); }
+  .accion-chip.tipo-responder { background: #e4ecf8; color: #1d4f9c; }
+  .accion-chip.tipo-seguir { background: #fff1cf; color: #8a5a00; }
+  .accion-cuando { font-size: 12px; color: var(--text2); white-space: nowrap; }
+  .accion-cuando.tarde { color: var(--danger-fg); font-weight: 700; }
+  .accion-mas { padding: 13px 16px; font-size: 13px; color: var(--text2); text-align: center; border-top: 1px solid var(--border); background: #fafbfd; }
+  .inicio-vacio { display: flex; flex-direction: column; align-items: center; gap: 4px; padding: 38px 20px; text-align: center; color: var(--text2); font-size: 13.5px; }
+  .inicio-vacio svg { color: var(--success-fg); background: var(--success-bg); border-radius: 50%; padding: 12px; width: 52px; height: 52px; margin-bottom: 8px; box-sizing: border-box; }
+  .inicio-vacio b { color: var(--navy); font-size: 16px; letter-spacing: -.02em; }
+  @media (hover: hover) and (pointer: fine) {
+    .inicio-kpi:hover { box-shadow: var(--shadow-md); border-color: #d5dbe6; cursor: pointer; }
+    .accion-fila:hover { background: #f6f8fb; cursor: pointer; }
+  }
+  @media (min-width: 640px) { .inicio-kpis { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+  @media (min-width: 1024px) {
+    .inicio-head h2 { font-size: 30px; }
+    .inicio-kpis { grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 14px; margin-bottom: 22px; }
+    .inicio-kpi { padding: 18px 18px 16px; }
+    .inicio-cols { grid-template-columns: minmax(0, 1.55fr) minmax(320px, 1fr); gap: 22px; }
+    .accion-fila { padding: 14px 22px; }
+  }
+
 </style>
 <style>
 #btn-logout{display:none!important}
-/* Incrustado en el teléfono del home: espacio para la isla dinámica y la barra inferior */
+/* Incrustado en un teléfono del sitio: espacio para la isla dinámica y la barra inferior */
 html.embed { --nav-h: 72px; }
 html.embed .topbar { padding-top: 38px; height: calc(var(--header-h) + 28px); }
 html.embed .bottom-nav { padding-bottom: 14px; }
@@ -730,17 +1216,26 @@ html.embed .inbox-chat { top: calc(var(--header-h) + 28px); }
 <div id="cliente-content" style="display:none;">
   <main class="content">
     <div class="view active" id="view-inicio">
-      <div class="panel" style="margin-bottom:16px;">
-        <div class="panel-title"><span>Esperan seguimiento</span></div>
-        <div id="inicio-seguimiento"></div>
+      <div class="inicio-head">
+        <h2 id="inicio-saludo">Hola</h2>
+        <p id="inicio-fecha"></p>
       </div>
-      <div class="panel" style="margin-bottom:16px;">
-        <div class="panel-title"><span>Seguimiento importante</span></div>
-        <div id="inicio-importantes"></div>
-      </div>
-      <div class="panel">
-        <div class="panel-title"><span>Formularios recibidos</span></div>
-        <div id="inicio-formularios"></div>
+      <div class="inicio-kpis" id="inicio-kpis"></div>
+      <div class="inicio-cols">
+        <section class="panel inicio-main">
+          <div class="panel-title"><span>Qué hacer ahora</span><span class="inicio-count" id="inicio-accion-count"></span></div>
+          <div id="inicio-accion"><div class="inbox-empty-msg">Cargando…</div></div>
+        </section>
+        <div class="inicio-side">
+          <section class="panel">
+            <div class="panel-title"><span>Formularios recibidos</span></div>
+            <div id="inicio-formularios"></div>
+          </section>
+          <section class="panel" id="inicio-panel-importantes">
+            <div class="panel-title"><span>Seguimiento marcado</span></div>
+            <div id="inicio-importantes"></div>
+          </section>
+        </div>
       </div>
     </div>
 
@@ -798,6 +1293,38 @@ html.embed .inbox-chat { top: calc(var(--header-h) + 28px); }
       </div>
     </div>
 
+    <div class="view" id="view-cotizaciones">
+      <div id="cotiz-resumen"></div>
+      <div id="cotiz-tabs">
+        <button class="cotiz-tab activo" data-etapa="por_cotizar">Por cotizar</button>
+        <button class="cotiz-tab" data-etapa="cotizadas">Ya cotizadas</button>
+      </div>
+      <input type="search" id="cotiz-buscar" placeholder="Buscar por nombre o teléfono" autocomplete="off">
+      <div id="cotiz-lista"></div>
+    </div>
+
+    <div class="view" id="view-precios">
+      <div id="precios-grid">
+        <div class="panel">
+          <div class="panel-title"><span>Precio por kilo</span></div>
+          <p class="precios-ayuda">Precio neto (sin IVA) por kilo de cada tipo de bolsa. Con estos valores se calcula la precotización.</p>
+          <div id="precios-form"></div>
+          <button class="btn btn-primary" id="precios-guardar">Guardar precios</button>
+          <div class="precios-nota" id="precios-nota"></div>
+        </div>
+        <div class="panel">
+          <div class="panel-title"><span>Precotización</span></div>
+          <div id="precot-layout">
+            <div id="precot-izq">
+              <div id="precot-filtros" style="display:flex;gap:6px;padding:0 0 8px;flex-wrap:wrap;"></div>
+              <div id="precot-lista"></div>
+            </div>
+            <div id="precot-detalle"><div class="cotiz-vacio">Elige un cliente de la izquierda para calcular su precotización.</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
     <div class="view" id="view-analisis">
       <div class="pipeline-updated" id="analisis-updated"></div>
       <button class="btn btn-outline btn-block admin-only" id="btn-ejecutar-analisis" style="margin-bottom:16px;"><svg class="icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg> Analizar ahora</button>
@@ -818,7 +1345,25 @@ html.embed .inbox-chat { top: calc(var(--header-h) + 28px); }
         <p>Todavía no hay clientes. Se cruzan solos las cotizaciones subidas con los contactos de WhatsApp.</p>
       </div>
       <div class="stats" id="clientes-stats"></div>
+      <div id="clientes-filtros" class="mj-chips"></div>
       <div class="client-roster" id="clientes-content"></div>
+    </div>
+
+    <div class="view" id="view-mejoras">
+      <div class="mj-intro">
+        <h2 class="mj-h">Mejoras y pasos a seguir</h2>
+        <p class="mj-sub">Qué hacer para vender más, quién lo hace y cómo va. Los indicadores se calculan solos con las cotizaciones, formularios y Ads.</p>
+      </div>
+      <div class="pipeline-updated" id="mejoras-updated"></div>
+      <div class="stats mj-kpis" id="mejoras-kpis"></div>
+      <div class="panel mj-panel" id="mejoras-motivos" style="display:none;"></div>
+      <div class="mj-toolbar">
+        <div class="mj-chips" id="mejoras-filtro-estado"></div>
+        <select id="mejoras-filtro-area" aria-label="Filtrar por área"></select>
+        <button class="btn btn-primary btn-sm admin-only" id="btn-nueva-mejora">+ Agregar mejora</button>
+      </div>
+      <div id="mejoras-lista"></div>
+      <div class="panel mj-panel" id="mejoras-licitaciones" style="display:none;"></div>
     </div>
 
     <div class="view" id="view-ads">
@@ -876,7 +1421,8 @@ html.embed .inbox-chat { top: calc(var(--header-h) + 28px); }
             <button class="btn btn-navy admin-only" id="btn-sincronizar-ads-vacio" style="display:none;"><svg class="icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg> Sincronizar con Google Ads</button>
             <button class="btn btn-outline admin-only" id="btn-cargar-ads">Pegar datos a mano</button>
           </div>
-          <div id="ads-content" style="display:none;">
+          <!-- OJO: no llamar "ads-content" a este bloque: la lista EasyList de Adblock Plus tiene la regla ###ads-content y lo oculta, dejando la vista de Ads en blanco. -->
+          <div id="gasto-ads-contenido" style="display:none;">
             <div class="pipeline-updated" id="ads-updated"></div>
             <div class="stats" id="ads-stats"></div>
 
@@ -923,7 +1469,7 @@ html.embed .inbox-chat { top: calc(var(--header-h) + 28px); }
           <div class="panel admin-only" style="margin-bottom:16px;">
             <div class="panel-title"><span>Registrar visita</span></div>
             <div style="padding:16px;">
-              <button class="btn btn-primary btn-block" id="btn-asistencia-conflex"><svg class="icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 11l1.6-4.5A2 2 0 0 1 8.5 5h7a2 2 0 0 1 1.9 1.5L19 11"/><rect x="3" y="11" width="18" height="6" rx="2"/><circle cx="7.5" cy="17.5" r="1.5"/><circle cx="16.5" cy="17.5" r="1.5"/></svg> Asistencia</button>
+              <button class="btn btn-primary btn-block" id="btn-asistencia-cliente"><svg class="icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 11l1.6-4.5A2 2 0 0 1 8.5 5h7a2 2 0 0 1 1.9 1.5L19 11"/><rect x="3" y="11" width="18" height="6" rx="2"/><circle cx="7.5" cy="17.5" r="1.5"/><circle cx="16.5" cy="17.5" r="1.5"/></svg> Asistencia</button>
             </div>
           </div>
           <div class="panel">
@@ -940,8 +1486,11 @@ html.embed .inbox-chat { top: calc(var(--header-h) + 28px); }
     <div class="nav-brand"><img src="/assets/panel-demo/logo-jpb.png" alt="JPB Marketing"><span>JPB Marketing<small>Panel de clientes</small></span></div>
     <button class="nav-btn active" data-view="inicio"><span class="nav-icon"><svg class="icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 10.5 12 3l9 7.5"/><path d="M5 9.5V20a1 1 0 0 0 1 1h4v-6h4v6h4a1 1 0 0 0 1-1V9.5"/></svg></span><span>Inicio</span></button>
     <button class="nav-btn" data-view="chats"><span class="nav-badge" id="nav-badge-chats"></span><span class="nav-icon"><svg class="icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg></span><span>Conversaciones</span></button>
+    <button class="nav-btn" data-view="cotizaciones" id="nav-cotizaciones" style="display:none;"><span class="nav-badge" id="nav-badge-cotiz"></span><span class="nav-icon"><svg class="icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><polyline points="9 15 11 17 15 13"/></svg></span><span>Cotizar</span></button>
+    <button class="nav-btn" data-view="precios" id="nav-precios" style="display:none;"><span class="nav-icon"><svg class="icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="2" width="16" height="20" rx="2"/><line x1="8" y1="6" x2="16" y2="6"/><line x1="8" y1="11" x2="8.01" y2="11"/><line x1="12" y1="11" x2="12.01" y2="11"/><line x1="16" y1="11" x2="16.01" y2="11"/><line x1="8" y1="15" x2="8.01" y2="15"/><line x1="12" y1="15" x2="12.01" y2="15"/><line x1="16" y1="15" x2="16.01" y2="15"/><line x1="8" y1="19" x2="16" y2="19"/></svg></span><span>Precios</span></button>
     <button class="nav-btn" data-view="analisis"><span class="nav-icon"><svg class="icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg></span><span>Análisis</span></button>
     <button class="nav-btn" data-view="clientes"><span class="nav-icon"><svg class="icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg></span><span>Clientes</span></button>
+    <button class="nav-btn" data-view="mejoras" id="nav-mejoras"><span class="nav-badge" id="nav-badge-mejoras"></span><span class="nav-icon"><svg class="icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg></span><span>Mejoras</span></button>
     <button class="nav-btn" data-view="ads"><span class="nav-icon"><svg class="icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg></span><span>Gastos</span></button>
   </nav>
 </div>
@@ -958,6 +1507,8 @@ html.embed .inbox-chat { top: calc(var(--header-h) + 28px); }
 </div>
 
 <!-- Sheet: nuevo/editar cliente -->
+<div id="toast" role="status" aria-live="polite"></div>
+
 <div class="sheet" id="sheet-estado">
   <div class="sheet-handle"></div>
   <h2 class="sheet-title">Etiqueta del chat</h2>
@@ -991,17 +1542,63 @@ html.embed .inbox-chat { top: calc(var(--header-h) + 28px); }
   </div>
 </div>
 
+<div class="sheet" id="sheet-resultado">
+  <div class="sheet-handle"></div>
+  <h2 class="sheet-title" id="resultado-titulo">Resultado de la cotización</h2>
+  <div class="sheet-body">
+    <div class="field">
+      <label>¿Cómo terminó?</label>
+      <div class="mj-seg" id="rs-estado">
+        <button type="button" data-estado="ganada">Ganada</button>
+        <button type="button" data-estado="perdida">Perdida</button>
+        <button type="button" data-estado="abierta">Sigue abierta</button>
+      </div>
+    </div>
+    <div class="field" id="rs-motivo-campo"><label>Motivo de la pérdida</label><select id="rs-motivo"></select></div>
+    <div class="field" id="rs-competidor-campo"><label>¿A quién le compró? (opcional)</label><input type="text" id="rs-competidor" placeholder="Ej: Competidor A, Competidor B, ferretería local"></div>
+    <div class="field" id="rs-monto-campo"><label>Monto (CLP, neto)</label><input type="number" id="rs-monto" min="0" step="1000" inputmode="numeric"><small>Por defecto, el total cotizado. Corrígelo si compró solo una parte.</small></div>
+    <div class="field"><label>Nota (opcional)</label><input type="text" id="rs-nota" placeholder="Ej: compró solo conduit, pide despacho a obra"></div>
+  </div>
+  <div class="sheet-foot">
+    <button class="btn btn-outline" data-close>Cancelar</button>
+    <button class="btn btn-primary" id="btn-guardar-resultado">Guardar</button>
+  </div>
+</div>
+
+<div class="sheet" id="sheet-mejora">
+  <div class="sheet-handle"></div>
+  <h2 class="sheet-title" id="mejora-titulo-sheet">Agregar mejora</h2>
+  <div class="sheet-body">
+    <div class="field"><label>Título</label><input type="text" id="mj-titulo" maxlength="160" placeholder="Ej: Ofrecer crédito a 30 días"></div>
+    <div class="mj-grid2">
+      <div class="field"><label>Área</label><select id="mj-area"></select></div>
+      <div class="field"><label>Responsable</label><select id="mj-responsable"><option>JPB</option><option>Empresa</option><option>Ambos</option><option>Cliente</option></select></div>
+      <div class="field"><label>Impacto</label><select id="mj-impacto"><option>Alto</option><option>Medio</option><option>Bajo</option></select></div>
+      <div class="field"><label>Prioridad</label><select id="mj-prioridad"><option value="1">1 · Ahora</option><option value="2">2 · Próximo</option><option value="3">3 · Después</option></select></div>
+    </div>
+    <div class="field"><label>Estado</label><select id="mj-estado"></select></div>
+    <div class="field"><label>Por qué / dato que lo respalda</label><textarea id="mj-detalle" rows="3" maxlength="1200"></textarea></div>
+    <div class="field"><label>Siguiente paso</label><textarea id="mj-paso" rows="2" maxlength="600"></textarea></div>
+    <div class="field"><label>Avance (opcional)</label><input type="text" id="mj-avance" maxlength="400" placeholder="Ej: llamaron a Zambrano el 18-nov"></div>
+  </div>
+  <div class="sheet-foot">
+    <button class="btn btn-outline" id="btn-eliminar-mejora" style="display:none;">Eliminar</button>
+    <button class="btn btn-outline" data-close>Cancelar</button>
+    <button class="btn btn-primary" id="btn-guardar-mejora">Guardar</button>
+  </div>
+</div>
+
 <div class="sheet" id="sheet-cliente">
   <div class="sheet-handle"></div>
   <h2 class="sheet-title">Nuevo cliente</h2>
   <div class="sheet-body">
     <div class="field">
       <label>Nombre del cliente</label>
-      <input type="text" id="f-nombre" placeholder="Ej: Polimer">
+      <input type="text" id="f-nombre" placeholder="Ej: Aceros del Norte">
     </div>
     <div class="field">
       <label>ID interno (se genera solo)</label>
-      <input type="text" id="f-id" placeholder="polimer">
+      <input type="text" id="f-id" placeholder="aceros-norte">
     </div>
     <div class="field-group">
       <h3>WhatsApp (opcional)</h3>
@@ -1048,7 +1645,7 @@ html.embed .inbox-chat { top: calc(var(--header-h) + 28px); }
           <input type="text" id="f-codigo-acceso" placeholder="Ej: 7K9QXM3P" style="flex:1;">
           <button class="btn btn-outline btn-sm" id="btn-generar-codigo" type="button">Generar</button>
         </div>
-        <small>Se lo entregas a este cliente (ej. Polimer, Conflex) para que entre a su propia vista: solo ve su información, no puede editar nada ni ver a otros clientes. Déjalo vacío para no darle acceso.</small>
+        <small>Se lo entregas a este cliente (ej. Aceros del Norte) para que entre a su propia vista: solo ve su información, no puede editar nada ni ver a otros clientes. Déjalo vacío para no darle acceso.</small>
       </div>
     </div>
   </div>
@@ -1095,7 +1692,7 @@ html.embed .inbox-chat { top: calc(var(--header-h) + 28px); }
   <button class="btn btn-outline btn-block" data-close style="margin-top:14px;">Cerrar</button>
 </div>
 
-<script src="/assets/panel-demo/mock.js"></script>
+<script src="/assets/panel-demo/mock.js?v=2"></script>
 <script>
 // ---- Efecto "tap" global: se agranda un poco al presionar cualquier botón/tarjeta ----
 const TAP_SELECTOR = 'button, .icon-btn, .nav-btn, .client-roster-card, .client-row, .inbox-item, .analisis-card, .pipeline-card, .campaign-head, .calendar-day.has-data';
@@ -1151,6 +1748,7 @@ let CLIENTE_ACTUAL = null;
 let CHATS_CACHE = [];
 let CHATS_CACHE_CLIENTE = null;
 let CHATS_FIRMA = '';
+let CHATS_CARGADOS_DE = null; // cliente cuyos chats ya llegaron (para no mostrar "todo al día" mientras carga)
 let chatAbierto = null;
 let ROL = 'admin';
 let MI_CLIENTE_ID = null;
@@ -1200,6 +1798,53 @@ function closeModals() {
 document.getElementById('overlay').addEventListener('click', closeModals);
 document.querySelectorAll('[data-close]').forEach((b) => b.addEventListener('click', closeModals));
 
+// ---- Ruta en la URL (#/cliente/vista[/chat]) ----
+// Es una sola página con pestañas, así que sin esto un F5 siempre volvía al primer cliente
+// y a Inicio. Con el hash, recargar o compartir el enlace deja en el mismo cliente y pestaña,
+// y el botón "atrás" del navegador vuelve a la pestaña anterior.
+let APLICANDO_RUTA = false;
+function leerRuta() {
+  const m = location.hash.match(/^#\/([a-z0-9-]+)(?:\/([a-z]+))?(?:\/(.+))?$/);
+  return m ? { cliente: m[1], vista: m[2] || null, chat: m[3] ? decodeURIComponent(m[3]) : null } : null;
+}
+function actualizarRuta(reemplazar) {
+  if (APLICANDO_RUTA || !CLIENTE_ACTUAL) return;
+  const act = document.querySelector('.nav-btn.active');
+  const vista = act ? act.dataset.view : 'inicio';
+  let h = `#/${CLIENTE_ACTUAL}/${vista}`;
+  if (vista === 'chats' && chatAbierto && document.getElementById('chats-inbox').classList.contains('chat-open')) {
+    h += '/' + encodeURIComponent(chatAbierto);
+  }
+  try { localStorage.setItem('panel_ultimo_cliente', CLIENTE_ACTUAL); } catch (e) { /* sin storage */ }
+  if (location.hash === h) return;
+  if (reemplazar) history.replaceState(null, '', h);
+  else history.pushState(null, '', h);
+}
+// Atrás/adelante del navegador: se aplica la ruta de la URL sin volver a escribirla.
+window.addEventListener('popstate', () => {
+  const r = leerRuta();
+  if (!r || !CLIENTES.find((c) => c.id === r.cliente)) return;
+  APLICANDO_RUTA = true;
+  try {
+    if (r.cliente !== CLIENTE_ACTUAL) {
+      CLIENTE_ACTUAL = r.cliente;
+      renderClientList();
+      actualizarCabeceraCliente();
+      seleccionarCliente(CLIENTE_ACTUAL, true);
+    }
+    if (r.chat) irAChat(r.chat);
+    else {
+      document.getElementById('chats-inbox').classList.remove('chat-open');
+      bloquearScrollFondo(false);
+      if (r.vista) irAVista(r.vista);
+    }
+  } finally { APLICANDO_RUTA = false; }
+});
+// Cualquier cambio de pestaña o de chat abierto actualiza la URL (lo observamos en vez de
+// tocar cada sitio que navega: menú, tarjetas que saltan a un chat, notificaciones…).
+new MutationObserver(() => actualizarRuta(false)).observe(document.querySelector('.bottom-nav'), { subtree: true, attributes: true, attributeFilter: ['class'] });
+new MutationObserver(() => actualizarRuta(false)).observe(document.getElementById('chats-inbox'), { attributes: true, attributeFilter: ['class'] });
+
 // ---- Cargar / seleccionar clientes ----
 function cargarClientes() {
   return fetch('api/clients?_=' + Date.now())
@@ -1219,22 +1864,35 @@ function cargarClientes() {
       // el cliente de la URL no existe o no hay acceso, se ignora y sigue el
       // comportamiento normal (último cliente usado o el primero de la lista).
       const params = new URLSearchParams(location.search);
-      const clienteParam = params.get('cliente');
+      const ruta = leerRuta();
+      let ultimo = null;
+      try { ultimo = localStorage.getItem('panel_ultimo_cliente'); } catch (e) { /* sin storage */ }
+      // Prioridad: enlace de notificación (?cliente=) > ruta #/cliente/... > último cliente usado.
+      const clienteParam = params.get('cliente') || (ruta && ruta.cliente) || null;
       if (clienteParam && clientes.find((c) => c.id === clienteParam)) {
         CLIENTE_ACTUAL = clienteParam;
-      } else if (!CLIENTE_ACTUAL || !clientes.find((c) => c.id === CLIENTE_ACTUAL)) {
+      } else if (CLIENTE_ACTUAL && clientes.find((c) => c.id === CLIENTE_ACTUAL)) {
+        // se mantiene el cliente actual (recarga de la lista tras editar)
+      } else if (ultimo && clientes.find((c) => c.id === ultimo)) {
+        CLIENTE_ACTUAL = ultimo;
+      } else {
         CLIENTE_ACTUAL = clientes[0].id;
       }
       renderClientList();
       actualizarCabeceraCliente();
       seleccionarCliente(CLIENTE_ACTUAL, true);
-      const chatParam = params.get('chat');
-      const vistaParam = params.get('vista');
-      if (chatParam) irAChat(chatParam);
-      else if (vistaParam) irAVista(vistaParam);
-      // Se limpia la URL para que un refresco manual de la página no vuelva a saltar
-      // al mismo chat/vista una y otra vez.
-      if (clienteParam || chatParam || vistaParam) history.replaceState(null, '', location.pathname);
+      const delEnlace = !!params.get('cliente');
+      const chatParam = params.get('chat') || (!delEnlace && ruta && ruta.cliente === CLIENTE_ACTUAL ? ruta.chat : null);
+      const vistaParam = params.get('vista') || (!delEnlace && ruta && ruta.cliente === CLIENTE_ACTUAL ? ruta.vista : null);
+      APLICANDO_RUTA = true;
+      try {
+        if (chatParam) irAChat(chatParam);
+        else if (vistaParam) irAVista(vistaParam);
+      } finally { APLICANDO_RUTA = false; }
+      // Se limpia el ?cliente=&chat= del enlace de la notificación (para que un refresco no
+      // vuelva a saltar) y se deja la ruta limpia #/cliente/vista en su lugar.
+      if (location.search) history.replaceState(null, '', location.pathname);
+      actualizarRuta(true);
     });
 }
 
@@ -1260,6 +1918,7 @@ function renderClientList() {
       renderClientList();
       actualizarCabeceraCliente();
       seleccionarCliente(CLIENTE_ACTUAL, true);
+      actualizarRuta(false);
     });
   });
   list.querySelectorAll('.client-row-edit').forEach((btn) => {
@@ -1296,6 +1955,7 @@ function seleccionarCliente(id, resetChat) {
   cargarAds();
   cargarAnalisis();
   cargarClientesRoster();
+  cargarMejoras();
   cargarGastos();
   cargarFacturacion();
   cargarDesplazamiento();
@@ -1437,8 +2097,6 @@ function tiempoRelativo(ts) {
   return `hace ${Math.round(diffH / 24)} d`;
 }
 
-// Estado/color de un chat: Polimer lo calcula el bot en vivo (cumple el mínimo de
-// producción o no); Conflex no tiene mínimo, así que verde = ya tiene una cotización.
 let ROSTER_POR_TEL = {};
 let FILTRO_ESTADO = 'todos';
 function estadoDeChat(c) {
@@ -1502,6 +2160,24 @@ function nombreDeContacto(telefono) {
 function nombreParaMostrar(c) {
   if (c.canal === 'web') return 'Chat web · ' + String(c.telefono).slice(4, 10);
   return nombreDeContacto(c.telefono) || c.telefono;
+}
+
+let TOAST_TIMER = null;
+function mostrarToast(msg) {
+  const el = document.getElementById('toast');
+  el.textContent = msg;
+  el.classList.add('visible');
+  clearTimeout(TOAST_TIMER);
+  TOAST_TIMER = setTimeout(() => el.classList.remove('visible'), 3200);
+}
+
+// Archivar / desarchivar un chat. Devuelve la promesa para poder encadenar avisos.
+function setArchivado(telefono, archivar) {
+  return fetch(`api/clients/${CLIENTE_ACTUAL}/chats/` + encodeURIComponent(telefono) + '/archivar', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ archivar }),
+  }).then((r) => { if (!r.ok) throw new Error('HTTP ' + r.status); });
 }
 
 let BUSQUEDA_CHATS = '';
@@ -1570,6 +2246,9 @@ function renderListaChats() {
   renderChipsFiltro();
   renderSeguimiento();
   renderMetricas();
+  renderCotizaciones();
+  renderInicioResumen();
+  renderPrecios();
   const l = leidosDe();
   const totalSinLeer = CHATS_CACHE.filter((c) => !c.archivado && c.telefono !== chatAbierto && sinLeer(c, l)).length;
   const navBadge = document.getElementById('nav-badge-chats');
@@ -1600,6 +2279,7 @@ function renderListaChats() {
           <span class="badge ${esWeb ? 'canal-web' : 'canal-whatsapp'}">${esWeb ? 'Chat web' : 'WhatsApp'}</span>
           ${est ? `<span class="badge est-${est.clave}">${est.texto}</span>` : ''}
           ${c.respondido ? '<span class="badge est-respondido">Respondido</span>' : ''}
+          ${c.archivado ? `<button class="btn-desarchivar" data-telefono="${esc(c.telefono)}">Desarchivar</button>` : ''}
           <span class="badge ${c.pausada ? 'pausado' : 'activo'}">${c.pausada ? 'Pausado' : 'Bot activo'}</span>
           ${c.entregaFallida ? `<span class="badge pausado">${icon('alert', 11)} No entregado</span>` : ''}
         </div>
@@ -1610,6 +2290,390 @@ function renderListaChats() {
   list.querySelectorAll('.inbox-item').forEach((el) => {
     el.addEventListener('click', () => abrirChat(el.dataset.telefono));
   });
+  list.querySelectorAll('.btn-desarchivar').forEach((btn) => {
+    btn.addEventListener('click', (e) => {
+      e.stopPropagation(); // no abrir el chat al tocar el botón
+      setArchivado(btn.dataset.telefono, false)
+        .then(() => { mostrarToast('Chat desarchivado: vuelve a estar en "Todos"'); cargarChats(); })
+        .catch(() => mostrarToast('No se pudo desarchivar. Intenta de nuevo.'));
+    });
+  });
+}
+
+// ---- Cotizaciones: embudo de pedidos que cumplen el mínimo (verdes). "Por cotizar" =
+// cumple y todavía no se marcó como respondido; "Cotizadas" = ya respondido (la marca
+// se invalida sola si el cliente vuelve a escribir, ver /respondido en worker.js). ----
+let COTIZ_ETAPA = 'por_cotizar';
+let COTIZ_BUSQUEDA = '';
+let COTIZ_VER_ANTIGUOS = false;
+const COTIZ_DIA = 24 * 3600 * 1000;
+
+function fuenteDeChat(c) { return c.canal === 'web' ? 'web' : 'whatsapp'; }
+
+// Hace cuánto espera: desde el último mensaje del cliente (si se sabe), si no desde la última actividad.
+function esperaDeCotizacion(c) {
+  const desde = c.ultimoClienteTs || c.ultimoTs || 0;
+  return desde ? Date.now() - desde : 0;
+}
+// Frase simple y completa ("hace 3 horas"), sin abreviaturas.
+function textoHace(ms) {
+  const min = Math.floor(ms / 60000);
+  if (min < 2) return 'hace un momento';
+  if (min < 60) return `hace ${min} minutos`;
+  const h = Math.floor(min / 60);
+  if (h < 24) return h === 1 ? 'hace 1 hora' : `hace ${h} horas`;
+  const d = Math.floor(h / 24);
+  return d === 1 ? 'hace 1 día' : `hace ${d} días`;
+}
+function telefonoLegible(t) {
+  const d = String(t || '').replace(/\D/g, '');
+  if (d.length === 11 && d.startsWith('56')) return `+56 ${d[2]} ${d.slice(3, 7)} ${d.slice(7)}`;
+  return t;
+}
+function nombreCotizacion(c) {
+  if (c.canal === 'web') return 'Visita de la página web';
+  return nombreDeContacto(c.telefono) || telefonoLegible(c.telefono);
+}
+function chatsCotizables() {
+  return CHATS_CACHE.filter((c) => {
+    if (c.archivado) return false;
+    const e = estadoDeChat(c);
+    return e && e.clave === 'cumple';
+  });
+}
+
+function marcarCotizada(telefono, respondido) {
+  return fetch(`api/clients/${CLIENTE_ACTUAL}/chats/` + encodeURIComponent(telefono) + '/respondido', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ respondido }),
+  }).then((r) => { if (!r.ok) throw new Error('HTTP ' + r.status); });
+}
+
+function tarjetaCotizacion(c) {
+  const espera = esperaDeCotizacion(c);
+  const hecha = !!c.respondido;
+  const nivel = hecha ? 'hecha' : espera >= COTIZ_DIA ? 'espera-alta' : espera >= 4 * 3600 * 1000 ? 'espera-media' : '';
+  return `
+  <div class="cotiz-card ${nivel}" data-telefono="${esc(c.telefono)}">
+    <div class="cotiz-nombre">${esc(nombreCotizacion(c))}</div>
+    <div class="cotiz-cuando">${hecha ? 'Ya cotizada' : 'Escribió ' + textoHace(espera)}</div>
+    <div class="cotiz-via">${fuenteDeChat(c) === 'web' ? 'Llegó por la página web' : 'Llegó por WhatsApp'}</div>
+    <div class="cotiz-msg">“${esc((c.ultimoMensaje || 'Sin mensajes').slice(0, 140))}”</div>
+    <div class="cotiz-acciones">
+      <button class="principal" data-accion="chat">Ver el chat</button>
+      <button data-accion="${hecha ? 'reabrir' : 'cotizada'}">${hecha ? 'Volver a pendientes' : '✔ Ya la cotizé'}</button>
+    </div>
+  </div>`;
+}
+
+function renderCotizaciones() {
+  const cont = document.getElementById('cotiz-lista');
+  if (!cont) return;
+  const base = chatsCotizables();
+  const nav = document.getElementById('nav-cotizaciones');
+  const aplica = CHATS_CACHE.some((c) => c.estadoPedido);
+  nav.style.display = aplica ? '' : 'none';
+  if (!aplica) return;
+
+  const porCotizar = base.filter((c) => !c.respondido);
+  const cotizadas = base.filter((c) => c.respondido);
+  const urgentes = porCotizar.filter((c) => esperaDeCotizacion(c) >= COTIZ_DIA).length;
+  const badge = document.getElementById('nav-badge-cotiz');
+  badge.textContent = porCotizar.length > 99 ? '99+' : String(porCotizar.length);
+  badge.style.display = porCotizar.length ? 'flex' : 'none';
+
+  document.getElementById('cotiz-resumen').innerHTML = porCotizar.length
+    ? `Tienes <strong>${porCotizar.length}</strong> ${porCotizar.length === 1 ? 'cliente' : 'clientes'} esperando cotización.${urgentes ? `<span class="alerta">${urgentes === 1 ? '1 lleva' : urgentes + ' llevan'} más de un día esperando.</span>` : ''}`
+    : '¡Todo al día! No hay clientes esperando cotización.';
+  document.querySelectorAll('.cotiz-tab').forEach((b) => b.classList.toggle('activo', b.dataset.etapa === COTIZ_ETAPA));
+
+  let lista = COTIZ_ETAPA === 'por_cotizar' ? porCotizar : cotizadas;
+  const q = COTIZ_BUSQUEDA.trim().toLowerCase();
+  if (q) {
+    const qd = q.replace(/\D/g, '');
+    lista = lista.filter((c) => nombreCotizacion(c).toLowerCase().includes(q)
+      || (qd && String(c.telefono).replace(/\D/g, '').includes(qd)));
+  }
+  // Los que llevan más tiempo esperando primero; los más viejos se agrupan aparte.
+  lista = [...lista].sort((a, b) => esperaDeCotizacion(a) - esperaDeCotizacion(b));
+
+  if (!lista.length) {
+    cont.innerHTML = `<div class="cotiz-vacio">${q ? 'No encontré ningún cliente con eso.' : COTIZ_ETAPA === 'por_cotizar' ? '¡Todo al día!' : 'Todavía no hay cotizaciones marcadas.'}</div>`;
+    return;
+  }
+  let html = '';
+  if (COTIZ_ETAPA === 'por_cotizar' && !q) {
+    const nuevos = lista.filter((c) => esperaDeCotizacion(c) < 2 * COTIZ_DIA);
+    const medios = lista.filter((c) => esperaDeCotizacion(c) >= 2 * COTIZ_DIA && esperaDeCotizacion(c) < 7 * COTIZ_DIA);
+    const viejos = lista.filter((c) => esperaDeCotizacion(c) >= 7 * COTIZ_DIA);
+    const seccion = (titulo, sub, arr) => arr.length ? `<div class="cotiz-seccion">${titulo} (${arr.length})<small>${sub}</small></div>${arr.map(tarjetaCotizacion).join('')}` : '';
+    html += seccion('Nuevos', 'Escribieron en los últimos 2 días', nuevos);
+    html += seccion('Esperando hace unos días', 'Entre 2 y 7 días', medios);
+    if (viejos.length) {
+      html += `<button class="cotiz-antiguos-btn" id="cotiz-ver-antiguos">${COTIZ_VER_ANTIGUOS ? 'Ocultar' : 'Ver'} los ${viejos.length} más antiguos (más de 7 días)</button>`;
+      if (COTIZ_VER_ANTIGUOS) html += viejos.map(tarjetaCotizacion).join('');
+    }
+  } else {
+    html = lista.map(tarjetaCotizacion).join('');
+  }
+  cont.innerHTML = html;
+  const btnViejos = document.getElementById('cotiz-ver-antiguos');
+  if (btnViejos) btnViejos.addEventListener('click', () => { COTIZ_VER_ANTIGUOS = !COTIZ_VER_ANTIGUOS; renderCotizaciones(); });
+  cont.querySelectorAll('.cotiz-card').forEach((card) => {
+    const tel = card.dataset.telefono;
+    card.querySelectorAll('button').forEach((btn) => btn.addEventListener('click', () => {
+      const a = btn.dataset.accion;
+      if (a === 'chat') { irAChat(tel); return; }
+      const marcar = a === 'cotizada';
+      marcarCotizada(tel, marcar)
+        .then(() => { mostrarToast(marcar ? 'Listo, quedó marcada como cotizada' : 'Volvió a "Por cotizar"'); cargarChats(); })
+        .catch(() => mostrarToast('No se pudo guardar. Intenta de nuevo.'));
+    }));
+  });
+}
+
+document.querySelectorAll('.cotiz-tab').forEach((b) => b.addEventListener('click', () => { COTIZ_ETAPA = b.dataset.etapa; renderCotizaciones(); }));
+document.getElementById('cotiz-buscar').addEventListener('input', (e) => { COTIZ_BUSQUEDA = e.target.value; renderCotizaciones(); });
+
+// ---- Precios por kilo y precotización (solo escritorio) ----
+// La precotización toma los productos que ya clasificó el bot en el chat (tipo, medidas,
+// micraje y peso en kg) y los multiplica por el precio por kilo del tipo de bolsa. Si el
+// bot no dejó el peso (pedidos viejos con la "excepción de mínimo"), se calcula acá con la
+// misma fórmula del bot: kilos = caras × ancho × largo × micras × 925 × unidades / 10^10
+// (caras = 2 en bolsas, 1 en film, rollo y stretch).
+const TIPOS_BOLSA = ['Hielo', 'Wicket', 'Cubre pallet', 'Basura', 'Rollo', 'Alta resistencia', 'Bins', 'Especiales', 'Pouch vacío', 'Film laminado', 'Film barrera', 'Stretch'];
+const MICRAS_ESTANDAR = { hielo: 70, wicket: 25, 'cubre pallet': 80, basura: 40, rollo: 15, 'alta resistencia': 150, bins: 50, especiales: 90, 'pouch vacio': 90, 'film laminado': 20, 'film barrera': 80, stretch: 23 };
+// Cómo escriben los clientes el tipo → categoría de precio (se prueba en orden).
+const ALIAS_TIPO = [
+  [/cubre\s*pallet/, 'Cubre pallet'], [/\bbins?\b/, 'Bins'], [/hielo/, 'Hielo'], [/wicket/, 'Wicket'],
+  [/alta\s*resist/, 'Alta resistencia'], [/pouch/, 'Pouch vacío'], [/film\s*barrera/, 'Film barrera'],
+  [/film/, 'Film laminado'], [/stretch|pull\s*pack/, 'Stretch'], [/rollo/, 'Rollo'],
+  [/basura/, 'Basura'], [/especial|ziploc|stand\s*up|doypack/, 'Especiales'],
+];
+const IVA = 0.19;
+// Comisión por ventas (va para JPB): el precio al cliente se sube para que, descontado este %,
+const COMISION = 0.05;
+let PRECIOS = {};
+let PRECIOS_CLIENTE = null;
+let PRECOT_SEL = null;
+let PRECOT_FILTRO = 'todos';
+const PRECOT_CACHE = {};
+const PRECOT_CLIENTE_DATOS = {}; // nombre, empresa, email y detalle que dejó el bot al cerrar el pedido
+const PRECOT_AJUSTE = {}; // por línea: { tipo, precio, peso } puestos a mano, solo para ese cálculo
+
+function normTexto(t) { return String(t || '').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').trim(); }
+function categoriasPrecio() {
+  return [...TIPOS_BOLSA, ...Object.keys(PRECIOS).filter((k) => !TIPOS_BOLSA.includes(k))];
+}
+// Categoría de precio de un producto: coincidencia exacta con una guardada, o por alias.
+function categoriaDeTipo(tipo) {
+  const t = normTexto(tipo);
+  const exacta = categoriasPrecio().find((k) => normTexto(k) === t);
+  if (exacta) return exacta;
+  const alias = ALIAS_TIPO.find(([re]) => re.test(t));
+  if (alias) return alias[1];
+  // Tipos propios que agregó el usuario (ej. "Camiseta"): si el nombre aparece en el texto del cliente.
+  return Object.keys(PRECIOS).find((k) => !TIPOS_BOLSA.includes(k) && t.includes(normTexto(k))) || '';
+}
+function microsDeProducto(p) {
+  if (Number(p.micras) > 0) return Number(p.micras);
+  const t = normTexto(p.tipo);
+  const clave = Object.keys(MICRAS_ESTANDAR).find((k) => t.includes(k));
+  return clave ? MICRAS_ESTANDAR[clave] : 40;
+}
+// Kilos del producto: el peso que dejó el bot; si falta, kilos pedidos o la fórmula.
+function pesoDeProducto(p) {
+  if (Number(p.pesoKg) > 0) return { kg: Number(p.pesoKg), calculado: false };
+  const cant = Number(p.cantidad) || 0;
+  if (normTexto(p.unidad) === 'kilos') return { kg: cant, calculado: false };
+  if (!(Number(p.ancho) > 0 && Number(p.largo) > 0 && cant > 0)) return { kg: 0, calculado: false };
+  const caras = /film|rollo|stretch/.test(normTexto(p.tipo)) ? 1 : 2;
+  return { kg: Math.round((caras * p.ancho * p.largo * microsDeProducto(p) * 925 * cant) / 1e10 * 100) / 100, calculado: true };
+}
+
+function cargarPrecios() {
+  if (PRECIOS_CLIENTE === CLIENTE_ACTUAL) return;
+  const cliente = CLIENTE_ACTUAL;
+  fetch(`api/clients/${cliente}/precios?_=` + Date.now()).then((r) => r.json()).then((d) => {
+    if (CLIENTE_ACTUAL !== cliente) return;
+    PRECIOS = d.precios || {};
+    PRECIOS_CLIENTE = cliente;
+    document.getElementById('precios-nota').textContent = d.actualizado ? 'Guardado el ' + new Date(d.actualizado).toLocaleString('es-CL') : 'Todavía no hay precios guardados.';
+    renderPreciosForm();
+    if (PRECOT_SEL) renderPrecotDetalle();
+  }).catch(() => {});
+}
+function filaPrecio(t) {
+  return `<div class="precios-fila"><label for="precio-${esc(t)}">${esc(t)}</label>
+    <span>$ <input type="number" min="0" step="1" id="precio-${esc(t)}" data-tipo="${esc(t)}" value="${PRECIOS[t] || ''}" placeholder="0"> /kg</span></div>`;
+}
+function renderPreciosForm() {
+  document.getElementById('precios-form').innerHTML = categoriasPrecio().map(filaPrecio).join('')
+    + `<div class="precios-fila precios-nuevo"><input type="text" id="precio-nuevo-nombre" maxlength="40" placeholder="Otro tipo (ej. Camiseta)">
+    <span>$ <input type="number" min="0" step="1" id="precio-nuevo-valor" placeholder="0"> /kg</span></div>`;
+}
+document.getElementById('precios-guardar').addEventListener('click', () => {
+  const precios = {};
+  document.querySelectorAll('#precios-form input[data-tipo]').forEach((i) => { if (Number(i.value) > 0) precios[i.dataset.tipo] = Number(i.value); });
+  const nombre = (document.getElementById('precio-nuevo-nombre') || {}).value;
+  const valor = Number((document.getElementById('precio-nuevo-valor') || {}).value);
+  if (nombre && nombre.trim() && valor > 0) precios[nombre.trim()] = valor;
+  fetch(`api/clients/${CLIENTE_ACTUAL}/precios`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ precios }) })
+    .then((r) => r.json()).then((d) => {
+      PRECIOS = d.precios || {};
+      document.getElementById('precios-nota').textContent = 'Guardado el ' + new Date(d.actualizado).toLocaleString('es-CL');
+      renderPreciosForm();
+      mostrarToast('Precios guardados');
+      if (PRECOT_SEL) renderPrecotDetalle();
+    }).catch(() => mostrarToast('No se pudieron guardar los precios'));
+});
+
+function renderPrecotLista() {
+  const cont = document.getElementById('precot-lista');
+  if (!cont) return;
+  const todas = chatsCotizables();
+  const nPend = todas.filter((c) => !c.respondido).length;
+  const fil = document.getElementById('precot-filtros');
+  if (fil) {
+    fil.innerHTML = [['todos', `Todos (${todas.length})`], ['pendientes', `Pendientes (${nPend})`], ['cotizados', `Cotizados (${todas.length - nPend})`]]
+      .map(([k, t]) => `<button class="precot-filtro ${PRECOT_FILTRO === k ? 'on' : ''}" data-f="${k}">${t}</button>`).join('');
+    fil.querySelectorAll('.precot-filtro').forEach((b) => b.addEventListener('click', () => { PRECOT_FILTRO = b.dataset.f; renderPrecotLista(); }));
+  }
+  const lista = todas.filter((c) => PRECOT_FILTRO === 'todos' || (PRECOT_FILTRO === 'pendientes') === !c.respondido)
+    .sort((a, b) => (!!a.respondido - !!b.respondido) || (esperaDeCotizacion(a) - esperaDeCotizacion(b)));
+  cont.innerHTML = lista.length
+    ? lista.map((c) => `<div class="precot-item ${c.respondido ? 'hecha' : 'pend'} ${c.telefono === PRECOT_SEL ? 'sel' : ''}" data-telefono="${esc(c.telefono)}"><span class="precot-est">${c.respondido ? '✔ Cotizado' : 'Pendiente'}</span><b>${esc(nombreCotizacion(c))}</b><small>Escribió ${textoHace(esperaDeCotizacion(c))}</small></div>`).join('')
+    : '<div class="cotiz-vacio" style="font-size:14px;padding:18px 10px;">No hay pedidos en esta lista.</div>';
+  cont.querySelectorAll('.precot-item').forEach((el) => el.addEventListener('click', () => seleccionarPrecot(el.dataset.telefono)));
+}
+function seleccionarPrecot(tel) {
+  PRECOT_SEL = tel;
+  renderPrecotLista();
+  const det = document.getElementById('precot-detalle');
+  if (PRECOT_CACHE[tel]) { renderPrecotDetalle(); return; }
+  det.innerHTML = '<div class="cotiz-vacio">Cargando pedido…</div>';
+  fetch(`api/clients/${CLIENTE_ACTUAL}/chats/${encodeURIComponent(tel)}/precotizacion?_=` + Date.now())
+    .then((r) => r.json()).then((d) => {
+      if (d.error) throw new Error(d.error);
+      PRECOT_CACHE[tel] = d.productos || [];
+      PRECOT_CLIENTE_DATOS[tel] = d.cliente || null;
+      if (PRECOT_SEL === tel) renderPrecotDetalle();
+    }).catch((e) => { det.innerHTML = `<div class="cotiz-vacio">No se pudo cargar el pedido (${esc(e.message)}).</div>`; });
+}
+function lineasPrecot() {
+  return (PRECOT_CACHE[PRECOT_SEL] || []).map((p, i) => {
+    const clave = PRECOT_SEL + '|' + i;
+    const aj = PRECOT_AJUSTE[clave] || {};
+    const tipo = aj.tipo != null ? aj.tipo : categoriaDeTipo(p.tipo);
+    const pesoBase = pesoDeProducto(p);
+    const kg = aj.peso != null ? aj.peso : pesoBase.kg;
+    const precio = aj.precio != null ? aj.precio : (PRECIOS[tipo] || 0);
+    const precioCli = Math.round(precio / (1 - COMISION)); // $/kg que ve el cliente
+    return { p, clave, tipo, kg, calculado: aj.peso == null && pesoBase.calculado, precio, precioCli, subtotalLista: Math.round(kg * precio), subtotal: Math.round(kg * precioCli) };
+  });
+}
+function descripcionProducto(p) {
+  const medidas = p.ancho && p.largo ? ` ${p.ancho}x${p.largo} cm` : '';
+  return `${p.tipo || 'Producto'}${medidas}${p.micras ? ' · ' + p.micras + ' µ' : ''}`;
+}
+// Datos del cliente: lo que extrajo el bot (nombre, empresa, correo) más el teléfono.
+function datosCliente(c) {
+  const d = PRECOT_CLIENTE_DATOS[PRECOT_SEL] || {};
+  const tel = PRECOT_SEL && !String(PRECOT_SEL).startsWith('web') ? telefonoLegible(PRECOT_SEL) : '';
+  return {
+    nombre: d.nombre || nombreDeContacto(PRECOT_SEL) || '',
+    empresa: d.empresa || '',
+    email: d.email || '',
+    telefono: tel,
+    detalle: d.detalle || '',
+    fecha: d.fecha ? new Date(d.fecha).toLocaleDateString('es-CL') : '',
+    cerrado: !!PRECOT_CLIENTE_DATOS[PRECOT_SEL],
+  };
+}
+function bloqueDatosCliente(c) {
+  const d = datosCliente(c);
+  const fila = (k, v) => `<div class="precot-dato"><span>${k}</span><b>${v ? esc(v) : '<i>no dado</i>'}</b></div>`;
+  return `<div class="precot-cliente">
+    ${fila('Nombre', d.nombre)}${fila('Empresa', d.empresa)}${fila('Correo', d.email)}${fila('Teléfono', d.telefono)}
+    ${d.cerrado ? '' : '<div class="precot-aviso" style="grid-column:1/-1;">El bot todavía no registró los datos de contacto de este cliente.</div>'}
+    ${d.detalle ? `<div class="precot-dato" style="grid-column:1/-1;"><span>Pedido según el bot</span><b style="font-weight:600;">${esc(d.detalle)}</b></div>` : ''}
+  </div>`;
+}
+function renderPrecotDetalle() {
+  const det = document.getElementById('precot-detalle');
+  const lineas = lineasPrecot();
+  const c = CHATS_CACHE.find((x) => x.telefono === PRECOT_SEL);
+  const barraChat = `<div style="display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:10px;"><b>${esc(c ? nombreCotizacion(c) : telefonoLegible(PRECOT_SEL))}</b><span><button class="btn ${c && c.respondido ? 'btn-outline' : 'btn-cotizado'} precot-cotizado">${c && c.respondido ? '↩ Quitar cotizado' : '✔ Cotizado'}</button> <button class="btn btn-outline precot-ver-chat">Ver el chat</button></span></div>`;
+  const enlazarChat = () => {
+    det.querySelectorAll('.precot-ver-chat').forEach((b) => b.addEventListener('click', () => irAChat(PRECOT_SEL)));
+    det.querySelectorAll('.precot-cotizado').forEach((b) => b.addEventListener('click', () => {
+      if (!c) return;
+      const nuevo = !c.respondido;
+      marcarCotizada(PRECOT_SEL, nuevo).then(() => {
+        c.respondido = nuevo;
+        renderPrecotLista(); renderPrecotDetalle(); renderCotizaciones();
+      }).catch((e) => alert('No se pudo guardar: ' + e.message));
+    }));
+  };
+  if (!lineas.length) { det.innerHTML = barraChat + '<div class="cotiz-vacio">Este chat todavía no tiene un pedido calculado por el bot.</div>'; enlazarChat(); return; }
+  const neto = lineas.reduce((a, l) => a + l.subtotal, 0); // lo que paga el cliente (sin IVA)
+  const netoLista = lineas.reduce((a, l) => a + l.subtotalLista, 0);
+  const comision = neto - netoLista; // tu 5%
+  const iva = Math.round(neto * IVA);
+  const esUn = (l) => normTexto(l.p.unidad) !== 'kilos' && Number(l.p.cantidad) > 0;
+  const porUn = (l) => (esUn(l) && l.precio && l.kg ? l.subtotal / Number(l.p.cantidad) : 0);
+  const clpUn = (v) => '$' + v.toLocaleString('es-CL', { maximumFractionDigits: 1 });
+  const faltan = lineas.some((l) => !l.precio || !l.kg);
+  const opciones = (sel) => `<option value="">— tipo de precio —</option>` + categoriasPrecio().map((k) => `<option value="${esc(k)}" ${k === sel ? 'selected' : ''}>${esc(k)}</option>`).join('');
+  det.innerHTML = `
+    ${barraChat}
+    ${bloqueDatosCliente(c)}
+    <div class="precot-scroll"><table class="precot-tabla"><thead><tr><th>Producto</th><th class="num">Cantidad</th><th class="num">Kilos</th><th class="num">$ / kg</th><th class="num">$ / un.</th><th class="num">Subtotal</th></tr></thead><tbody>
+    ${lineas.map((l) => `<tr>
+      <td>${esc(descripcionProducto(l.p))}<br><select class="precot-tipo" data-clave="${esc(l.clave)}">${opciones(l.tipo)}</select>
+        ${l.p.clasificacion === 'NO_CUMPLE' ? '<br><span class="precot-aviso">No cumple el mínimo</span>' : ''}</td>
+      <td class="num">${Number(l.p.cantidad).toLocaleString('es-CL')} ${normTexto(l.p.unidad) === 'kilos' ? 'kg' : 'un.'}</td>
+      <td class="num"><input class="precot-precio" type="number" min="0" step="0.01" data-clave="${esc(l.clave)}" data-campo="peso" value="${l.kg || ''}" placeholder="falta">${l.calculado ? '<br><small class="precot-nota-calc">calculado</small>' : ''}</td>
+      <td class="num"><input class="precot-precio" type="number" min="0" data-clave="${esc(l.clave)}" data-campo="precio" value="${l.precio || ''}" placeholder="falta"></td>
+      <td class="num">${porUn(l) ? clpUn(porUn(l)) : '—'}</td>
+      <td class="num">${l.precio && l.kg ? clp(l.subtotal) : '<span class="precot-aviso">Falta dato</span>'}</td></tr>`).join('')}
+    </tbody></table></div>
+    <div class="precot-totales"><div><span>Neto</span><span>${clp(neto)}</span></div><div><span>IVA (19%)</span><span>${clp(iva)}</span></div><div class="total"><span>Total cliente</span><span>${clp(neto + iva)}</span></div></div>
+    <div class="precot-interno"><b>Solo para ti (no se copia)</b>
+      <div><span>Tu empresa recibe (neto de lista)</span><span>${clp(netoLista)}</span></div>
+      <div><span>Tu comisión ${COMISION * 100}%</span><span>${clp(comision)}</span></div></div>
+    ${faltan ? '<div class="precot-aviso" style="text-align:right;margin-top:6px;">Faltan kilos o precio en alguna línea: elige el tipo de precio o escríbelos.</div>' : ''}
+    <div class="precot-acciones"><button class="btn btn-outline precot-ver-chat">Ver el chat</button><button class="btn btn-primary" id="precot-copiar">Copiar resumen</button></div>`;
+  det.querySelectorAll('.precot-precio').forEach((i) => i.addEventListener('change', () => {
+    const aj = PRECOT_AJUSTE[i.dataset.clave] = PRECOT_AJUSTE[i.dataset.clave] || {};
+    aj[i.dataset.campo] = Number(i.value) || 0;
+    renderPrecotDetalle();
+  }));
+  det.querySelectorAll('.precot-tipo').forEach((sel) => sel.addEventListener('change', () => {
+    const aj = PRECOT_AJUSTE[sel.dataset.clave] = PRECOT_AJUSTE[sel.dataset.clave] || {};
+    aj.tipo = sel.value;
+    delete aj.precio; // al cambiar el tipo, el precio vuelve a salir de la lista guardada
+    renderPrecotDetalle();
+  }));
+  enlazarChat();
+  document.getElementById('precot-copiar').addEventListener('click', () => {
+    const d = datosCliente(c);
+    const cabecera = ['Precotización']
+      .concat(d.nombre ? [`Cliente: ${d.nombre}`] : [], d.empresa ? [`Empresa: ${d.empresa}`] : [],
+        d.email ? [`Correo: ${d.email}`] : [], d.telefono ? [`Teléfono: ${d.telefono}`] : [])
+      .join('\n') + '\n';
+    const texto = cabecera + '\n' + lineas.map((l) => `• ${descripcionProducto(l.p)}: ${Number(l.p.cantidad).toLocaleString('es-CL')} ${normTexto(l.p.unidad) === 'kilos' ? 'kg' : 'un.'} (${l.kg.toLocaleString('es-CL')} kg × ${clp(l.precioCli)}/kg${porUn(l) ? ` · ${clpUn(porUn(l))} c/u` : ''}) = ${clp(l.subtotal)}`).join('\n')
+      + `\nNeto: ${clp(neto)}\nIVA 19%: ${clp(iva)}\nTotal: ${clp(neto + iva)}`;
+    navigator.clipboard.writeText(texto).then(() => mostrarToast('Resumen copiado'), () => mostrarToast('No se pudo copiar'));
+  });
+}
+function renderPrecios() {
+  const aplica = CHATS_CACHE.some((c) => c.estadoPedido);
+  document.getElementById('nav-precios').style.display = aplica ? '' : 'none';
+  if (!aplica) return;
+  cargarPrecios();
+  renderPrecotLista();
 }
 
 // ---- Inicio: clientes que esperan seguimiento ----
@@ -1727,8 +2791,6 @@ function cargarChats() {
   filtroEstado.style.display = 'flex';
   document.getElementById('chats-herramientas').style.display = 'flex';
   // Se limpia la lista y se muestra "Cargando..." de inmediato — antes se quedaba
-  // mostrando los chats del cliente anterior (ej. Conflex) hasta que la respuesta del
-  // nuevo cliente (ej. Polimer) llegaba, y como esa consulta podía demorar, parecía que
   // el panel se había quedado pegado mostrando datos de otro cliente.
   // Solo al cambiar de cliente se vacía la lista. Los refrescos automáticos (cada 8 s)
   // reemplazan la lista sin borrarla, para no parpadear ni mostrar "Cargando" todo el rato.
@@ -1769,6 +2831,7 @@ function cargarChats() {
       if (firma === CHATS_FIRMA && CHATS_CACHE_CLIENTE === clienteAlPedir) return;
       CHATS_FIRMA = firma;
       CHATS_CACHE = nuevos;
+      CHATS_CARGADOS_DE = clienteAlPedir;
       if (chatAbierto) marcarLeido(chatAbierto); // lo que llega con el chat abierto ya se vio
       renderListaChats();
       actualizarCabeceraChat();
@@ -1870,6 +2933,30 @@ function renderBurbuja(m) {
   return `<div class="bubble ${m.rol === 'bot' ? 'bot' : 'cliente'}">${audio}${imagen}${esc(m.texto)}${meta}</div>`;
 }
 
+// Separador de día entre mensajes ("Hoy", "Ayer", "lun 26 oct") — la hora ya va en cada burbuja.
+function etiquetaDia(ts) {
+  const d = new Date(ts);
+  const hoy = new Date();
+  const dia = (x) => new Date(x.getFullYear(), x.getMonth(), x.getDate()).getTime();
+  const dif = Math.round((dia(hoy) - dia(d)) / 86400000);
+  if (dif === 0) return 'Hoy';
+  if (dif === 1) return 'Ayer';
+  const opc = { weekday: 'short', day: 'numeric', month: 'short' };
+  if (d.getFullYear() !== hoy.getFullYear()) opc.year = 'numeric';
+  return d.toLocaleDateString('es-CL', opc).replace(/\./g, '');
+}
+function burbujaConDia() {
+  let ultimo = '';
+  return (m) => {
+    let sep = '';
+    if (m.ts) {
+      const dia = new Date(m.ts).toDateString();
+      if (dia !== ultimo) { ultimo = dia; sep = `<div class="chat-dia"><span>${esc(etiquetaDia(m.ts))}</span></div>`; }
+    }
+    return sep + renderBurbuja(m);
+  };
+}
+
 let MENSAJES_FIRMA = '';
 function cargarMensajesChat() {
   if (!chatAbierto) return;
@@ -1882,7 +2969,7 @@ function cargarMensajesChat() {
       const aviso = data.entregaFallida
         ? `<div class="inbox-chat-aviso">${icon('alert', 13)} El último mensaje del bot NO llegó a WhatsApp (${new Date(data.entregaFallida.ts).toLocaleString('es-CL')}). Probablemente el token de WhatsApp venció — este chat solo muestra lo que el bot generó, no lo que realmente recibió el cliente.</div>`
         : '';
-      const html = aviso + ((data.mensajes || []).map(renderBurbuja).join('')
+      const html = aviso + ((data.mensajes || []).map(burbujaConDia()).join('')
         || `<div class="inbox-chat-empty"><div class="inbox-chat-empty-icon">${icon('chat', 30)}</div><span>Sin mensajes todavía</span></div>`);
       // Si nada cambió desde el último refresco (cada 2s mientras el chat está abierto),
       // no se vuelve a escribir el innerHTML: reemplazarlo igual aunque no cambiara nada
@@ -2097,15 +3184,105 @@ function irAChat(telefono) {
   abrirChat(telefono);
 }
 
+
+// ---- Inicio: resumen del día + lista priorizada de "qué hacer ahora" ----
+// Todo sale de lo que ya está en memoria (chats, formularios, gasto del mes): no hay
+// consultas nuevas. Cada tarjeta y cada fila lleva directo a donde se resuelve.
+function renderInicioResumen() {
+  const kpis = document.getElementById('inicio-kpis');
+  if (!kpis) return;
+  const cli = clienteActualObj();
+  const DIA = 24 * 3600 * 1000;
+  const h = new Date().getHours();
+  document.getElementById('inicio-saludo').textContent = h < 12 ? 'Buenos días' : h < 20 ? 'Buenas tardes' : 'Buenas noches';
+  const fecha = new Date().toLocaleDateString('es-CL', { weekday: 'long', day: 'numeric', month: 'long' });
+  document.getElementById('inicio-fecha').textContent = (cli ? cli.nombre + ' · ' : '') + fecha.charAt(0).toUpperCase() + fecha.slice(1);
+
+  const conWA = !!(cli && cli.whatsapp && cli.whatsapp.configurado);
+  const accion = document.getElementById('inicio-accion');
+  const cuenta = document.getElementById('inicio-accion-count');
+  if (conWA && CHATS_CARGADOS_DE !== CLIENTE_ACTUAL) {
+    kpis.innerHTML = Array(4).fill('<div class="inicio-kpi cargando"><div class="inicio-kpi-v">—</div><div class="inicio-kpi-l">Cargando</div></div>').join('');
+    accion.innerHTML = '<div class="inbox-empty-msg">Cargando…</div>';
+    cuenta.textContent = '';
+    return;
+  }
+
+  const activos = conWA ? CHATS_CACHE.filter((c) => !c.archivado) : [];
+  const l = leidosDe();
+  const aplicaCot = conWA && CHATS_CACHE.some((c) => c.estadoPedido);
+  const porCotizar = aplicaCot ? chatsCotizables().filter((c) => !c.respondido) : [];
+  const urgentes = porCotizar.filter((c) => esperaDeCotizacion(c) >= DIA).length;
+  const noLeidos = activos.filter((c) => sinLeer(c, l));
+  const seguimiento = conWA ? CHATS_CACHE.filter(esPendienteSeguimiento) : [];
+  const formSemana = FORMULARIOS_CACHE.filter((f) => f.ts && Date.now() - f.ts <= 7 * DIA).length;
+
+  const tiles = [];
+  if (aplicaCot) tiles.push({ vista: 'cotizaciones', ico: 'target', v: porCotizar.length, l: 'Por cotizar', sub: urgentes ? `${urgentes} con más de 1 día` : 'Todo al día', tono: urgentes ? 'alerta' : porCotizar.length ? 'marca' : 'ok' });
+  if (conWA) {
+    tiles.push({ vista: 'chats', ico: 'chat', v: noLeidos.length, l: 'Sin leer', sub: noLeidos.length ? 'Mensajes nuevos' : 'Nada pendiente', tono: noLeidos.length ? 'marca' : 'ok' });
+    tiles.push({ vista: 'chats', ico: 'clock', v: seguimiento.length, l: 'Sin respuesta', sub: seguimiento.length ? 'Dejaron de contestar' : 'Nadie por seguir', tono: seguimiento.length ? 'aviso' : 'ok' });
+  }
+  tiles.push({ vista: null, ico: 'inbox', v: formSemana, l: 'Formularios', sub: 'Últimos 7 días', tono: formSemana ? 'marca' : 'neutro' });
+  if (cli && cli.ads && cli.ads.configurado && GASTO_ADS > 0) tiles.push({ vista: 'ads', ico: 'megaphone', v: clp(GASTO_ADS), l: 'Gasto en Ads', sub: 'Este mes', tono: 'neutro', texto: true });
+  kpis.innerHTML = tiles.map((t) => `
+    <button class="inicio-kpi tono-${t.tono}" ${t.vista ? `data-ir="${t.vista}"` : 'data-form="1"'}>
+      <span class="inicio-kpi-ico">${icon(t.ico, 18)}</span>
+      <span class="inicio-kpi-v${t.texto ? ' texto' : ''}">${t.v}</span>
+      <span class="inicio-kpi-l">${t.l}</span>
+      <span class="inicio-kpi-sub">${t.sub}</span>
+    </button>`).join('');
+  kpis.querySelectorAll('[data-ir]').forEach((b) => b.addEventListener('click', () => irAVista(b.dataset.ir)));
+  kpis.querySelectorAll('[data-form]').forEach((b) => b.addEventListener('click', () => {
+    const el = document.getElementById('inicio-formularios');
+    if (el) el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  }));
+
+  // Qué hacer ahora: cotizar > responder > seguimiento, sin repetir al mismo cliente.
+  const visto = new Set();
+  const filas = [];
+  const agregar = (c, tipo, ms) => {
+    if (visto.has(c.telefono)) return;
+    visto.add(c.telefono);
+    filas.push({ c, tipo, ms });
+  };
+  [...porCotizar].sort((a, b) => esperaDeCotizacion(b) - esperaDeCotizacion(a)).forEach((c) => agregar(c, 'cotizar', esperaDeCotizacion(c)));
+  [...noLeidos].sort((a, b) => (a.ultimoClienteTs || 0) - (b.ultimoClienteTs || 0)).forEach((c) => agregar(c, 'responder', esperaDeCotizacion(c)));
+  [...seguimiento].sort((a, b) => a.ultimoTs - b.ultimoTs).forEach((c) => agregar(c, 'seguir', Date.now() - c.ultimoTs));
+  const ETIQ = { cotizar: 'Cotizar', responder: 'Responder', seguir: 'Hacer seguimiento' };
+  const MAX = 8;
+  cuenta.textContent = filas.length ? String(filas.length) : '';
+  if (!filas.length) {
+    accion.innerHTML = `<div class="inicio-vacio">${icon('check', 26)}<b>Todo al día</b><span>No hay nada pendiente ahora mismo.</span></div>`;
+  } else {
+    accion.innerHTML = filas.slice(0, MAX).map(({ c, tipo, ms }) => `
+      <button class="accion-fila" data-telefono="${esc(c.telefono)}">
+        <span class="accion-av">${nombreDeContacto(c.telefono) && c.canal !== 'web' ? esc(iniciales(nombreDeContacto(c.telefono))) : icon(c.canal === 'web' ? 'chat' : 'users', 17)}</span>
+        <span class="accion-cuerpo">
+          <span class="accion-nombre">${esc(c.canal === 'web' ? nombreCotizacion(c) : nombreDeContacto(c.telefono) || telefonoLegible(c.telefono))}</span>
+          <span class="accion-msg">${esc((c.ultimoMensaje || '').slice(0, 90))}</span>
+        </span>
+        <span class="accion-lado">
+          <span class="accion-chip tipo-${tipo}">${ETIQ[tipo]}</span>
+          <span class="accion-cuando${ms >= DIA ? ' tarde' : ''}">${textoHace(ms)}</span>
+        </span>
+      </button>`).join('')
+      + (filas.length > MAX ? `<div class="accion-mas">Y ${filas.length - MAX} más — míralos en ${aplicaCot ? 'Cotizar' : 'Conversaciones'}.</div>` : '');
+    accion.querySelectorAll('.accion-fila').forEach((b) => b.addEventListener('click', () => irAChat(b.dataset.telefono)));
+  }
+}
+
 function cargarInicio() {
+  renderInicioResumen();
   Promise.all([
     fetch(`api/clients/${CLIENTE_ACTUAL}/clientes?_=` + Date.now()).then((r) => r.json()).catch(() => null),
     fetch(`api/clients/${CLIENTE_ACTUAL}/formularios?_=` + Date.now()).then((r) => r.json()).catch(() => null),
   ]).then(([clientesData, formulariosData]) => {
     const importantes = ((clientesData && clientesData.clientes) || []).filter((cl) => cl.importante);
     const contImportantes = document.getElementById('inicio-importantes');
-    contImportantes.innerHTML = importantes.length
-      ? importantes.map((cl) => `
+    if (contImportantes) {
+      contImportantes.innerHTML = importantes.length
+        ? importantes.map((cl) => `
         <div class="client-roster-card" data-telefono="${esc(cl.telefono || '')}">
           <div class="client-roster-avatar">${esc(iniciales(cl.nombre))}</div>
           <div class="client-roster-body">
@@ -2116,10 +3293,11 @@ function cargarInicio() {
             ${cl.totalCotizado ? `<div class="v">${clp(cl.totalCotizado)}</div>` : '<div class="v sin">Sin cotizar</div>'}
           </div>
         </div>`).join('')
-      : '<div class="factura-empty">No tienes cotizaciones marcadas para hacer seguimiento — márcalas con la estrella en la pestaña Clientes.</div>';
-    contImportantes.querySelectorAll('.client-roster-card[data-telefono]').forEach((el) => {
-      if (el.dataset.telefono) el.addEventListener('click', () => irAChat(el.dataset.telefono));
-    });
+        : '<div class="factura-empty">No tienes cotizaciones marcadas para hacer seguimiento — márcalas con la estrella en la pestaña Clientes.</div>';
+      contImportantes.querySelectorAll('.client-roster-card[data-telefono]').forEach((el) => {
+        if (el.dataset.telefono) el.addEventListener('click', () => irAChat(el.dataset.telefono));
+      });
+    }
 
     FORMULARIOS_CACHE = (formulariosData && formulariosData.items) || [];
     const contFormularios = document.getElementById('inicio-formularios');
@@ -2137,6 +3315,7 @@ function cargarInicio() {
     contFormularios.querySelectorAll('.btn-ver-formulario').forEach((btn) => {
       btn.addEventListener('click', () => verFormulario(FORMULARIOS_CACHE[Number(btn.dataset.idx)]));
     });
+    renderInicioResumen();
   });
 }
 
@@ -2190,12 +3369,44 @@ function cargarClientesRoster() {
 
       const totalGeneral = clientes.reduce((sum, cl) => sum + (cl.totalCotizado || 0), 0);
       const conCotizacion = clientes.filter((cl) => cl.totalCotizado > 0).length;
+      const ganadas = clientes.filter((cl) => cl.resultado && cl.resultado.estado === 'ganada');
+      const perdidas = clientes.filter((cl) => cl.resultado && cl.resultado.estado === 'perdida');
+      const montoGanado = ganadas.reduce((s, cl) => s + (cl.resultado.monto || cl.totalCotizado || 0), 0);
+      const cerradas = ganadas.length + perdidas.length;
       document.getElementById('clientes-stats').innerHTML = `
         <div class="stat"><div class="stat-icon">${icon('wallet', 17)}</div><div class="stat-body"><div class="label">Total cotizado</div><div class="value orange">${clp(totalGeneral)}</div></div></div>
         <div class="stat"><div class="stat-icon">${icon('users', 17)}</div><div class="stat-body"><div class="label">Clientes</div><div class="value">${clientes.length} (${conCotizacion} cotizados)</div></div></div>
+        <div class="stat"><div class="stat-icon">${icon('check', 17)}</div><div class="stat-body"><div class="label">Ganado</div><div class="value">${clp(montoGanado)}</div></div></div>
+        <div class="stat"><div class="stat-icon">${icon('target', 17)}</div><div class="stat-body"><div class="label">Tasa de cierre</div><div class="value">${cerradas ? Math.round((ganadas.length / cerradas) * 100) + '%' : '—'}</div></div></div>
       `;
 
-      content.innerHTML = clientes.map((cl) => {
+      const cuenta = {
+        todos: clientes.length,
+        sin_resultado: clientes.filter((cl) => cl.totalCotizado > 0 && !cl.resultado).length,
+        reactivar: clientes.filter(paraReactivar).length,
+        ganada: ganadas.length,
+        perdida: perdidas.length,
+      };
+      const filtros = document.getElementById('clientes-filtros');
+      filtros.innerHTML = [
+        ['todos', 'Todos'], ['sin_resultado', 'Sin resultado'], ['reactivar', 'Para reactivar'], ['ganada', 'Ganadas'], ['perdida', 'Perdidas'],
+      ].map(([k, l]) => `<button class="filtro-chip ${ROSTER_FILTRO === k ? 'activo' : ''}" data-filtro="${k}">${l} (${cuenta[k]})</button>`).join('');
+      filtros.querySelectorAll('.filtro-chip').forEach((b) => b.addEventListener('click', () => {
+        ROSTER_FILTRO = b.dataset.filtro;
+        cargarClientesRoster();
+      }));
+      const visibles = clientes.filter((cl) => {
+        if (ROSTER_FILTRO === 'sin_resultado') return cl.totalCotizado > 0 && !cl.resultado;
+        if (ROSTER_FILTRO === 'reactivar') return paraReactivar(cl);
+        if (ROSTER_FILTRO === 'ganada' || ROSTER_FILTRO === 'perdida') return cl.resultado && cl.resultado.estado === ROSTER_FILTRO;
+        return true;
+      });
+      if (!visibles.length) {
+        content.innerHTML = '<div class="mj-vacio">No hay clientes en este filtro.</div>';
+        return;
+      }
+
+      content.innerHTML = visibles.map((cl) => {
         const a = analisisPorTel[soloDigitos(cl.telefono)];
         const puntaje = a && a.nivelInteres ? a.nivelInteres.puntaje : null;
         return `
@@ -2209,6 +3420,9 @@ function cargarClientesRoster() {
               ${cl.origenWhatsapp ? '<span class="tag on">WhatsApp</span>' : ''}
               ${cl.origenFormulario ? `<span class="tag off">${icon('inbox', 10)} ${cl.cantidadFormularios || 1} formulario(s)</span>` : ''}
               ${cl.cantidadCotizaciones ? `<span class="tag off">${cl.cantidadCotizaciones} cotización(es)</span>` : ''}
+              ${cl.resultado ? `<span class="tag res-${esc(cl.resultado.estado)}">${cl.resultado.estado === 'ganada' ? 'Ganada' : 'Perdida' + (cl.resultado.motivo ? ' · ' + esc(cl.resultado.motivo) : '')}</span>` : ''}
+              ${paraReactivar(cl) ? '<span class="tag res-reactivar">Para reactivar</span>' : ''}
+              ${cl.cotParciales ? `<span class="tag res-reactivar">${cl.cotParciales} parcial(es)</span>` : ''}
               ${puntaje !== null ? `<span class="tag ${puntaje >= 70 ? 'on' : 'off'}">${iconoInteres(puntaje)} ${puntaje}</span>` : ''}
               ${(a && a.alertas && a.alertas.length) ? `<span class="tag off" style="color:var(--danger-fg);">${icon('alert', 11)} ${a.alertas.length}</span>` : ''}
             </div>
@@ -2216,8 +3430,9 @@ function cargarClientesRoster() {
           <div class="client-roster-total">
             ${cl.totalCotizado ? `<div class="v">${clp(cl.totalCotizado)}</div>` : '<div class="v sin">Sin cotizar</div>'}
             ${cl.ultimaFecha ? `<div class="n">${cl.ultimaFecha}</div>` : ''}
+            ${cl.totalCotizado ? `<button class="client-roster-res" data-clave="${esc(cl.clave || '')}" aria-label="Marcar resultado de la cotización">Resultado</button>` : ''}
             <button class="client-roster-edit" data-clave="${esc(cl.clave || '')}" aria-label="Editar datos del cliente">${icon('edit', 15)}</button>
-            <button class="client-roster-star admin-only ${cl.importante ? 'on' : ''}" data-clave="${cl.clave || ''}" aria-label="Marcar importante">${icon('star', 17)}</button>
+            <button class="client-roster-star admin-only ${cl.importante ? 'on' : ''}" data-clave="${esc(cl.clave || '')}" aria-label="Marcar importante">${icon('star', 17)}</button>
           </div>
         </div>
       `;
@@ -2242,6 +3457,14 @@ function cargarClientesRoster() {
         });
       });
 
+      content.querySelectorAll('.client-roster-res').forEach((btn) => {
+        btn.addEventListener('click', (e) => {
+          e.stopPropagation();
+          const cl = clientes.find((x) => x.clave === btn.dataset.clave);
+          if (cl) abrirResultado(cl);
+        });
+      });
+
       content.querySelectorAll('.client-roster-star').forEach((btn) => {
         btn.addEventListener('click', (e) => {
           e.stopPropagation();
@@ -2260,6 +3483,291 @@ function cargarClientesRoster() {
     })
     .catch(() => {});
 }
+
+// ---- Resultado de cotizaciones (ganada / perdida / abierta) ----
+let ROSTER_FILTRO = 'todos';
+let MOTIVOS_PERDIDA = ['Precio', 'Plazo de entrega', 'Despacho / retiro', 'Especificación o medida', 'Compró a otro proveedor', 'Proyecto suspendido', 'No respondió', 'Otro'];
+let RESULTADO_EDITANDO = null;
+let RESULTADO_ESTADO = 'ganada';
+
+// Cotización sin resultado, con 14 a 120 días desde la última fecha: vale la pena
+// escribirle ("¿sigue en pie la obra?"). Misma regla que esParaReactivar en mejoras.js.
+function paraReactivar(cl) {
+  if (!cl.totalCotizado || cl.resultado || !cl.ultimaFecha) return false;
+  const t = Date.parse(cl.ultimaFecha + 'T12:00:00Z');
+  if (Number.isNaN(t)) return false;
+  const dias = Math.floor((Date.now() - t) / 86400000);
+  return dias >= 14 && dias <= 120;
+}
+
+function pintarEstadoResultado() {
+  document.querySelectorAll('#rs-estado button').forEach((b) => b.classList.toggle('on', b.dataset.estado === RESULTADO_ESTADO));
+  const perdida = RESULTADO_ESTADO === 'perdida';
+  document.getElementById('rs-motivo-campo').style.display = perdida ? '' : 'none';
+  document.getElementById('rs-competidor-campo').style.display = perdida ? '' : 'none';
+  document.getElementById('rs-monto-campo').style.display = RESULTADO_ESTADO === 'abierta' ? 'none' : '';
+}
+
+function abrirResultado(cl) {
+  RESULTADO_EDITANDO = cl;
+  const r = cl.resultado || {};
+  RESULTADO_ESTADO = r.estado || 'ganada';
+  document.getElementById('resultado-titulo').textContent = 'Resultado · ' + (cl.nombre || 'cotización');
+  const sel = document.getElementById('rs-motivo');
+  sel.innerHTML = '<option value="">Elegir…</option>' + MOTIVOS_PERDIDA.map((m) => `<option ${r.motivo === m ? 'selected' : ''}>${esc(m)}</option>`).join('');
+  document.getElementById('rs-competidor').value = r.competidor || '';
+  document.getElementById('rs-monto').value = r.monto || cl.totalCotizado || '';
+  document.getElementById('rs-nota').value = r.nota || '';
+  pintarEstadoResultado();
+  openModal('sheet-resultado');
+}
+document.querySelectorAll('#rs-estado button').forEach((b) => b.addEventListener('click', () => {
+  RESULTADO_ESTADO = b.dataset.estado;
+  pintarEstadoResultado();
+}));
+document.getElementById('btn-guardar-resultado').addEventListener('click', () => {
+  if (!RESULTADO_EDITANDO) return;
+  if (RESULTADO_ESTADO === 'perdida' && !document.getElementById('rs-motivo').value) {
+    alert('Elige el motivo de la pérdida: es lo que después dice qué mejorar.');
+    return;
+  }
+  const btn = document.getElementById('btn-guardar-resultado');
+  btn.disabled = true;
+  fetch(`api/clients/${CLIENTE_ACTUAL}/clientes/resultado`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      clave: RESULTADO_EDITANDO.clave,
+      estado: RESULTADO_ESTADO,
+      motivo: document.getElementById('rs-motivo').value,
+      competidor: document.getElementById('rs-competidor').value,
+      monto: document.getElementById('rs-monto').value,
+      nota: document.getElementById('rs-nota').value,
+    }),
+  })
+    .then((r) => r.json())
+    .then((res) => {
+      btn.disabled = false;
+      if (res.error) { alert(res.error); return; }
+      closeModals();
+      mostrarToast(RESULTADO_ESTADO === 'abierta' ? 'Cotización marcada como abierta' : 'Resultado guardado');
+      cargarClientesRoster();
+      cargarMejoras();
+    })
+    .catch(() => { btn.disabled = false; alert('No se pudo guardar.'); });
+});
+
+// ---- Mejoras y pasos a seguir ----
+const MJ_ESTADOS = { pendiente: 'Pendiente', en_curso: 'En curso', hecho: 'Hecho', descartado: 'Descartado' };
+const MJ_AREAS = ['Medición', 'Ventas', 'Canales', 'Web', 'Bot', 'Confianza'];
+const MJ_PRIORIDAD = { 1: 'Ahora', 2: 'Próximo', 3: 'Después' };
+let MEJORAS = { items: [], indicadores: null, licitaciones: null };
+let MJ_FILTRO_ESTADO = 'activas';
+let MJ_FILTRO_AREA = '';
+let MEJORA_EDITANDO = null;
+let MJ_LIC_VER_TODAS = false;
+
+function cargarMejoras() {
+  const cliente = CLIENTE_ACTUAL;
+  fetch(`api/clients/${cliente}/mejoras?_=` + Date.now())
+    .then((r) => r.json())
+    .then((data) => {
+      if (cliente !== CLIENTE_ACTUAL || data.error) return;
+      MEJORAS = data;
+      if (Array.isArray(data.motivosPerdida) && data.motivosPerdida.length) MOTIVOS_PERDIDA = data.motivosPerdida;
+      renderMejoras();
+    })
+    .catch(() => {});
+}
+
+function renderMejoras() {
+  const ind = MEJORAS.indicadores || {};
+  const items = MEJORAS.items || [];
+  document.getElementById('mejoras-updated').textContent = ind.actualizadoTs ? 'Cotizaciones actualizadas ' + tiempoRelativo(ind.actualizadoTs) : '';
+
+  // Indicadores
+  const kpi = (ic, label, value, sub, cls) => `<div class="stat"><div class="stat-icon">${icon(ic, 17)}</div><div class="stat-body"><div class="label">${label}</div><div class="value ${cls || ''}">${value}</div>${sub ? `<div class="stat-sub">${sub}</div>` : ''}</div></div>`;
+  const cerradas = (ind.ganadas || 0) + (ind.perdidas || 0);
+  document.getElementById('mejoras-kpis').innerHTML = !ind.cantidadCotizaciones && !ind.formularios30 ? '' : [
+    kpi('wallet', 'Cotizado', clp(ind.totalCotizado || 0), `${ind.cantidadCotizaciones || 0} cotizaciones · ${ind.clientesCotizados || 0} clientes`, 'orange'),
+    kpi('target', 'Tasa de cierre', ind.tasaCierre === null || ind.tasaCierre === undefined ? '—' : ind.tasaCierre + '%', cerradas ? `${ind.ganadas} clientes ganados · ${ind.perdidas} perdidos` : 'Marca resultados en Clientes'),
+    kpi('check', 'Ganado', clp(ind.montoGanado || 0), ind.montoPerdido ? 'Perdido ' + clp(ind.montoPerdido) : '', 'ok'),
+    kpi('flame', 'Sin resultado', clp(ind.montoAbierto || 0), `${ind.sinResultado || 0} cotizaciones abiertas`),
+    kpi('clock', 'Para reactivar', String(ind.paraReactivar || 0), ind.montoReactivar ? clp(ind.montoReactivar) + ' · 14+ días sin respuesta' : '14+ días sin respuesta', ind.paraReactivar ? 'mal' : ''),
+    kpi('alert', 'Parciales', String(ind.parciales || 0), ind.montoParcial ? clp(ind.montoParcial) + ' con ítems por confirmar' : 'Ítems por confirmar', ind.parciales ? 'mal' : ''),
+    kpi('barChart', 'Top 3 clientes', (ind.top3Pct || 0) + '% del monto', (ind.top3 || []).map((t) => esc(String(t.nombre).split(/\s+\(|\s+(?:SpA|S\.A\.|Ltda|Limitada)\b/i)[0])).join(' · ')),
+    kpi('inbox', 'Formularios web', String(ind.formularios30 || 0), 'últimos 30 días'),
+    ind.ads ? kpi('megaphone', 'Ads este mes', clp(ind.ads.gasto || 0), ind.ads.costoPorConversion ? `${Math.round(ind.ads.conversiones)} conv. · ${clp(ind.ads.costoPorConversion)} c/u` : `${Math.round(ind.ads.conversiones || 0)} conversiones`) : '',
+  ].join('');
+
+  // Motivos de pérdida
+  const motivosEl = document.getElementById('mejoras-motivos');
+  const motivos = ind.motivosPerdida || [];
+  if (motivos.length) {
+    const max = Math.max(...motivos.map((m) => m.n));
+    motivosEl.style.display = '';
+    motivosEl.innerHTML = `<div class="panel-title"><span>Por qué se pierden las cotizaciones</span></div><div class="mj-panel-body">${motivos.map((m) => `
+      <div class="mj-motivo"><span>${esc(m.motivo)}</span><span class="bar" style="width:${Math.max(6, Math.round((m.n / max) * 100))}%"></span><span>${m.n}</span></div>`).join('')}
+      <p class="mj-nota-chica">Con 15–20 pérdidas marcadas ya se puede armar la ficha contra la competencia y ajustar la oferta.</p></div>`;
+  } else {
+    motivosEl.style.display = 'none';
+  }
+
+  // Filtros
+  const cuenta = (f) => items.filter((m) => f === 'todas' ? true : f === 'activas' ? (m.estado === 'pendiente' || m.estado === 'en_curso') : m.estado === f).length;
+  document.getElementById('mejoras-filtro-estado').innerHTML = [['activas', 'Por hacer'], ['en_curso', 'En curso'], ['hecho', 'Hechas'], ['todas', 'Todas']]
+    .map(([k, l]) => `<button class="filtro-chip ${MJ_FILTRO_ESTADO === k ? 'activo' : ''}" data-f="${k}">${l} (${cuenta(k)})</button>`).join('');
+  document.querySelectorAll('#mejoras-filtro-estado .filtro-chip').forEach((b) => b.addEventListener('click', () => { MJ_FILTRO_ESTADO = b.dataset.f; renderMejoras(); }));
+  const selArea = document.getElementById('mejoras-filtro-area');
+  selArea.innerHTML = '<option value="">Todas las áreas</option>' + MJ_AREAS.map((a) => `<option ${MJ_FILTRO_AREA === a ? 'selected' : ''}>${a}</option>`).join('');
+
+  const pendientesAhora = items.filter((m) => m.prioridad === 1 && (m.estado === 'pendiente' || m.estado === 'en_curso')).length;
+  const badge = document.getElementById('nav-badge-mejoras');
+  badge.textContent = pendientesAhora ? String(pendientesAhora) : '';
+  badge.style.display = pendientesAhora ? '' : 'none';
+
+  // Lista, agrupada por prioridad
+  const lista = document.getElementById('mejoras-lista');
+  const visibles = items.filter((m) => {
+    if (MJ_FILTRO_AREA && m.area !== MJ_FILTRO_AREA) return false;
+    if (MJ_FILTRO_ESTADO === 'activas') return m.estado === 'pendiente' || m.estado === 'en_curso';
+    if (MJ_FILTRO_ESTADO === 'todas') return true;
+    return m.estado === MJ_FILTRO_ESTADO;
+  });
+  if (!items.length) {
+    lista.innerHTML = `<div class="mj-vacio">Todavía no hay mejoras para este cliente.${ROL === 'admin' ? ' Toca "+ Agregar mejora".' : ''}</div>`;
+  } else if (!visibles.length) {
+    lista.innerHTML = '<div class="mj-vacio">Nada en este filtro.</div>';
+  } else {
+    const grupos = [1, 2, 3].map((p) => [p, visibles.filter((m) => (m.prioridad || 2) === p)]).filter(([, l]) => l.length);
+    lista.innerHTML = grupos.map(([p, l]) => `
+      <div class="mj-grupo">Prioridad ${p} · ${MJ_PRIORIDAD[p]}</div>
+      ${l.map((m) => `
+        <div class="mj-card imp-${esc(m.impacto || 'Medio')} est-${esc(m.estado)}" data-id="${esc(m.id)}">
+          <div class="mj-card-top">
+            <div class="mj-titulo">${esc(m.titulo)}</div>
+            <select class="mj-estado-sel est-${esc(m.estado)}" data-id="${esc(m.id)}" aria-label="Estado">
+              ${Object.entries(MJ_ESTADOS).map(([k, l2]) => `<option value="${k}" ${m.estado === k ? 'selected' : ''}>${l2}</option>`).join('')}
+            </select>
+            <button class="mj-edit admin-only" data-id="${esc(m.id)}" aria-label="Editar mejora">${icon('edit', 15)}</button>
+          </div>
+          <div class="mj-tags">
+            <span class="mj-tag">${esc(m.area || '')}</span>
+            <span class="mj-tag">Impacto ${esc(m.impacto || '')}</span>
+            <span class="mj-tag resp-${esc(m.responsable || '')}">${esc(m.responsable === 'Cliente' ? (clienteActualObj() || {}).nombre || 'Cliente' : m.responsable || '')}</span>
+          </div>
+          ${m.detalle ? `<p class="mj-detalle">${esc(m.detalle)}</p>` : ''}
+          ${m.siguientePaso ? `<p class="mj-paso"><b>Siguiente paso:</b> ${esc(m.siguientePaso)}</p>` : ''}
+          ${m.avance ? `<div class="mj-avance">${icon('check', 12)} ${esc(m.avance)}</div>` : ''}
+        </div>`).join('')}
+    `).join('');
+    lista.querySelectorAll('.mj-estado-sel').forEach((sel) => sel.addEventListener('change', () => {
+      guardarMejora({ id: sel.dataset.id, estado: sel.value }, 'Estado actualizado');
+    }));
+    lista.querySelectorAll('.mj-edit').forEach((b) => b.addEventListener('click', () => {
+      abrirMejora(items.find((m) => m.id === b.dataset.id));
+    }));
+  }
+
+  renderLicitaciones();
+}
+
+function renderLicitaciones() {
+  const el = document.getElementById('mejoras-licitaciones');
+  if (!MEJORAS.licitacionesActivas) { el.style.display = 'none'; return; }
+  el.style.display = '';
+  const lic = MEJORAS.licitaciones;
+  const items = (lic && lic.items) || [];
+  const directas = items.filter((x) => x.tipo === 'directa');
+  const obras = items.filter((x) => x.tipo === 'obra');
+  const fila = (x) => `
+    <div class="mj-lic">
+      <a href="https://www.mercadopublico.cl/Procurement/Modules/RFB/DetailsAcquisition.aspx?idlicitacion=${encodeURIComponent(x.codigo)}" target="_blank" rel="noopener">${esc(x.nombre)}</a>${x.nueva ? '<span class="nueva">Nueva</span>' : ''}
+      <div class="mj-lic-meta">${esc(x.codigo)}${x.cierre ? ' · cierra ' + esc(String(x.cierre).slice(0, 10)) : ''}</div>
+    </div>`;
+  el.innerHTML = `
+    <div class="panel-title"><span>Licitaciones que calzan · Mercado Público</span>
+      <button class="btn btn-outline btn-sm admin-only" id="btn-buscar-licitaciones">Buscar ahora</button></div>
+    <div class="mj-panel-body">
+      ${!lic ? '<p class="mj-nota-chica">Se buscan solas cada mañana. Toca "Buscar ahora" para la primera búsqueda.</p>' : ''}
+      ${lic && lic.error ? `<p class="mj-nota-chica" style="color:var(--danger-fg)">Última búsqueda con error: ${esc(lic.error)}. Se reintenta mañana.</p>` : ''}
+      ${lic && !lic.error && !items.length ? '<p class="mj-nota-chica">Hoy no hay licitaciones activas que calcen.</p>' : ''}
+      ${directas.length ? `<div class="mj-grupo">Para postular (${directas.length}) · productos que fabrica</div>${directas.map(fila).join('')}` : ''}
+      ${obras.length ? `<div class="mj-grupo">Obras sanitarias (${obras.length}) · la constructora que gane necesitará tubería</div>${obras.slice(0, MJ_LIC_VER_TODAS ? obras.length : 6).map(fila).join('')}
+        ${obras.length > 6 ? `<button class="mj-mas" id="btn-lic-mas">${MJ_LIC_VER_TODAS ? 'Ver menos' : `Ver todas (${obras.length})`}</button>` : ''}` : ''}
+      ${lic && lic.ts ? `<p class="mj-nota-chica">Revisadas ${lic.totalActivas || '—'} licitaciones activas, ${tiempoRelativo(lic.ts)}.${lic.ticketPropio ? '' : ' Con ticket de prueba de la API: conviene pedir uno propio (gratis) en api.mercadopublico.cl.'}</p>` : ''}
+    </div>`;
+  const mas = document.getElementById('btn-lic-mas');
+  if (mas) mas.addEventListener('click', () => { MJ_LIC_VER_TODAS = !MJ_LIC_VER_TODAS; renderLicitaciones(); });
+  const btn = document.getElementById('btn-buscar-licitaciones');
+  if (btn) btn.addEventListener('click', () => {
+    btn.disabled = true;
+    btn.textContent = 'Buscando…';
+    fetch(`api/clients/${CLIENTE_ACTUAL}/licitaciones/sincronizar`, { method: 'POST' })
+      .then((r) => r.json())
+      .then((res) => {
+        if (res.error) { alert(res.error); }
+        if (res.licitaciones) MEJORAS.licitaciones = res.licitaciones;
+        renderLicitaciones();
+      })
+      .catch(() => { btn.disabled = false; btn.textContent = 'Buscar ahora'; alert('No se pudo buscar.'); });
+  });
+}
+
+function guardarMejora(body, aviso) {
+  return fetch(`api/clients/${CLIENTE_ACTUAL}/mejoras/item`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(body),
+  })
+    .then((r) => r.json())
+    .then((res) => {
+      if (res.error) { alert(res.error); return false; }
+      MEJORAS.items = res.items;
+      renderMejoras();
+      if (aviso) mostrarToast(aviso);
+      return true;
+    })
+    .catch(() => { alert('No se pudo guardar.'); return false; });
+}
+
+function abrirMejora(m) {
+  MEJORA_EDITANDO = m || null;
+  document.getElementById('mejora-titulo-sheet').textContent = m ? 'Editar mejora' : 'Agregar mejora';
+  document.getElementById('mj-area').innerHTML = MJ_AREAS.map((a) => `<option ${m && m.area === a ? 'selected' : ''}>${a}</option>`).join('');
+  document.getElementById('mj-estado').innerHTML = Object.entries(MJ_ESTADOS).map(([k, l]) => `<option value="${k}" ${m && m.estado === k ? 'selected' : ''}>${l}</option>`).join('');
+  document.getElementById('mj-titulo').value = m ? m.titulo : '';
+  document.getElementById('mj-responsable').value = m ? m.responsable : 'JPB';
+  document.getElementById('mj-impacto').value = m ? m.impacto : 'Medio';
+  document.getElementById('mj-prioridad').value = String(m ? m.prioridad || 2 : 2);
+  document.getElementById('mj-detalle').value = m ? m.detalle || '' : '';
+  document.getElementById('mj-paso').value = m ? m.siguientePaso || '' : '';
+  document.getElementById('mj-avance').value = m ? m.avance || '' : '';
+  document.getElementById('btn-eliminar-mejora').style.display = m ? '' : 'none';
+  openModal('sheet-mejora');
+}
+document.getElementById('btn-nueva-mejora').addEventListener('click', () => abrirMejora(null));
+document.getElementById('mejoras-filtro-area').addEventListener('change', (e) => { MJ_FILTRO_AREA = e.target.value; renderMejoras(); });
+document.getElementById('btn-guardar-mejora').addEventListener('click', () => {
+  const titulo = document.getElementById('mj-titulo').value.trim();
+  if (!titulo) { alert('Falta el título.'); return; }
+  guardarMejora({
+    id: MEJORA_EDITANDO ? MEJORA_EDITANDO.id : undefined,
+    titulo,
+    area: document.getElementById('mj-area').value,
+    responsable: document.getElementById('mj-responsable').value,
+    impacto: document.getElementById('mj-impacto').value,
+    prioridad: document.getElementById('mj-prioridad').value,
+    estado: document.getElementById('mj-estado').value,
+    detalle: document.getElementById('mj-detalle').value,
+    siguientePaso: document.getElementById('mj-paso').value,
+    avance: document.getElementById('mj-avance').value,
+  }, MEJORA_EDITANDO ? 'Mejora actualizada' : 'Mejora agregada').then((ok) => { if (ok) closeModals(); });
+});
+document.getElementById('btn-eliminar-mejora').addEventListener('click', () => {
+  if (!MEJORA_EDITANDO || !confirm('¿Eliminar esta mejora?')) return;
+  guardarMejora({ id: MEJORA_EDITANDO.id, eliminar: true }, 'Mejora eliminada').then((ok) => { if (ok) closeModals(); });
+});
 
 // ---- Alta / edición manual de un cliente (nombre, empresa, email, nota) ----
 let CONTACTO_EDITANDO = null; // clave del roster que se está editando (null = alta nueva)
@@ -2325,17 +3833,20 @@ document.getElementById('estado-respondido').addEventListener('click', (e) => {
 document.getElementById('estado-archivar').addEventListener('click', (e) => {
   if (!chatAbierto) return;
   const archivar = e.currentTarget.dataset.archivar !== 'false';
-  fetch(`api/clients/${CLIENTE_ACTUAL}/chats/` + encodeURIComponent(chatAbierto) + '/archivar', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ archivar }),
-  })
+  setArchivado(chatAbierto, archivar)
     .then(() => {
       closeModals();
-      if (archivar) document.getElementById('btn-volver-chats').click();
+      if (archivar) {
+        document.getElementById('btn-volver-chats').click();
+        mostrarToast('Chat archivado. Lo encuentras en el filtro "Archivados"');
+      } else {
+        // Se pasa a "Todos" para que el chat se vea de vuelta en la lista (en "Archivados" ya no está).
+        FILTRO_ESTADO = 'todos';
+        mostrarToast('Chat desarchivado: vuelve a estar en "Todos"');
+      }
       cargarChats();
     })
-    .catch(() => alert('No se pudo archivar.'));
+    .catch(() => mostrarToast('No se pudo cambiar. Intenta de nuevo.'));
 });
 document.querySelectorAll('.estado-opt').forEach((btn) => {
   btn.addEventListener('click', () => {
@@ -2424,7 +3935,7 @@ function renderSelectorMesAds(mes) {
 
 function renderAdsDatos(mes, data, dataAnterior) {
   const noConfig = document.getElementById('ads-no-config');
-  const content = document.getElementById('ads-content');
+  const content = document.getElementById('gasto-ads-contenido');
   const esMesActual = mes === mesActualClaveLocal();
 
   if (!data) {
@@ -2450,6 +3961,7 @@ function renderAdsDatos(mes, data, dataAnterior) {
     GASTO_ADS = t.gasto || 0;
     document.getElementById('resumen-ads-valor').textContent = clp(GASTO_ADS);
     actualizarResumenTotal();
+    renderInicioResumen();
   }
 
   let comparacionHtml = '';
@@ -2640,7 +4152,6 @@ function renderFacturacion(data) {
 }
 
 // Gasto del mes: WhatsApp/Meta + IA, calculados por el bot de cada cliente (ver
-// /admin/costos en whatsapp-agente[-polimer]) y cacheados por el panel en /gastos.
 function filaGasto(label, valor) {
   return `<div style="display:flex;justify-content:space-between;padding:10px 0;border-bottom:1px solid #eee;"><span>${label}</span><span>${valor}</span></div>`;
 }
@@ -2699,7 +4210,7 @@ function cargarDesplazamiento() {
 
       const hoy = new Date().toLocaleDateString('en-CA', { timeZone: 'America/Santiago' });
       const yaHoy = visitas.some((v) => v.fecha === hoy);
-      const btn = document.getElementById('btn-asistencia-conflex');
+      const btn = document.getElementById('btn-asistencia-cliente');
       btn.disabled = yaHoy;
       btn.innerHTML = yaHoy ? `${icon('check', 15)} Ya registraste hoy` : `${icon('car', 15)} Asistencia a ${c ? esc(c.nombre) : ''}`;
     });
@@ -2745,8 +4256,8 @@ function renderCalendarioDesplazamiento(visitas) {
   });
 }
 
-document.getElementById('btn-asistencia-conflex').addEventListener('click', () => {
-  const btn = document.getElementById('btn-asistencia-conflex');
+document.getElementById('btn-asistencia-cliente').addEventListener('click', () => {
+  const btn = document.getElementById('btn-asistencia-cliente');
   btn.disabled = true;
   fetch(`api/clients/${CLIENTE_ACTUAL}/desplazamiento/asistencia`, { method: 'POST' })
     .then((r) => r.json())
