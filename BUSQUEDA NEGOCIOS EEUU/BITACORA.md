@@ -919,3 +919,7 @@ URLs revisadas:
 ## 2026-11-15 – Prospección Recepcia
 - Leads: 15 (calidad baja-media; solo snippets, WebFetch bloqueado). Rubros: barberías, inmobiliarias, dental, veterinarias, kinesiología. Ciudades: Temuco, Concepción, Maipú, San Miguel, La Reina/Macul. Búsqueda de talleres en Providencia sin negocios verificables.
 - URLs: agendapro.com (barba-temuco, clinicas-maipu, veterinarias San Miguel, centros kinesiológicos), yapo.cl (perfiles Concepción), 2x3.cl, mercantil.com (Maipú Dent), doctoralia.cl (Kinesic Work).
+
+## 2026-11-16 – Prospección Recepcia
+- Leads: 15 (calidad baja-media; solo snippets, WebFetch bloqueado; teléfonos no verificados). Rubros: barberías x4, estética x3, dental x3, gimnasios x2, kinesiología x2, psicología x1. Ciudades: Linares, San Felipe, Quillota, Los Ángeles, San Antonio, Ovalle, Puerto Varas. Descartado Veterinaria Villarrica (ya listada).
+- URLs: agendapro.com (barberias-region-del-maule, centro-medico-sedent-san-felipe, dental-health-clinic-quillota, cejas-quillota, oranges-fitness-san-antonio, clinicas-odontologicas-quilpue), doctoralia.cl (Chávez Castillo, Calvo, kinesiología Puerto Varas), 2x3.cl (Ovalle), cronoshare.cl, mercantil.com.
