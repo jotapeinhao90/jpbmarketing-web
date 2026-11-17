@@ -336,17 +336,43 @@ const RAMPA = { x0: beltX1, y0: beltY + .24, x1: 10.05, y1: .62 };
 }
 const PALLET = { x: 10.85, z: lineZ };
 S(box(1.25, .14, 1.05), M.wood, mtx(PALLET.x, .07, PALLET.z));
-// camión de reparto con las puertas traseras abiertas hacia el pallet
-{ const B = mtx(14.15, 0, lineZ + .2, 0, 0, 0);
-  S(box(3.4, 2.05, 1.95), M.white, at(B, 0, 1.5, 0));                                  // furgón
-  S(box(3.42, .22, 1.97), M.yellow, at(B, 0, .95, 0), 30, false);                      // franja
-  S(box(.05, 1.85, 1.75), M.dark, at(B, -1.71, 1.5, 0), 30, false);                     // interior oscuro
-  S(box(1.45, 1.55, 1.9), M.white, at(B, 2.42, 1.25, 0));                               // cabina
-  S(box(.04, .7, 1.6), M.glass, at(B, 3.15, 1.6, 0), 30, false);                         // parabrisas
-  S(box(1.45, .5, 1.92), M.dark, at(B, 2.42, .55, 0), 30, false);
-  for (const [wx, wz] of [[-1, .9], [-1, -.9], [2.5, .9], [2.5, -.9]]) S(cyl(.42, .42, .3, 18), M.rubber, at(B, wx, .42, wz, Math.PI / 2, 0, 0), 40);
-  for (const sz of [-1, 1]) S(box(.04, 1.95, .95), M.white, at(B, -1.72 - .45, 1.5, sz * 1.4, 0, sz * -1.35, 0), 30);  // puertas abiertas
-  for (let k = 0; k < 4; k++) S(box(.55, .42, .5), M.carton, at(B, -1.0 + (k % 2) * .6, .73 + ((k / 2) | 0) * .43, -.45), 30, false);
+// camión de reparto: furgón sobre el chasis, cabina con capó, ruedas con llanta y puertas traseras abiertas con bisagra
+const TRUCK = { x: 14.15, z: lineZ + .2, piso: .95 };
+{ const B = mtx(TRUCK.x, 0, TRUCK.z, 0, 0, 0), RB = (w, h, d, r = .06) => new RoundedBoxGeometry(w, h, d, 2, r);
+  const tg = grp(scene, TRUCK.x, 0, TRUCK.z), rojo = basic({ color: 0xff3b30 }), vidrio = std({ color: 0x1c2735, roughness: .12, metalness: .7 }), yF = TRUCK.piso + 1.025;                    // centro del furgón
+  S(box(5.5, .2, 1.1), M.dark, at(B, .55, .72, 0), 30, false);                          // chasis
+  D(RB(3.4, 2.05, 1.95, .07), M.white, tg, 0, yF, 0);                                 // furgón
+  S(box(3.42, .2, 1.97), M.yellow, at(B, 0, TRUCK.piso + .32, 0), 30, false);           // franja
+  S(box(.05, 1.85, 1.75), M.dark, at(B, -1.69, yF, 0), 30, false);                       // interior oscuro
+  S(box(3.3, .06, 1.85), M.dark, at(B, 0, TRUCK.piso + .03, 0), 30, false);             // piso de carga
+  S(box(.14, .14, 1.9), M.dark, at(B, -1.76, .82, 0), 30, false);                        // parachoques trasero
+  for (const sz of [-1, 1]) {
+    S(box(.04, .18, .14), rojo, at(B, -1.72, 1.12, sz * .82), 30, false);               // focos traseros
+    S(box(1.15, .09, .38), M.dark, at(B, -.9, .98, sz * .8), 30, false);                 // tapabarro trasero
+  }
+  // cabina con capó
+  D(RB(1.5, 1.72, 1.9, .1), M.white, tg, 2.5, 1.56, 0);
+  D(RB(.6, .74, 1.86, .08), M.white, tg, 3.52, 1.07, 0);
+  S(box(.03, .42, 1.15), M.dark, at(B, 3.83, 1.06, 0), 30, false);                       // parrilla
+  S(box(.22, .2, 1.96), M.dark, at(B, 3.84, .62, 0), 30, false);                         // parachoques
+  S(box(.05, .82, 1.66), vidrio, at(B, 3.2, 1.98, 0, 0, 0, -.22), 30, false);           // parabrisas inclinado
+  for (const sz of [-1, 1]) {
+    S(box(.04, .15, .3), M.lamp, at(B, 3.83, 1.3, sz * .66), 30, false);                // focos
+    S(box(.78, .62, .02), vidrio, at(B, 2.7, 1.98, sz * .956), 30, false);             // ventana lateral
+    S(box(.04, .26, .12), M.dark, at(B, 3.3, 1.86, sz * 1.13), 30, false);              // espejo
+    S(box(.05, .05, .18), M.dark, at(B, 3.28, 1.86, sz * 1.03), 30, false);
+    S(box(.36, .05, .24), M.dark, at(B, 2.4, .62, sz * 1.0), 30, false);                // pisadera
+    S(box(.95, .09, .36), M.dark, at(B, 2.8, 1.0, sz * .82), 30, false);                 // tapabarro delantero
+  }
+  // ruedas: neumático + llanta + maza (traseras dobles)
+  for (const [wx, wz] of [[-.9, .8], [-.9, -.8], [-.9, .5], [-.9, -.5], [2.8, .82], [2.8, -.82]]) {
+    S(cyl(.45, .45, .28, 22), M.rubber, at(B, wx, .45, wz, Math.PI / 2, 0, 0), 40);
+    if (Math.abs(wz) > .7) { S(cyl(.25, .25, .3, 16), M.steel, at(B, wx, .45, wz, Math.PI / 2, 0, 0), 40, false); S(cyl(.08, .08, .32, 10), M.dark, at(B, wx, .45, wz, Math.PI / 2, 0, 0), 40, false); }
+  }
+  // puertas traseras abiertas, unidas a sus bisagras
+  const th = 1.75;
+  for (const sz of [-1, 1]) S(box(.04, 1.95, .95), M.white, at(B, -1.72 - Math.sin(th) * .475, yF, sz * (.975 - Math.cos(th) * .475), 0, sz * th, 0), 30);
+  for (let k = 0; k < 4; k++) S(box(.55, .42, .5), M.carton, at(B, -1.0 + (k % 2) * .6, TRUCK.piso + .27 + ((k / 2) | 0) * .43, -.45), 30, false);
 }
 // palletizado detrás de cada robot
 for (const px of [-6.2, .8]) {
@@ -861,7 +887,7 @@ function rotulo(parent, texto, size, px, py, pz, ry = 0) {
   return g;
 }
 insignia(scene, -11.15, 1.62, lineZ + 1.3);                 // dosificadora
-rotulo(scene, 'JPB MARKETING', .26, 13.95, 1.62, lineZ + 1.2);             // costado del camión
+rotulo(scene, 'JPB MARKETING', .26, 13.95, TRUCK.piso + 1.05, lineZ + 1.2);             // costado del camión
 rotulo(grua, 'JPB MARKETING', .3, 0, 10.25, .62 + .19);      // viga de la grúa
 rotulo(grua, 'JPB MARKETING', .3, 0, 10.25, -.62 - .19, Math.PI);
 { const B = mtx(13.6, 0, -10.6, 0, Math.PI * .92, 0), p = new THREE.Vector3(0, .82, -1.31).applyMatrix4(B); insignia(scene, p.x, p.y, p.z, Math.PI * .92 + Math.PI, .8); } // contrapeso grúa horquilla
@@ -1631,7 +1657,7 @@ function frame(now) {
         if (pilaN >= pila.length && !pilaVacia) pilaVacia = clock + 1.4; // el camión carga el pallet completo
       }
     } else if (c.position.x > beltX1 - .1) c.userData.rampa = 0;
-    c.position.y = beltY + .24 + (act.prospeccion > .1 && c.position.x < -7 ? Math.abs(Math.sin(clock * 14 + c.position.x)) * .05 * act.prospeccion : 0);
+    if (c.userData.rampa == null) c.position.y = beltY + .24 + (act.prospeccion > .1 && c.position.x < -7 ? Math.abs(Math.sin(clock * 14 + c.position.x)) * .05 * act.prospeccion : 0);
   });
   prospCajas.forEach((c) => {
     const u = c.userData; u.t += dt * (.5 + .9 * (act.outbound || 0));
