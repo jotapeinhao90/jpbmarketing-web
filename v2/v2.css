@@ -515,3 +515,17 @@ body.menu-abierto .nav-burger i:last-child{top:13.5px;transform:rotate(-45deg)}
 .tel-status svg{height:calc(11px * var(--f));width:auto;fill:#fff}
 .tel-status i{display:block;width:calc(24px * var(--f));height:calc(11.5px * var(--f));border:1.5px solid rgba(255,255,255,.55);border-radius:calc(3.5px * var(--f));position:relative}
 .tel-status i::after{content:"";position:absolute;inset:1.5px;right:22%;background:#fff;border-radius:2px}
+
+/* Cabeceras de sección con título grande (servicios, clientes) */
+.sec-head{flex-wrap:wrap;padding-bottom:22px;margin-bottom:0}
+.sec-head .kicker{margin-bottom:12px}
+.sec-head .h2{max-width:22ch}
+.servicios .sec-head{margin-bottom:0}
+.caso-top{flex-wrap:wrap;row-gap:10px}
+.foot-links{display:flex;flex-wrap:wrap;gap:6px 18px}
+.foot-links a{margin:0!important}
+@media (max-width:700px){.sec-head{flex-direction:column;align-items:flex-start}.sec-side{text-align:left;padding-bottom:0}}
+.caso-logo{height:auto;min-height:44px}
+/* Menú móvil a pantalla completa */
+.nav-menu{bottom:0;overflow-y:auto;overscroll-behavior:contain;border-bottom:0}
+body.menu-abierto{overflow:hidden}
