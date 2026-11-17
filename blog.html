@@ -1,319 +1,128 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="es">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Blog — JPB Marketing | Recursos B2B Industrial Chile</title>
-  <meta name="description" content="Guías, casos de uso y estrategias de marketing B2B industrial para empresas chilenas. Prospección, automatización, ventas y más.">
   <link rel="canonical" href="https://jpbmarketing.cl/blog">
+  <meta name="description" content="Guías, casos de uso y estrategias de marketing B2B industrial para empresas chilenas. Prospección, automatización, ventas y más.">
   <meta property="og:title" content="Blog — JPB Marketing | Recursos B2B Industrial Chile">
   <meta property="og:description" content="Guías y estrategias de marketing B2B industrial para empresas chilenas.">
   <meta property="og:url" content="https://jpbmarketing.cl/blog">
   <meta property="og:image" content="https://jpbmarketing.cl/assets/logo.webp">
   <meta property="og:type" content="website">
   <meta name="twitter:card" content="summary_large_image">
-  <link rel="icon" href="/favicon.png" type="image/png">
-  <link rel="apple-touch-icon" href="/assets/logo.png">
-    <link rel="preload" as="font" type="font/woff2" href="/assets/fonts/Inter-latin.woff2" crossorigin>
-  <link rel="preload" as="font" type="font/woff2" href="/assets/fonts/PlusJakartaSans-latin.woff2" crossorigin>
-  <link rel="stylesheet" href="styles.css">
   <script type="application/ld+json">
   {"@context": "https://schema.org", "@type": "CollectionPage", "name": "Blog — JPB Marketing", "url": "https://jpbmarketing.cl/blog", "inLanguage": "es-CL", "mainEntity": {"@type": "ItemList", "itemListElement": [{"@type": "ListItem", "position": 1, "url": "https://jpbmarketing.cl/prospeccion-b2b-chile", "name": "Cómo hacer Prospección B2B Industrial en Chile: Guía Completa 2026"}, {"@type": "ListItem", "position": 2, "url": "https://jpbmarketing.cl/automatizacion-n8n-chile", "name": "Automatización con n8n y Make para Empresas Industriales en Chile"}, {"@type": "ListItem", "position": 3, "url": "https://jpbmarketing.cl/outsourcing-fuerza-ventas-chile", "name": "Outsourcing de Fuerza de Ventas en Chile"}, {"@type": "ListItem", "position": 4, "url": "https://jpbmarketing.cl/whatsapp-business-api-chile", "name": "WhatsApp Business API para Empresas Industriales en Chile"}, {"@type": "ListItem", "position": 5, "url": "https://jpbmarketing.cl/pagina-web-empresa-industrial-chile", "name": "Página Web para Empresa Industrial en Chile"}, {"@type": "ListItem", "position": 6, "url": "https://jpbmarketing.cl/seo-con-claude-code", "name": "SEO con Claude Code"}, {"@type": "ListItem", "position": 7, "url": "https://jpbmarketing.cl/keyword-research-b2b-industrial-chile", "name": "Keyword research B2B industrial"}, {"@type": "ListItem", "position": 8, "url": "https://jpbmarketing.cl/como-conseguir-clientes-b2b-chile", "name": "Cómo Conseguir Clientes B2B en Chile: 7 Canales que Sí Funcionan en 2026"}, {"@type": "ListItem", "position": 9, "url": "https://jpbmarketing.cl/prospeccion-linkedin-b2b-chile", "name": "Prospección en LinkedIn en Chile: Cómo Conseguir Reuniones B2B Sin Spamear"}, {"@type": "ListItem", "position": 10, "url": "https://jpbmarketing.cl/agente-ia-whatsapp-chile", "name": "Agente de IA en WhatsApp para Empresas en Chile: Qué Es, Cómo Funciona y Cuándo Conviene"}]}}
   </script>
+  <meta name="theme-color" content="#070b16">
+  <link rel="icon" href="/favicon.png" type="image/png">
+  <link rel="apple-touch-icon" href="/assets/logo.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..900&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/v2/v2.css?v=30">
+  <link rel="stylesheet" href="/v2/sitio.css?v=1">
+  <style>html,body{background:#070b16}</style>
+  <style>
+    .post-card .cuerpo{display:flex;flex-direction:column;flex:1}
+    .post-card .post-pie{margin-top:auto;padding-top:16px;display:flex;flex-wrap:wrap;gap:6px 14px;font-family:var(--mono);font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-3)}
+    .post-card .post-pie .leer{margin-left:auto;color:var(--yellow)}
+    .enlace-casos{font-size:12px;letter-spacing:.06em;color:var(--yellow)}
+  </style>
   <script defer src="/analytics.js"></script>
-  <script defer src="/fx.js"></script>
 </head>
-<body>
+<body class="interna">
+<a class="skip-link" href="#main">Saltar al contenido</a>
 
-<!-- NAVBAR -->
-<nav class="navbar">
-  <div class="container">
-    <div class="nav-inner">
-      <a href="/" class="nav-logo">
-        <img src="assets/logo.webp" alt="JPB Marketing" title="JPB Marketing — Agencia B2B Industrial Chile" class="nav-logo-img">
-      </a>
-      <div class="nav-links"><a href="/servicios">Servicios</a><a href="/agente-ia">Agente IA</a><a href="/blog" class="active">Blog</a><a href="/nosotros">Nosotros</a><a href="/contacto" class="btn-nav-cta">Hablemos</a></div>
-      <button class="nav-hamburger" aria-label="Menú">
-        <span></span><span></span><span></span>
-      </button>
-    </div>
+<header class="nav" id="nav">
+  <a href="/" class="nav-brand" aria-label="JPB Marketing, inicio">JPB<span>·</span>MARKETIN<b>G</b></a>
+  <nav class="nav-links" aria-label="Principal">
+    <a href="/">Inicio</a>
+    <a href="/servicios">Servicios</a>
+    <a href="/agente-ia">Agente IA</a>
+    <a href="/prospeccion">Prospección</a>
+    <a href="/nosotros">Clientes</a>
+    <a href="/blog" class="activo">Blog</a>
+  </nav>
+  <div class="nav-right">
+    <a href="/contacto" class="nav-cta">Hablemos</a>
+    <button type="button" class="nav-burger" id="nav-burger" aria-label="Abrir menú" aria-expanded="false" aria-controls="nav-menu"><i></i><i></i></button>
   </div>
+</header>
+<nav class="nav-menu" id="nav-menu" aria-label="Menú móvil" hidden>
+  <a href="/"><span class="mono">00</span>Inicio</a>
+  <a href="/servicios"><span class="mono">01</span>Servicios</a>
+  <a href="/agente-ia"><span class="mono">02</span>Agente IA</a>
+  <a href="/prospeccion"><span class="mono">03</span>Prospección</a>
+  <a href="/nosotros"><span class="mono">04</span>Clientes y nosotros</a>
+  <a href="/blog" class="activo"><span class="mono">05</span>Blog</a>
+  <a href="/contacto" class="nav-menu-cta">Agenda una llamada →</a>
+  <a href="https://wa.me/56944843503" target="_blank" rel="noopener noreferrer" class="mono nav-menu-wa">WhatsApp · +56 9 4484 3503</a>
 </nav>
-<div class="nav-mobile"><a href="/servicios">Servicios</a><a href="/agente-ia">Agente IA</a><a href="/blog">Blog</a><a href="/nosotros">Nosotros</a><a href="/contacto" class="btn-nav-cta">Hablemos</a></div>
 
-<!-- PAGE HERO -->
-<section class="page-hero">
-  <div class="page-hero-inner">
-    <span class="section-label reveal">Recursos B2B Industrial</span>
-    <h1 class="reveal reveal-delay-1">Blog JPB Marketing</h1>
-    <p class="reveal reveal-delay-2">Guías prácticas, casos de uso y estrategias de ventas B2B para el sector industrial chileno — escritas desde la experiencia.</p>
-  </div>
-</section>
+<main id="main">
+  <section class="pag-hero">
+    <nav class="migas" aria-label="Migas de pan"><a href="/">Inicio</a><span>/</span><span>Blog</span></nav>
+    <p class="mono kicker">RECURSOS B2B INDUSTRIAL</p>
+    <h1>Blog JPB Marketing</h1>
+    <p class="bajada">Guías prácticas, casos de uso y estrategias de ventas B2B para el sector industrial chileno, escritas desde la experiencia.</p>
+  </section>
 
-<!-- ARTICLES GRID -->
-<section>
-  <div class="container">
-    <div class="blog-grid">
-
-      <a href="/como-conseguir-clientes-b2b-chile" class="blog-card reveal">
-        <div class="blog-card-body">
-          <div class="blog-card-tag">Ventas · Estrategia</div>
-          <div class="blog-card-title">Cómo Conseguir Clientes B2B en Chile: 7 Canales que Sí Funcionan en 2026</div>
-          <div class="blog-card-excerpt">Siete canales para conseguir clientes B2B en Chile: prospección en frío, LinkedIn, WhatsApp, SEO, referidos, ferias y alianzas. Qué funciona en la industria y cómo combinarlos.</div>
-          <div class="blog-card-meta">
-            <span>Octubre 2026</span>
-            <span>7 min</span>
-            <span class="blog-card-read">Leer →</span>
-          </div>
-        </div>
-      </a>
-
-      <a href="/prospeccion-linkedin-b2b-chile" class="blog-card reveal">
-        <div class="blog-card-body">
-          <div class="blog-card-tag">Prospección · LinkedIn</div>
-          <div class="blog-card-title">Prospección en LinkedIn en Chile: Cómo Conseguir Reuniones B2B Sin Spamear</div>
-          <div class="blog-card-excerpt">Cómo prospectar en LinkedIn en Chile para vender B2B: optimizar el perfil, segmentar, escribir el primer mensaje, hacer seguimiento y evitar que te marquen como spam.</div>
-          <div class="blog-card-meta">
-            <span>Octubre 2026</span>
-            <span>6 min</span>
-            <span class="blog-card-read">Leer →</span>
-          </div>
-        </div>
-      </a>
-
-      <a href="/agente-ia-whatsapp-chile" class="blog-card reveal">
-        <div class="blog-card-body">
-          <div class="blog-card-tag">IA · WhatsApp</div>
-          <div class="blog-card-title">Agente de IA en WhatsApp para Empresas en Chile: Qué Es, Cómo Funciona y Cuándo Conviene</div>
-          <div class="blog-card-excerpt">Qué es un agente de IA en WhatsApp, cómo atiende y cotiza a tus clientes 24/7, qué necesita tu empresa para implementarlo en Chile y en qué casos conviene.</div>
-          <div class="blog-card-meta">
-            <span>Octubre 2026</span>
-            <span>6 min</span>
-            <span class="blog-card-read">Leer →</span>
-          </div>
-        </div>
-      </a>
-
-      <a href="/prospeccion-b2b-chile" class="blog-card reveal">
-        <div class="blog-card-body">
-          <div class="blog-card-tag">Prospección · B2B</div>
-          <div class="blog-card-title">Cómo hacer Prospección B2B Industrial en Chile: Guía Completa 2026</div>
-          <div class="blog-card-excerpt">Aprende el sistema que usamos en JPB Marketing para prospectar 1,600 contactos industriales diarios con una tasa de respuesta 3x sobre el mercado.</div>
-          <div class="blog-card-meta">
-            <span>Mayo 2026</span>
-            <span>8 min</span>
-            <span class="blog-card-read">Leer →</span>
-          </div>
-        </div>
-      </a>
-
-      <a href="/automatizacion-n8n-chile" class="blog-card reveal reveal-delay-1">
-        <div class="blog-card-body">
-          <div class="blog-card-tag">Automatización · IA</div>
-          <div class="blog-card-title">Automatización con n8n y Make para Empresas Industriales en Chile</div>
-          <div class="blog-card-excerpt">5 casos de uso reales de automatización que están usando fábricas chilenas para reducir trabajo manual y responder más rápido a sus clientes.</div>
-          <div class="blog-card-meta">
-            <span>Mayo 2026</span>
-            <span>7 min</span>
-            <span class="blog-card-read">Leer →</span>
-          </div>
-        </div>
-      </a>
-
-      <a href="/outsourcing-fuerza-ventas-chile" class="blog-card reveal reveal-delay-2">
-        <div class="blog-card-body">
-          <div class="blog-card-tag">Ventas · Estrategia</div>
-          <div class="blog-card-title">Outsourcing de Fuerza de Ventas en Chile: Cuándo Contratar un Vendedor Externo</div>
-          <div class="blog-card-excerpt">Contratar un vendedor interno puede costar más de $3M al mes y tomar 6 meses en rendir frutos. Descubre cuándo el modelo externo es la mejor opción.</div>
-          <div class="blog-card-meta">
-            <span>Mayo 2026</span>
-            <span>6 min</span>
-            <span class="blog-card-read">Leer →</span>
-          </div>
-        </div>
-      </a>
-
-      <a href="/whatsapp-business-api-chile" class="blog-card reveal">
-        <div class="blog-card-body">
-          <div class="blog-card-tag">WhatsApp · IA</div>
-          <div class="blog-card-title">WhatsApp Business API para Empresas Industriales en Chile: Atención 24/7 con IA</div>
-          <div class="blog-card-excerpt">El 78% de los leads van al primero en responder. Descubre cómo implementar una secretaria IA en WhatsApp que atiende, califica y agenda reuniones automáticamente.</div>
-          <div class="blog-card-meta">
-            <span>Mayo 2026</span>
-            <span>7 min</span>
-            <span class="blog-card-read">Leer →</span>
-          </div>
-        </div>
-      </a>
-
-      <a href="/pagina-web-empresa-industrial-chile" class="blog-card reveal reveal-delay-1">
-        <div class="blog-card-body">
-          <div class="blog-card-tag">Web · Conversión</div>
-          <div class="blog-card-title">Página Web para Empresa Industrial en Chile: Qué Debe Tener y Cuánto Cuesta en 2026</div>
-          <div class="blog-card-excerpt">La mayoría de las webs industriales no generan leads porque están diseñadas para verse bien, no para convertir. Esto es lo que realmente necesita la tuya.</div>
-          <div class="blog-card-meta">
-            <span>Mayo 2026</span>
-            <span>6 min</span>
-            <span class="blog-card-read">Leer →</span>
-          </div>
-        </div>
-      </a>
-
-      <a href="/seo-con-claude-code" class="blog-card reveal reveal-delay-2">
-        <div class="blog-card-body">
-          <div class="blog-card-tag">SEO · IA</div>
-          <div class="blog-card-title">SEO con Claude Code: La Guía que Nadie Pidió Pero Todos Necesitan</div>
-          <div class="blog-card-excerpt">Cómo generar blog posts a escala, páginas de servicio optimizadas y SEO técnico automatizado — sin saber una línea de código. Basado en el método de Jono Catliff.</div>
-          <div class="blog-card-meta">
-            <span>Mayo 2026</span>
-            <span>10 min</span>
-            <span class="blog-card-read">Leer →</span>
-          </div>
-        </div>
-      </a>
-
-      <a href="/keyword-research-b2b-industrial-chile" class="blog-card reveal">
-        <div class="blog-card-body">
-          <div class="blog-card-tag">SEO · B2B</div>
-          <div class="blog-card-title">Por Qué el Keyword Planner Dice que tu Cliente B2B No Existe (Y Por Qué Se Equivoca)</div>
-          <div class="blog-card-excerpt">El Keyword Planner subestima sistemáticamente las búsquedas B2B industriales — incluyendo "agente de IA para WhatsApp". Análisis técnico de por qué pasa y cómo hacer keyword research real en mercados de nicho.</div>
-          <div class="blog-card-meta">
-            <span>Junio 2026</span>
-            <span>12 min</span>
-            <span class="blog-card-read">Leer →</span>
-          </div>
-        </div>
-      </a>
-
-      <a href="/nosotros#polimer" class="blog-card reveal reveal-delay-1">
-        <div class="blog-card-body">
-          <div class="blog-card-tag">Caso de éxito · Manufactura</div>
-          <div class="blog-card-title">ETP Polimer: de cero presencia digital a competidor activo</div>
-          <div class="blog-card-excerpt">Construimos su identidad visual y web desde cero. Hoy operan con Google Ads y prospección outbound automatizada — cliente activo hace más de 2 años.</div>
-          <div class="blog-card-meta">
-            <span>Caso de éxito</span>
-            <span>Cliente activo</span>
-            <span class="blog-card-read">Ver historia →</span>
-          </div>
-        </div>
-      </a>
-
-      <a href="/nosotros#fierros-idini" class="blog-card reveal reveal-delay-2">
-        <div class="blog-card-body">
-          <div class="blog-card-tag">Caso de éxito · Metalmecánica</div>
-          <div class="blog-card-title">Fierros Idini: 1.700 productos online y tráfico orgánico sostenido</div>
-          <div class="blog-card-excerpt">Reconstruimos su sitio web desde cero con catálogo completo estructurado. Base sólida para Google Ads y una estrategia SEO de largo plazo, con 3 plantas en operación.</div>
-          <div class="blog-card-meta">
-            <span>Caso de éxito</span>
-            <span>Cliente activo</span>
-            <span class="blog-card-read">Ver historia →</span>
-          </div>
-        </div>
-      </a>
-
-      <a href="/nosotros#plastiservi-conflex" class="blog-card reveal">
-        <div class="blog-card-body">
-          <div class="blog-card-tag">Caso de éxito · Plástico industrial</div>
-          <div class="blog-card-title">Plastiservi + Conflex: de cliente histórico a nueva empresa</div>
-          <div class="blog-card-excerpt">Años de asesoría digital con Plastiservi llevaron a construir Conflex juntos desde el día uno: nombre, identidad, web y estrategia digital ya en marcha con Google Ads.</div>
-          <div class="blog-card-meta">
-            <span>Caso de éxito</span>
-            <span>Cliente activo</span>
-            <span class="blog-card-read">Ver historia →</span>
-          </div>
-        </div>
-      </a>
-
-      <a href="/nosotros#kem-barbershop" class="blog-card reveal reveal-delay-1">
-        <div class="blog-card-photo">
-          <img src="Clientes/kem_barbershop_foto.webp" alt="JPB Marketing con The Kem Barbershop" loading="lazy">
-        </div>
-        <div class="blog-card-body">
-          <div class="blog-card-tag">Caso de éxito · Barbería</div>
-          <div class="blog-card-title">El caso piloto que catapultó un modelo ya replicado en varias barberías</div>
-          <div class="blog-card-excerpt">Todo partió en The Kem Barbershop: identificamos el problema y construimos un sistema de fidelización por WhatsApp cada 14 días. Hoy ya está replicado en varias barberías, con la meta de llegar a 50 clientes activos a fines de 2026.</div>
-          <div class="blog-card-meta">
-            <span>Caso de éxito</span>
-            <span>Modelo replicado</span>
-            <span class="blog-card-read">Ver historia →</span>
-          </div>
-        </div>
-      </a>
-
+  <section class="seccion">
+    <div class="sec-cabeza aparece">
+      <div><p class="mono kicker">ARTÍCULOS</p><h2 class="h2">Guías y estrategias</h2></div>
     </div>
-  </div>
-</section>
-
-<!-- CTA FINAL -->
-<section class="cta-section">
-  <div class="container">
-    <span class="section-label reveal">¿Listo para escalar?</span>
-    <h2 class="reveal reveal-delay-1">Agenda una <span class="text-gradient">Llamada Estratégica</span></h2>
-    <p class="reveal reveal-delay-2">Sin compromisos. En 30 minutos analizamos tu situación comercial y te mostramos cómo podemos integrarnos a tu equipo.</p>
-    <div class="cta-actions reveal reveal-delay-3">
-      <a href="/contacto" class="btn btn-primary btn-lg">Contactar ahora</a>
-      <a href="https://wa.me/56944843503" class="btn btn-outline btn-lg" target="_blank" rel="noopener">WhatsApp directo</a>
+    <div class="rejilla aparece">
+      <a href="/como-conseguir-clientes-b2b-chile" class="post-card"><div class="cuerpo"><small>Ventas · Estrategia</small><h3>Cómo Conseguir Clientes B2B en Chile: 7 Canales que Sí Funcionan en 2026</h3><p>Siete canales para conseguir clientes B2B en Chile: prospección en frío, LinkedIn, WhatsApp, SEO, referidos, ferias y alianzas. Qué funciona en la industria y cómo combinarlos.</p><p class="post-pie"><span>Octubre 2026</span><span>7 min</span><span class="leer">Leer →</span></p></div></a>
+      <a href="/prospeccion-linkedin-b2b-chile" class="post-card"><div class="cuerpo"><small>Prospección · LinkedIn</small><h3>Prospección en LinkedIn en Chile: Cómo Conseguir Reuniones B2B Sin Spamear</h3><p>Cómo prospectar en LinkedIn en Chile para vender B2B: optimizar el perfil, segmentar, escribir el primer mensaje, hacer seguimiento y evitar que te marquen como spam.</p><p class="post-pie"><span>Octubre 2026</span><span>6 min</span><span class="leer">Leer →</span></p></div></a>
+      <a href="/agente-ia-whatsapp-chile" class="post-card"><div class="cuerpo"><small>IA · WhatsApp</small><h3>Agente de IA en WhatsApp para Empresas en Chile: Qué Es, Cómo Funciona y Cuándo Conviene</h3><p>Qué es un agente de IA en WhatsApp, cómo atiende y cotiza a tus clientes 24/7, qué necesita tu empresa para implementarlo en Chile y en qué casos conviene.</p><p class="post-pie"><span>Octubre 2026</span><span>6 min</span><span class="leer">Leer →</span></p></div></a>
+      <a href="/prospeccion-b2b-chile" class="post-card"><div class="cuerpo"><small>Prospección · B2B</small><h3>Cómo hacer Prospección B2B Industrial en Chile: Guía Completa 2026</h3><p>Aprende el sistema que usamos en JPB Marketing para prospectar 1,600 contactos industriales diarios con una tasa de respuesta 3x sobre el mercado.</p><p class="post-pie"><span>Mayo 2026</span><span>8 min</span><span class="leer">Leer →</span></p></div></a>
+      <a href="/automatizacion-n8n-chile" class="post-card"><div class="cuerpo"><small>Automatización · IA</small><h3>Automatización con n8n y Make para Empresas Industriales en Chile</h3><p>5 casos de uso reales de automatización que están usando fábricas chilenas para reducir trabajo manual y responder más rápido a sus clientes.</p><p class="post-pie"><span>Mayo 2026</span><span>7 min</span><span class="leer">Leer →</span></p></div></a>
+      <a href="/outsourcing-fuerza-ventas-chile" class="post-card"><div class="cuerpo"><small>Ventas · Estrategia</small><h3>Outsourcing de Fuerza de Ventas en Chile: Cuándo Contratar un Vendedor Externo</h3><p>Contratar un vendedor interno puede costar más de $3M al mes y tomar 6 meses en rendir frutos. Descubre cuándo el modelo externo es la mejor opción.</p><p class="post-pie"><span>Mayo 2026</span><span>6 min</span><span class="leer">Leer →</span></p></div></a>
+      <a href="/whatsapp-business-api-chile" class="post-card"><div class="cuerpo"><small>WhatsApp · IA</small><h3>WhatsApp Business API para Empresas Industriales en Chile: Atención 24/7 con IA</h3><p>El 78% de los leads van al primero en responder. Descubre cómo implementar una secretaria IA en WhatsApp que atiende, califica y agenda reuniones automáticamente.</p><p class="post-pie"><span>Mayo 2026</span><span>7 min</span><span class="leer">Leer →</span></p></div></a>
+      <a href="/pagina-web-empresa-industrial-chile" class="post-card"><div class="cuerpo"><small>Web · Conversión</small><h3>Página Web para Empresa Industrial en Chile: Qué Debe Tener y Cuánto Cuesta en 2026</h3><p>La mayoría de las webs industriales no generan leads porque están diseñadas para verse bien, no para convertir. Esto es lo que realmente necesita la tuya.</p><p class="post-pie"><span>Mayo 2026</span><span>6 min</span><span class="leer">Leer →</span></p></div></a>
+      <a href="/seo-con-claude-code" class="post-card"><div class="cuerpo"><small>SEO · IA</small><h3>SEO con Claude Code: La Guía que Nadie Pidió Pero Todos Necesitan</h3><p>Cómo generar blog posts a escala, páginas de servicio optimizadas y SEO técnico automatizado, sin saber una línea de código. Basado en el método de Jono Catliff.</p><p class="post-pie"><span>Mayo 2026</span><span>10 min</span><span class="leer">Leer →</span></p></div></a>
+      <a href="/keyword-research-b2b-industrial-chile" class="post-card"><div class="cuerpo"><small>SEO · B2B</small><h3>Por Qué el Keyword Planner Dice que tu Cliente B2B No Existe (Y Por Qué Se Equivoca)</h3><p>El Keyword Planner subestima sistemáticamente las búsquedas B2B industriales, incluyendo "agente de IA para WhatsApp". Análisis técnico de por qué pasa y cómo hacer keyword research real en mercados de nicho.</p><p class="post-pie"><span>Junio 2026</span><span>12 min</span><span class="leer">Leer →</span></p></div></a>
     </div>
-  </div>
-</section>
+  </section>
 
-<!-- FOOTER -->
-<footer class="footer">
-  <div class="container">
-    <div class="footer-grid">
-      <div class="footer-brand">
-        <div class="footer-logo">
-          <img src="/assets/logo.webp" alt="JPB Marketing" style="height:52px;width:auto;display:block;">
-        </div>
-        <p>Conectamos fábricas e industrias chilenas con sus clientes potenciales de forma directa, tecnologizada y efectiva. Especialistas en B2B industrial.</p>
-      </div>
-      <div class="footer-col">
-        <h5>Servicios</h5>
-        <ul>
-          <li><a href="/servicios">Transformación Digital</a></li>
-          <li><a href="/servicios">Secretaria IA WhatsApp</a></li>
-          <li><a href="/servicios">Automatización con IA</a></li>
-          <li><a href="/servicios">Páginas Web Industriales</a></li>
-          <li><a href="/servicios">Vendedor Externo</a></li>
-          <li><a href="/servicios">Prospección B2B</a></li>
-        </ul>
-      </div>
-      <div class="footer-col">
-        <h5>Empresa</h5>
-        <ul>
-          <li><a href="/nosotros">Nosotros</a></li>
-          <li><a href="/prospeccion">Sistema de Prospección</a></li>
-          <li><a href="/blog">Blog</a></li><li><a href="/nosotros#casos-exito">Casos de éxito</a></li>
-          <li><a href="/contacto">Contacto</a></li>
-        </ul>
-      </div>
-      <div class="footer-col">
-        <h5>Legal</h5>
-        <ul>
-          <li><a href="#">Política de Privacidad</a></li>
-          <li><a href="#">Términos de Servicio</a></li>
-        </ul>
-        <div class="footer-contact-info">
-          <p>📧 jpbayas@jpbmarketing.cl</p>
-          <p>📱 +56 9 4484 3503</p>
-          <p>📍 Santiago, Chile</p>
-        </div>
-      </div>
+  <section class="seccion seccion-alt">
+    <div class="sec-cabeza aparece">
+      <div><p class="mono kicker">CASOS DE ÉXITO</p><h2 class="h2">Historias de clientes</h2></div>
+      <p><a href="/nosotros#casos-exito" class="mono enlace-casos">Ver todos los casos →</a></p>
     </div>
-    <div class="footer-access"><span>Accesos</span><a href="/prospeccion">Sistema de prospección</a><a href="/prospector/">Prospector</a><a href="/herramientas/recordatorios/">Acceso Clientes</a><a href="/prospector/?login=1">Iniciar sesión</a><a href="/nosotros">Nosotros</a></div>
-    <div class="footer-bottom">
-      <span>© 2026 JPB Marketing. Todos los derechos reservados.</span>
-      <span>Santiago, Chile</span>
+    <div class="rejilla aparece">
+      <a href="/nosotros#polimer" class="post-card"><div class="foto"><img src="/Clientes/Foto_con_polimer.webp" alt="JPB Marketing con ETP Polimer" loading="lazy" width="900" height="900"></div><div class="cuerpo"><small>Caso de éxito · Manufactura</small><h3>ETP Polimer: de cero presencia digital a competidor activo</h3><p>Construimos su identidad visual y web desde cero. Hoy operan con Google Ads y prospección outbound automatizada, cliente activo hace más de 2 años.</p><p class="post-pie"><span>Caso de éxito</span><span>Cliente activo</span><span class="leer">Ver historia →</span></p></div></a>
+      <a href="/nosotros#fierros-idini" class="post-card"><div class="foto"><img src="/Clientes/Fierros_idini_foto.webp" alt="JPB Marketing con Fierros Idini" loading="lazy" width="900" height="900"></div><div class="cuerpo"><small>Caso de éxito · Metalmecánica</small><h3>Fierros Idini: 1.700 productos online y tráfico orgánico sostenido</h3><p>Reconstruimos su sitio web desde cero con catálogo completo estructurado. Base sólida para Google Ads y una estrategia SEO de largo plazo, con 3 plantas en operación.</p><p class="post-pie"><span>Caso de éxito</span><span>Cliente activo</span><span class="leer">Ver historia →</span></p></div></a>
+      <a href="/nosotros#plastiservi-conflex" class="post-card"><div class="foto"><img src="/Clientes/4413EF69-A08E-4B0B-96FA-4A9EE240617A.webp" alt="JPB Marketing en planta Conflex" loading="lazy" width="900" height="900"></div><div class="cuerpo"><small>Caso de éxito · Plástico industrial</small><h3>Plastiservi + Conflex: de cliente histórico a nueva empresa</h3><p>Años de asesoría digital con Plastiservi llevaron a construir Conflex juntos desde el día uno: nombre, identidad, web y estrategia digital ya en marcha con Google Ads.</p><p class="post-pie"><span>Caso de éxito</span><span>Cliente activo</span><span class="leer">Ver historia →</span></p></div></a>
+      <a href="/nosotros#kem-barbershop" class="post-card"><div class="foto"><img src="/Clientes/kem_barbershop_foto.webp" alt="JPB Marketing con The Kem Barbershop" loading="lazy" width="900" height="838"></div><div class="cuerpo"><small>Caso de éxito · Barbería</small><h3>El caso piloto que catapultó un modelo ya replicado en varias barberías</h3><p>Todo partió en The Kem Barbershop: identificamos el problema y construimos un sistema de fidelización por WhatsApp cada 14 días. Hoy ya está replicado en varias barberías, con la meta de llegar a 50 clientes activos a fines de 2026.</p><p class="post-pie"><span>Caso de éxito</span><span>Modelo replicado</span><span class="leer">Ver historia →</span></p></div></a>
     </div>
-  </div>
-</footer>
+  </section>
 
-<a href="https://wa.me/56944843503" class="whatsapp-float" target="_blank" rel="noopener" aria-label="Contactar por WhatsApp">
-  <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
-</a>
-<button class="back-top" aria-label="Volver arriba">
-  <svg viewBox="0 0 24 24"><polyline points="18 15 12 9 6 15"/></svg>
-</button>
-<script src="main.js"></script>
+  <section class="cta" id="contacto">
+    <p class="mono kicker">¿LISTO PARA ESCALAR?</p>
+    <h2 class="cta-title">Agenda una <em>llamada estratégica</em></h2>
+    <p class="cta-sub">Sin compromisos. En 30 minutos analizamos tu situación comercial y te mostramos cómo podemos integrarnos a tu equipo.</p>
+    <div class="hero-actions">
+      <a href="/contacto" class="btn btn-primary">Contactar ahora</a>
+      <a href="https://wa.me/56944843503" class="btn btn-ghost" target="_blank" rel="noopener noreferrer">WhatsApp directo</a>
+    </div>
+    <p class="mono cta-mail"><a href="mailto:jpbayas@jpbmarketing.cl">jpbayas@jpbmarketing.cl</a> · +56 9 4484 3503</p>
+  </section>
+
+  <p class="marca" aria-hidden="true"><span>JPB MARKETIN<b>G</b></span></p>
+  <footer class="foot mono">
+    <span>JPB MARKETING · SANTIAGO DE CHILE · 2026</span>
+    <span class="foot-links"><a href="/servicios">Servicios</a><a href="/agente-ia">Agente IA</a><a href="/prospeccion">Prospección</a><a href="/nosotros">Nosotros</a><a href="/blog">Blog</a><a href="/contacto">Contacto</a><a href="/privacidad-whatsapp">Privacidad</a></span>
+  </footer>
+</main>
+
+<div class="barra-movil" id="barra-movil" aria-hidden="true">
+  <a href="/contacto" class="btn btn-primary">Agenda una llamada</a>
+  <a href="https://wa.me/56944843503" class="barra-wa" target="_blank" rel="noopener noreferrer" aria-label="Escríbenos por WhatsApp"><svg viewBox="0 0 24 24" width="24" height="24" fill="currentColor" aria-hidden="true"><path d="M17.47 14.38c-.3-.15-1.76-.87-2.03-.97-.27-.1-.47-.15-.67.15-.2.3-.77.97-.94 1.16-.17.2-.35.22-.64.07-.3-.15-1.26-.46-2.39-1.48-.88-.79-1.48-1.76-1.65-2.06-.17-.3-.02-.46.13-.6.13-.14.3-.35.45-.52.15-.17.2-.3.3-.5.1-.2.05-.37-.03-.52-.07-.15-.67-1.61-.92-2.2-.24-.58-.49-.5-.67-.51h-.57c-.2 0-.52.07-.79.37-.27.3-1.04 1.02-1.04 2.48s1.07 2.88 1.21 3.07c.15.2 2.1 3.2 5.08 4.49.71.31 1.26.49 1.7.63.71.23 1.36.2 1.87.12.57-.09 1.76-.72 2-1.41.25-.7.25-1.29.18-1.41-.08-.13-.27-.2-.57-.35M12.05 21.79h-.01a9.87 9.87 0 0 1-5.03-1.38l-.36-.21-3.74.98 1-3.65-.24-.37a9.86 9.86 0 0 1-1.51-5.26c0-5.45 4.44-9.88 9.89-9.88a9.83 9.83 0 0 1 6.99 2.9 9.82 9.82 0 0 1 2.89 6.99c0 5.45-4.44 9.88-9.88 9.88m8.41-18.3A11.81 11.81 0 0 0 12.05 0C5.5 0 .16 5.34.16 11.89c0 2.1.55 4.14 1.59 5.95L.06 24l6.3-1.65a11.88 11.88 0 0 0 5.69 1.45h.01c6.55 0 11.89-5.34 11.89-11.89 0-3.18-1.24-6.17-3.48-8.41"/></svg></a>
+</div>
+
+<script src="/v2/pagina.js?v=12" defer></script>
 </body>
 </html>

@@ -3,5 +3,7 @@ Allow: /
 Disallow: /gracias.html
 Disallow: /crm-barberias.html
 Disallow: /crm-barberias
+Disallow: /borrador/
+Disallow: /v2/plantilla
 
 Sitemap: https://jpbmarketing.cl/sitemap.xml

@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="es">
 <head>
   <meta charset="UTF-8">
@@ -7,213 +7,75 @@
   <meta name="description" content="Tu solicitud ha sido recibida. Nos pondremos en contacto contigo pronto.">
   <meta name="robots" content="noindex, nofollow">
   <link rel="canonical" href="https://jpbmarketing.cl/gracias">
+  <meta name="theme-color" content="#070b16">
   <link rel="icon" href="/favicon.png" type="image/png">
   <link rel="apple-touch-icon" href="/assets/logo.png">
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..900&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/v2/v2.css?v=30">
+  <link rel="stylesheet" href="/v2/sitio.css?v=1">
   <style>
-    :root {
-      --bg: #080c18;
-      --surface: #0d1424;
-      --cyan: #0abedc;
-      --cyan-glow: rgba(10, 190, 220, 0.15);
-      --text: #e2e8f0;
-      --text-muted: #7a8ba8;
-      --green: #25d366;
-    }
-
-    * { margin: 0; padding: 0; box-sizing: border-box; }
-
-    body {
-      font-family: 'Inter', sans-serif;
-      background: var(--bg);
-      color: var(--text);
-      min-height: 100vh;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      overflow: hidden;
-      position: relative;
-    }
-
-    /* Animated background */
-    body::before {
-      content: '';
-      position: fixed;
-      top: 0; left: 0; right: 0; bottom: 0;
-      background:
-        radial-gradient(ellipse at 20% 50%, rgba(10, 190, 220, 0.08) 0%, transparent 50%),
-        radial-gradient(ellipse at 80% 20%, rgba(59, 130, 246, 0.06) 0%, transparent 50%),
-        radial-gradient(ellipse at 50% 80%, rgba(168, 85, 247, 0.04) 0%, transparent 50%);
-      z-index: 0;
-      animation: bgPulse 8s ease-in-out infinite alternate;
-    }
-
-    @keyframes bgPulse {
-      0% { opacity: 0.6; }
-      100% { opacity: 1; }
-    }
-
-    .container {
-      position: relative;
-      z-index: 1;
-      text-align: center;
-      max-width: 580px;
-      padding: 2rem;
-    }
-
-    /* Success checkmark */
-    .check-circle {
-      width: 100px;
-      height: 100px;
-      border-radius: 50%;
-      background: var(--cyan-glow);
-      border: 2px solid var(--cyan);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      margin: 0 auto 2rem;
-      animation: scaleIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-      box-shadow: 0 0 40px rgba(10, 190, 220, 0.2);
-    }
-
-    .check-circle svg {
-      width: 48px;
-      height: 48px;
-      stroke: var(--cyan);
-      stroke-width: 2.5;
-      fill: none;
-      stroke-dasharray: 50;
-      stroke-dashoffset: 50;
-      animation: drawCheck 0.6s 0.4s ease forwards;
-    }
-
-    @keyframes scaleIn {
-      0% { transform: scale(0); opacity: 0; }
-      100% { transform: scale(1); opacity: 1; }
-    }
-
-    @keyframes drawCheck {
-      to { stroke-dashoffset: 0; }
-    }
-
-    h1 {
-      font-family: 'Space Grotesk', sans-serif;
-      font-size: clamp(1.8rem, 4vw, 2.5rem);
-      font-weight: 700;
-      margin-bottom: 1rem;
-      animation: fadeUp 0.6s 0.3s ease both;
-    }
-
-    h1 span {
-      background: linear-gradient(135deg, var(--cyan), #3b82f6);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
-    }
-
-    .subtitle {
-      font-size: 1.1rem;
-      color: var(--text-muted);
-      line-height: 1.7;
-      margin-bottom: 2.5rem;
-      animation: fadeUp 0.6s 0.5s ease both;
-    }
-
-    .whatsapp-btn {
-      display: inline-flex;
-      align-items: center;
-      gap: 12px;
-      background: var(--green);
-      color: #fff;
-      padding: 16px 36px;
-      border-radius: 50px;
-      font-size: 1.05rem;
-      font-weight: 600;
-      text-decoration: none;
-      transition: all 0.3s ease;
-      animation: fadeUp 0.6s 0.7s ease both;
-      box-shadow: 0 4px 20px rgba(37, 211, 102, 0.3);
-    }
-
-    .whatsapp-btn:hover {
-      transform: translateY(-3px) scale(1.03);
-      box-shadow: 0 8px 30px rgba(37, 211, 102, 0.45);
-    }
-
-    .whatsapp-btn svg {
-      width: 24px;
-      height: 24px;
-      fill: #fff;
-    }
-
-    .back-link {
-      display: inline-block;
-      margin-top: 1.5rem;
-      color: var(--text-muted);
-      font-size: 0.9rem;
-      text-decoration: none;
-      transition: color 0.3s;
-      animation: fadeUp 0.6s 0.9s ease both;
-    }
-
-    .back-link:hover {
-      color: var(--cyan);
-    }
-
-    @keyframes fadeUp {
-      0% { opacity: 0; transform: translateY(20px); }
-      100% { opacity: 1; transform: translateY(0); }
-    }
-
-    /* Floating particles */
-    .particle {
-      position: fixed;
-      width: 3px;
-      height: 3px;
-      background: var(--cyan);
-      border-radius: 50%;
-      opacity: 0;
-      animation: float 6s ease-in-out infinite;
-    }
-
-    @keyframes float {
-      0%, 100% { opacity: 0; transform: translateY(100vh); }
-      10% { opacity: 0.6; }
-      90% { opacity: 0.6; }
-      100% { opacity: 0; transform: translateY(-10vh); }
-    }
+    html,body{background:#070b16}
+    .gracias{min-height:calc(100svh - var(--nav-h) - 80px);display:flex;flex-direction:column;justify-content:center}
+    .gracias-check{width:64px;height:64px;border-radius:50%;display:grid;place-items:center;border:1px solid rgba(245,184,0,.5);background:rgba(245,184,0,.1);color:var(--yellow);margin-bottom:26px}
+    .gracias-check svg{width:30px;height:30px}
+    .gracias .bajada strong{color:var(--ink)}
+    .gracias .btn svg{width:18px;height:18px;margin-right:8px;vertical-align:-3px}
   </style>
   <script defer src="/analytics.js"></script>
 </head>
-<body>
-  <!-- Floating particles -->
-  <div class="particle" style="left:10%; animation-delay:0s; animation-duration:7s;"></div>
-  <div class="particle" style="left:25%; animation-delay:1.2s; animation-duration:6s;"></div>
-  <div class="particle" style="left:40%; animation-delay:2.5s; animation-duration:8s;"></div>
-  <div class="particle" style="left:55%; animation-delay:0.8s; animation-duration:5s;"></div>
-  <div class="particle" style="left:70%; animation-delay:3s; animation-duration:7s;"></div>
-  <div class="particle" style="left:85%; animation-delay:1.5s; animation-duration:6.5s;"></div>
-  <div class="particle" style="left:92%; animation-delay:2s; animation-duration:9s;"></div>
+<body class="interna">
+<a class="skip-link" href="#main">Saltar al contenido</a>
 
-  <div class="container">
-    <div class="check-circle">
-      <svg viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5" stroke-linecap="round" stroke-linejoin="round"/></svg>
-    </div>
-
-    <h1>¡Mensaje <span>recibido</span>!</h1>
-
-    <p class="subtitle">
-      Nuestro equipo revisará tu solicitud y te contactaremos en las próximas <strong>24 horas hábiles</strong>.<br><br>
-      Si necesitas una respuesta más rápida, escríbenos directamente por WhatsApp 👇
-    </p>
-
-    <a href="https://wa.me/56944843503?text=Hola%20JPB%20Marketing%2C%20acabo%20de%20enviar%20el%20formulario%20de%20contacto%20y%20me%20gustar%C3%ADa%20m%C3%A1s%20informaci%C3%B3n." class="whatsapp-btn" target="_blank" rel="noopener noreferrer">
-      <svg viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12 0C5.373 0 0 5.373 0 12c0 2.625.846 5.059 2.284 7.034L.789 23.492a.5.5 0 00.611.611l4.458-1.495A11.952 11.952 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 22c-2.317 0-4.47-.75-6.214-2.02l-.436-.328-3.266 1.095 1.095-3.266-.328-.436A9.935 9.935 0 012 12C2 6.486 6.486 2 12 2s10 4.486 10 10-4.486 10-10 10z"/></svg>
-      Hablar por WhatsApp
-    </a>
-
-    <a href="/" class="back-link">← Volver al inicio</a>
+<header class="nav" id="nav">
+  <a href="/" class="nav-brand" aria-label="JPB Marketing, inicio">JPB<span>·</span>MARKETIN<b>G</b></a>
+  <nav class="nav-links" aria-label="Principal">
+    <a href="/">Inicio</a>
+    <a href="/servicios">Servicios</a>
+    <a href="/agente-ia">Agente IA</a>
+    <a href="/prospeccion">Prospección</a>
+    <a href="/nosotros">Clientes</a>
+    <a href="/blog">Blog</a>
+  </nav>
+  <div class="nav-right">
+    <a href="/contacto" class="nav-cta">Hablemos</a>
+    <button type="button" class="nav-burger" id="nav-burger" aria-label="Abrir menú" aria-expanded="false" aria-controls="nav-menu"><i></i><i></i></button>
   </div>
+</header>
+<nav class="nav-menu" id="nav-menu" aria-label="Menú móvil" hidden>
+  <a href="/"><span class="mono">00</span>Inicio</a>
+  <a href="/servicios"><span class="mono">01</span>Servicios</a>
+  <a href="/agente-ia"><span class="mono">02</span>Agente IA</a>
+  <a href="/prospeccion"><span class="mono">03</span>Prospección</a>
+  <a href="/nosotros"><span class="mono">04</span>Clientes y nosotros</a>
+  <a href="/blog"><span class="mono">05</span>Blog</a>
+  <a href="/contacto" class="nav-menu-cta">Agenda una llamada →</a>
+  <a href="https://wa.me/56944843503" target="_blank" rel="noopener noreferrer" class="mono nav-menu-wa">WhatsApp · +56 9 4484 3503</a>
+</nav>
+
+<main id="main">
+  <section class="pag-hero gracias">
+    <div class="gracias-check" aria-hidden="true">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 6L9 17l-5-5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    </div>
+    <p class="mono kicker">SOLICITUD ENVIADA</p>
+    <h1>¡Mensaje recibido!</h1>
+    <p class="bajada">Nuestro equipo revisará tu solicitud y te contactaremos en las próximas <strong>24 horas hábiles</strong>.</p>
+    <p class="bajada">Si necesitas una respuesta más rápida, escríbenos directamente por WhatsApp.</p>
+    <div class="hero-actions">
+      <a href="https://wa.me/56944843503?text=Hola%20JPB%20Marketing%2C%20acabo%20de%20enviar%20el%20formulario%20de%20contacto%20y%20me%20gustar%C3%ADa%20m%C3%A1s%20informaci%C3%B3n." class="btn btn-primary" target="_blank" rel="noopener noreferrer"><svg aria-hidden="true" viewBox="0 0 24 24" fill="currentColor"><path d="M17.47 14.38c-.3-.15-1.76-.87-2.03-.97-.27-.1-.47-.15-.67.15-.2.3-.77.97-.94 1.16-.17.2-.35.22-.64.07-.3-.15-1.26-.46-2.39-1.48-.88-.79-1.48-1.76-1.65-2.06-.17-.3-.02-.46.13-.6.13-.14.3-.35.45-.52.15-.17.2-.3.3-.5.1-.2.05-.37-.03-.52-.07-.15-.67-1.61-.92-2.2-.24-.58-.49-.5-.67-.51h-.57c-.2 0-.52.07-.79.37-.27.3-1.04 1.02-1.04 2.48s1.07 2.88 1.21 3.07c.15.2 2.1 3.2 5.08 4.49.71.31 1.26.49 1.7.63.71.23 1.36.2 1.87.12.57-.09 1.76-.72 2-1.41.25-.7.25-1.29.18-1.41-.08-.13-.27-.2-.57-.35M12.05 21.79h-.01a9.87 9.87 0 0 1-5.03-1.38l-.36-.21-3.74.98 1-3.65-.24-.37a9.86 9.86 0 0 1-1.51-5.26c0-5.45 4.44-9.88 9.89-9.88a9.83 9.83 0 0 1 6.99 2.9 9.82 9.82 0 0 1 2.89 6.99c0 5.45-4.44 9.88-9.88 9.88m8.41-18.3A11.81 11.81 0 0 0 12.05 0C5.5 0 .16 5.34.16 11.89c0 2.1.55 4.14 1.59 5.95L.06 24l6.3-1.65a11.88 11.88 0 0 0 5.69 1.45h.01c6.55 0 11.89-5.34 11.89-11.89 0-3.18-1.24-6.17-3.48-8.41"/></svg>Hablar por WhatsApp</a>
+      <a href="/" class="btn btn-ghost">← Volver al inicio</a>
+    </div>
+  </section>
+
+  <p class="marca" aria-hidden="true"><span>JPB MARKETIN<b>G</b></span></p>
+  <footer class="foot mono">
+    <span>JPB MARKETING · SANTIAGO DE CHILE · 2026</span>
+    <span class="foot-links"><a href="/servicios">Servicios</a><a href="/agente-ia">Agente IA</a><a href="/prospeccion">Prospección</a><a href="/nosotros">Nosotros</a><a href="/blog">Blog</a><a href="/contacto">Contacto</a><a href="/privacidad-whatsapp">Privacidad</a></span>
+  </footer>
+</main>
+
+<script src="/v2/pagina.js?v=12" defer></script>
 </body>
 </html>

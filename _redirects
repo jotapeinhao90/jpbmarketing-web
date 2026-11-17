@@ -12,3 +12,6 @@
 /pagina-web-empresa-industrial-chile.html /pagina-web-empresa-industrial-chile 301
 /seo-con-claude-code.html              /seo-con-claude-code              301
 /casos                                 /nosotros#casos-exito             301
+/v2            /             301
+/v2/           /             301
+/v2/index.html /             301

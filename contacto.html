@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="es">
 <head>
   <meta charset="UTF-8">
@@ -12,81 +12,104 @@
   <meta property="og:image" content="https://jpbmarketing.cl/assets/logo.webp">
   <meta property="og:type" content="website">
   <meta name="twitter:card" content="summary_large_image">
-  <link rel="icon" href="/favicon.png" type="image/png">
-  <link rel="apple-touch-icon" href="/assets/logo.png">
-    <link rel="preload" as="font" type="font/woff2" href="/assets/fonts/Inter-latin.woff2" crossorigin>
-  <link rel="preload" as="font" type="font/woff2" href="/assets/fonts/PlusJakartaSans-latin.woff2" crossorigin>
-  <link rel="stylesheet" href="styles.css">
   <script type="application/ld+json">
   {"@context":"https://schema.org","@type":"ContactPage","name":"Contacto — JPB Marketing","url":"https://jpbmarketing.cl/contacto","provider":{"@type":"Organization","name":"JPB Marketing","telephone":"+56944843503","email":"jpbayas@jpbmarketing.cl"}}
   </script>
+  <meta name="theme-color" content="#070b16">
+  <link rel="icon" href="/favicon.png" type="image/png">
+  <link rel="apple-touch-icon" href="/assets/logo.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..900&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/v2/v2.css?v=30">
+  <link rel="stylesheet" href="/v2/sitio.css?v=1">
+  <style>
+    html,body{background:#070b16}
+    .form-cabeza h2{font-weight:800;font-stretch:112%;font-size:clamp(24px,2.4vw,32px);line-height:1.12;letter-spacing:-.015em}
+    .form-cabeza p,.contacto-lado>p{color:var(--ink-2);font-size:15px;margin-top:8px}
+    .form-cabeza{margin-bottom:24px}
+    .contacto-lado>h2{font-family:var(--mono);font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--yellow);font-weight:500}
+    .contacto-lado>p{margin-bottom:8px}
+    .contacto-item .icono svg{width:20px;height:20px}
+    .contacto-lado .tarjeta{margin-top:24px}
+    .contacto-lado .tarjeta .btn{margin-top:16px;width:100%;justify-content:center}
+    .formulario .btn svg{width:18px;height:18px;margin-left:6px;vertical-align:-3px}
+    @media (max-width:860px){.contacto-lado{margin-top:12px;padding-top:30px;border-top:1px solid var(--line)}}
+  </style>
   <script defer src="/analytics.js"></script>
-  <script defer src="/fx.js"></script>
 </head>
-<body>
+<body class="interna">
+<a class="skip-link" href="#main">Saltar al contenido</a>
 
-<!-- NAVBAR -->
-<nav class="navbar">
-  <div class="container">
-    <div class="nav-inner">
-      <a href="/" class="nav-logo">
-        <img src="assets/logo.webp" alt="JPB Marketing" title="JPB Marketing — Agencia B2B Industrial Chile" class="nav-logo-img">
-
-      </a>      <div class="nav-links"><a href="/servicios">Servicios</a><a href="/agente-ia">Agente IA</a><a href="/blog">Blog</a><a href="/nosotros">Nosotros</a><a href="/contacto" class="btn-nav-cta">Hablemos</a></div>
-      <button class="nav-hamburger" aria-label="Menú">
-        <span></span><span></span><span></span>
-      </button>
-    </div>
+<header class="nav" id="nav">
+  <a href="/" class="nav-brand" aria-label="JPB Marketing, inicio">JPB<span>·</span>MARKETIN<b>G</b></a>
+  <nav class="nav-links" aria-label="Principal">
+    <a href="/">Inicio</a>
+    <a href="/servicios">Servicios</a>
+    <a href="/agente-ia">Agente IA</a>
+    <a href="/prospeccion">Prospección</a>
+    <a href="/nosotros">Clientes</a>
+    <a href="/blog">Blog</a>
+  </nav>
+  <div class="nav-right">
+    <a href="/contacto" class="nav-cta">Hablemos</a>
+    <button type="button" class="nav-burger" id="nav-burger" aria-label="Abrir menú" aria-expanded="false" aria-controls="nav-menu"><i></i><i></i></button>
   </div>
+</header>
+<nav class="nav-menu" id="nav-menu" aria-label="Menú móvil" hidden>
+  <a href="/"><span class="mono">00</span>Inicio</a>
+  <a href="/servicios"><span class="mono">01</span>Servicios</a>
+  <a href="/agente-ia"><span class="mono">02</span>Agente IA</a>
+  <a href="/prospeccion"><span class="mono">03</span>Prospección</a>
+  <a href="/nosotros"><span class="mono">04</span>Clientes y nosotros</a>
+  <a href="/blog"><span class="mono">05</span>Blog</a>
+  <a href="/contacto" class="nav-menu-cta">Agenda una llamada →</a>
+  <a href="https://wa.me/56944843503" target="_blank" rel="noopener noreferrer" class="mono nav-menu-wa">WhatsApp · +56 9 4484 3503</a>
 </nav>
-<div class="nav-mobile"><a href="/servicios">Servicios</a><a href="/agente-ia">Agente IA</a><a href="/blog">Blog</a><a href="/nosotros">Nosotros</a><a href="/contacto" class="btn-nav-cta">Hablemos</a></div>
 
-<!-- PAGE HERO -->
-<section class="page-hero">
-  <div class="page-hero-inner">
-    <span class="section-label reveal">Hablemos</span>
-    <h1 class="reveal reveal-delay-1">Agenda una <span class="text-gradient">Llamada Estratégica</span></h1>
-    <p class="reveal reveal-delay-2">En 30 minutos analizamos tu situación comercial y te mostramos exactamente cómo podemos ayudarte a escalar tus ventas B2B.</p>
-  </div>
-</section>
+<main id="main">
+  <section class="pag-hero">
+    <nav class="migas" aria-label="Migas de pan"><a href="/">Inicio</a><span>/</span><span>Contacto</span></nav>
+    <p class="mono kicker">HABLEMOS</p>
+    <h1>Agenda una llamada estratégica</h1>
+    <p class="bajada">En 30 minutos analizamos tu situación comercial y te mostramos exactamente cómo podemos ayudarte a escalar tus ventas B2B.</p>
+  </section>
 
-<!-- CONTACT -->
-<section>
-  <div class="container">
-    <div class="contact-layout">
+  <section class="seccion">
+    <div class="contacto-grid">
+      <div>
+        <div class="form-cabeza">
+          <h2>Envíanos un mensaje</h2>
+          <p>Te respondemos en menos de 24 horas hábiles.</p>
+        </div>
 
-      <!-- FORM -->
-      <div class="contact-form reveal">
-        <h2 style="font-size:1.5rem;margin-bottom:8px;">Envíanos un mensaje</h2>
-        <p style="font-size:0.9rem;color:var(--light);margin-bottom:32px;">Te respondemos en menos de 24 horas hábiles.</p>
-
-        <form id="lead-form" novalidate>
+        <form id="lead-form" class="formulario" novalidate>
           <!-- Honeypot anti-spam -->
-          <input type="text" name="_honey" style="display:none" tabindex="-1" autocomplete="off">
+          <input type="text" name="_honey" style="display:none" tabindex="-1" autocomplete="off" aria-label="input">
 
-          <div class="form-row">
-            <div class="form-group">
+          <div class="form-fila">
+            <div class="campo">
               <label for="nombre">Nombre completo *</label>
-              <input type="text" id="nombre" name="nombre" placeholder="Juan Pérez" required>
+              <input type="text" id="nombre" name="nombre" placeholder="Juan Pérez" autocomplete="name" required>
             </div>
-            <div class="form-group">
+            <div class="campo">
               <label for="email">Email corporativo *</label>
-              <input type="email" id="email" name="email" placeholder="juan@empresa.cl" required>
+              <input type="email" id="email" name="email" placeholder="juan@empresa.cl" autocomplete="email" required>
             </div>
           </div>
 
-          <div class="form-row">
-            <div class="form-group">
+          <div class="form-fila">
+            <div class="campo">
               <label for="empresa">Empresa *</label>
-              <input type="text" id="empresa" name="empresa" placeholder="Nombre de tu empresa" required>
+              <input type="text" id="empresa" name="empresa" placeholder="Nombre de tu empresa" autocomplete="organization" required>
             </div>
-            <div class="form-group">
+            <div class="campo">
               <label for="cargo">Cargo</label>
-              <input type="text" id="cargo" name="cargo" placeholder="Gerente Comercial">
+              <input type="text" id="cargo" name="cargo" placeholder="Gerente Comercial" autocomplete="organization-title">
             </div>
           </div>
 
-          <div class="form-group">
+          <div class="campo">
             <label for="servicio">Servicio de interés</label>
             <select id="servicio" name="servicio">
               <option value="" disabled selected>Selecciona un servicio...</option>
@@ -99,125 +122,64 @@
             </select>
           </div>
 
-          <div class="form-group">
+          <div class="campo">
             <label for="mensaje">Mensaje *</label>
             <textarea id="mensaje" name="mensaje" placeholder="Cuéntanos sobre tu empresa y qué necesitas lograr. ¿Cuál es tu principal desafío comercial hoy?" required></textarea>
           </div>
 
-          <button type="submit" class="btn btn-primary btn-lg" style="width:100%;justify-content:center;">
+          <button type="submit" class="btn btn-primary">
             Enviar mensaje
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+            <svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
           </button>
         </form>
       </div>
 
-      <!-- SIDEBAR -->
-      <div class="contact-sidebar reveal reveal-delay-1">
-        <h3>Información de contacto</h3>
-        <p style="font-size:0.9rem;color:var(--light);margin-bottom:24px;">También puedes contactarnos directamente por cualquiera de estos canales.</p>
+      <aside class="contacto-lado aparece">
+        <h2>Información de contacto</h2>
+        <p>También puedes contactarnos directamente por cualquiera de estos canales.</p>
 
-        <div class="contact-item">
-          <div class="contact-item-icon">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
-          </div>
+        <div class="contacto-item">
+          <div class="icono"><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg></div>
           <div>
-            <h5>Email</h5>
+            <h3>Email</h3>
             <p><a href="mailto:jpbayas@jpbmarketing.cl">jpbayas@jpbmarketing.cl</a></p>
           </div>
         </div>
 
-        <div class="contact-item">
-          <div class="contact-item-icon" style="color:#25d366;">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
-          </div>
+        <div class="contacto-item">
+          <div class="icono"><svg aria-hidden="true" viewBox="0 0 24 24" fill="currentColor"><path d="M17.47 14.38c-.3-.15-1.76-.87-2.03-.97-.27-.1-.47-.15-.67.15-.2.3-.77.97-.94 1.16-.17.2-.35.22-.64.07-.3-.15-1.26-.46-2.39-1.48-.88-.79-1.48-1.76-1.65-2.06-.17-.3-.02-.46.13-.6.13-.14.3-.35.45-.52.15-.17.2-.3.3-.5.1-.2.05-.37-.03-.52-.07-.15-.67-1.61-.92-2.2-.24-.58-.49-.5-.67-.51h-.57c-.2 0-.52.07-.79.37-.27.3-1.04 1.02-1.04 2.48s1.07 2.88 1.21 3.07c.15.2 2.1 3.2 5.08 4.49.71.31 1.26.49 1.7.63.71.23 1.36.2 1.87.12.57-.09 1.76-.72 2-1.41.25-.7.25-1.29.18-1.41-.08-.13-.27-.2-.57-.35M12.05 21.79h-.01a9.87 9.87 0 0 1-5.03-1.38l-.36-.21-3.74.98 1-3.65-.24-.37a9.86 9.86 0 0 1-1.51-5.26c0-5.45 4.44-9.88 9.89-9.88a9.83 9.83 0 0 1 6.99 2.9 9.82 9.82 0 0 1 2.89 6.99c0 5.45-4.44 9.88-9.88 9.88m8.41-18.3A11.81 11.81 0 0 0 12.05 0C5.5 0 .16 5.34.16 11.89c0 2.1.55 4.14 1.59 5.95L.06 24l6.3-1.65a11.88 11.88 0 0 0 5.69 1.45h.01c6.55 0 11.89-5.34 11.89-11.89 0-3.18-1.24-6.17-3.48-8.41"/></svg></div>
           <div>
-            <h5>WhatsApp</h5>
-            <p><a href="https://wa.me/56944843503" target="_blank" rel="noopener">+56 9 4484 3503</a></p>
+            <h3>WhatsApp</h3>
+            <p><a href="https://wa.me/56944843503" target="_blank" rel="noopener noreferrer">+56 9 4484 3503</a></p>
           </div>
         </div>
 
-        <div class="contact-item">
-          <div class="contact-item-icon">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
-          </div>
+        <div class="contacto-item">
+          <div class="icono"><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg></div>
           <div>
-            <h5>Ubicación</h5>
+            <h3>Ubicación</h3>
             <p>Santiago, Chile</p>
           </div>
         </div>
 
-        <!-- Mini lead magnet -->
-        <div style="margin-top:8px;background:linear-gradient(135deg,#1e3a5f,#2563eb);border-radius:16px;padding:28px;color:white;">
-          <p style="font-size:0.875rem;font-weight:700;color:rgba(255,255,255,0.7);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:10px;">Gratis</p>
-          <h4 style="color:white;font-size:1.1rem;margin-bottom:10px;">200 contactos B2B para tu sector</h4>
-          <p style="font-size:0.875rem;color:rgba(255,255,255,0.75);margin-bottom:20px;">Prueba nuestro prospector antes de hablar con nosotros.</p>
-          <a href="/prospector/" class="btn btn-white" style="width:100%;justify-content:center;font-size:0.875rem;">Acceder gratis →</a>
+        <div class="tarjeta destacada">
+          <span class="etiqueta">Gratis</span>
+          <h3>200 contactos B2B para tu sector</h3>
+          <p>Prueba nuestro prospector antes de hablar con nosotros.</p>
+          <a href="/prospector/" class="btn btn-ghost">Acceder gratis →</a>
         </div>
-      </div>
-
+      </aside>
     </div>
-  </div>
-</section>
+  </section>
 
-<!-- FOOTER -->
-<footer class="footer">
-  <div class="container">
-    <div class="footer-grid">
-      <div class="footer-brand">
-        <div class="footer-logo">
-          <img src="/assets/logo.webp" alt="JPB Marketing" style="height:52px;width:auto;display:block;">
-        </div>
-        <p>Conectamos fábricas e industrias chilenas con sus clientes potenciales de forma directa, tecnologizada y efectiva. Especialistas en B2B industrial.</p>
-      </div>
-      <div class="footer-col">
-        <h5>Servicios</h5>
-        <ul>
-          <li><a href="/servicios">Transformación Digital</a></li>
-          <li><a href="/servicios">Secretaria IA WhatsApp</a></li>
-          <li><a href="/servicios">Automatización con IA</a></li>
-          <li><a href="/servicios">Páginas Web Industriales</a></li>
-          <li><a href="/servicios">Vendedor Externo</a></li>
-          <li><a href="/servicios">Prospección B2B</a></li>
-        </ul>
-      </div>
-      <div class="footer-col">
-        <h5>Empresa</h5>
-        <ul>
-          <li><a href="/nosotros">Nosotros</a></li>
-          <li><a href="/prospeccion">Sistema de Prospección</a></li>
-          <li><a href="/contacto">Contacto</a></li>
-          <li><a href="/prospector/">Prospector Gratuito</a></li>
-        </ul>
-      </div>
-      <div class="footer-col">
-        <h5>Legal</h5>
-        <ul>
-          <li><a href="#">Política de Privacidad</a></li>
-          <li><a href="#">Términos de Servicio</a></li>
-        </ul>
-        <div class="footer-contact-info">
-          <p>📧 jpbayas@jpbmarketing.cl</p>
-          <p>📱 +56 9 4484 3503</p>
-          <p>📍 Santiago, Chile</p>
-        </div>
-      </div>
-    </div>
-    <div class="footer-access"><span>Accesos</span><a href="/prospeccion">Sistema de prospección</a><a href="/prospector/">Prospector</a><a href="/herramientas/recordatorios/">Acceso Clientes</a><a href="/prospector/?login=1">Iniciar sesión</a><a href="/nosotros">Nosotros</a></div>
-    <div class="footer-bottom">
-      <span>© 2026 JPB Marketing. Todos los derechos reservados.</span>
-      <span>Santiago, Chile</span>
-    </div>
-  </div>
-</footer>
+  <p class="marca" aria-hidden="true"><span>JPB MARKETIN<b>G</b></span></p>
+  <footer class="foot mono">
+    <span>JPB MARKETING · SANTIAGO DE CHILE · 2026</span>
+    <span class="foot-links"><a href="/servicios">Servicios</a><a href="/agente-ia">Agente IA</a><a href="/prospeccion">Prospección</a><a href="/nosotros">Nosotros</a><a href="/blog">Blog</a><a href="/contacto">Contacto</a><a href="/privacidad-whatsapp">Privacidad</a></span>
+  </footer>
+</main>
 
-<a href="https://wa.me/56944843503" class="whatsapp-float" target="_blank" rel="noopener" aria-label="Contactar por WhatsApp">
-  <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
-</a>
-<button class="back-top" aria-label="Volver arriba">
-  <svg viewBox="0 0 24 24"><polyline points="18 15 12 9 6 15"/></svg>
-</button>
-
-<script src="main.js"></script>
+<script src="/v2/pagina.js?v=12" defer></script>
 
 <!-- Enviar leads 100% por Google (Apps Script: guarda en Sheets + email por Gmail) -->
 <script>

@@ -1,10 +1,11 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="es">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>JPB Marketing — Agencia B2B Industrial | Chile</title>
-  <meta name="description" content="Tu socio estratégico B2B en Chile. Prospección industrial, automatización con IA y presencia digital para fábricas que buscan escalar sus ventas B2B.">
+  <title>JPB Marketing · Agencia B2B industrial | Chile</title>
+  <meta name="description" content="Agencia B2B industrial en Santiago. Prospección, agentes de IA en WhatsApp, automatización y web para fábricas que quieren vender más. Entra a la planta.">
+  <link rel="canonical" href="https://jpbmarketing.cl/">
   <meta name="keywords" content="marketing B2B Chile, prospección industrial, automatización IA, vendedor externo, fábricas Chile">
   <meta property="og:title" content="JPB Marketing — Agencia B2B Industrial Chile">
   <meta property="og:description" content="Nos integramos a tu equipo comercial como vendedor externo. Prospección B2B industrial, IA y presencia digital para fábricas en Chile.">
@@ -14,771 +15,340 @@
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content="JPB Marketing — Agencia B2B Industrial Chile">
   <meta name="twitter:image" content="https://jpbmarketing.cl/assets/logo.webp">
-  <link rel="canonical" href="https://jpbmarketing.cl/">
-  <link rel="icon" href="/favicon.png" type="image/png">
   <link rel="apple-touch-icon" href="/assets/logo.png">
-    <link rel="preload" as="font" type="font/woff2" href="/assets/fonts/Inter-latin.woff2" crossorigin>
-  <link rel="preload" as="font" type="font/woff2" href="/assets/fonts/PlusJakartaSans-latin.woff2" crossorigin>
-  <link rel="stylesheet" href="styles.css?v=22">
-  <link rel="stylesheet" href="home.css?v=1">
+  <meta name="theme-color" content="#070b16">
+  <link rel="icon" href="/favicon.png" type="image/png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..900&family=JetBrains+Mono:wght@400;500;700&family=Silkscreen:wght@400;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/v2/v2.css?v=30">
+  <style>html,body{background:#070b16}</style>
+  <script type="importmap">
+  {"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"}}
+  </script>
   <script type="application/ld+json">
   {"@context":"https://schema.org","@graph":[{"@type":["Organization","ProfessionalService"],"@id":"https://jpbmarketing.cl/#org","name":"JPB Marketing","url":"https://jpbmarketing.cl","logo":"https://jpbmarketing.cl/assets/logo.webp","image":"https://jpbmarketing.cl/assets/logo.webp","description":"Agencia B2B Industrial en Chile. Prospección, automatización con IA, agentes de WhatsApp y presencia digital para fábricas.","telephone":"+56944843503","email":"jpbayas@jpbmarketing.cl","address":{"@type":"PostalAddress","addressLocality":"Santiago","addressCountry":"CL"},"areaServed":{"@type":"Country","name":"Chile"},"knowsAbout":["Prospección B2B","Automatización con IA","WhatsApp Business API","SEO","Páginas web industriales"]},{"@type":"WebSite","@id":"https://jpbmarketing.cl/#website","url":"https://jpbmarketing.cl","name":"JPB Marketing","inLanguage":"es-CL","publisher":{"@id":"https://jpbmarketing.cl/#org"}}]}
   </script>
   <script defer src="/analytics.js"></script>
-  <script defer src="/fx.js"></script>
 </head>
 <body>
 
-<!-- ANNOUNCEMENT BAR -->
-<div class="announce-bar" id="announce-bar">
-  <div class="announce-inner">
-    <span class="announce-tag">OFERTA OCTUBRE</span>
-    <span class="announce-text">Agente IA $119.000/mes · Precio bloqueado hasta el 31 oct</span>
-    <span class="announce-count" id="ann-count"></span>
-    <a href="/agente-ia#oferta-octubre" class="announce-cta">Ver oferta →</a>
-    <button class="announce-close" id="announce-close" aria-label="Cerrar">✕</button>
+<!-- NAV -->
+<header class="nav" id="nav">
+  <a href="#inicio" class="nav-brand" aria-label="JPB Marketing, inicio">JPB<span>·</span>MARKETIN<b>G</b></a>
+  <nav class="nav-links" aria-label="Principal">
+    <a href="#inicio">Inicio</a>
+    <a href="#servicios">Servicios<sup>(6)</sup></a>
+    <a href="#clientes">Clientes<sup>(4)</sup></a>
+    <a href="#metodo">Cómo trabajamos</a>
+    <a href="/blog">Blog</a>
+  </nav>
+  <div class="nav-right">
+    <span class="nav-status"><i></i><span id="nav-status-txt">Planta</span><sup>(1)</sup></span>
+    <button type="button" class="nav-sonido" id="btn-sonido" aria-label="Silenciar sonido" aria-pressed="true" title="Sonido">
+      <svg class="ic-on" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M11 5 6 9H3v6h3l5 4z"/><path d="M15.5 8.5a5 5 0 0 1 0 7"/><path d="M18.5 5.5a9 9 0 0 1 0 13"/></svg>
+      <svg class="ic-off" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M11 5 6 9H3v6h3l5 4z"/><path d="m16 9 5 6M21 9l-5 6"/></svg>
+    </button>
+    <a href="/contacto" class="nav-cta">Hablemos</a>
+    <button type="button" class="nav-burger" id="nav-burger" aria-label="Abrir menú" aria-expanded="false" aria-controls="nav-menu"><i></i><i></i></button>
   </div>
-</div>
-
-<!-- PRELOADER -->
-<div id="preloader">
-  <div class="loader">
-    <div class="loader__bar"></div>
-    <div class="loader__bar"></div>
-    <div class="loader__bar"></div>
-    <div class="loader__bar"></div>
-    <div class="loader__bar"></div>
-    <div class="loader__ball"></div>
-  </div>
-</div>
-
-<!-- NAVBAR -->
-<nav class="navbar">
-  <div class="container">
-    <div class="nav-inner">
-      <a href="/" class="nav-logo">
-        <img src="assets/logo.webp" alt="JPB Marketing" title="JPB Marketing — Agencia B2B Industrial Chile" class="nav-logo-img">
-
-      </a>      <div class="nav-links"><a href="/servicios">Servicios</a><a href="/agente-ia">Agente IA</a><a href="/blog">Blog</a><a href="/nosotros">Nosotros</a><a href="/contacto" class="btn-nav-cta">Hablemos</a></div>
-      <button class="nav-hamburger" aria-label="Menú">
-        <span></span><span></span><span></span>
-      </button>
-    </div>
-  </div>
+</header>
+<nav class="nav-menu" id="nav-menu" aria-label="Menú móvil" hidden>
+  <a href="#inicio"><span class="mono">00</span>Planta</a>
+  <a href="#servicios"><span class="mono">01</span>Servicios</a>
+  <a href="#panel"><span class="mono">02</span>Panel JPB</a>
+  <a href="#clientes"><span class="mono">03</span>Clientes</a>
+  <a href="#metodo"><span class="mono">04</span>Cómo trabajamos</a>
+  <a href="/blog"><span class="mono">05</span>Blog</a>
+  <a href="/contacto" class="nav-menu-cta">Agenda una llamada →</a>
+  <a href="https://wa.me/56944843503" target="_blank" rel="noopener noreferrer" class="mono nav-menu-wa">WhatsApp · +56 9 4484 3503</a>
+  <button type="button" class="mono nav-menu-maq" data-modo="maquina">Ver la página en modo máquina (para IA)</button>
 </nav>
-<div class="nav-mobile"><a href="/servicios">Servicios</a><a href="/agente-ia">Agente IA</a><a href="/blog">Blog</a><a href="/nosotros">Nosotros</a><a href="/contacto" class="btn-nav-cta">Hablemos</a></div>
 
-<!-- HERO -->
-<section class="h2-hero">
-  <div class="h2-hero-bg" aria-hidden="true"></div>
-  <div class="container h2-hero-grid">
-    <div class="h2-hero-copy">
-      <span class="h2-eyebrow reveal"><i></i>Agencia B2B industrial · Santiago, Chile</span>
-      <h1 class="h2-title reveal reveal-delay-1">Tu fábrica ya vende.<br>Hagamos que <em>venda más.</em></h1>
-      <p class="h2-sub reveal reveal-delay-2">Somos tu socio estratégico B2B: nos integramos a tu equipo comercial como un vendedor externo con portafolio permanente. Prospección industrial, automatización con IA y presencia digital, sin reuniones que pudieron ser un email.</p>
-      <div class="h2-actions reveal reveal-delay-3">
-        <a href="/contacto" class="h2-btn h2-btn-primary">Agenda una llamada <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></a>
-        <a href="/nosotros#casos-exito" class="h2-btn h2-btn-ghost">Ver casos reales</a>
-      </div>
-      <div class="h2-tags reveal reveal-delay-4"><span>Prospección B2B</span><span>Agentes IA en WhatsApp</span><span>Web y SEO</span></div>
+<main id="humano">
+
+  <!-- ESCENA 3D: LA PLANTA -->
+  <section class="planta" id="inicio" aria-label="Planta JPB en 3D">
+    <canvas id="fabrica" aria-hidden="true"></canvas>
+    <div class="planta-fallback" id="planta-fallback" hidden>
+      <img src="/Clientes/4413EF69-A08E-4B0B-96FA-4A9EE240617A.webp" alt="JPB Marketing en la planta de un cliente">
     </div>
-
-  </div>
-</section>
-
-<!-- CIFRAS -->
-<section class="h2-stats" aria-label="Cifras">
-  <div class="container h2-stats-grid">
-    <div class="h2-stat reveal"><b><span data-count="24">24</span><span>/7</span></b><p>Atención con Agente IA, aun fuera de horario</p></div>
-    <div class="h2-stat reveal reveal-delay-1"><b><span data-count="14">14</span> <span>días</span></b><p>Para tener tu sistema comercial funcionando</p></div>
-    <div class="h2-stat reveal reveal-delay-2"><b><span data-count="3">3</span><span>x</span></b><p>Tasa de respuesta sobre el promedio del mercado</p></div>
-    <div class="h2-stat reveal reveal-delay-3"><b><span data-count="200">200</span><span>M+</span></b><p>Negocios en nuestra base de prospección</p></div>
-  </div>
-</section>
-
-<!-- SERVICIOS -->
-<section class="h2-services">
-  <div class="container">
-    <div class="h2-head">
-      <div>
-        <span class="h2-kicker reveal">Qué hacemos</span>
-        <h2 class="h2-h2 reveal reveal-delay-1">Todo lo que tu fábrica necesita para vender más.</h2>
-      </div>
-      <p class="reveal reveal-delay-2">Seis servicios que se combinan: tú eliges por dónde empezar y nosotros armamos el resto.</p>
+    <div class="planta-msg" id="planta-msg">
+      <p class="mono">AGENCIA B2B INDUSTRIAL · SANTIAGO</p>
+      <h2>Hacemos que tu empresa<br><em>venda más</em>.</h2>
+      <p>Toca cada estación.</p>
     </div>
-    <div class="h2-svc-grid">
-      <a href="/agente-ia" class="h2-svc reveal">
-        <div class="h2-svc-top"><div class="h2-svc-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a8 8 0 0 1-11.6 7.1L3 21l1.9-5.4A8 8 0 1 1 21 12z"/><path d="M8.5 11h7M8.5 14h4"/></svg></div><span class="h2-svc-num">01</span></div>
-        <h3>Agente IA en WhatsApp</h3><p>Atiende, califica y cotiza a tus clientes las 24 horas, y avisa a tu equipo cuando hay una venta real.</p>
-        <span class="h2-svc-more">Ver el agente <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></span>
+    <div class="etiquetas" id="etiquetas"></div>
+    <div class="app-demo" id="app-demo" hidden>
+      <div class="app-anim">
+      <p class="app-badge" id="app-badge"><i></i><span>Toca para probar la demo</span></p>
+      <div class="tel">
+        <span class="tel-btn tel-accion"></span><span class="tel-btn tel-vol1"></span><span class="tel-btn tel-vol2"></span><span class="tel-btn tel-power"></span>
+        <div class="tel-pantalla"><div class="tel-isla"></div><div class="tel-status" aria-hidden="true"><b>9:41</b><span><svg viewBox="0 0 18 12"><rect x="0" y="8" width="3" height="4" rx="1"/><rect x="5" y="5.5" width="3" height="6.5" rx="1"/><rect x="10" y="3" width="3" height="9" rx="1"/><rect x="15" y="0" width="3" height="12" rx="1"/></svg><svg viewBox="0 0 16 12"><path d="M8 11.5 5.6 9a3.4 3.4 0 0 1 4.8 0zM3.2 6.6a6.8 6.8 0 0 1 9.6 0l-1.6 1.6a4.5 4.5 0 0 0-6.4 0zM.8 4.2a10.2 10.2 0 0 1 14.4 0L13.6 5.8a7.9 7.9 0 0 0-11.2 0z"/></svg><i></i></span></div><iframe id="app-iframe" title="Demo interactiva de la app Panel JPB"></iframe></div>
+      </div>
+      </div>
+    </div>
+    <div class="est-chips" id="est-chips" aria-label="Estaciones de la planta"></div>
+    <div class="estacion" id="estacion" hidden>
+      <button type="button" class="est-cerrar" aria-label="Volver a la planta">×</button>
+      <p class="est-kicker mono"></p>
+      <h3 class="est-titulo"></h3>
+      <p class="est-texto"></p>
+      <a class="est-cta" href="/contacto">Ver más →</a>
+      <div class="est-nav"><button type="button" class="est-prev" aria-label="Paso anterior"><span aria-hidden="true">‹</span></button><span class="est-dots"></span><span class="est-num mono">1/8</span><button type="button" class="est-next" aria-label="Paso siguiente"><svg class="anillo" viewBox="0 0 56 56" aria-hidden="true"><circle cx="28" cy="28" r="26" pathLength="100"/></svg><span aria-hidden="true">›</span></button></div>
+    </div>
+    <div class="planta-hud">
+      <div class="hud-left">
+        <span class="hud-line hud-build"><b id="hud-estado">LEVANTANDO PLANTA</b> <span id="hud-pct">0%</span></span>
+        <span class="hud-line hud-ventas">VENTAS HOY · <b id="hud-ventas">128</b></span>
+      </div>
+      <div class="hud-right">
+        <button type="button" class="hud-btn" id="btn-recorrido">▶ Recorrido con Diego</button>
+        <button type="button" class="hud-btn" id="btn-pantallas" hidden>← Volver a la planta</button>
+      </div>
+    </div>
+    <div class="hud-tip" id="hud-tip" hidden></div>
+    <a href="#hero" class="baja" id="baja" aria-label="Baja para ver más"><span>Baja para ver más</span><i aria-hidden="true"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg></i></a>
+  </section>
+
+  <!-- HERO -->
+  <section class="hero" id="hero">
+    <p class="mono kicker">JPB MARKETING · SANTIAGO DE CHILE</p>
+    <h1 class="hero-title">Tu fábrica ya vende. Hagamos que venda <em>más</em>.</h1>
+    <p class="hero-sub">Nos sumamos a tu equipo comercial: te traemos clientes con Google Ads y prospección, los atendemos por WhatsApp con IA y te ayudamos a cerrar.</p>
+    <div class="hero-actions">
+      <a href="/contacto" class="btn btn-primary">Agenda una llamada</a>
+      <a href="#servicios" class="btn btn-ghost">Entrar a servicios</a>
+    </div>
+  </section>
+
+  <!-- CIFRAS -->
+  <section class="cifras" aria-label="Cifras">
+    <div class="cifra"><b>24<span>/7</span></b><p>Atención con Agente IA, aun fuera de horario</p></div>
+    <div class="cifra"><b>14<span> días</span></b><p>Para tener tu sistema comercial funcionando</p></div>
+    <div class="cifra"><b>3<span>x</span></b><p>Tasa de respuesta sobre el promedio del mercado</p></div>
+    <div class="cifra"><b>200<span>M+</span></b><p>Negocios en nuestra base de prospección</p></div>
+  </section>
+
+  <!-- SERVICIOS -->
+  <section class="servicios" id="servicios">
+    <h2 class="sec-label">Lo que hacemos</h2>
+    <div class="svc-list">
+      <a class="svc svc-top" href="/keyword-research-b2b-industrial-chile">
+        <span class="svc-num mono">01</span>
+        <h3 class="svc-title">Google Ads</h3>
+        <div class="svc-body">
+          <p class="svc-desc">Campañas de Google Ads para empresas industriales: apareces cuando un comprador busca lo que vendes, y medimos el costo de cada cotización.</p>
+        </div>
+        <span class="svc-arrow" aria-hidden="true">↗</span>
       </a>
-      <a href="/prospeccion" class="h2-svc reveal reveal-delay-1">
-        <div class="h2-svc-top"><div class="h2-svc-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1.2"/></svg></div><span class="h2-svc-num">02</span></div>
-        <h3>Prospección B2B</h3><p>Llegamos a los decisores de tu rubro con mensajes directos y segmentados, y te agendamos reuniones.</p>
-        <span class="h2-svc-more">Ver el sistema <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></span>
+      <a class="svc" href="/agente-ia">
+        <span class="svc-num mono">02</span>
+        <h3 class="svc-title">Agente IA en WhatsApp</h3>
+        <div class="svc-body">
+          <p class="svc-desc">Todo lo que llega desde Google te escribe por WhatsApp: la IA responde, cotiza y guía a cada cliente hasta la compra.</p>
+        </div>
+        <span class="svc-arrow" aria-hidden="true">↗</span>
       </a>
-      <a href="/servicios" class="h2-svc reveal reveal-delay-2">
-        <div class="h2-svc-top"><div class="h2-svc-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2 4 14h7l-1 8 9-12h-7z"/></svg></div><span class="h2-svc-num">03</span></div>
-        <h3>Automatización con IA</h3><p>Conectamos tus herramientas para que cotizaciones, seguimientos y reportes salgan solos.</p>
-        <span class="h2-svc-more">Ver más <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></span>
+      <a class="svc" href="/pagina-web-empresa-industrial-chile">
+        <span class="svc-num mono">03</span>
+        <h3 class="svc-title">Web industrial que convierte</h3>
+        <div class="svc-body">
+          <p class="svc-desc">Sitios rápidos, con catálogo y cotización directa, listos para recibir el tráfico de tus campañas.</p>
+        </div>
+        <span class="svc-arrow" aria-hidden="true">↗</span>
       </a>
-      <a href="/pagina-web-empresa-industrial-chile" class="h2-svc reveal">
-        <div class="h2-svc-top"><div class="h2-svc-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="14" rx="2"/><path d="M3 9h18M8 21h8M12 18v3"/></svg></div><span class="h2-svc-num">04</span></div>
-        <h3>Web industrial que convierte</h3><p>Sitios rápidos, con catálogo y cotización directa, pensados para generar contactos, no solo para verse bien.</p>
-        <span class="h2-svc-more">Ver cómo <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></span>
+      <a class="svc" href="/keyword-research-b2b-industrial-chile">
+        <span class="svc-num mono">04</span>
+        <h3 class="svc-title">SEO</h3>
+        <div class="svc-body">
+          <p class="svc-desc">Hacemos que te encuentren también en los resultados orgánicos, sin depender solo de la pauta.</p>
+        </div>
+        <span class="svc-arrow" aria-hidden="true">↗</span>
       </a>
-      <a href="/outsourcing-fuerza-ventas-chile" class="h2-svc reveal reveal-delay-1">
-        <div class="h2-svc-top"><div class="h2-svc-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8" r="3.5"/><path d="M2.5 20a6.5 6.5 0 0 1 13 0"/><path d="M16 4.5a3.5 3.5 0 0 1 0 7M18 14.5a6.5 6.5 0 0 1 3.5 5.5"/></svg></div><span class="h2-svc-num">05</span></div>
-        <h3>Vendedor externo</h3><p>Un equipo comercial a tu medida, sin sueldos fijos ni seis meses de ramp-up. Trabajamos como parte de tu empresa.</p>
-        <span class="h2-svc-more">Ver el modelo <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></span>
+      <a class="svc" href="/prospeccion">
+        <span class="svc-num mono">05</span>
+        <h3 class="svc-title">Prospección B2B</h3>
+        <div class="svc-body">
+          <p class="svc-desc">Llegamos a los decisores de tu rubro con mensajes directos y segmentados, y te agendamos reuniones.</p>
+        </div>
+        <span class="svc-arrow" aria-hidden="true">↗</span>
       </a>
-      <a href="/keyword-research-b2b-industrial-chile" class="h2-svc reveal reveal-delay-2">
-        <div class="h2-svc-top"><div class="h2-svc-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg></div><span class="h2-svc-num">06</span></div>
-        <h3>SEO y Google Ads</h3><p>Hacemos que te encuentren cuando tu cliente busca a su proveedor, con orgánico y pauta bien medidos.</p>
-        <span class="h2-svc-more">Ver más <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></span>
+      <a class="svc" href="/outsourcing-fuerza-ventas-chile">
+        <span class="svc-num mono">06</span>
+        <h3 class="svc-title">Vendedor externo y automatización</h3>
+        <div class="svc-body">
+          <p class="svc-desc">Nos sumamos a tu equipo comercial y automatizamos cotizaciones, seguimientos y reportes.</p>
+        </div>
+        <span class="svc-arrow" aria-hidden="true">↗</span>
       </a>
     </div>
-  </div>
-</section>
+  </section>
 
-<div style="display:none"><!-- BASE DATOS B2B — guardada en herramientas/secciones_ocultas/prospector-offer.html --></div>
-
-
-
-<!-- AGENTE IA FEATURED — oculto temporalmente -->
-<div style="display:none">
-<!-- AGENTE IA FEATURED -->
-<section class="waia-featured">
-  <div class="waia-glow waia-glow-green"></div>
-  <div class="waia-glow waia-glow-blue"></div>
-  <div class="container">
-    <div class="waia-featured-grid">
-
-      <!-- Chat mockup -->
-      <div class="waia-mockup reveal">
-        <div class="waia-phone">
-          <div class="waia-phone-bar">
-            <div class="waia-phone-bar-dot" style="background:#ff5f57"></div>
-            <div class="waia-phone-bar-dot" style="background:#febc2e"></div>
-            <div class="waia-phone-bar-dot" style="background:#28c840"></div>
-          </div>
-          <div class="waia-phone-header">
-            <div class="waia-phone-avatar">🏭</div>
-            <div class="waia-phone-info">
-              <div class="waia-phone-name">Tu empresa</div>
-              <div class="waia-phone-status"><span class="waia-dot-online"></span>en línea siempre</div>
-            </div>
-          </div>
-          <div class="waia-chat-bg" id="index-chat">
-            <div class="waia-chat-messages" id="index-msgs"></div>
-          </div>
-        </div>
-        <div class="waia-float waia-float-1">⚡ Respondió en 2 seg</div>
-        <div class="waia-float waia-float-2">🕐 Son las 11:42 PM</div>
-      </div>
-
-      <!-- Copy -->
-      <div class="waia-copy reveal reveal-delay-1">
-        <div class="waia-badge">
-          <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
-          Agente IA en WhatsApp
-        </div>
-        <h2 class="waia-title">Tu empresa disponible<br><span class="waia-gradient-text">las 24 horas — sin contratar a nadie</span></h2>
-        <p class="waia-desc">Respondemos por ti, cotizamos, agendamos reuniones y filtramos leads — de forma completamente automática. Tu equipo solo recibe las oportunidades listas para cerrar.</p>
-        <div class="waia-stats-row">
-          <div class="waia-stat">
-            <div class="waia-stat-num">&lt;&nbsp;3s</div>
-            <div class="waia-stat-lbl">Respuesta</div>
-          </div>
-          <div class="waia-stat-sep"></div>
-          <div class="waia-stat">
-            <div class="waia-stat-num">24/7</div>
-            <div class="waia-stat-lbl">Disponible</div>
-          </div>
-          <div class="waia-stat-sep"></div>
-          <div class="waia-stat">
-            <div class="waia-stat-num">14d</div>
-            <div class="waia-stat-lbl">Setup</div>
-          </div>
-        </div>
-        <div class="waia-actions">
-          <a href="/agente-ia" class="btn btn-primary btn-lg">Ver cómo funciona</a>
-          <a href="/contacto" class="waia-wa-cta">Agendar demo →</a>
-        </div>
-      </div>
-
+  <!-- PANEL JPB -->
+  <section class="panel" id="panel">
+    <div class="panel-copy">
+      <p class="mono kicker"><i class="dot"></i> NUEVA APP MÓVIL PARA CLIENTES</p>
+      <h2 class="h2">Panel JPB: el centro de control de los <em>agentes de IA</em> que construimos para ti.</h2>
+      <ul class="panel-list">
+        <li>Conversaciones de WhatsApp en vivo: responde tú o deja al bot</li>
+        <li>Te muestra qué clientes dejaron de responder, para hacerles seguimiento</li>
+        <li>Análisis diario con IA: interés de cada cliente y alertas</li>
+      </ul>
+      <a href="/panel-jpb-demo" target="_blank" rel="noopener noreferrer" class="btn btn-ghost">Abrir demo a pantalla completa ↗</a>
     </div>
-  </div>
-</section>
-
-<!-- OFERTA OCTUBRE -->
-<section class="oferta-section" id="oferta-octubre">
-  <div class="oferta-glow"></div>
-  <div class="container">
-
-    <div class="oferta-badge-row">
-      <span class="oferta-fire-badge">OFERTA OCTUBRE</span>
-      <span class="oferta-deadline">Precio bloqueado solo hasta el <strong>31 de octubre</strong></span>
+    <div class="phone">
+      <div class="phone-frame"><iframe src="/panel-jpb-demo" title="Demo interactiva de Panel JPB" loading="lazy"></iframe></div>
     </div>
+  </section>
 
-    <div class="oferta-grid">
-
-      <!-- LEFT: copy + value stack -->
-      <div class="oferta-left reveal">
-        <h2 class="oferta-title"><span class="oferta-highlight">Vendedor IA en WhatsApp</span> para tu empresa — disponible 24/7, sin sueldo ni finiquito</h2>
-        <p class="oferta-sub">Implementamos, entrenamos y mantenemos tu agente. Tú solo cierras los negocios que llegan listos.</p>
-
-        <div class="oferta-stats-row">
-          <div class="oferta-stat-chip"><strong>&lt; 3s</strong><span>Respuesta</span></div>
-          <div class="oferta-stat-chip"><strong>24/7</strong><span>Disponible</span></div>
-          <div class="oferta-stat-chip"><strong>14d</strong><span>Setup</span></div>
-          <div class="oferta-stat-chip"><strong>∞</strong><span>Chats simultáneos</span></div>
-        </div>
-
-        <ul class="oferta-list">
-          <li><span class="oferta-chk">✓</span> Agente IA vendedor en WhatsApp</li>
-          <li><span class="oferta-chk">✓</span> Implementación completa — $0</li>
-          <li><span class="oferta-chk">✓</span> Mantención mensual incluida</li>
-          <li><span class="oferta-chk">✓</span> Soporte prioritario directo</li>
-          <li><span class="oferta-chk">✓</span> Precio bloqueado de por vida</li>
-          <li><span class="oferta-chk">✓</span> Sin contratos de permanencia</li>
-        </ul>
-
-        <div class="oferta-guarantee-inline">
-          🤝 <strong>No pagas hasta el día 30</strong> — si quedaste satisfecho, decides si contratar el sistema
-        </div>
-      </div>
-
-      <!-- RIGHT: price card + timer + CTA -->
-      <div class="oferta-right reveal reveal-delay-1">
-        <div class="oferta-card">
-          <div class="oferta-card-tag">PRECIO BLOQUEADO HASTA EL 31 OCT</div>
-
-          <div class="oferta-price-row">
-            <span class="oferta-price-old">$290.000<span>/mes</span></span>
-            <div class="oferta-price-new">
-              <span class="oferta-currency">$</span>119.000
-              <span class="oferta-per">/mes<br>de por vida</span>
-            </div>
-          </div>
-
-          <div class="oferta-savings">Ahorras $2.052.000 al año vs el mercado</div>
-
-          <div class="oferta-timer-wrap">
-            <div class="oferta-timer-label">La oferta cierra en:</div>
-            <div class="oferta-timer" id="oferta-timer">
-              <div class="oferta-timer-unit"><span id="ot-days">--</span><em>días</em></div>
-              <div class="oferta-timer-sep">:</div>
-              <div class="oferta-timer-unit"><span id="ot-hrs">--</span><em>hrs</em></div>
-              <div class="oferta-timer-sep">:</div>
-              <div class="oferta-timer-unit"><span id="ot-min">--</span><em>min</em></div>
-              <div class="oferta-timer-sep">:</div>
-              <div class="oferta-timer-unit"><span id="ot-sec">--</span><em>seg</em></div>
-            </div>
-          </div>
-
-          <a href="/contacto" class="oferta-cta-btn">Quiero mi agente ahora →</a>
-          <a href="https://wa.me/56944843503?text=Hola%2C+vi+la+oferta+del+agente+IA+a+%24119.000+y+quiero+m%C3%A1s+informaci%C3%B3n" class="oferta-wa-btn" target="_blank" rel="noopener">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
-            Consultar por WhatsApp
-          </a>
-
-          <div class="oferta-cupos">
-            <span class="oferta-cupos-dot"></span>
-            <strong>Solo 7 cupos disponibles</strong> — la implementación es personalizada y tomamos pocos clientes a la vez
-          </div>
-        </div>
-      </div>
-
+  <!-- CLIENTES -->
+  <section class="clientes" id="clientes">
+    <div class="sec-head">
+      <h2 class="sec-label">Clientes activos</h2>
+      <p class="sec-side">Empresas industriales que escalaron con nosotros. Relaciones que empezaron como proyectos y se convirtieron en alianzas de largo plazo.</p>
     </div>
-  </div>
-</section>
-</div><!-- fin AGENTE IA FEATURED oculto -->
-
-<!-- PANEL JPB — NUEVA APP MÓVIL PARA CLIENTES -->
-<section class="panel-app-section">
-  <div class="panel-app-bg"></div>
-  <div class="container">
-    <div class="panel-app-grid">
-
-      <div class="panel-app-content reveal">
-        <div class="panel-app-badge">
-          <span class="panel-app-badge-dot"></span>
-          Nueva app móvil para clientes
-        </div>
-        <h2>Panel JPB: el centro de control<br>de los <span class="text-gradient">agentes de IA que construimos para ti</span></h2>
-
-        <div class="panel-app-actions">
-          <a href="/panel-jpb-demo" target="_blank" rel="noopener" class="btn btn-outline-white">Abrir demo a pantalla completa ↗</a>
-        </div>
-        <p class="panel-app-hint">👆 La app del teléfono es una demo interactiva real — con datos de ejemplo de una empresa ficticia.</p>
-
-        <div class="panel-app-features">
-          <span>Conversaciones de WhatsApp en vivo: responde tú o deja al bot</span>
-          <span>Te muestra qué clientes dejaron de responder, para hacerles seguimiento</span>
-          <span>Análisis diario con IA: interés de cada cliente y alertas</span>
-          <span>Gastos claros: Google Ads, mensajes de Meta e IA, con facturación por ciclo</span>
-        </div>
+    <div class="caso" id="caso-polimer">
+      <div class="caso-foto"><img src="/Clientes/Foto_con_polimer.webp" alt="JPB Marketing con ETP Polimer" loading="lazy" width="900" height="1171"></div>
+      <div class="caso-body">
+        <div class="caso-top"><span class="caso-logo caso-logo-light"><img src="/Clientes/Polimer_logo.webp" alt="ETP Polimer" loading="lazy"></span><span class="mono caso-years">2+ AÑOS · ACTIVO</span></div>
+        <h3>De cero a competidor activo en su industria</h3>
+        <p>Construimos identidad visual y web desde cero. Hoy con Google Ads y prospección outbound, relación activa desde el inicio.</p>
+        <div class="caso-links"><a href="/nosotros#polimer">Ver historia completa →</a><a href="https://polimer-etp.cl" target="_blank" rel="noopener noreferrer">Visitar ↗</a></div>
       </div>
-
-      <div class="panel-app-visual reveal reveal-delay-1">
-        <div class="iphone-mockup">
-          <div class="iphone-tap-badge"><span class="tbd-dot"></span>Toca para probar la demo</div>
-          <div class="iphone-frame">
-            <div class="iphone-power-btn"></div>
-            <div class="iphone-screen">
-              <div class="iphone-island"></div>
-              <div class="iphone-time">9:41</div>
-              <div class="iphone-status-icons">
-                <svg width="15" height="11" viewBox="0 0 16 12" fill="#fff"><rect x="0" y="7" width="3" height="5" rx="0.5"/><rect x="4.5" y="4.5" width="3" height="7.5" rx="0.5"/><rect x="9" y="2" width="3" height="10" rx="0.5"/><rect x="13.5" y="0" width="2.5" height="12" rx="0.5" opacity="0.4"/></svg>
-                <svg width="18" height="11" viewBox="0 0 24 12" fill="none"><rect x="1" y="1" width="19" height="10" rx="2.5" stroke="#fff" stroke-opacity="0.6"/><rect x="2.5" y="2.5" width="15" height="7" rx="1.2" fill="#fff"/><rect x="21.5" y="4" width="1.5" height="4" rx="0.7" fill="#fff" opacity="0.6"/></svg>
-              </div>
-              <iframe src="/panel-jpb-demo" title="Demo interactiva de Panel JPB"></iframe>
-            </div>
-          </div>
-        </div>
-      </div>
-
     </div>
-  </div>
-</section>
-
-<!-- CASOS DE ÉXITO -->
-<section class="casos-section">
-  <div class="container">
-    <div class="section-header">
-      <span class="section-label reveal">Casos de éxito</span>
-      <h2 class="section-title reveal reveal-delay-1">Empresas industriales que<br><span class="text-gradient">escalaron con nosotros</span></h2>
-      <p class="section-desc reveal reveal-delay-2">Llevamos años construyendo presencia digital y sistemas comerciales para el sector industrial chileno. Relaciones que empezaron como proyectos y se convirtieron en alianzas de largo plazo.</p>
-    </div>
-
-    <!-- 3-col client cards -->
-    <div class="caso3-grid">
-
-      <!-- ETP POLIMER -->
-      <div class="caso3-card reveal">
-        <div class="caso3-photo">
-          <img src="Clientes/Foto_con_polimer.webp" alt="JPB Marketing con ETP Polimer" loading="lazy">
-        </div>
-        <div class="caso3-body">
-          <a href="https://polimer-etp.cl" target="_blank" rel="noopener" class="caso3-logo-link">
-            <img src="Clientes/Polimer_logo.webp" alt="ETP Polimer" class="caso3-logo" loading="lazy">
-          </a>
-          <span class="caso-years">⏱ 2+ años · Activo</span>
-          <h3>De cero a competidor activo en su industria</h3>
-          <p>Construimos identidad visual y web desde cero. Hoy con Google Ads y prospección outbound — relación activa desde el inicio.</p>
-          <div class="caso-chips" style="margin-bottom:0;">
-            <span class="caso-chip">Manufactura</span>
-            <span class="caso-chip">Web + Branding</span>
-            <span class="caso-chip">Google Ads</span>
-          </div>
-          <div class="caso-links-row">
-            <a href="/nosotros#polimer" class="caso-link">Ver historia completa →</a>
-            <a href="https://polimer-etp.cl" target="_blank" rel="noopener" class="caso-link-visit">Visitar ↗</a>
-          </div>
-        </div>
+    <div class="caso" id="caso-idini">
+      <div class="caso-foto"><img src="/Clientes/Fierros_idini_foto.webp" alt="JPB Marketing con Fierros Idini" loading="lazy" width="1000" height="666"></div>
+      <div class="caso-body">
+        <div class="caso-top"><span class="caso-logo"><img src="/Clientes/Fierros_idini.webp" alt="Fierros Idini" loading="lazy"></span><span class="mono caso-years">2+ AÑOS · ACTIVO</span></div>
+        <h3>1.700 productos online y tráfico orgánico sostenido</h3>
+        <p>Web reconstruida con catálogo completo. Base para Google Ads y SEO que genera visibilidad sin depender solo de pauta.</p>
+        <div class="caso-links"><a href="/nosotros#fierros-idini">Ver historia completa →</a><a href="https://fierrosidini.cl" target="_blank" rel="noopener noreferrer">Visitar ↗</a></div>
       </div>
-
-      <!-- FIERROS IDINI -->
-      <div class="caso3-card reveal reveal-delay-1">
-        <div class="caso3-photo">
-          <img src="Clientes/Fierros_idini_foto.webp" alt="JPB Marketing con Fierros Idini" loading="lazy">
-        </div>
-        <div class="caso3-body">
-          <a href="https://fierrosidini.cl" target="_blank" rel="noopener" class="caso3-logo-link">
-            <img src="Clientes/Fierros_idini.webp" alt="Fierros Idini" class="caso3-logo" loading="lazy">
-          </a>
-          <span class="caso-years">⏱ 2+ años · Activo</span>
-          <h3>1.700 productos online y tráfico orgánico sostenido</h3>
-          <p>Web reconstruida con catálogo completo. Base para Google Ads y SEO que genera visibilidad sin depender solo de pauta.</p>
-          <div class="caso-chips" style="margin-bottom:0;">
-            <span class="caso-chip">3 plantas</span>
-            <span class="caso-chip">1.700+ productos</span>
-            <span class="caso-chip">SEO + Ads</span>
-          </div>
-          <div class="caso-links-row">
-            <a href="/nosotros#fierros-idini" class="caso-link">Ver historia completa →</a>
-            <a href="https://fierrosidini.cl" target="_blank" rel="noopener" class="caso-link-visit">Visitar ↗</a>
-          </div>
-        </div>
-      </div>
-
-      <!-- PLASTISERVI + CONFLEX -->
-      <div class="caso3-card reveal reveal-delay-2">
-        <div class="caso3-photo">
-          <img src="Clientes/4413EF69-A08E-4B0B-96FA-4A9EE240617A.webp" alt="JPB en planta Conflex" loading="lazy">
-        </div>
-        <div class="caso3-body">
-          <div style="display:flex;align-items:center;gap:12px;margin-bottom:12px;">
-            <a href="https://plastiservi.cl" target="_blank" rel="noopener">
-              <img src="Clientes/Plastiservi_logo.webp" alt="Plastiservi" style="max-height:28px;max-width:90px;object-fit:contain;display:block;" loading="lazy">
-            </a>
-            <span style="color:#9ca3af;font-size:1rem;">+</span>
-            <a href="https://conflex.cl" target="_blank" rel="noopener">
-              <img src="Clientes/logo-conflex-transparent.webp" alt="Conflex" style="max-height:30px;max-width:90px;object-fit:contain;display:block;" loading="lazy">
-            </a>
-          </div>
-          <span class="caso-years">⏱ Historial largo · Activo</span>
-          <h3>De cliente histórico a nueva empresa</h3>
-          <p>Con Plastiservi llevamos años. Ese vínculo llevó a crear Conflex juntos desde el día uno. Web activa y e-commerce en camino.</p>
-          <div class="caso-chips" style="margin-bottom:0;">
-            <span class="caso-chip">Plástico industrial</span>
-            <span class="caso-chip">Web Conflex</span>
-            <span class="caso-chip">Google Ads</span>
-          </div>
-          <div class="caso-links-row">
-            <a href="/nosotros#plastiservi-conflex" class="caso-link">Ver historia completa →</a>
-            <a href="https://conflex.cl" target="_blank" rel="noopener" class="caso-link-visit">Visitar Conflex ↗</a>
-          </div>
-        </div>
-      </div>
-
-    </div><!-- /3-col grid -->
-
-    <div class="casos-cta-row reveal">
-      <a href="/nosotros#casos-exito" class="btn btn-outline">Ver todos los casos →</a>
     </div>
-  </div>
-</section>
-
-<!-- MÉTODO -->
-<section class="method-section">
-  <div class="container">
-    <div class="section-header">
-      <span class="section-label reveal">Cómo trabajamos</span>
-      <h2 class="section-title reveal reveal-delay-1">Cuatro pasos, <span class="text-gradient">sin humo</span></h2>
+    <div class="caso" id="caso-conflex">
+      <div class="caso-foto"><img src="/Clientes/4413EF69-A08E-4B0B-96FA-4A9EE240617A.webp" alt="JPB en planta Conflex" loading="lazy" width="900" height="967"></div>
+      <div class="caso-body">
+        <div class="caso-top"><span class="caso-logo caso-logo-light"><img src="/Clientes/Plastiservi_logo.webp" alt="Plastiservi" loading="lazy"><img src="/Clientes/logo-conflex-transparent.webp" alt="Conflex" loading="lazy"></span><span class="mono caso-years">HISTORIAL LARGO · ACTIVO</span></div>
+        <h3>De cliente histórico a nueva empresa</h3>
+        <p>Con Plastiservi llevamos años. Ese vínculo llevó a crear Conflex juntos desde el día uno. Web activa y e-commerce en camino.</p>
+        <div class="caso-links"><a href="/nosotros#plastiservi-conflex">Ver historia completa →</a><a href="https://conflex.cl" target="_blank" rel="noopener noreferrer">Visitar Conflex ↗</a></div>
+      </div>
     </div>
-    <ol class="method-steps">
-      <li class="method-step reveal"><span class="method-num">1</span><h3>Diagnóstico</h3><p>Entendemos tu producto, tu cliente ideal y por dónde se te está yendo la venta.</p></li>
-      <li class="method-step reveal reveal-delay-1"><span class="method-num">2</span><h3>Plan de acción</h3><p>Definimos canales, mensajes y metas concretas para los próximos 90 días.</p></li>
-      <li class="method-step reveal reveal-delay-2"><span class="method-num">3</span><h3>Ejecución</h3><p>Prospectamos, automatizamos y respondemos por ti. Tu equipo se enfoca en cerrar.</p></li>
-      <li class="method-step reveal reveal-delay-3"><span class="method-num">4</span><h3>Reporte</h3><p>Te mostramos qué funcionó, qué no y qué ajustamos, con números y sin rodeos.</p></li>
+    <div class="caso" id="caso-kem">
+      <div class="caso-foto"><img src="/Clientes/kem_barbershop_foto.webp" alt="JPB Marketing con The Kem Barbershop" loading="lazy" width="900" height="838"></div>
+      <div class="caso-body">
+        <div class="caso-top"><span class="caso-logo caso-logo-kem"><img src="/Clientes/kem_logo.webp" alt="The Kem Barbershop" loading="lazy"></span><span class="mono caso-years">ACTIVO · MODELO REPLICADO</span></div>
+        <h3>El caso piloto de un modelo de fidelización ya replicado</h3>
+        <p>Cada cliente se registra una vez con su WhatsApp y recibe un recordatorio automático cada 14 días para volver, sin seguimiento manual. Hoy el modelo está en varias barberías.</p>
+        <div class="caso-links"><a href="/nosotros#kem-barbershop">Ver historia completa →</a></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- MÉTODO -->
+  <section class="metodo" id="metodo">
+    <p class="mono kicker">CÓMO TRABAJAMOS</p>
+    <h2 class="h2 metodo-title">Cinco pasos para que tu empresa venda más, funcionando en <em>14 días</em>.</h2>
+    <ol class="pasos pasos-5">
+      <li><span class="mono">01</span><h3>Evaluamos</h3><p>Tu producto, tu competencia y qué buscan tus compradores en Google.</p></li>
+      <li><span class="mono">02</span><h3>Preparamos</h3><p>Palabras clave que compran, web lista para cotizar y medición desde el día uno.</p></li>
+      <li><span class="mono">03</span><h3>Posicionamos</h3><p>Campañas de Google Ads optimizadas por costo de cotización.</p></li>
+      <li><span class="mono">04</span><h3>Guiamos por WhatsApp</h3><p>Cada contacto llega a tu WhatsApp y la IA lo atiende, cotiza y guía.</p></li>
+      <li><span class="mono">05</span><h3>Cerramos</h3><p>Seguimiento a cada cotización hasta la venta, con todo visible en el Panel JPB.</p></li>
     </ol>
-  </div>
+  </section>
+
+  <!-- CTA -->
+  <section class="cta" id="contacto">
+    <p class="mono kicker">30 MINUTOS SIN COSTO</p>
+    <h2 class="cta-title">¿Hablamos de lo que <em>tu fábrica</em> podría vender?</h2>
+    <p class="cta-sub">En 30 minutos revisamos tu situación comercial y te decimos, sin compromiso, qué haríamos primero.</p>
+    <div class="hero-actions">
+      <a href="/contacto" class="btn btn-primary">Agenda una llamada</a>
+      <a href="https://wa.me/56944843503" class="btn btn-ghost" target="_blank" rel="noopener noreferrer">Escríbenos por WhatsApp</a>
+    </div>
+    <p class="mono cta-mail"><a href="mailto:jpbayas@jpbmarketing.cl">jpbayas@jpbmarketing.cl</a> · +56 9 4484 3503</p>
+  </section>
+
+  <p class="marca" aria-hidden="true"><span>JPB MARKETIN<b>G</b></span></p>
+
+  <footer class="foot mono">
+    <span>JPB MARKETING · SANTIAGO DE CHILE · 2026</span>
+    <span><a href="/nosotros">Nosotros</a><a href="/blog">Blog</a><a href="/prospector/">Prospector</a><a href="/privacidad-whatsapp">Privacidad</a></span>
+  </footer>
+</main>
+
+<!-- VISTA PARA MÁQUINAS -->
+<section class="maquina" id="maquina" hidden aria-label="Vista para máquinas">
+  <h2 class="maq-title" aria-label="JPB Marketing">JPB MARKETING.</h2>
+  <p class="maq-meta">&gt; vista para máquinas · text/markdown · <span id="maq-bytes">0</span> bytes</p>
+  <p class="maq-actions"><button type="button" id="maq-copy">[copiar]</button> <button type="button" id="maq-dl">[descargar .md]</button></p>
+  <pre id="maq-md"></pre>
 </section>
 
-<!-- BLOG -->
-<section class="h2-blog">
-  <div class="container">
-    <div class="h2-head">
-      <div>
-        <span class="h2-kicker reveal">Aprende</span>
-        <h2 class="h2-h2 reveal reveal-delay-1">Guías para vender más al sector industrial.</h2>
-      </div>
-      <a href="/blog" class="h2-btn h2-btn-primary reveal reveal-delay-2" style="align-self:flex-end">Ver todo el blog <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></a>
-    </div>
-    <div class="h2-post-grid">
-      <a href="/como-conseguir-clientes-b2b-chile" class="h2-post reveal"><small>Ventas · Estrategia</small><h3>Cómo conseguir clientes B2B en Chile: 7 canales que sí funcionan</h3><p>Prospección, LinkedIn, WhatsApp, SEO, referidos, ferias y alianzas, y cómo combinarlos.</p><span>Leer guía →</span></a>
-      <a href="/prospeccion-linkedin-b2b-chile" class="h2-post reveal reveal-delay-1"><small>Prospección · LinkedIn</small><h3>Prospección en LinkedIn en Chile: reuniones B2B sin spamear</h3><p>Perfil, segmentación, primer mensaje y seguimiento para conseguir respuestas reales.</p><span>Leer guía →</span></a>
-      <a href="/agente-ia-whatsapp-chile" class="h2-post reveal reveal-delay-2"><small>IA · WhatsApp</small><h3>Agente de IA en WhatsApp: qué es y cuándo conviene</h3><p>Cómo atiende y cotiza un agente de IA, qué necesita tu empresa y en qué casos vale la pena.</p><span>Leer guía →</span></a>
-    </div>
-  </div>
-</section>
+<!-- BARRA DE CONTACTO EN CELULAR -->
+<div class="barra-movil" id="barra-movil" aria-hidden="true">
+  <a href="/contacto" class="btn btn-primary">Agenda una llamada</a>
+  <a href="https://wa.me/56944843503" class="barra-wa" target="_blank" rel="noopener noreferrer" aria-label="Escríbenos por WhatsApp"><svg viewBox="0 0 24 24" width="24" height="24" fill="currentColor" aria-hidden="true"><path d="M17.47 14.38c-.3-.15-1.76-.87-2.03-.97-.27-.1-.47-.15-.67.15-.2.3-.77.97-.94 1.16-.17.2-.35.22-.64.07-.3-.15-1.26-.46-2.39-1.48-.88-.79-1.48-1.76-1.65-2.06-.17-.3-.02-.46.13-.6.13-.14.3-.35.45-.52.15-.17.2-.3.3-.5.1-.2.05-.37-.03-.52-.07-.15-.67-1.61-.92-2.2-.24-.58-.49-.5-.67-.51h-.57c-.2 0-.52.07-.79.37-.27.3-1.04 1.02-1.04 2.48s1.07 2.88 1.21 3.07c.15.2 2.1 3.2 5.08 4.49.71.31 1.26.49 1.7.63.71.23 1.36.2 1.87.12.57-.09 1.76-.72 2-1.41.25-.7.25-1.29.18-1.41-.08-.13-.27-.2-.57-.35M12.05 21.79h-.01a9.87 9.87 0 0 1-5.03-1.38l-.36-.21-3.74.98 1-3.65-.24-.37a9.86 9.86 0 0 1-1.51-5.26c0-5.45 4.44-9.88 9.89-9.88a9.83 9.83 0 0 1 6.99 2.9 9.82 9.82 0 0 1 2.89 6.99c0 5.45-4.44 9.88-9.88 9.88m8.41-18.3A11.81 11.81 0 0 0 12.05 0C5.5 0 .16 5.34.16 11.89c0 2.1.55 4.14 1.59 5.95L.06 24l6.3-1.65a11.88 11.88 0 0 0 5.69 1.45h.01c6.55 0 11.89-5.34 11.89-11.89 0-3.18-1.24-6.17-3.48-8.41"/></svg></a>
+</div>
 
-<!-- CTA FINAL -->
-<section class="h2-cta">
-  <div class="container">
-    <h2 class="reveal">¿Hablamos de lo que <em>tu fábrica</em> podría vender?</h2>
-    <p class="reveal reveal-delay-1">En 30 minutos revisamos tu situación comercial y te decimos, sin compromiso, qué haríamos primero.</p>
-    <div class="h2-actions reveal reveal-delay-2">
-      <a href="/contacto" class="h2-btn h2-btn-primary">Agenda una llamada <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></a>
-      <a href="https://wa.me/56944843503" class="h2-btn h2-btn-ghost" target="_blank" rel="noopener">Escríbenos por WhatsApp</a>
-    </div>
-  </div>
-</section>
+<!-- TOGGLE HUMANO / MÁQUINA -->
+<div class="modo" role="group" aria-label="Modo de vista">
+  <button type="button" class="on" data-modo="humano" aria-pressed="true">HUMANO</button>
+  <button type="button" data-modo="maquina" aria-pressed="false">MÁQUINA</button>
+</div>
 
-<!-- FOOTER -->
-<footer class="footer">
-  <div class="container">
-    <div class="footer-grid">
-      <div class="footer-brand">
-        <div class="footer-logo">
-          <img src="/assets/logo.webp" alt="JPB Marketing" style="height:52px;width:auto;display:block;">
-        </div>
-        <p>Conectamos fábricas e industrias chilenas con sus clientes potenciales de forma directa, tecnologizada y efectiva. Especialistas en B2B industrial.</p>
-      </div>
-      <div class="footer-col">
-        <h5>Servicios</h5>
-        <ul>
-          <li><a href="/servicios">Transformación Digital</a></li>
-          <li><a href="/servicios">Secretaria IA WhatsApp</a></li>
-          <li><a href="/servicios">Automatización con IA</a></li>
-          <li><a href="/servicios">Páginas Web Industriales</a></li>
-          <li><a href="/servicios">Vendedor Externo</a></li>
-          <li><a href="/servicios">Prospección B2B</a></li>
-        </ul>
-      </div>
-      <div class="footer-col">
-        <h5>Empresa</h5>
-        <ul>
-          <li><a href="/nosotros">Nosotros</a></li>
-          <li><a href="/prospeccion">Sistema de Prospección</a></li>
-          <li><a href="/contacto">Contacto</a></li>
-          <li><a href="/prospector/">Prospector Gratuito</a></li>
-        </ul>
-      </div>
-      <div class="footer-col">
-        <h5>Legal</h5>
-        <ul>
-          <li><a href="#">Política de Privacidad</a></li>
-          <li><a href="#">Términos de Servicio</a></li>
-        </ul>
-        <div class="footer-contact-info">
-          <p>📧 jpbayas@jpbmarketing.cl</p>
-          <p>📱 +56 9 4484 3503</p>
-          <p>📍 Santiago, Chile</p>
-        </div>
-      </div>
-    </div>
-    <div class="footer-access"><span>Accesos</span><a href="/prospeccion">Sistema de prospección</a><a href="/prospector/">Prospector</a><a href="/herramientas/recordatorios/">Acceso Clientes</a><a href="/prospector/?login=1">Iniciar sesión</a><a href="/nosotros">Nosotros</a></div>
-    <div class="footer-bottom">
-      <span>© 2026 JPB Marketing. Todos los derechos reservados.</span>
-      <span>Santiago, Chile</span>
-    </div>
-  </div>
-</footer>
+<script type="text/markdown" id="md-src"># JPB Marketing — agencia B2B industrial en Chile
 
-<!-- FLOATING BUTTONS -->
-<a href="https://wa.me/56944843503" class="whatsapp-float" target="_blank" rel="noopener" aria-label="Contactar por WhatsApp">
-  <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
-</a>
-<button class="back-top" aria-label="Volver arriba">
-  <svg viewBox="0 0 24 24"><polyline points="18 15 12 9 6 15"/></svg>
-</button>
+## Quiénes somos
 
-<script src="main.js"></script>
-<script>
-/* Hero slider */
-(function () {
-  var slides  = document.querySelectorAll('.hero-slide');
-  var fill    = document.getElementById('hs-fill');
-  var label   = document.getElementById('hs-label');
-  var btnPrev = document.getElementById('hs-prev');
-  var btnNext = document.getElementById('hs-next');
-  var btnPause= document.getElementById('hs-pause');
-  if (!slides.length || !fill) return;
+JPB Marketing es una agencia de Santiago que se integra al equipo comercial de fábricas e industrias chilenas como un vendedor externo con portafolio permanente: prospección industrial, automatización con IA y presencia digital.
 
-  var labels  = ['Sistema de Prospección', 'Oferta Junio'];
-  var CYCLE   = 6000;
-  var cur     = 1;
-  var paused  = false;
-  var t       = null;
+## Servicios
 
-  function resetBar() {
-    fill.style.transition = 'none';
-    fill.style.width = '0%';
-    void fill.offsetHeight;
-    fill.style.transition = 'width ' + CYCLE + 'ms linear';
-    fill.style.width = '100%';
-  }
+- Google Ads — Campañas para que aparezcas cuando un comprador busca lo que vendes, medidas por costo de cotización. /keyword-research-b2b-industrial-chile
+- Agente IA en WhatsApp — Atiende, califica y cotiza a tus clientes las 24 horas, y avisa a tu equipo cuando hay una venta real. /agente-ia
+- Prospección B2B — Llegamos a los decisores de tu rubro con mensajes directos y segmentados, y te agendamos reuniones. /prospeccion
+- Automatización con IA — Conectamos tus herramientas para que cotizaciones, seguimientos y reportes salgan solos. /servicios
+- Web industrial que convierte — Sitios rápidos, con catálogo y cotización directa, pensados para generar contactos. /pagina-web-empresa-industrial-chile
+- Vendedor externo — Un equipo comercial a tu medida, sin sueldos fijos ni seis meses de ramp-up. /outsourcing-fuerza-ventas-chile
+- SEO y Google Ads — Hacemos que te encuentren cuando tu cliente busca a su proveedor. /keyword-research-b2b-industrial-chile
 
-  function goTo(n, manual) {
-    slides[cur].classList.remove('active');
-    cur = (n + slides.length) % slides.length;
-    slides[cur].classList.add('active');
-    if (label) label.textContent = labels[cur];
-    if (manual) { clearTimeout(t); paused = false; setPause(false); }
-    resetBar();
-    if (!paused) schedule();
-  }
+## Cifras
 
-  function schedule() {
-    clearTimeout(t);
-    t = setTimeout(function () { goTo(cur + 1); }, CYCLE);
-  }
+- 24/7: atención con Agente IA, aun fuera de horario
+- 14 días: para tener tu sistema comercial funcionando
+- 3x: tasa de respuesta sobre el promedio del mercado
+- 200M+: negocios en nuestra base de prospección
 
-  function setPause(p) {
-    paused = p;
-    var ip = btnPause.querySelector('.hs-icon-pause');
-    var ipl = btnPause.querySelector('.hs-icon-play');
-    if (ip) ip.style.display = p ? 'none' : '';
-    if (ipl) ipl.style.display = p ? '' : 'none';
-    if (p) {
-      fill.style.animationPlayState = 'paused';
-      fill.style.transition = 'none';
-    }
-  }
+## Panel JPB
 
-  if (btnPrev) btnPrev.addEventListener('click', function () { goTo(cur - 1, true); });
-  if (btnNext) btnNext.addEventListener('click', function () { goTo(cur + 1, true); });
-  if (btnPause) btnPause.addEventListener('click', function () {
-    if (paused) { setPause(false); schedule(); resetBar(); }
-    else        { setPause(true);  clearTimeout(t); }
-  });
+App móvil para clientes: conversaciones de WhatsApp en vivo, seguimiento de clientes que dejaron de responder, análisis diario con IA y gastos claros (Google Ads, Meta, IA). Demo: /panel-jpb-demo
 
-  resetBar();
-  schedule();
-})();
+## Clientes
 
-/* Hero card countdown */
-(function () {
-  var end = new Date('2026-10-31T23:59:59-04:00').getTime();
-  var hd = document.getElementById('hoc-d');
-  var hh = document.getElementById('hoc-h');
-  var hm = document.getElementById('hoc-m');
-  var hs = document.getElementById('hoc-s');
-  if (!hd) return;
-  function pad2(n) { return n < 10 ? '0' + n : '' + n; }
-  function tickHoc() {
-    var diff = end - Date.now();
-    if (diff <= 0) return;
-    hd.textContent = Math.floor(diff / 86400000);
-    hh.textContent = pad2(Math.floor((diff % 86400000) / 3600000));
-    hm.textContent = pad2(Math.floor((diff % 3600000) / 60000));
-    if (hs) hs.textContent = pad2(Math.floor((diff % 60000) / 1000));
-  }
-  tickHoc(); setInterval(tickHoc, 1000);
-})();
+- ETP Polimer (manufactura) — de cero a competidor activo: identidad, web, Google Ads y prospección outbound. 2+ años.
+- Fierros Idini (barraca de fierros, 3 plantas) — web con 1.700+ productos, SEO y Google Ads. 2+ años.
+- Plastiservi + Conflex (plástico industrial) — cliente histórico; creamos Conflex juntos desde el día uno.
+- The Kem Barbershop — piloto del modelo de fidelización por WhatsApp con recordatorios cada 14 días, ya replicado en varias barberías.
 
-/* Announcement bar */
-(function () {
-  var bar   = document.getElementById('announce-bar');
-  var close = document.getElementById('announce-close');
-  var count = document.getElementById('ann-count');
-  if (!bar) return;
-  if (sessionStorage.getItem('ann-closed')) { bar.remove(); return; }
-  document.body.classList.add('body-announce');
-  close.addEventListener('click', function () {
-    bar.classList.add('ann-hide');
-    document.body.classList.remove('body-announce');
-    sessionStorage.setItem('ann-closed', '1');
-  });
-  var end = new Date('2026-10-31T23:59:59-04:00').getTime();
-  function tickAnn() {
-    var d = end - Date.now();
-    if (d <= 0 || !count) return;
-    var days = Math.floor(d / 86400000);
-    var hrs  = Math.floor((d % 86400000) / 3600000);
-    count.textContent = '· ' + days + 'd ' + hrs + 'h';
-  }
-  tickAnn(); setInterval(tickAnn, 60000);
-})();
+## Cómo trabajamos
 
-/* Countdown oferta */
-(function () {
-  var end = new Date('2026-10-31T23:59:59-04:00').getTime();
-  var days = document.getElementById('ot-days');
-  var hrs  = document.getElementById('ot-hrs');
-  var min  = document.getElementById('ot-min');
-  var sec  = document.getElementById('ot-sec');
-  if (!days) return;
-  function pad(n) { return n < 10 ? '0' + n : n; }
-  function tick() {
-    var diff = end - Date.now();
-    if (diff <= 0) { days.textContent = hrs.textContent = min.textContent = sec.textContent = '00'; return; }
-    days.textContent = pad(Math.floor(diff / 86400000));
-    hrs.textContent  = pad(Math.floor((diff % 86400000) / 3600000));
-    min.textContent  = pad(Math.floor((diff % 3600000)  / 60000));
-    sec.textContent  = pad(Math.floor((diff % 60000)    / 1000));
-  }
-  tick();
-  setInterval(tick, 1000);
-})();
+1. Diagnóstico — producto, cliente ideal y dónde se va la venta.
+2. Plan de acción — canales, mensajes y metas para 90 días.
+3. Ejecución — prospectamos, automatizamos y respondemos por ti.
+4. Reporte — qué funcionó, qué no y qué ajustamos, con números.
+
+## Contacto
+
+- Correo: jpbayas@jpbmarketing.cl
+- WhatsApp: +56 9 4484 3503
+- Agenda: https://jpbmarketing.cl/contacto
+- Santiago, Chile
 </script>
-<script>
-(function () {
-  var chat = document.getElementById('index-chat');
-  var box  = document.getElementById('index-msgs');
-  if (!chat || !box) return;
 
-  var chk = '<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>';
-  var cal = '<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>';
-
-  var msgs = [
-    { t: 'in',     ms: 700,   h: 'Hola, necesito una cotización urgente 🔩' },
-    { t: 'out',    ms: 2000,  h: '¡Hola! Dime el producto y cantidad — preparo la cotización ahora mismo 📋' },
-    { t: 'out',    ms: 4000,  h: '<div class="waia-msg-chip waia-chip-green">' + chk + ' Cotización enviada</div>200 un. · Acero 304 cal.14 · $2.840.000 + IVA' },
-    { t: 'in',     ms: 5400,  h: 'Sí, mañana martes' },
-    { t: 'out',    ms: 7000,  h: '<div class="waia-msg-chip waia-chip-blue">' + cal + ' Reunión agendada</div>Rodrigo (Gte. Comercial) · Martes 10:00 AM' },
-    { t: 'typing', ms: 8800  }
-  ];
-
-  var CYCLE = 12000;
-  var handles = [];
-
-  function scrollChat() {
-    setTimeout(function () {
-      var target = chat.scrollHeight;
-      if (typeof chat.scrollTo === 'function') {
-        try { chat.scrollTo({ top: target, behavior: 'smooth' }); } catch(e) { chat.scrollTop = target; }
-      } else {
-        chat.scrollTop = target;
-      }
-    }, 60);
-  }
-
-  function startChat() {
-    handles.forEach(clearTimeout);
-    handles = [];
-    box.innerHTML = '';
-    chat.scrollTop = 0;
-
-    msgs.forEach(function (m) {
-      handles.push(setTimeout(function () {
-        var el = document.createElement('div');
-        if (m.t === 'typing') {
-          el.className = 'waia-typing';
-          el.innerHTML = '<span></span><span></span><span></span>';
-        } else {
-          el.className = 'waia-msg waia-msg-' + m.t;
-          el.innerHTML = m.h;
-        }
-        el.style.opacity = '0';
-        el.style.transform = 'translateY(10px)';
-        el.style.transition = 'opacity .35s ease, transform .35s ease';
-        box.appendChild(el);
-        void el.offsetHeight;
-        el.style.opacity = '1';
-        el.style.transform = 'translateY(0)';
-        scrollChat();
-      }, m.ms));
-    });
-
-    handles.push(setTimeout(startChat, CYCLE));
-  }
-
-  startChat();
-})();
-</script>
-<script>
-/* Cifras: conteo al entrar en pantalla */
-(function () {
-  var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-  if (!reduce && 'IntersectionObserver' in window) {
-    var io = new IntersectionObserver(function (es) {
-      es.forEach(function (e) {
-        if (!e.isIntersecting) return;
-        io.unobserve(e.target);
-        var el = e.target, end = +el.dataset.count, t0 = null;
-        requestAnimationFrame(function step(t) {
-          if (t0 === null) t0 = t;
-          var p = Math.max(0, Math.min((t - t0) / 1100, 1));
-          el.textContent = Math.round(end * (1 - Math.pow(1 - p, 3)));
-          if (p < 1) requestAnimationFrame(step);
-          else el.textContent = end;
-        });
-      });
-    }, { threshold: 0.6 });
-    document.querySelectorAll('[data-count]').forEach(function (el) { el.textContent = '0'; io.observe(el); });
-    setTimeout(function () { document.querySelectorAll('[data-count]').forEach(function (el) { if (+el.textContent === 0) el.textContent = el.dataset.count; }); }, 8000);
-  }
-})();
-</script>
-<script>
-/* Escala la demo del panel (390 px lógicos) al ancho real del marco del teléfono */
-(function () {
-  var screen = document.querySelector('.iphone-screen');
-  var frame = screen && screen.querySelector('iframe');
-  if (!frame) return;
-  function fit() {
-    var s = screen.clientWidth / 390;
-    frame.style.transform = 'scale(' + s + ')';
-    frame.style.height = (screen.clientHeight / s) + 'px';
-  }
-  fit();
-  if ('ResizeObserver' in window) new ResizeObserver(fit).observe(screen);
-  else window.addEventListener('resize', fit);
-})();
-</script>
+<script src="/v2/pagina.js?v=12" defer></script>
+<script type="module" src="/v2/fabrica.js?v=41"></script>
 </body>
 </html>
