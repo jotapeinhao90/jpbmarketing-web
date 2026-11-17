@@ -30,6 +30,12 @@ new_sqlite_classes = ["Conversacion"]
 [ai]
 binding = "AI"
 
+# R2: guarda el audio y las imágenes originales, para que el panel de chats pueda
+# reproducirlos/mostrarlos además de que el bot los procese.
+[[r2_buckets]]
+binding = "AUDIOS"
+bucket_name = "polimer-audios"
+
 # Corre ejecutarAnalisisDiario() todos los días a las 4am hora Chile (07:00 UTC con
 # horario de verano vigente desde sept 2026 — ajustar a "0 8 * * *" si Chile vuelve a
 # UTC-4). Analiza cada conversación activa y sube el resultado a control.jpbmarketing.cl.
@@ -50,3 +56,7 @@ enabled = true
 #   PANEL_KEY                 -> autentica las llamadas a /admin/*
 #   SHEETS_WEBHOOK_URL        -> opcional, Apps Script que registra los pedidos cerrados
 #   SHEETS_SECRET             -> opcional, valida que el POST a Sheets viene de este Worker
+
+# Con Workers Paid el límite de CPU por request sube (el plan Free tenía 10 ms fijos).
+[limits]
+cpu_ms = 30000

@@ -2,10 +2,9 @@
 // Vive aparte del Worker para poder verificarlo sin desplegar.
 
 export const MINIMO_KG = 300;
-const HOMS_PACK_WA = "56979678988";
 
 const MICRAJE_ESTANDAR = {
-  hielo: 40,
+  hielo: 70,
   wicket: 25,
   "cubre pallet": 80,
   basura: 40,
@@ -24,10 +23,6 @@ const MICRAJE_DEFAULT = 40;
 // stretch son lámina simple, van ×1. Stretch entra acá porque se vende en rollo, no
 // como bolsa — si Polimer lo factura distinto, es el único lugar que hay que tocar.
 const UNA_SOLA_CARA = /film|rollo|stretch/i;
-
-// Formatos tan grandes que sobre 500 unidades el mínimo se cumple siempre; el prompt
-// los exceptúa explícitamente del cálculo.
-const EXENTOS_SOBRE_500 = /cubre\s*pallet|bins/i;
 
 const normalizar = (s) =>
   String(s || "")
@@ -55,36 +50,60 @@ export function clasificarPedido({ productos = [] }) {
     const cantidad = Number(p.cantidad) || 0;
     const enKilos = normalizar(p.unidad) === "kilos";
 
-    if (EXENTOS_SOBRE_500.test(p.tipo || "") && !enKilos && cantidad > 500) {
-      return { ...p, micras, pesoKg: null, clasificacion: "VALIDO", motivo: "excepcion_minimo" };
-    }
-
     const caras = UNA_SOLA_CARA.test(p.tipo || "") ? 1 : 2;
-    const pesoKg = enKilos
+    const pesoCrudo = enKilos
       ? cantidad
       : (caras * Number(p.ancho) * Number(p.largo) * micras * 925 * cantidad) / 10_000_000_000;
+    // Clasificar sobre el número YA redondeado — si no, un peso real de 299.9989 se
+    // muestra como "300 kg" pero se marca como que no cumple, contradiciendo lo que ve.
+    const pesoKg = Math.round(pesoCrudo * 100) / 100;
 
-    return {
-      ...p,
-      micras,
-      pesoKg: Math.round(pesoKg * 100) / 100,
-      clasificacion: pesoKg >= MINIMO_KG ? "VALIDO" : "DERIVAR",
-    };
+    const cumple = pesoKg >= MINIMO_KG;
+    const resultado = { ...p, micras, pesoKg, clasificacion: cumple ? "VALIDO" : "NO_CUMPLE" };
+
+    if (!cumple) {
+      // Qué habría que pedir para llegar al mínimo, para decírselo al cliente: en kilos si
+      // el pedido venía en kilos, en unidades de esa misma medida si venía en unidades.
+      if (enKilos) {
+        resultado.minimoKg = MINIMO_KG;
+      } else {
+        resultado.minimoUnidades = unidadesParaPeso({
+          tipo: p.tipo, ancho: p.ancho, largo: p.largo, micraje: p.micraje, pesoKg: MINIMO_KG,
+        }).unidadesAprox;
+      }
+    }
+    return resultado;
   });
 
-  const aDerivar = evaluados.filter((p) => p.clasificacion === "DERIVAR");
+  const noCumplen = evaluados.filter((p) => p.clasificacion === "NO_CUMPLE");
 
   return {
     productos: evaluados,
-    todosValidos: aDerivar.length === 0,
-    todosDerivar: aDerivar.length === evaluados.length && evaluados.length > 0,
-    linkDerivacion: aDerivar.length ? linkHomsPack(aDerivar) : null,
+    todosValidos: noCumplen.length === 0,
+    todosNoCumplen: noCumplen.length === evaluados.length && evaluados.length > 0,
   };
 }
 
-export function linkHomsPack(productos) {
-  const detalle = productos
-    .map((p) => `${p.tipo} ${p.ancho}x${p.largo} cm, ${p.micras} micrones, ${p.cantidad} ${p.unidad}`)
-    .join("; ");
-  return `https://wa.me/${HOMS_PACK_WA}?text=${encodeURIComponent(`Hola, vengo referido de Polimer. Quiero cotizar: ${detalle}`)}`;
+// Inverso de clasificarPedido: dado un peso objetivo, cuántas unidades hacen falta.
+// Existe para que el modelo nunca tenga que despejar la fórmula mentalmente cuando el
+// cliente pregunta "¿cuántas bolsas son 300 kg?" — ese despeje a mano es exactamente
+// el tipo de cuenta grande donde un LLM se equivoca (pasó en producción: calculó
+// 242.000 bolsas para 300 kg en 21x35/40 micras, cuando la cifra real es ~55.200).
+// Redondea hacia arriba: si se usa para decirle al cliente cuál es el mínimo, la cifra
+// tiene que alcanzar los kg pedidos, nunca quedar apenas por debajo.
+export function unidadesParaPeso({ tipo, ancho, largo, micraje, pesoKg }) {
+  const micras = micrajeDe(tipo, micraje);
+  const caras = UNA_SOLA_CARA.test(tipo || "") ? 1 : 2;
+  const divisor = caras * Number(ancho) * Number(largo) * micras * 925;
+  const unidadesAprox = divisor > 0 ? Math.ceil((Number(pesoKg) * 10_000_000_000) / divisor - 1e-9) : null;
+  return { unidadesAprox, micras };
+}
+
+// Rollos se cotizan por peso, no por unidades cortadas: el cliente suele dar el peso
+// de cada rollo y cuántos rollos quiere ("rollos de 2,5 kilos, dame 100"). Esa
+// multiplicación va en código por la misma razón que unidadesParaPeso — nunca dejar
+// que el modelo haga la cuenta de cabeza.
+export function pesoTotalRollos({ pesoPorRolloKg, cantidadRollos }) {
+  const total = Number(pesoPorRolloKg) * Number(cantidadRollos);
+  return { pesoTotalKg: Math.round(total * 100) / 100 };
 }
