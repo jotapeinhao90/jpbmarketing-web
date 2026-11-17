@@ -1067,7 +1067,7 @@ function animarReal(w, clock, dt) {
 }
 const trabajadores = [
   trabajadorX(scene, 2.2, .35, Math.PI, { idle: 0, barba: true }),                                     // de espaldas mirando la cinta
-  trabajadorX(scene, PROSP.x - 1.2, PROSP.z - .2, Math.PI / 2, { idle: .7 }),               // Camila, en la consola de prospección
+  trabajadorX(scene, -14, 3.35, Math.PI / 2, { camina: true, x0: -10, x1: 15, v: 1.05 }), // Camila (prospección), por el pasillo
   trabajadorX(scene, 2.5, 7.3, .12, { idle: 1.5, jefe: true, barba: true }) // Diego, jefe de planta: al frente
 ];
 // cada persona hace un trabajo concreto de JPB (nombres de ejemplo, se pueden cambiar por los reales)
