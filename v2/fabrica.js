@@ -626,6 +626,38 @@ const sGoogle = (x, W, H, st, tt) => {
   setFont(x, 900, 64); x.fillStyle = '#202124'; x.fillText(String(64 + Math.floor(tt * .4)), 26, H - 28);
   setFont(x, 600, 22, 'JetBrains Mono', false); x.fillStyle = '#5f6368'; x.fillText('CLICS HOY → ENTRAN A LA LÍNEA', 200, H - 40);
 };
+// 02 · prospección B2B: campaña en vivo por correo, LinkedIn y WhatsApp
+const prospFeed = [
+  ['Gerente de Compras', 'Constructora', 'Reunión agendada ✓', '#f5b800'],
+  ['Jefe de Planta', 'Metalmecánica', 'Respondió', '#30d158'],
+  ['Dueño', 'Ferretería industrial', 'Abrió el correo', '#5ea4ff'],
+  ['Director Comercial', 'Plásticos', 'Correo 2 de 3 enviado', 'rgba(238,240,244,.55)'],
+  ['Gerente General', 'Alimentos', 'Respondió por LinkedIn', '#30d158'],
+  ['Jefe de Abastecimiento', 'Minería', 'Reunión agendada ✓', '#f5b800'],
+  ['Gerente de Operaciones', 'Packaging', 'Abrió el correo', '#5ea4ff']
+];
+const sProsp = (x, W, H, st, tt) => {
+  x.fillStyle = '#0b1220'; x.fillRect(0, 0, W, H);
+  setFont(x, 700, 20, 'JetBrains Mono', false); x.fillStyle = YEL; x.fillText('02 · PROSPECCIÓN B2B', 22, 36);
+  setFont(x, 500, 14, 'JetBrains Mono', false); x.fillStyle = 'rgba(238,240,244,.55)'; x.textAlign = 'right'; x.fillText('CORREO · LINKEDIN · WHATSAPP', W - 22, 36); x.textAlign = 'left';
+  const env = Math.min(1600, 1180 + Math.floor((tt % 40) * 10.5));
+  [['CONTACTOS HOY', env.toLocaleString('es-CL')], ['RESPUESTAS', String(38 + Math.floor((tt % 40) * .55))], ['REUNIONES', String(5 + Math.floor((tt % 40) / 9))]].forEach(([k, v], i) => {
+    const px = 22 + i * (W - 44) / 3; setFont(x, 500, 13, 'JetBrains Mono', false); x.fillStyle = 'rgba(238,240,244,.6)'; x.fillText(k, px, 70);
+    setFont(x, 900, 38); x.fillStyle = i === 2 ? YEL : INK; x.fillText(v, px, 112);
+  });
+  x.fillStyle = 'rgba(238,240,244,.12)'; x.fillRect(22, 128, W - 44, 2);
+  const off = Math.floor(tt / 1.7), rh = (H - 146) / 5;
+  for (let r = 0; r < 5; r++) {
+    const [cargo, rubro, estado, col] = prospFeed[(off + r) % prospFeed.length], y = 140 + r * rh;
+    x.globalAlpha = r === 0 ? Math.min(1, (tt % 1.7) * 2.5) : 1;
+    x.fillStyle = 'rgba(238,240,244,.05)'; x.fillRect(22, y, W - 44, rh - 8);
+    x.fillStyle = col; x.fillRect(22, y, 5, rh - 8);
+    setFont(x, 700, 19, 'Archivo', false); x.fillStyle = INK; x.fillText(cargo, 40, y + rh * .42);
+    setFont(x, 500, 15, 'Archivo', false); x.fillStyle = 'rgba(238,240,244,.55)'; x.fillText(rubro, 40, y + rh * .78);
+    setFont(x, 700, 16, 'JetBrains Mono', false); x.fillStyle = col; x.textAlign = 'right'; x.fillText(estado, W - 36, y + rh * .6); x.textAlign = 'left';
+    x.globalAlpha = 1;
+  }
+};
 const sAds = (x, W, H, st, tt) => {
   x.fillStyle = '#0b1220'; x.fillRect(0, 0, W, H);
   setFont(x, 700, 20, 'JetBrains Mono', false); x.fillStyle = YEL; x.fillText('GOOGLE ADS · CAMPAÑA INDUSTRIAL', 22, 36);
@@ -692,7 +724,7 @@ const ULTIMAS = [['Constructora Maipú', 2940000], ['Metalúrgica Ríos', 118000
 const sVentas = (x, W, H, st, tt) => {
   x.fillStyle = '#05080f'; x.fillRect(0, 0, W, H);
   const v = typeof ventas === 'number' ? ventas : 128, recien = typeof SON === 'object' && SON.ultimaVenta && (clock - SON.ultimaVenta) < .8;
-  setFont(x, 600, 17, 'JetBrains Mono', false); x.fillStyle = YEL; x.fillText('03 · VENTAS CERRADAS HOY', 24, 34);
+  setFont(x, 600, 17, 'JetBrains Mono', false); x.fillStyle = YEL; x.fillText('04 · VENTAS CERRADAS HOY', 24, 34);
   setFont(x, 900, 112); x.fillStyle = recien ? YEL : INK; x.fillText(String(v), 20, 140);
   setFont(x, 700, 18, 'JetBrains Mono', false); x.fillStyle = '#25d366'; x.fillText('▲ 3x vs. mes pasado', 26, 170);
   // meta del mes
@@ -757,7 +789,7 @@ const ledG = grp(scene, LED.x, LED.y, -17.04);
 for (const sx of [-1, 1]) S(box(.12, .12, .9), M.steel, mtx(LED.x + sx * 4.2, LED.y + 1.6, -17.6), 30, false);
 const led = new Pantalla(ledG, LED.w, LED.h, 1536, [ledClientes], { led: true, fps: 2, dur: 6, label: 'Clientes · ver casos', href: '#clientes', delay: .5 });
 // pantallas de las estaciones 01 y 03, montadas sobre las máquinas
-for (const [kx, slides, label] of [[-10.6, [sGoogle], '01 · Google Ads'], [ARCO_X, [sVentas], '03 · Ventas cerradas']]) {
+for (const [kx, slides, label] of [[-10.6, [sGoogle], '01 · Google Ads'], [ARCO_X, [sVentas], '04 · Ventas cerradas']]) {
   const g = grp(scene, kx, kx === ARCO_X ? 3.95 : 3.45, kx === ARCO_X ? lineZ + .05 : lineZ + 1.05);
   D(box(2.75, 1.6, .12), M.dark, g, 0, 0, -.07);
   for (const s of [-1, 1]) D(box(.08, .9, .08), M.dark, g, s * .9, -1.15, -.25);
@@ -770,8 +802,29 @@ const TOTEM = { x: -.7, z: lineZ + 1.2 };
   D(cyl(.45, .5, .08, 24), M.dark, g, 0, .04, 0, 0, 0, 0, 40);
   D(box(.16, .62, .1), M.steel, g, 0, .36, -.05);
   D(new RoundedBoxGeometry(1.72, 3.05, .14, 4, .14), M.dark, g, 0, 2.15, -.03);
-  new Pantalla(g, 1.56, 2.85, 512, [sWhats], { label: '02 · Agente IA en WhatsApp', href: '#servicios', delay: .2 }).mesh.position.set(0, 2.15, .045);
+  new Pantalla(g, 1.56, 2.85, 512, [sWhats], { label: '03 · Agente IA en WhatsApp', href: '#servicios', delay: .2 }).mesh.position.set(0, 2.15, .045);
 }
+// 02 · consola de prospección B2B: la campaña sale a buscar clientes y las respuestas caen a la cinta como leads
+const PROSP = { x: -5.4, z: 2.25 };
+const CHUTE = { y0: 1.62, z0: 1.8, y1: beltY + .24, z1: -.36 };
+{
+  const g = grp(scene, PROSP.x, 0, PROSP.z);
+  D(box(1.5, 1.05, .8), M.machine, g, 0, .525, 0);
+  D(box(1.54, .05, .84), M.yellow, g, 0, 1.05, 0, 0, 0, 0, 30, false);
+  D(box(.9, .1, .02), M.lamp, g, -.2, .78, .41, 0, 0, 0, 30, false);
+  D(box(.62, .42, .5), M.dark, g, 0, 1.27, -.3);                               // tolva donde salen los leads
+  for (const s of [-1, 1]) D(box(.07, 1.05, .07), M.dark, g, s * .78, 1.55, .22); // postes de la pantalla
+  D(box(1.86, 1.1, .1), M.dark, g, 0, 2.45, .2);
+  new Pantalla(g, 1.76, 1.0, 768, [sProsp], { dur: 9, label: '02 · Prospección B2B', href: '#servicios', delay: .25 }).mesh.position.set(0, 2.45, .256);
+  // rampa de la tolva a la cinta
+  const L = Math.hypot(CHUTE.z0 - CHUTE.z1, CHUTE.y0 - CHUTE.y1), a = Math.atan2(CHUTE.y0 - CHUTE.y1, CHUTE.z0 - CHUTE.z1);
+  const cz = (CHUTE.z0 + CHUTE.z1) / 2 - PROSP.z, cy = (CHUTE.y0 + CHUTE.y1) / 2 - .25;
+  D(box(.62, .04, L), M.steel, g, 0, cy, cz, -a, 0, 0);
+  for (const s of [-1, 1]) D(box(.04, .16, L), M.yellow, g, s * .31, cy + .07, cz, -a, 0, 0);
+  D(box(.06, cy - .02, .06), M.dark, g, 0, (cy - .02) / 2, cz);
+}
+// leads de prospección: salen de la tolva, bajan por la rampa y siguen por la cinta hasta el agente IA
+const prospCajas = [0, 1].map((i) => { const c = D(cajaGeo, M.lead, scene, PROSP.x, CHUTE.y0, CHUTE.z0); c.visible = false; c.userData.t = -1.8 - i * 2.6; return c; });
 
 /* ------------------------------------------------------------------ */
 /*  Marca JPB en letras metálicas en relieve y trabajadores            */
@@ -1014,13 +1067,13 @@ function animarReal(w, clock, dt) {
 }
 const trabajadores = [
   trabajadorX(scene, 2.2, .35, Math.PI, { idle: 0, barba: true }),                                     // de espaldas mirando la cinta
-  trabajadorX(scene, -14, 3.35, Math.PI / 2, { camina: true, x0: -10, x1: 15, v: 1.05 }), // pasillo
+  trabajadorX(scene, PROSP.x - 1.2, PROSP.z - .2, Math.PI / 2, { idle: .7 }),               // Camila, en la consola de prospección
   trabajadorX(scene, 2.5, 7.3, .12, { idle: 1.5, jefe: true, barba: true }) // Diego, jefe de planta: al frente
 ];
 // cada persona hace un trabajo concreto de JPB (nombres de ejemplo, se pueden cambiar por los reales)
 const ROLES = [
   { nombre: 'Matías', cargo: 'Entrena tu agente IA de WhatsApp', texto: 'Revisa las conversaciones del agente, le enseña tu catálogo y tus precios, y ajusta las respuestas para que cotice como tu mejor vendedor.', href: '/agente-ia', cta: 'Ver el agente IA' },
-  { nombre: 'Camila', cargo: 'Prospección B2B', texto: 'Busca a los decisores de tu rubro, les escribe por correo, LinkedIn y WhatsApp, y te deja reuniones agendadas.', href: '/prospeccion', cta: 'Ver prospección' },
+  { nombre: 'Camila', cargo: 'Prospección B2B profesional', texto: 'Arma la base de decisores de tu rubro, les escribe por correo, LinkedIn y WhatsApp con infraestructura propia, y te deja reuniones agendadas.', href: '/prospeccion', cta: 'Ver prospección' },
   { nombre: 'Diego', cargo: 'Jefe de planta · Panel JPB', texto: 'Mira los números de tu planta comercial todos los días y te los muestra claros en el Panel JPB: conversaciones, cotizaciones y ventas.', href: '#panel', cta: 'Ver el Panel JPB' },
   { nombre: 'Valentina', cargo: 'Revisa tus cotizaciones y les hace seguimiento', texto: 'Ninguna cotización queda en el aire: revisa cada una, ve quién dejó de responder y le hace seguimiento hasta que se cierra o se descarta.', href: '/contacto', cta: 'Quiero seguimiento' },
   { nombre: 'Tomás', cargo: 'Gestiona tus campañas de Google Ads', texto: 'Arma y optimiza tus campañas para que aparezcas cuando un comprador busca a su proveedor, midiendo cada contacto que llega.', href: '/keyword-research-b2b-industrial-chile', cta: 'Ver Google Ads' },
@@ -1137,9 +1190,10 @@ const polvo = (() => {
 /* ------------------------------------------------------------------ */
 const ESTACIONES = {
   prospeccion: { kicker: 'PASO 01 · GOOGLE ADS', titulo: 'Te encuentran en Google', texto: 'Campañas de Google Ads para empresas industriales: tu anuncio aparece cuando un comprador busca lo que vendes, y cada clic entra a la línea como un prospecto.', href: '/keyword-research-b2b-industrial-chile', cta: 'Ver Google Ads', c: [-10.6, 1.8, lineZ], s: [3.8, 4, 3.2], pos: [-5.6, 2.9, 6.4], etiqueta: '01 · Google Ads', ea: [-10.6, 4.55, lineZ + 1], corto: 'Con Google Ads apareces cuando te buscan y cada clic entra como prospecto.', mpos: [-7.6, 3.3, 9.6], mlook: [-9.6, 1.9, -1] },
-  ia: { kicker: 'PASO 02 · AGENTE IA EN WHATSAPP', titulo: 'Te escriben por WhatsApp, la IA vende', texto: 'Tus clientes escriben a tu WhatsApp y el agente responde en 2 segundos, cotiza con tu catálogo y califica, de día y de noche. Las cajas grises (leads) pasan por el agente y salen amarillas: ventas.', href: '/agente-ia', cta: 'Ver el agente IA', c: [-.7, 1.6, -.9], s: [11.5, 3.6, 5], pos: [.6, 2.6, 6.2], etiqueta: '02 · Agente IA en WhatsApp', ea: [-.7, 3.5, lineZ + 1.2], corto: 'Te escriben por WhatsApp y la IA responde, cotiza y califica al tiro. Los leads grises salen amarillos: ventas.', mpos: [.3, 2.7, 7.6], mlook: [-.7, 2.05, -.3] },
+  outbound: { kicker: 'PASO 02 · PROSPECCIÓN PROFESIONAL', titulo: 'También salimos a buscarlos', texto: 'No esperamos solo a que te busquen: prospectamos a los decisores de tu rubro por correo, LinkedIn y WhatsApp, con infraestructura propia y hasta 1.600 contactos al día. Cada respuesta baja a la línea como un lead.', href: '/prospeccion', cta: 'Ver prospección', c: [PROSP.x, 1.5, PROSP.z - .6], s: [3, 3.2, 3.4], pos: [-4.5, 2.8, 7.9], etiqueta: '02 · Prospección B2B', ea: [PROSP.x, 3.35, PROSP.z + .3], corto: 'Prospectamos a los decisores de tu rubro por correo, LinkedIn y WhatsApp: cada respuesta baja a la línea como lead.', mpos: [-4.4, 2.75, 7.4], mlook: [-5.5, 1.75, 1.2] },
+  ia: { kicker: 'PASO 03 · AGENTE IA EN WHATSAPP', titulo: 'Te escriben por WhatsApp, la IA vende', texto: 'Tus clientes escriben a tu WhatsApp y el agente responde en 2 segundos, cotiza con tu catálogo y califica, de día y de noche. Las cajas grises (leads) pasan por el agente y salen amarillas: ventas.', href: '/agente-ia', cta: 'Ver el agente IA', c: [-.7, 1.6, -.9], s: [11.5, 3.6, 5], pos: [.6, 2.6, 6.2], etiqueta: '03 · Agente IA en WhatsApp', ea: [-.7, 3.5, lineZ + 1.2], corto: 'Te escriben por WhatsApp y la IA responde, cotiza y califica al tiro. Los leads grises salen amarillos: ventas.', mpos: [.3, 2.7, 7.6], mlook: [-.7, 2.05, -.3] },
   oficina: { kicker: 'SEGUNDO PISO · OFICINA COMERCIAL', titulo: 'Tu equipo, con todo a la vista', texto: 'Aquí trabaja el equipo comercial: cada uno ve en su pantalla las conversaciones de WhatsApp, los prospectos y las cotizaciones del día. Toca a cada persona para ver qué hace por tu empresa.', href: '/outsourcing-fuerza-ventas-chile', cta: 'Ver el modelo', c: [-16.5, 5.7, -13], s: [11, 2.8, 10], pos: [-9.2, 7.6, -3.4], etiqueta: '2º piso · Oficina comercial', ea: [-16.5, 7.3, -8.6], corto: 'Tu equipo ve todo en el Panel JPB y nosotros nos sumamos como vendedor externo.', mpos: [-12.2, 8.2, -2.2], mlook: [-16.6, 5.3, -12.4] },
-  ventas: { kicker: 'PASO 03 · SALEN VENTAS', titulo: 'Tu fábrica despacha más', texto: 'Cada caja amarilla es una venta cerrada: baja al pallet y sale en el camión. Llegan pedidos listos para cerrar y ves cada venta en el Panel JPB.', href: '/contacto', cta: 'Quiero vender más', c: [11.2, 1.6, lineZ], s: [8.4, 3.8, 4.2], pos: [7.2, 3.1, 7.8], etiqueta: '03 · Ventas', ea: [ARCO_X, 4.95, lineZ], corto: 'Cada caja amarilla es una venta cerrada que sale a despacho.', mpos: [9.1, 3.2, 8.6], mlook: [9.7, 2.4, -1] },
+  ventas: { kicker: 'PASO 04 · SALEN VENTAS', titulo: 'Tu fábrica despacha más', texto: 'Cada caja amarilla es una venta cerrada: baja al pallet y sale en el camión. Llegan pedidos listos para cerrar y ves cada venta en el Panel JPB.', href: '/contacto', cta: 'Quiero vender más', c: [11.2, 1.6, lineZ], s: [8.4, 3.8, 4.2], pos: [7.2, 3.1, 7.8], etiqueta: '04 · Ventas', ea: [ARCO_X, 4.95, lineZ], corto: 'Cada caja amarilla es una venta cerrada que sale a despacho.', mpos: [9.1, 3.2, 8.6], mlook: [9.7, 2.4, -1] },
   despacho: { kicker: 'ABIERTA 24/7 · WEB + SEO', titulo: 'Que te encuentren', texto: 'Web industrial con catálogo y cotizador, SEO y Google Ads: los pedidos llegan aunque nadie salga a buscarlos.', href: '/pagina-web-empresa-industrial-chile', cta: 'Ver web industrial', c: [15, 2.4, -13], s: [10.5, 5, 7], pos: [8.4, 3.6, -3.2] },
   equipo: { kicker: 'EQUIPO JPB EN TU PLANTA', titulo: 'Vendedor externo', texto: 'Nos integramos a tu equipo comercial con portafolio permanente, sin sueldos fijos ni seis meses de ramp-up.', href: '/outsourcing-fuerza-ventas-chile', cta: 'Ver el modelo' }
 };
@@ -1172,9 +1226,9 @@ for (const [k, e] of Object.entries(ESTACIONES)) if (e.etiqueta) {
   etiquetas.push([b, null]);
 }
 // en móvil las etiquetas no caben en pantalla: fila de botones por estación
-for (const k of ['prospeccion', 'ia', 'ventas', 'oficina']) {
+for (const k of ['prospeccion', 'outbound', 'ia', 'ventas', 'oficina']) {
   const b = document.createElement('button'); b.type = 'button'; b.className = 'est-chip';
-  b.textContent = { prospeccion: '01 Prospección', ia: '02 WhatsApp IA', ventas: '03 Ventas', oficina: '2º piso' }[k];
+  b.textContent = { prospeccion: '01 Google Ads', outbound: '02 Prospección', ia: '03 WhatsApp IA', ventas: '04 Ventas', oficina: '2º piso' }[k];
   b.addEventListener('click', () => abrirEstacion(k)); document.getElementById('est-chips').appendChild(b);
 }
 let ventas = 128; hudVentas.textContent = ventas;
@@ -1201,7 +1255,7 @@ const MOVIL = () => innerWidth < 760;
 let rt = performance.now() / 1000, ri = 0, recOn = false, recNext = 0, recStartAt = 0, pasoT0 = 0, cineI = -1;
 const poseEst = (k) => { const e = ESTACIONES[k]; return MOVIL() ? { pos: e.mpos, look: e.mlook, fov: 60 } : { pos: e.pos, look: e.c, fov: 50 }; };
 const RECORRIDO = [
-  { kicker: 'RECORRIDO · DIEGO, JEFE DE PLANTA', titulo: 'Hola, soy Diego. Te muestro cómo hacemos que tu empresa venda más.', texto: 'Evaluamos, preparamos, posicionamos, guiamos cada contacto por WhatsApp y cerramos la venta. Y tú lo sigues todo desde tu app.', corto: 'Evaluamos, preparamos, posicionamos, guiamos por WhatsApp, cerramos y lo sigues en tu app.', href: '#servicios', cta: 'Ver servicios',
+  { kicker: 'RECORRIDO · DIEGO, JEFE DE PLANTA', titulo: 'Hola, soy Diego. Te muestro cómo hacemos que tu empresa venda más.', texto: 'Evaluamos, preparamos, posicionamos, prospectamos, guiamos cada contacto por WhatsApp y cerramos la venta. Y tú lo sigues todo desde tu app.', corto: 'Evaluamos, posicionamos, prospectamos, guiamos por WhatsApp, cerramos y lo sigues en tu app.', href: '#servicios', cta: 'Ver servicios',
     pose: () => { const p = diego.g.position; return MOVIL() ? { pos: [p.x + .5, 1.75, p.z + 3.4], look: [p.x, 1.3, p.z], fov: 58 } : { pos: [p.x + 1.1, 1.85, p.z + 3.1], look: [p.x - .5, 1.45, p.z], fov: 46 }; } },
   { key: 'oficina', kicker: 'PASO 1 · EVALUAMOS TU EMPRESA', titulo: 'Partimos por entender tu negocio', texto: 'Revisamos tu producto, tus clientes, tu competencia y qué buscan tus compradores en Google. Así sabemos dónde está la venta.', corto: 'Revisamos tu producto, tu competencia y qué buscan tus compradores en Google.', href: '/contacto', cta: 'Pedir evaluación' },
   { key: 'oficina', kicker: 'PASO 2 · PREPARAMOS TU POSICIONAMIENTO', titulo: 'Palabras clave, web y medición', texto: 'Elegimos las búsquedas que compran, dejamos tu web lista para cotizar y medimos cada contacto desde el primer día.', corto: 'Elegimos las búsquedas que compran, dejamos tu web lista y medimos cada contacto.', href: '/pagina-web-empresa-industrial-chile', cta: 'Ver web industrial',
@@ -1211,9 +1265,10 @@ const RECORRIDO = [
       return MOVIL() ? { pos: [x + .04, 6.22, z + 1.42], look: [x, 5.66, z - .33], fov: 52 } : { pos: [x - .05, 5.74, z + .66], look: [x - .24, 5.66, z - .33], fov: 50 };
     } },
   { key: 'prospeccion', kicker: 'PASO 3 · POSICIONAMOS CON GOOGLE ADS', titulo: 'Apareces cuando te buscan', texto: 'Campañas de Google Ads para empresas industriales, optimizadas por costo por cotización. Cada clic entra a la línea como un prospecto.', corto: 'Google Ads para industria: cada clic entra como prospecto.' },
-  { key: 'ia', kicker: 'PASO 4 · TODO ENTRA POR WHATSAPP', titulo: 'La IA guía cada contacto', texto: 'Quien llega desde Google te escribe por WhatsApp: el agente IA responde al tiro, cotiza con tu catálogo y lo guía hasta la compra. Las cajas grises salen amarillas.', corto: 'Llegan desde Google a tu WhatsApp: la IA responde, cotiza y guía hasta la compra.' },
-  { key: 'ventas', kicker: 'PASO 5 · CERRAMOS LA VENTA', titulo: 'Pedidos listos para cerrar', texto: 'Tu equipo recibe clientes calientes, hacemos seguimiento a cada cotización y ves todo en el Panel JPB.', corto: 'Tu equipo recibe clientes calientes y seguimos cada cotización hasta cerrar.' },
-  { app: true, kicker: 'PASO 6 · TU APP PANEL JPB', titulo: 'Sigues todo desde tu teléfono', texto: 'Con la app Panel JPB ves en vivo las conversaciones de WhatsApp, quién dejó de responder, cada cotización y lo que gastas en Google y en IA.', corto: 'En la app Panel JPB ves en vivo tus chats, cotizaciones, seguimientos y gastos.', href: '/panel-jpb-demo', cta: 'Abrir demo completa',
+  { key: 'outbound', kicker: 'PASO 4 · PROSPECCIÓN PROFESIONAL', titulo: 'Y salimos a buscar a tus clientes', texto: 'Además de Google, prospectamos a los decisores de tu rubro por correo, LinkedIn y WhatsApp, con infraestructura propia y hasta 1.600 contactos al día. Cada respuesta baja a la línea como un lead.', corto: 'Prospectamos a los decisores de tu rubro: hasta 1.600 contactos al día por correo, LinkedIn y WhatsApp.', href: '/prospeccion', cta: 'Ver prospección' },
+  { key: 'ia', kicker: 'PASO 5 · TODO ENTRA POR WHATSAPP', titulo: 'La IA guía cada contacto', texto: 'Quien llega desde Google o desde la prospección te escribe por WhatsApp: el agente IA responde al tiro, cotiza con tu catálogo y lo guía hasta la compra. Las cajas grises salen amarillas.', corto: 'Llegan desde Google a tu WhatsApp: la IA responde, cotiza y guía hasta la compra.' },
+  { key: 'ventas', kicker: 'PASO 6 · CERRAMOS LA VENTA', titulo: 'Pedidos listos para cerrar', texto: 'Tu equipo recibe clientes calientes, hacemos seguimiento a cada cotización y ves todo en el Panel JPB.', corto: 'Tu equipo recibe clientes calientes y seguimos cada cotización hasta cerrar.' },
+  { app: true, kicker: 'PASO 7 · TU APP PANEL JPB', titulo: 'Sigues todo desde tu teléfono', texto: 'Con la app Panel JPB ves en vivo las conversaciones de WhatsApp, quién dejó de responder, cada cotización y lo que gastas en Google y en IA.', corto: 'En la app Panel JPB ves en vivo tus chats, cotizaciones, seguimientos y gastos.', href: '/panel-jpb-demo', cta: 'Abrir demo completa',
     pose: () => { const p = diego.g.position; return MOVIL() ? { pos: [p.x + .58, 1.62, p.z + 3.3], look: [p.x + .5, 1.42, p.z], fov: 56 } : { pos: [p.x + .95, 1.72, p.z + 3.1], look: [p.x + .95, 1.42, p.z], fov: 44 }; } },
   { kicker: 'CLIENTES ACTIVOS', titulo: 'Empresas que ya venden más con nosotros', texto: 'ETP Polimer, Fierros Idini y Plastiservi + Conflex: relaciones activas de años, con resultados medibles.', corto: 'ETP Polimer, Fierros Idini y Plastiservi + Conflex: clientes activos con resultados.', href: '#clientes', cta: 'Ver los casos',
     pose: () => MOVIL() ? { pos: [-3.6, 6.4, 4.5], look: [-3.6, 6.9, -17], fov: 56 } : { pos: [-3.6, 6.3, -4], look: [-3.6, 6.9, -17], fov: 50 } },
@@ -1556,7 +1611,7 @@ function frame(now) {
     if (w.act > focoAct) { focoAct = w.act; w.g.getWorldPosition(P); foco.position.set(P.x, P.y + 3, P.z + 1.5); }
   });
   foco.intensity = 30 * focoAct * power;
-  const flujo = Math.max(act.prospeccion, act.ia, act.ventas);
+  const flujo = Math.max(act.prospeccion, act.outbound, act.ia, act.ventas);
 
   // --- línea: leads entran, la IA los convierte, salen ventas ---
   const vel = .9 * (1 + 1.6 * flujo);
@@ -1577,6 +1632,16 @@ function frame(now) {
       }
     } else if (c.position.x > beltX1 - .1) c.userData.rampa = 0;
     c.position.y = beltY + .24 + (act.prospeccion > .1 && c.position.x < -7 ? Math.abs(Math.sin(clock * 14 + c.position.x)) * .05 * act.prospeccion : 0);
+  });
+  prospCajas.forEach((c) => {
+    const u = c.userData; u.t += dt * (.5 + .9 * (act.outbound || 0));
+    if (u.t < 0) { c.visible = false; return; }
+    c.visible = power > .6;
+    if (u.t < 1) { // bajando por la rampa
+      const k = u.t * u.t; c.position.set(PROSP.x, CHUTE.y0 + (CHUTE.y1 - CHUTE.y0) * k, CHUTE.z0 + (CHUTE.z1 - CHUTE.z0) * k);
+    } else if (c.position.z > lineZ + .01) { // entra a la cinta
+      c.position.z += (lineZ - c.position.z) * Math.min(1, dt * 6); c.position.y = beltY + .24; if (lineZ - c.position.z > -.03) c.position.z = lineZ;
+    } else { c.position.x += dt * vel; if (c.position.x > TOTEM.x - .35) { u.t = -2.2; c.position.set(PROSP.x, CHUTE.y0, CHUTE.z0); } }
   });
   if (pilaVacia && clock > pilaVacia) { pilaVacia = 0; pilaN = 0; pila.forEach((b) => (b.visible = false)); }
   robots.forEach((r, i) => {
