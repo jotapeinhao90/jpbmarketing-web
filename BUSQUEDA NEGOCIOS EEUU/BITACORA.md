@@ -947,3 +947,7 @@ URLs revisadas:
 ## 2026-11-22 – Prospección Recepcia
 - Leads: 15 (calidad baja-media; solo snippets, teléfonos no verificados). Rubros: veterinaria x4, kinesiología x4, barbería x5, psicología x1, taller x1. Ciudades: Puerto Montt, Valdivia, Concepción, Antofagasta, Osorno. Excluidos por repetidos: Puerta Sur, Zoonavet, Rizadas Antofagasta, Kapone.
 - URLs: https://agendapro.com/mp/cl/clinicas-veterinarias-puerto-montt, https://www.doctoralia.cl/perfil/consuelo-lagos-salcedo, https://www.doctoralia.cl/kinesiologo/concepcion, https://www.doctoralia.cl/clinicas/kinesiologia/concepcion, https://agendapro.com/mp/cl/barberias-region-de-antofagasta, https://www.fresha.com/lp/en/bt/barbershops/in/cl-antofagasta, https://academiaxray.cl/blog/sociedad-automotriz-mecanica-y-reparaciones-kahler-limitada/
+
+## 2026-11-23 – Prospección Recepcia
+- Leads: 15 (calidad baja-media; solo snippets; teléfonos no verificados). Rubros: estética x7, dental x3, gimnasio x2, psicología x2, veterinaria x1. Ciudades: Chillán, Los Ángeles, Ñuñoa. Sin resultados útiles: talleres Temuco. Excluido por repetido: Pehuen.
+- URLs: https://agendapro.com/mp/cl/facial-chillan, https://agendapro.com/mp/cl/depilacion-brazos-chillan, https://agendapro.com/mp/cl/gimnasios-region-del-biobio, https://www.doctoralia.cl/dentista/chillan, https://www.doctoralia.cl/psicologo/nunoa, https://psicologiaymente.com/directorio/cl/rankings/mejores-psicologos-nunoa, https://www.cronoshare.cl/servicios/talleres-mecanicos-mecanicos-a-domicilio/region-de-la-araucania/temuco
