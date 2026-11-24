@@ -951,3 +951,7 @@ URLs revisadas:
 ## 2026-11-23 – Prospección Recepcia
 - Leads: 15 (calidad baja-media; solo snippets; teléfonos no verificados). Rubros: estética x7, dental x3, gimnasio x2, psicología x2, veterinaria x1. Ciudades: Chillán, Los Ángeles, Ñuñoa. Sin resultados útiles: talleres Temuco. Excluido por repetido: Pehuen.
 - URLs: https://agendapro.com/mp/cl/facial-chillan, https://agendapro.com/mp/cl/depilacion-brazos-chillan, https://agendapro.com/mp/cl/gimnasios-region-del-biobio, https://www.doctoralia.cl/dentista/chillan, https://www.doctoralia.cl/psicologo/nunoa, https://psicologiaymente.com/directorio/cl/rankings/mejores-psicologos-nunoa, https://www.cronoshare.cl/servicios/talleres-mecanicos-mecanicos-a-domicilio/region-de-la-araucania/temuco
+
+## 2026-11-24 – Prospección Recepcia
+- Leads: 15 (calidad baja-media; solo snippets; teléfonos no verificados). Rubros: talleres x3, dental x4, veterinaria x3, barbería/peluquería x5. Ciudades: Valparaíso, Viña del Mar, Providencia, Vitacura.
+- URLs: https://www.cronoshare.cl/servicios/talleres-mecanicos-mecanicos-a-domicilio/region-de-valparaiso/valparaiso, https://www.doctoralia.cl/dentista/valparaiso, https://agendapro.com/mp/cl/pl/petsmann-veterinaria-y-peluqueria-las-condes/43100, https://www.cronoshare.cl/servicios/veterinarios-clinicas-veterinarias/region-metropolitana/providencia, https://agendapro.com/mp/cl/peluquerias-region-de-valparaiso, https://www.fresha.com/lp/en/bt/barbershops/in/cl-valparaíso
