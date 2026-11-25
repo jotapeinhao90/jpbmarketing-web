@@ -955,3 +955,7 @@ URLs revisadas:
 ## 2026-11-24 – Prospección Recepcia
 - Leads: 15 (calidad baja-media; solo snippets; teléfonos no verificados). Rubros: talleres x3, dental x4, veterinaria x3, barbería/peluquería x5. Ciudades: Valparaíso, Viña del Mar, Providencia, Vitacura.
 - URLs: https://www.cronoshare.cl/servicios/talleres-mecanicos-mecanicos-a-domicilio/region-de-valparaiso/valparaiso, https://www.doctoralia.cl/dentista/valparaiso, https://agendapro.com/mp/cl/pl/petsmann-veterinaria-y-peluqueria-las-condes/43100, https://www.cronoshare.cl/servicios/veterinarios-clinicas-veterinarias/region-metropolitana/providencia, https://agendapro.com/mp/cl/peluquerias-region-de-valparaiso, https://www.fresha.com/lp/en/bt/barbershops/in/cl-valparaíso
+
+## 2026-11-25 – Prospección Recepcia
+- Leads: 15 (calidad baja-media; solo snippets; teléfonos no verificados salvo Physical Studio Fit). Rubros: gimnasios/deporte x5, dental x3, inmobiliarias x3, estética x4. Ciudades: Maipú, La Reina, Macul, San Bernardo, Curicó, Rancagua, Machalí. Excluidos por repetidos: Salydent, El Alba. wellhub.com no accesible vía WebFetch.
+- URLs: https://wellhub.com/es-cl/search/partners/physical-studio-fit-sede-la-reina/, https://wellhub.com/es-cl/search/partners/mindfit-maipu/, https://www.doctoralia.cl/dentista/san-bernardo, https://www.yapo.cl/bienes-raices-venta-de-propiedades/maule-curico, https://agendapro.com/mp/cl/centros-estetica-region-de-o-higgins, https://mercantil.com/centros-de-estetica/ohiggins/4557, https://www.doctoralia.cl/psicologo/maipu
